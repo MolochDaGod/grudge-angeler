@@ -197,14 +197,20 @@ export default function FishingGame() {
       "/assets/fisherman/Fisherman_fish.png",
       "/assets/fisherman/Fisherman_hook.png",
       "/assets/objects/Boat.png",
+      "/assets/objects/Boat2.png",
       "/assets/objects/Water.png",
       "/assets/objects/Pier_Tiles.png",
       "/assets/objects/Fishing_hut.png",
       "/assets/objects/Stay.png",
+      "/assets/objects/Fish-rod.png",
       "/assets/objects/Grass1.png",
       "/assets/objects/Grass2.png",
+      "/assets/objects/Grass3.png",
+      "/assets/objects/Grass4.png",
       "/assets/objects/Fishbarrel1.png",
       "/assets/objects/Fishbarrel2.png",
+      "/assets/objects/Fishbarrel3.png",
+      "/assets/objects/Fishbarrel4.png",
       ...FISH_TYPES.map(f => f.catchAsset),
       ...JUNK_ITEMS.map(j => j.asset),
       ...["1","2","3","4","5","6"].flatMap(n => [
@@ -474,38 +480,87 @@ export default function FishingGame() {
       }
       ctx.globalAlpha = 1;
 
-      // Pier/dock with wood plank details
-      const pierWidth = W - fishermanX + 100;
-      const plankColors = ["#6b4423", "#5a3a1a", "#7a5030", "#634020"];
-      for (let py = 0; py < 4; py++) {
-        ctx.fillStyle = plankColors[py % plankColors.length];
-        ctx.fillRect(fishermanX - 50, pierY + py * 5, pierWidth, 5);
-      }
-      ctx.fillStyle = "rgba(0,0,0,0.15)";
-      ctx.fillRect(fishermanX - 50, pierY + 15, pierWidth, 5);
+      // Pier using Pier_Tiles.png tileset
+      // Pier_Tiles.png is 128x128, contains tile pieces:
+      //   Top-left 64x16: horizontal plank top
+      //   Rows below: support posts and water-level tiles
+      const pierTiles = getImg("/assets/objects/Pier_Tiles.png");
+      const pierScale = 2.5;
+      const pierLeft = fishermanX - 60;
+      const pierRight = W + 20;
+      const pierThickness = 20 * pierScale;
 
-      // Pier supports
-      ctx.fillStyle = "#4a2a10";
-      for (let px = fishermanX; px < W; px += 90) {
-        ctx.fillRect(px, pierY + 10, 6, 55);
-        ctx.fillStyle = "#3a1a08";
-        ctx.fillRect(px + 6, pierY + 10, 2, 55);
+      if (pierTiles && pierTiles.complete) {
+        // Draw pier planks using the top portion of the tileset (horizontal planks)
+        const plankSrcW = 64;
+        const plankSrcH = 16;
+        const plankDrawW = plankSrcW * pierScale;
+        const plankDrawH = plankSrcH * pierScale;
+
+        for (let px = pierLeft; px < pierRight; px += plankDrawW) {
+          const drawW = Math.min(plankDrawW, pierRight - px);
+          const srcW = drawW / pierScale;
+          ctx.drawImage(pierTiles, 0, 0, srcW, plankSrcH, px, pierY, drawW, plankDrawH);
+        }
+
+        // Pier support posts using vertical sections from tileset
+        const postSrcX = 80;
+        const postSrcY = 0;
+        const postSrcW = 10;
+        const postSrcH = 64;
+        const postDrawW = postSrcW * pierScale;
+        const postDrawH = postSrcH * pierScale;
+
+        for (let px = pierLeft + 40; px < pierRight - 30; px += 100) {
+          ctx.drawImage(pierTiles, postSrcX, postSrcY, postSrcW, postSrcH,
+            px, pierY + plankDrawH - 4, postDrawW, postDrawH);
+        }
+      } else {
+        // Fallback: simple colored planks
+        const pierWidth = pierRight - pierLeft;
+        const plankColors = ["#6b4423", "#5a3a1a", "#7a5030", "#634020", "#6b4423"];
+        for (let py = 0; py < 5; py++) {
+          ctx.fillStyle = plankColors[py];
+          ctx.fillRect(pierLeft, pierY + py * 8, pierWidth, 8);
+        }
         ctx.fillStyle = "#4a2a10";
+        for (let px = pierLeft + 40; px < pierRight - 30; px += 100) {
+          ctx.fillRect(px, pierY + 40, 8, 80);
+        }
       }
 
       // Pier shadow in water
-      ctx.globalAlpha = 0.15;
+      ctx.globalAlpha = 0.12;
       ctx.fillStyle = "#000000";
-      ctx.fillRect(fishermanX - 50, waterY, pierWidth, 15);
+      ctx.fillRect(pierLeft, waterY, pierRight - pierLeft, 12);
       ctx.globalAlpha = 1;
 
-      // Decorative objects
-      drawImage("/assets/objects/Fishbarrel1.png", fishermanX + 200, pierY - 11 * 2, 2);
-      drawImage("/assets/objects/Fishbarrel2.png", fishermanX + 230, pierY - 11 * 2, 2);
-      drawImage("/assets/objects/Stay.png", fishermanX + 320, pierY - 15 * 2, 2);
-      drawImage("/assets/objects/Grass1.png", W - 160, pierY - 33 * 1.5 + 5, 1.5);
-      drawImage("/assets/objects/Grass2.png", W - 90, pierY - 33 * 1.3 + 5, 1.3);
-      drawImage("/assets/objects/Fishing_hut.png", W - 380, pierY - 122 * 1.5 + 10, 1.5);
+      // Fishing hut - positioned so stairs align with pier surface
+      const hutScale = 2.2;
+      const hutW = 192 * hutScale;
+      const hutH = 122 * hutScale;
+      const hutX = W - hutW - 20;
+      const hutY = pierY - hutH + 35 * hutScale;
+      drawImage("/assets/objects/Fishing_hut.png", hutX, hutY, hutScale);
+
+      // Boat floating on water (subtle bob)
+      const boatBob = Math.sin(s.time * 0.025) * 2;
+      const boatScale = 2.5;
+      drawImage("/assets/objects/Boat.png", pierLeft - 74 * boatScale - 30, waterY - 10 * boatScale + boatBob, boatScale);
+
+      // Decorative objects on pier - positioned relative to pier surface
+      const objY = pierY - 2;
+      drawImage("/assets/objects/Fishbarrel4.png", fishermanX + 160, objY - 25 * 2.2, 2.2);
+      drawImage("/assets/objects/Fishbarrel1.png", fishermanX + 210, objY - 11 * 2.2, 2.2);
+      drawImage("/assets/objects/Fishbarrel2.png", fishermanX + 245, objY - 15 * 2.2, 2.2);
+      drawImage("/assets/objects/Fish-rod.png", fishermanX + 290, objY - 26 * 2, 2);
+      drawImage("/assets/objects/Stay.png", fishermanX + 320, objY - 15 * 2.2, 2.2);
+
+      // Grass near the hut and pier edges
+      drawImage("/assets/objects/Grass1.png", hutX - 15, objY - 33 * 1.8 + 5, 1.8);
+      drawImage("/assets/objects/Grass3.png", hutX + 30, objY - 24 * 1.5 + 3, 1.5);
+      drawImage("/assets/objects/Grass2.png", W - 50, objY - 25 * 1.6 + 3, 1.6);
+      drawImage("/assets/objects/Grass4.png", W - 25, objY - 23 * 1.4 + 2, 1.4);
 
       // Ripples
       for (let i = s.ripples.length - 1; i >= 0; i--) {
@@ -561,35 +616,52 @@ export default function FishingGame() {
         ctx.globalAlpha = 1;
       }
 
-      // Fisherman
+      // Fisherman sprite with per-frame rod tip tracking
+      // Sprite coords are in 48x48 pixel space, scaled by SCALE
+      // Rod tip positions (x,y) in sprite-local pixel coords for each animation
+      const fishRodTips: Record<string, [number, number][]> = {
+        idle: [[10, 8], [10, 9], [10, 8], [10, 7]],
+        fish: [[4, 10], [3, 11], [4, 12], [5, 10]],
+        hook: [[38, 5], [30, 3], [18, 6], [8, 12], [4, 20], [6, 28]],
+      };
+
       let fishermanFrame = Math.floor(s.time * 0.07) % 4;
       let fishermanSprite = "/assets/fisherman/Fisherman_idle.png";
       let fishermanFrameCount = 4;
+      let rodTipKey = "idle";
 
       if (s.gameState === "casting") {
         fishermanSprite = "/assets/fisherman/Fisherman_hook.png";
         fishermanFrameCount = 6;
         fishermanFrame = Math.min(Math.floor(s.castPower / 18), 5);
+        rodTipKey = "hook";
       } else if (s.gameState === "waiting" || s.gameState === "bite") {
         fishermanSprite = "/assets/fisherman/Fisherman_fish.png";
         fishermanFrameCount = 4;
         fishermanFrame = Math.floor(s.time * 0.05) % 4;
+        rodTipKey = "fish";
       } else if (s.gameState === "reeling") {
         fishermanSprite = "/assets/fisherman/Fisherman_hook.png";
         fishermanFrameCount = 6;
         fishermanFrame = Math.floor(s.time * 0.18) % 6;
+        rodTipKey = "hook";
       } else if (s.gameState === "caught") {
         fishermanSprite = "/assets/fisherman/Fisherman_fish.png";
         fishermanFrameCount = 4;
         fishermanFrame = 3;
+        rodTipKey = "fish";
       }
 
       drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE);
 
+      // Calculate rod tip position in screen coords from sprite-local coords
+      const tips = fishRodTips[rodTipKey] || fishRodTips.idle;
+      const tipLocal = tips[Math.min(fishermanFrame, tips.length - 1)];
+      const rodTipX = fishermanX + tipLocal[0] * SCALE;
+      const rodTipY = fishermanY + tipLocal[1] * SCALE;
+
       // Fishing line, bobber, and hook
       if (s.gameState === "waiting" || s.gameState === "bite" || s.gameState === "reeling") {
-        const rodTipX = fishermanX + 18;
-        const rodTipY = fishermanY + 18;
         s.bobberBob = Math.sin(s.time * 0.08) * 2.5;
         const bobberX = s.hookX;
         let bobberY = waterY + s.bobberBob;
@@ -602,42 +674,60 @@ export default function FishingGame() {
           s.lineWobble *= 0.93;
         }
 
-        // Fishing line with curve
-        ctx.strokeStyle = "rgba(212,197,169,0.8)";
-        ctx.lineWidth = 1.2;
+        // Fishing line with natural catenary curve (bezier)
+        ctx.strokeStyle = "rgba(200,190,170,0.85)";
+        ctx.lineWidth = 1.5;
         ctx.beginPath();
         ctx.moveTo(rodTipX, rodTipY);
-        const cp1x = (rodTipX + bobberX) / 2 + s.lineWobble;
-        const cp1y = Math.min(rodTipY, bobberY) - 20 + Math.sin(s.time * 0.05) * 3;
-        ctx.quadraticCurveTo(cp1x, cp1y, bobberX, bobberY);
+        const midX = (rodTipX + bobberX) / 2 + s.lineWobble;
+        const sagAmount = Math.max(15, Math.abs(rodTipX - bobberX) * 0.08);
+        const sagY = Math.max(rodTipY, bobberY) + sagAmount + Math.sin(s.time * 0.04) * 2;
+        ctx.bezierCurveTo(
+          rodTipX + (midX - rodTipX) * 0.4, rodTipY + sagAmount * 0.3,
+          midX, sagY,
+          bobberX, bobberY
+        );
         ctx.stroke();
 
         // Bobber
+        const bobberSize = 5;
         ctx.fillStyle = "#ffffff";
         ctx.beginPath();
-        ctx.arc(bobberX, bobberY - 1, 4, Math.PI, 0);
+        ctx.arc(bobberX, bobberY - 1, bobberSize, Math.PI, 0);
         ctx.fill();
         ctx.fillStyle = "#e74c3c";
         ctx.beginPath();
-        ctx.arc(bobberX, bobberY + 1, 4, 0, Math.PI);
+        ctx.arc(bobberX, bobberY + 1, bobberSize, 0, Math.PI);
         ctx.fill();
         ctx.fillStyle = "#c0392b";
-        ctx.fillRect(bobberX - 1, bobberY - 6, 2, 5);
+        ctx.fillRect(bobberX - 1.5, bobberY - bobberSize - 4, 3, 5);
 
-        // Hook line going down
-        ctx.strokeStyle = "rgba(200,190,170,0.6)";
+        // Bobber water interaction - small ripple ring
+        ctx.globalAlpha = 0.2;
+        ctx.strokeStyle = "#88ccee";
+        ctx.lineWidth = 0.8;
+        const rSize = bobberSize + 2 + Math.sin(s.time * 0.06) * 1.5;
+        ctx.beginPath();
+        ctx.ellipse(bobberX, bobberY + 2, rSize, rSize * 0.25, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+
+        // Hook line going down from bobber
+        ctx.strokeStyle = "rgba(180,170,150,0.5)";
         ctx.lineWidth = 0.8;
         ctx.beginPath();
-        ctx.moveTo(bobberX, bobberY + 5);
+        ctx.moveTo(bobberX, bobberY + bobberSize + 1);
         ctx.lineTo(s.hookX, s.hookY);
         ctx.stroke();
 
         // Small hook at bottom
-        ctx.strokeStyle = "#aaa";
-        ctx.lineWidth = 1;
+        ctx.strokeStyle = "#999";
+        ctx.lineWidth = 1.2;
         ctx.beginPath();
-        ctx.arc(s.hookX + 3, s.hookY, 3, 0, Math.PI);
+        ctx.arc(s.hookX + 3, s.hookY, 3.5, -0.3, Math.PI + 0.3);
         ctx.stroke();
+        ctx.fillStyle = "#bbb";
+        ctx.fillRect(s.hookX + 2, s.hookY - 4, 1.5, 4);
 
         // Bite exclamation
         if (s.gameState === "bite") {
@@ -646,21 +736,31 @@ export default function FishingGame() {
           const exScale = 1 + Math.sin(s.exclamationTimer * 0.2) * 0.15;
 
           ctx.save();
-          ctx.translate(bobberX, bobberY - 25 - bounce);
+          ctx.translate(bobberX, bobberY - 30 - bounce);
           ctx.scale(exScale, exScale);
 
-          ctx.fillStyle = "rgba(0,0,0,0.5)";
-          drawRoundRect(-20, -14, 40, 28, 6);
+          ctx.fillStyle = "rgba(0,0,0,0.6)";
+          drawRoundRect(-22, -15, 44, 30, 8);
           ctx.fill();
 
           ctx.fillStyle = "#f1c40f";
-          ctx.font = "bold 20px 'Press Start 2P', monospace";
+          ctx.font = "bold 22px 'Press Start 2P', monospace";
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           ctx.fillText("!", 0, 0);
 
           ctx.restore();
         }
+      }
+
+      // Draw a visible line during casting too (rod tip to approximate cast direction)
+      if (s.gameState === "casting") {
+        ctx.strokeStyle = "rgba(200,190,170,0.4)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(rodTipX, rodTipY);
+        ctx.lineTo(rodTipX - 15, rodTipY - 10);
+        ctx.stroke();
       }
 
       // Particles
