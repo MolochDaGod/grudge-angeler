@@ -116,7 +116,7 @@ interface Bounty {
   label: string;
 }
 
-type GameState = "title" | "charSelect" | "idle" | "casting" | "waiting" | "bite" | "reeling" | "caught" | "missed" | "swimming" | "boarding" | "store";
+type GameState = "intro" | "title" | "charSelect" | "idle" | "casting" | "waiting" | "bite" | "reeling" | "caught" | "missed" | "swimming" | "boarding" | "store";
 
 interface SwimmingFish {
   x: number;
@@ -168,7 +168,7 @@ export default function FishingGame() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gameLoopRef = useRef<number>(0);
   const stateRef = useRef({
-    gameState: "title" as GameState,
+    gameState: "intro" as GameState,
     score: 0,
     combo: 0,
     bestCombo: 0,
@@ -260,7 +260,7 @@ export default function FishingGame() {
 
   const imagesRef = useRef<Map<string, HTMLImageElement>>(new Map());
   const [uiState, setUiState] = useState({
-    gameState: "title" as GameState,
+    gameState: "intro" as GameState,
     score: 0,
     combo: 0,
     totalCaught: 0,
@@ -447,6 +447,7 @@ export default function FishingGame() {
         `/assets/creatures/${n}/Walk.png`,
       ]),
       ...Array.from({length: 17}, (_, i) => `/assets/icons/Icons_${String(i+1).padStart(2,'0')}.png`),
+      "/assets/logo.png",
     ];
     Promise.all(assets.map(a => loadImage(a)));
     generateBounties();
@@ -559,7 +560,7 @@ export default function FishingGame() {
     document.addEventListener("touchend", onDocTouchEnd);
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (stateRef.current.gameState === "charSelect") return;
+      if (stateRef.current.gameState === "charSelect" || stateRef.current.gameState === "intro") return;
       const key = e.key.toLowerCase();
       stateRef.current.keysDown.add(key);
       if (["a", "d", "w", "s", " ", "e"].includes(key)) e.preventDefault();
@@ -1157,7 +1158,7 @@ export default function FishingGame() {
         } else {
           ctx.fillText("GRUDGE", bbX + bbW/2, bbY + 15);
           ctx.fillStyle = "#4fc3f7";
-          ctx.fillText("ANGLER", bbX + bbW/2, bbY + 28);
+          ctx.fillText("ANGELER", bbX + bbW/2, bbY + 28);
           ctx.fillStyle = "#78909c";
           ctx.font = "3px 'Press Start 2P', monospace";
           ctx.fillText("v1.0", bbX + bbW/2, bbY + 38);
@@ -1929,6 +1930,13 @@ export default function FishingGame() {
         ctx.globalAlpha = 1;
       }
 
+      if (s.gameState === "intro") {
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(0, 0, W, H);
+        requestAnimationFrame(gameLoop);
+        return;
+      }
+
       // Title screen & charSelect - shared background
       if (s.gameState === "title" || s.gameState === "charSelect") {
         ctx.fillStyle = "rgba(0,10,30,0.45)";
@@ -1987,12 +1995,18 @@ export default function FishingGame() {
         ctx.shadowColor = "#3498db";
         ctx.shadowBlur = 30;
         ctx.fillStyle = "#4fc3f7";
+        const logoImg = imagesRef.current.get("/assets/logo.png");
+        if (logoImg && logoImg.complete) {
+          const logoSize = 80;
+          ctx.drawImage(logoImg, W / 2 - logoSize / 2, titleY - logoSize - 10, logoSize, logoSize);
+        }
+
         ctx.font = "bold 48px 'Press Start 2P', monospace";
         ctx.textAlign = "center";
         ctx.fillText("GRUDGE", W / 2, titleY);
         ctx.shadowColor = "#f1c40f";
         ctx.fillStyle = "#ffd54f";
-        ctx.fillText("ANGLER", W / 2, titleY + 58);
+        ctx.fillText("ANGELER", W / 2, titleY + 58);
         ctx.shadowBlur = 0;
 
         ctx.fillStyle = "#90a4ae";
@@ -2049,6 +2063,10 @@ export default function FishingGame() {
     const H = canvas.height;
     const waterY = H * 0.42;
     const defaultFX = W * 0.45;
+
+    if (s.gameState === "intro") {
+      return;
+    }
 
     if (s.gameState === "title") {
       s.gameState = "charSelect";
@@ -2151,6 +2169,29 @@ export default function FishingGame() {
   };
 
   const [showCollection, setShowCollection] = useState(false);
+  const [introPhase, setIntroPhase] = useState(0);
+  const introVideoRef = useRef<HTMLVideoElement>(null);
+
+  const advanceIntro = useCallback(() => {
+    if (introPhase === 0) {
+      setIntroPhase(1);
+    } else {
+      stateRef.current.gameState = "title";
+      syncUI();
+      setIntroPhase(-1);
+    }
+  }, [introPhase, syncUI]);
+
+  useEffect(() => {
+    if (uiState.gameState !== "intro" || introPhase < 0) return;
+    const vid = introVideoRef.current;
+    if (!vid) return;
+    vid.currentTime = 0;
+    const playPromise = vid.play();
+    if (playPromise) playPromise.catch(() => {
+      advanceIntro();
+    });
+  }, [introPhase, uiState.gameState, advanceIntro]);
 
   return (
     <div className="relative w-screen h-screen overflow-hidden" style={{ fontFamily: "'Press Start 2P', monospace", background: "#0a0f1a" }}>
@@ -2165,12 +2206,37 @@ export default function FishingGame() {
         data-testid="game-canvas"
       />
 
+      {uiState.gameState === "intro" && introPhase >= 0 && (
+        <div
+          className="absolute inset-0 flex items-center justify-center"
+          style={{ zIndex: 20, background: "#000", cursor: "pointer" }}
+          onClick={advanceIntro}
+          data-testid="intro-overlay"
+        >
+          <video
+            ref={introVideoRef}
+            key={introPhase}
+            src={introPhase === 0 ? "https://i.imgur.com/sxWeOBP.mp4" : "https://i.imgur.com/wSesBRh.mp4"}
+            onEnded={advanceIntro}
+            playsInline
+            muted
+            style={{ width: "100%", height: "100%", objectFit: "contain" }}
+            data-testid="intro-video"
+          />
+          <div style={{
+            position: "absolute", bottom: 24, right: 24,
+            color: "rgba(255,255,255,0.4)", fontSize: 8,
+            fontFamily: "'Press Start 2P', monospace",
+          }}>CLICK TO SKIP</div>
+        </div>
+      )}
+
       {/* Character Select Screen - HTML Overlay */}
       {uiState.gameState === "charSelect" && (
         <div className="absolute inset-0 flex items-center justify-center" style={{ fontFamily: "'Press Start 2P', monospace", zIndex: 10 }} data-testid="char-select-screen">
           <div className="flex flex-col items-center gap-6" style={{ background: "rgba(5,12,30,0.92)", borderRadius: 16, border: "2px solid rgba(79,195,247,0.3)", padding: "32px 40px", maxWidth: 520, width: "90%" }}>
             <div className="text-center">
-              <div style={{ color: "#4fc3f7", fontSize: 20, marginBottom: 4, textShadow: "0 0 20px rgba(79,195,247,0.5)" }}>GRUDGE ANGLER</div>
+              <div style={{ color: "#4fc3f7", fontSize: 20, marginBottom: 4, textShadow: "0 0 20px rgba(79,195,247,0.5)" }}>GRUDGE ANGELER</div>
               <div style={{ color: "#607d8b", fontSize: 8 }}>Choose your character</div>
             </div>
 
