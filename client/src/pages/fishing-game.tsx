@@ -416,7 +416,7 @@ export default function FishingGame() {
             s.keysDown.delete(" ");
             s.gameState = "idle";
             s.isSwimming = false;
-            s.playerX = defaultFishermanX;
+            s.playerX = Math.max(pierLeftBound, Math.min(W - 40, s.swimX));
             addParticles(s.swimX, waterY, 15, "#5dade2", 3, "splash");
             addRipple(s.swimX, waterY);
             syncUI();
