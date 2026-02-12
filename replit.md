@@ -36,6 +36,22 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 - Rod tip coords are mirrored when flipped: `(SPRITE_FRAME_W - 1 - tipLocal[0]) * SCALE`
 - Reeling minigame (Palworld-style): horizontal bar with fish icon, catch zone moves LEFT on click (2x speed), drifts RIGHT when released; circular progress gauge fills/depletes based on alignment
 
+## Game Mechanics
+1. **Title Screen** - Click to start
+2. **Idle** - Click to begin casting, A/D to walk on pier, Space to dive
+3. **Casting** - Mouse-aim crosshair system: move mouse to aim where bobber lands, click to cast; dashed line from rod tip to crosshair; cursor becomes crosshair
+4. **Waiting** - Bobber in water, fish swim nearby; a fish will approach and bite the hook
+5. **Bite** - Fish grabs line! Line connects to fish sprite's mouth; click to start reeling
+6. **Reeling** - Palworld-style minigame with hooked fish visible in water; fish moves left/right; player can move A/D to align with fish; alignment bonus: closer = slower tension bar + faster gauge fill
+7. **Caught/Missed** - Result shown, click to continue
+
+## Fish Behavior
+- SwimmingFish have wobblePhase/wobbleAmp for vertical bobbing, dirChangeTimer for random direction changes
+- Fish approach hook when selected (approachingHook flag), swim toward hook position
+- Hooked fish (during bite/reeling) stored as hookedFishX/Y/Dir/Frame/VX state fields
+- Line renders from rod tip to fish mouth position using bezier curve
+- Alignment: horizontal distance between player and hooked fish affects difficulty (alignmentBonus 0.6-1.0)
+
 ## Features
 - 8 fish species (common, uncommon, rare, legendary)
 - 3 junk items including treasure chest

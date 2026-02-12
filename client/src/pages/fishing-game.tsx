@@ -46,6 +46,11 @@ interface SwimmingFish {
   frame: number;
   frameTimer: number;
   speed: number;
+  wobblePhase: number;
+  wobbleAmp: number;
+  baseY: number;
+  approachingHook: boolean;
+  dirChangeTimer: number;
 }
 
 interface CaughtEntry {
@@ -117,6 +122,15 @@ export default function FishingGame() {
     screenShake: 0,
     catchPopY: 0,
     mouseX: 0,
+    mouseY: 0,
+    aimX: 0,
+    aimY: 0,
+    hookedFishX: 0,
+    hookedFishY: 0,
+    hookedFishDir: 1,
+    hookedFishFrame: 0,
+    hookedFishFrameTimer: 0,
+    hookedFishVX: 0,
     playerX: 0,
     playerVX: 0,
     playerVY: 0,
@@ -142,6 +156,7 @@ export default function FishingGame() {
     reelTarget: 0.5,
     castPower: 0,
     rodLevel: 1,
+    alignment: 0,
     bestCombo: 0,
     caughtCollection: [] as [string, CaughtEntry][],
     missReason: "",
@@ -175,8 +190,12 @@ export default function FishingGame() {
     const direction = Math.random() > 0.5 ? 1 : -1;
     const x = direction > 0 ? -80 : canvasW + 80;
     s.swimmingFish.push({
-      x, y, type: fishType, direction, frame: 0, frameTimer: 0,
+      x, y, baseY: y, type: fishType, direction, frame: 0, frameTimer: 0,
       speed: fishType.speed * (0.7 + Math.random() * 0.6),
+      wobblePhase: Math.random() * Math.PI * 2,
+      wobbleAmp: 2 + Math.random() * 4,
+      approachingHook: false,
+      dirChangeTimer: 60 + Math.random() * 120,
     });
   }, []);
 
@@ -243,6 +262,9 @@ export default function FishingGame() {
 
   const syncUI = useCallback(() => {
     const s = stateRef.current;
+    const alignDist = Math.abs(s.playerX - s.hookedFishX);
+    const maxAlignDist = 400;
+    const alignVal = Math.max(0, 1 - alignDist / maxAlignDist);
     setUiState({
       gameState: s.gameState,
       score: s.score,
@@ -255,6 +277,7 @@ export default function FishingGame() {
       reelTarget: s.reelTarget,
       castPower: s.castPower,
       rodLevel: s.rodLevel,
+      alignment: s.gameState === "reeling" ? alignVal : 0,
       bestCombo: s.bestCombo,
       caughtCollection: Array.from(s.caughtCollection.entries()),
       missReason: s.missReason,
@@ -278,6 +301,7 @@ export default function FishingGame() {
     const onDocMouseMove = (e: MouseEvent) => {
       const st = stateRef.current;
       st.mouseX = e.clientX;
+      st.mouseY = e.clientY;
     };
     const onDocMouseDown = () => {
       stateRef.current.isReeling = true;
@@ -372,7 +396,7 @@ export default function FishingGame() {
       const SWIM_SPEED = 2.0;
       const pierLeftBound = defaultFishermanX - 80;
 
-      if (s.gameState === "idle") {
+      if (s.gameState === "idle" || s.gameState === "casting") {
         let moving = false;
         if (s.keysDown.has("a")) {
           s.playerX -= WALK_SPEED * dt;
@@ -386,7 +410,12 @@ export default function FishingGame() {
         }
         s.playerX = Math.max(pierLeftBound, Math.min(W - 40, s.playerX));
 
-        if (s.keysDown.has(" ")) {
+        if (s.gameState === "casting") {
+          s.aimX = Math.max(10, Math.min(s.playerX - 30, s.mouseX));
+          s.aimY = Math.max(waterY + 20, Math.min(H - 40, s.mouseY));
+        }
+
+        if (s.keysDown.has(" ") && s.gameState === "idle") {
           s.keysDown.delete(" ");
           s.gameState = "swimming";
           s.isSwimming = true;
@@ -397,6 +426,17 @@ export default function FishingGame() {
           s.splashDone = false;
           syncUI();
         }
+      }
+
+      if (s.gameState === "reeling") {
+        const REEL_WALK_SPEED = 1.8;
+        if (s.keysDown.has("a")) {
+          s.playerX -= REEL_WALK_SPEED * dt;
+        }
+        if (s.keysDown.has("d")) {
+          s.playerX += REEL_WALK_SPEED * dt;
+        }
+        s.playerX = Math.max(pierLeftBound, Math.min(W - 40, s.playerX));
       }
 
       if (s.gameState === "swimming") {
@@ -697,9 +737,55 @@ export default function FishingGame() {
 
       for (let i = s.swimmingFish.length - 1; i >= 0; i--) {
         const fish = s.swimmingFish[i];
-        fish.x += fish.direction * fish.speed * dt;
+
+        if (fish.approachingHook && (s.gameState === "waiting")) {
+          const dx = s.hookX - fish.x;
+          const dy = s.hookY - fish.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist > 8) {
+            fish.x += (dx / dist) * fish.speed * 1.5 * dt;
+            fish.y += (dy / dist) * fish.speed * 1.0 * dt;
+            fish.direction = dx > 0 ? 1 : -1;
+          } else {
+            s.gameState = "bite";
+            s.biteTimer = 120 + Math.random() * 80;
+            s.exclamationTimer = 0;
+            s.currentCatch = fish.type;
+            s.hookedFishX = fish.x;
+            s.hookedFishY = fish.y;
+            s.hookedFishDir = fish.direction;
+            s.hookedFishFrame = 0;
+            s.hookedFishFrameTimer = 0;
+            s.hookedFishVX = (Math.random() > 0.5 ? 1 : -1) * fish.speed;
+            if (Math.random() < 0.08) {
+              s.currentCatch = null;
+              s.currentJunk = JUNK_ITEMS[Math.floor(Math.random() * JUNK_ITEMS.length)];
+            } else { s.currentJunk = null; }
+            addParticles(s.hookX, waterY, 10, "#5dade2", 2.5, "splash");
+            addRipple(s.hookX, waterY);
+            s.screenShake = 3;
+            s.swimmingFish.splice(i, 1);
+            syncUI();
+            continue;
+          }
+        } else {
+          fish.dirChangeTimer -= dt;
+          if (fish.dirChangeTimer <= 0 && !fish.approachingHook) {
+            if (Math.random() < 0.3) {
+              fish.direction *= -1;
+            }
+            fish.speed = fish.type.speed * (0.7 + Math.random() * 0.6);
+            fish.wobbleAmp = 2 + Math.random() * 4;
+            fish.dirChangeTimer = 60 + Math.random() * 120;
+          }
+          fish.x += fish.direction * fish.speed * dt;
+          fish.wobblePhase += 0.04 * dt;
+          fish.y = fish.baseY + Math.sin(fish.wobblePhase) * fish.wobbleAmp;
+        }
+
         fish.frameTimer += dt;
-        if (fish.frameTimer > 8) {
+        const frameSpeed = 4 + (1.0 / Math.max(0.3, fish.speed)) * 4;
+        if (fish.frameTimer > frameSpeed) {
           fish.frameTimer = 0;
           fish.frame = (fish.frame + 1) % fish.type.walkFrames;
         }
@@ -714,11 +800,10 @@ export default function FishingGame() {
         ctx.globalAlpha = depthAlpha;
 
         const creatureScale = SCALE * 0.65;
-        const fishBobY = fish.y + Math.sin(s.time * 0.025 + fish.x * 0.008) * 3;
         drawSprite(
           `/assets/creatures/${fish.type.creatureFolder}/Walk.png`,
           fish.frame, fish.type.walkFrames,
-          fish.x, fishBobY, creatureScale,
+          fish.x, fish.y, creatureScale,
           fish.direction < 0
         );
         ctx.globalAlpha = 1;
@@ -775,7 +860,7 @@ export default function FishingGame() {
         if (s.gameState === "casting") {
           fishermanSprite = "/assets/fisherman/Fisherman_hook.png";
           fishermanFrameCount = 6;
-          fishermanFrame = Math.min(Math.floor(s.castPower / 18), 5);
+          fishermanFrame = Math.floor(s.time * 0.08) % 6;
           rodTipKey = "hook";
         } else if (s.gameState === "waiting" || s.gameState === "bite") {
           fishermanSprite = "/assets/fisherman/Fisherman_fish.png";
@@ -811,21 +896,13 @@ export default function FishingGame() {
         rodTipY = fishermanY + tipLocal[1] * SCALE;
       }
 
-      // Fishing line, bobber, and hook
-      if (s.gameState === "waiting" || s.gameState === "bite" || s.gameState === "reeling") {
+      // Fishing line, bobber, hook, and hooked fish
+      if (s.gameState === "waiting") {
         s.bobberBob = Math.sin(s.time * 0.08) * 2.5;
         const bobberX = s.hookX;
         let bobberY = waterY + s.bobberBob;
+        s.lineWobble *= 0.93;
 
-        if (s.gameState === "bite") {
-          bobberY += Math.sin(s.time * 0.4) * 6;
-          s.lineWobble = Math.sin(s.time * 0.25) * 4;
-          if (Math.random() < 0.1 * dt) addRipple(bobberX + (Math.random() - 0.5) * 10, waterY);
-        } else {
-          s.lineWobble *= 0.93;
-        }
-
-        // Fishing line with natural catenary curve (bezier)
         ctx.strokeStyle = "rgba(200,190,170,0.85)";
         ctx.lineWidth = 1.5;
         ctx.beginPath();
@@ -840,7 +917,6 @@ export default function FishingGame() {
         );
         ctx.stroke();
 
-        // Bobber
         const bobberSize = 5;
         ctx.fillStyle = "#ffffff";
         ctx.beginPath();
@@ -853,7 +929,6 @@ export default function FishingGame() {
         ctx.fillStyle = "#c0392b";
         ctx.fillRect(bobberX - 1.5, bobberY - bobberSize - 4, 3, 5);
 
-        // Bobber water interaction - small ripple ring
         ctx.globalAlpha = 0.2;
         ctx.strokeStyle = "#88ccee";
         ctx.lineWidth = 0.8;
@@ -863,7 +938,6 @@ export default function FishingGame() {
         ctx.stroke();
         ctx.globalAlpha = 1;
 
-        // Hook line going down from bobber
         ctx.strokeStyle = "rgba(180,170,150,0.5)";
         ctx.lineWidth = 0.8;
         ctx.beginPath();
@@ -871,7 +945,6 @@ export default function FishingGame() {
         ctx.lineTo(s.hookX, s.hookY);
         ctx.stroke();
 
-        // Small hook at bottom
         ctx.strokeStyle = "#999";
         ctx.lineWidth = 1.2;
         ctx.beginPath();
@@ -879,15 +952,55 @@ export default function FishingGame() {
         ctx.stroke();
         ctx.fillStyle = "#bbb";
         ctx.fillRect(s.hookX + 2, s.hookY - 4, 1.5, 4);
+      }
 
-        // Bite exclamation
+      if (s.gameState === "bite" || s.gameState === "reeling") {
+        const creatureScale = SCALE * 0.65;
+        const fishSpriteW = 48 * creatureScale;
+        const fishMouthX = s.hookedFishX + (s.hookedFishDir > 0 ? fishSpriteW * 0.8 : fishSpriteW * 0.2);
+        const fishMouthY = s.hookedFishY + 12 * creatureScale;
+
+        s.lineWobble = s.gameState === "bite" ? Math.sin(s.time * 0.25) * 6 : Math.sin(s.time * 0.15) * 2;
+
+        ctx.strokeStyle = s.gameState === "bite" ? "rgba(220,180,120,0.9)" : "rgba(200,190,170,0.85)";
+        ctx.lineWidth = s.gameState === "bite" ? 2 : 1.5;
+        ctx.beginPath();
+        ctx.moveTo(rodTipX, rodTipY);
+        const midX = (rodTipX + fishMouthX) / 2 + s.lineWobble;
+        const sagAmount = Math.max(10, Math.abs(rodTipX - fishMouthX) * 0.06);
+        const sagY = Math.min(waterY + 5, Math.max(rodTipY, fishMouthY - 20)) + sagAmount;
+        ctx.bezierCurveTo(
+          rodTipX + (midX - rodTipX) * 0.3, rodTipY + sagAmount * 0.2,
+          midX, sagY,
+          fishMouthX, fishMouthY
+        );
+        ctx.stroke();
+
+        if (s.gameState === "bite") {
+          if (Math.random() < 0.1 * dt) addRipple(fishMouthX + (Math.random() - 0.5) * 10, waterY);
+        }
+
+        const fishDepth = (s.hookedFishY - waterY) / (H - waterY);
+        const depthAlpha = 0.9 - fishDepth * 0.25;
+        ctx.globalAlpha = depthAlpha;
+
+        const creatureFolder = s.currentCatch?.creatureFolder || "1";
+        const walkFrames = s.currentCatch?.walkFrames || 4;
+        drawSprite(
+          `/assets/creatures/${creatureFolder}/Walk.png`,
+          s.hookedFishFrame, walkFrames,
+          s.hookedFishX, s.hookedFishY, creatureScale,
+          s.hookedFishDir < 0
+        );
+        ctx.globalAlpha = 1;
+
         if (s.gameState === "bite") {
           s.exclamationTimer += dt;
           const bounce = Math.abs(Math.sin(s.exclamationTimer * 0.15)) * 8;
           const exScale = 1 + Math.sin(s.exclamationTimer * 0.2) * 0.15;
 
           ctx.save();
-          ctx.translate(bobberX, bobberY - 30 - bounce);
+          ctx.translate(fishMouthX, s.hookedFishY - 20 - bounce);
           ctx.scale(exScale, exScale);
 
           ctx.fillStyle = "rgba(0,0,0,0.6)";
@@ -904,14 +1017,33 @@ export default function FishingGame() {
         }
       }
 
-      // Draw a visible line during casting too (rod tip to approximate cast direction)
+      // Crosshair and aim line during casting
       if (s.gameState === "casting") {
-        ctx.strokeStyle = "rgba(200,190,170,0.4)";
+        ctx.strokeStyle = "rgba(200,190,170,0.5)";
         ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
         ctx.beginPath();
         ctx.moveTo(rodTipX, rodTipY);
-        ctx.lineTo(rodTipX - 15, rodTipY - 10);
+        ctx.lineTo(s.aimX, s.aimY);
         ctx.stroke();
+        ctx.setLineDash([]);
+
+        const crossSize = 10;
+        const pulse = 0.7 + Math.sin(s.time * 0.1) * 0.3;
+        ctx.globalAlpha = pulse;
+        ctx.strokeStyle = "#f1c40f";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(s.aimX - crossSize, s.aimY);
+        ctx.lineTo(s.aimX + crossSize, s.aimY);
+        ctx.moveTo(s.aimX, s.aimY - crossSize);
+        ctx.lineTo(s.aimX, s.aimY + crossSize);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(s.aimX, s.aimY, crossSize + 4, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
       }
 
       // Show dock climb indicator when swimming near dock
@@ -960,32 +1092,30 @@ export default function FishingGame() {
       if (s.gameState === "waiting") {
         s.waitTimer -= dt;
         s.hookY = Math.min(s.hookY + 0.4 * dt, s.hookTargetY);
+
         if (s.waitTimer <= 0) {
-          const hookRange = 100;
-          const nearbyFish = s.swimmingFish.filter(f =>
-            Math.abs(f.x - s.hookX) < hookRange && Math.abs(f.y - s.hookY) < hookRange
-          );
-          if (nearbyFish.length > 0 || Math.random() < 0.2) {
-            s.gameState = "bite";
-            s.biteTimer = 120 + Math.random() * 80;
-            s.exclamationTimer = 0;
+          const hasApproaching = s.swimmingFish.some(f => f.approachingHook);
+          if (!hasApproaching) {
+            const hookRange = 300;
+            const nearbyFish = s.swimmingFish.filter(f =>
+              Math.abs(f.x - s.hookX) < hookRange && !f.approachingHook
+            );
             if (nearbyFish.length > 0) {
-              s.currentCatch = nearbyFish[0].type;
-            } else {
-              const totalW = FISH_TYPES.reduce((a, f) => a + f.weight, 0);
-              let rr = Math.random() * totalW;
-              s.currentCatch = FISH_TYPES[0];
-              for (const ft of FISH_TYPES) { rr -= ft.weight; if (rr <= 0) { s.currentCatch = ft; break; } }
+              const closest = nearbyFish.reduce((a, b) =>
+                Math.abs(a.x - s.hookX) < Math.abs(b.x - s.hookX) ? a : b
+              );
+              closest.approachingHook = true;
+            } else if (Math.random() < 0.15) {
+              spawnFish(W, waterY, H);
+              const newFish = s.swimmingFish[s.swimmingFish.length - 1];
+              if (newFish) {
+                newFish.x = s.hookX + (Math.random() > 0.5 ? 1 : -1) * (200 + Math.random() * 100);
+                newFish.y = s.hookY + (Math.random() - 0.5) * 60;
+                newFish.baseY = newFish.y;
+                newFish.approachingHook = true;
+              }
             }
-            if (Math.random() < 0.08) {
-              s.currentCatch = null;
-              s.currentJunk = JUNK_ITEMS[Math.floor(Math.random() * JUNK_ITEMS.length)];
-            } else { s.currentJunk = null; }
-            addParticles(s.hookX, waterY, 10, "#5dade2", 2.5, "splash");
-            addRipple(s.hookX, waterY);
-            s.screenShake = 3;
-          } else {
-            s.waitTimer = 25 + Math.random() * 80;
+            s.waitTimer = 30 + Math.random() * 50;
           }
         }
       }
@@ -1006,13 +1136,37 @@ export default function FishingGame() {
           ? (s.currentCatch.rarity === "legendary" ? 1.8 : s.currentCatch.rarity === "rare" ? 1.4 : s.currentCatch.rarity === "uncommon" ? 1.15 : 1)
           : 1;
 
-        const fishSpeed = (0.004 + s.rodLevel * 0.0005) * difficultyMult;
+        const fishMoveSpeed = (s.currentCatch?.speed || 1.0) * 1.2 * difficultyMult;
+        s.hookedFishX += s.hookedFishVX * dt;
+        s.hookedFishFrameTimer += dt;
+        if (s.hookedFishFrameTimer > 6) {
+          s.hookedFishFrameTimer = 0;
+          s.hookedFishFrame = (s.hookedFishFrame + 1) % (s.currentCatch?.walkFrames || 4);
+        }
+        if (Math.random() < (0.012 * difficultyMult) * dt) {
+          s.hookedFishVX = (Math.random() > 0.5 ? 1 : -1) * fishMoveSpeed * (0.5 + Math.random() * 0.8);
+        }
+        s.hookedFishDir = s.hookedFishVX > 0 ? 1 : -1;
+        s.hookedFishX = Math.max(20, Math.min(W - 20, s.hookedFishX));
+        s.hookedFishY += Math.sin(s.time * 0.04) * 0.15;
+        s.hookedFishY = Math.max(waterY + 15, Math.min(H - 30, s.hookedFishY));
+
+        if (Math.random() < 0.03 * dt) {
+          addParticles(s.hookedFishX, s.hookedFishY - 5, 2, "#88ccff", 1, "bubble");
+        }
+
+        const alignDist = Math.abs(s.playerX - s.hookedFishX);
+        const maxAlignDist = W * 0.4;
+        const alignment = Math.max(0, 1 - alignDist / maxAlignDist);
+        const alignmentBonus = 0.6 + alignment * 0.4;
+
+        const fishSpeed = (0.004 + s.rodLevel * 0.0005) * difficultyMult * (1.0 / alignmentBonus);
         s.reelTarget += s.reelDirection * fishSpeed * dt;
         if (Math.random() < (0.008 * difficultyMult) * dt) s.reelDirection *= -1;
         if (s.reelTarget >= 0.88) { s.reelTarget = 0.88; s.reelDirection = -1; }
         if (s.reelTarget <= 0.12) { s.reelTarget = 0.12; s.reelDirection = 1; }
 
-        const zoneDriftRight = 0.004 * dt;
+        const zoneDriftRight = 0.004 * (1.0 / alignmentBonus) * dt;
         const zoneMoveLeft = 0.008 * dt;
         if (s.isReeling) {
           s.reelProgress = Math.max(0.05, s.reelProgress - zoneMoveLeft);
@@ -1023,13 +1177,14 @@ export default function FishingGame() {
         const catchZoneHalf = (0.08 + s.rodLevel * 0.015);
         const fishInZone = s.reelTarget >= (s.reelProgress - catchZoneHalf) && s.reelTarget <= (s.reelProgress + catchZoneHalf);
 
+        const gaugeGainRate = 0.003 * alignmentBonus;
         if (fishInZone) {
-          s.reelGauge = Math.min(1.0, s.reelGauge + 0.003 * dt);
-          s.hookY -= 0.8 * dt;
-          if (Math.random() < 0.04 * dt) addParticles(s.hookX, s.hookY, 2, "#2ecc71", 1.5, "sparkle");
+          s.reelGauge = Math.min(1.0, s.reelGauge + gaugeGainRate * dt);
+          s.hookedFishY -= 0.3 * dt;
+          if (Math.random() < 0.04 * dt) addParticles(s.hookedFishX, s.hookedFishY, 2, "#2ecc71", 1.5, "sparkle");
         } else {
           s.reelGauge = Math.max(0, s.reelGauge - 0.004 * difficultyMult * dt);
-          s.hookY += 0.3 * dt;
+          s.hookedFishY += 0.15 * dt;
         }
 
         if (s.reelGauge >= 1.0) {
@@ -1053,9 +1208,9 @@ export default function FishingGame() {
 
           if (s.totalCaught % 5 === 0 && s.rodLevel < 5) s.rodLevel++;
 
-          addParticles(s.hookX, waterY, 25, "#f1c40f", 5, "sparkle");
-          addParticles(s.hookX, waterY, 15, "#ffffff", 3, "splash");
-          addRipple(s.hookX, waterY, 50);
+          addParticles(s.hookedFishX, waterY, 25, "#f1c40f", 5, "sparkle");
+          addParticles(s.hookedFishX, waterY, 15, "#ffffff", 3, "splash");
+          addRipple(s.hookedFishX, waterY, 50);
           s.flashTimer = 12;
           s.screenShake = 5;
           syncUI();
@@ -1197,9 +1352,9 @@ export default function FishingGame() {
         // Controls
         ctx.fillStyle = "#607d8b";
         ctx.font = "9px 'Press Start 2P', monospace";
-        ctx.fillText("CLICK to cast & reel", W / 2, fishIconY + 100);
+        ctx.fillText("CLICK to cast | AIM with mouse", W / 2, fishIconY + 100);
         ctx.fillText("A/D to walk  |  SPACE to swim", W / 2, fishIconY + 118);
-        ctx.fillText("W/A/S/D to swim  |  SPACE to climb out", W / 2, fishIconY + 136);
+        ctx.fillText("A/D while reeling to align with fish", W / 2, fishIconY + 136);
 
         // Bottom decoration
         const catchIcons = ["/assets/catch/1.png", "/assets/catch/3.png", "/assets/catch/5.png", "/assets/catch/Chest.png"];
@@ -1259,20 +1414,21 @@ export default function FishingGame() {
       s.gameState = "casting";
       s.castPower = 0;
       s.castDirection = 1;
+      s.aimX = s.playerX - 100;
+      s.aimY = waterY + 60;
       syncUI();
       return;
     }
 
     if (s.gameState === "casting") {
       s.gameState = "waiting";
-      const power = s.castPower / 100;
-      const fishermanX = s.playerX;
-      s.hookX = fishermanX - 60 - power * Math.min(250, W * 0.3);
+      s.hookX = s.aimX;
       s.hookY = waterY + 10;
-      s.hookTargetY = waterY + 30 + power * (H - waterY - 100);
-      s.waitTimer = 40 + Math.random() * 80;
+      s.hookTargetY = Math.max(waterY + 30, s.aimY);
+      s.waitTimer = 20 + Math.random() * 40;
       addParticles(s.hookX, waterY, 15, "#5dade2", 3, "splash");
       addRipple(s.hookX, waterY);
+      s.swimmingFish.forEach(f => { f.approachingHook = false; });
       syncUI();
       return;
     }
@@ -1335,6 +1491,7 @@ export default function FishingGame() {
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
+        style={{ cursor: uiState.gameState === "casting" ? "crosshair" : "default" }}
         onClick={handleClick}
         onMouseMove={handleMouseMove}
         onTouchMove={handleTouchMove}
@@ -1377,25 +1534,11 @@ export default function FishingGame() {
             </button>
           </div>
 
-          {/* Cast Power Bar */}
+          {/* Casting Aim Prompt */}
           {uiState.gameState === "casting" && (
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2" style={{ pointerEvents: "none" }} data-testid="cast-power-bar">
-              <span style={{ color: "#ecf0f1", fontSize: 10, textShadow: "1px 1px 0 #000" }}>CAST POWER</span>
-              <div className="w-56 h-5 relative" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 10, border: "1px solid rgba(255,255,255,0.2)", overflow: "hidden" }}>
-                <div
-                  className="h-full"
-                  style={{
-                    width: `${uiState.castPower}%`,
-                    background: uiState.castPower > 80 ? "linear-gradient(90deg, #e74c3c, #c0392b)" :
-                                uiState.castPower > 50 ? "linear-gradient(90deg, #f39c12, #e67e22)" :
-                                "linear-gradient(90deg, #2ecc71, #27ae60)",
-                    borderRadius: 8,
-                    transition: "none",
-                    boxShadow: uiState.castPower > 80 ? "0 0 10px rgba(231,76,60,0.5)" : "none",
-                  }}
-                />
-              </div>
-              <span style={{ color: "#f1c40f", fontSize: 9, textShadow: "1px 1px 0 #000" }}>Click to cast!</span>
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1" style={{ pointerEvents: "none" }} data-testid="cast-aim-prompt">
+              <span style={{ color: "#f1c40f", fontSize: 12, textShadow: "1px 1px 0 #000" }}>AIM YOUR CAST</span>
+              <span style={{ color: "#b0bec5", fontSize: 8, textShadow: "1px 1px 0 #000" }}>Move mouse to aim, click to cast!</span>
             </div>
           )}
 
@@ -1475,8 +1618,23 @@ export default function FishingGame() {
                     />
                   </div>
                 </div>
+                <div className="flex items-center gap-2" style={{ marginTop: 2 }}>
+                  <span style={{ color: "#78909c", fontSize: 7 }}>ALIGN</span>
+                  <div style={{ width: 60, height: 6, background: "rgba(255,255,255,0.1)", borderRadius: 3, overflow: "hidden" }}>
+                    <div style={{
+                      width: `${uiState.alignment * 100}%`,
+                      height: "100%",
+                      background: uiState.alignment > 0.7 ? "#2ecc71" : uiState.alignment > 0.4 ? "#f39c12" : "#e74c3c",
+                      borderRadius: 3,
+                      transition: "width 0.1s",
+                    }} />
+                  </div>
+                  <span style={{ color: uiState.alignment > 0.7 ? "#2ecc71" : "#78909c", fontSize: 7 }}>
+                    {uiState.alignment > 0.7 ? "GREAT" : uiState.alignment > 0.4 ? "OK" : "FAR"}
+                  </span>
+                </div>
                 <span style={{ color: "#b0bec5", fontSize: 8, textShadow: "1px 1px 0 #000" }}>
-                  Hold click to reel in!
+                  Hold click to reel | A/D to align with fish
                 </span>
               </div>
             );
