@@ -52,13 +52,27 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 - Line renders from rod tip to fish mouth position using bezier curve
 - Alignment: horizontal distance between player and hooked fish affects difficulty (alignmentBonus 0.6-1.0)
 
+## Boat System
+- Press E near boat (left end of pier) to trigger boat prompt
+- Clicking "Yes" starts boarding cutscene: fisherman walks to boat edge, hops onto boat
+- Boarding has 3 phases: walk (phase 0), jump (phase 1), land (phase 2)
+- GameState "boarding" handles cutscene, transitions to "idle" with inBoat=true
+- When inBoat: A/D moves the entire boat left/right on water, fisherman rides on deck
+- Fishing mechanics work identically from boat (cast, wait, reel, catch)
+- boatX tracks boat horizontal position; fisherman position derived from boatX + offset
+- Fisherman bobs with boat using boatBobVal
+- Press E near pier to exit boat (returns to pier walking)
+- Boat movement speed: 2.0 normal, 1.5 during reeling
+
 ## Features
 - 8 fish species (common, uncommon, rare, legendary)
 - 3 junk items including treasure chest
+- Random fish sizes (0.5x-5x) affecting score, weight, difficulty
 - Combo system for consecutive catches
 - Rod leveling (every 5 catches)
-- Fish collection log
+- Fish collection log with detailed stats (biggest size, total weight, rarity badges)
 - Day/night sky cycle
 - Water ripples, particles, and screen shake effects
 - Character walking on pier (A/D keys)
 - Swimming mechanics (Space to dive, WASD underwater, Space near dock to climb out)
+- Boat boarding cutscene and boat fishing (E to enter/exit)

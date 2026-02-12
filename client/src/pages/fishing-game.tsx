@@ -36,7 +36,7 @@ const JUNK_ITEMS = [
   { name: "Treasure Chest", asset: "/assets/catch/Chest.png", w: 22, h: 12, points: 100, description: "A chest glittering with gold coins!" },
 ];
 
-type GameState = "title" | "idle" | "casting" | "waiting" | "bite" | "reeling" | "caught" | "missed" | "swimming";
+type GameState = "title" | "idle" | "casting" | "waiting" | "bite" | "reeling" | "caught" | "missed" | "swimming" | "boarding";
 
 interface SwimmingFish {
   x: number;
@@ -149,6 +149,11 @@ export default function FishingGame() {
     splashDone: false,
     showBoatPrompt: false,
     nearBoat: false,
+    inBoat: false,
+    boatX: 0,
+    boardingPhase: 0 as number,
+    boardingTargetX: 0,
+    boardingTimer: 0,
   });
 
   const imagesRef = useRef<Map<string, HTMLImageElement>>(new Map());
@@ -172,6 +177,7 @@ export default function FishingGame() {
     showCatchTimer: 0,
     showBoatPrompt: false,
     nearBoat: false,
+    inBoat: false,
   });
 
   const loadImage = useCallback((src: string): Promise<HTMLImageElement> => {
@@ -298,6 +304,7 @@ export default function FishingGame() {
       showCatchTimer: s.showCatchTimer,
       showBoatPrompt: s.showBoatPrompt,
       nearBoat: s.nearBoat,
+      inBoat: s.inBoat,
     });
   }, []);
 
@@ -370,9 +377,24 @@ export default function FishingGame() {
       const key = e.key.toLowerCase();
       stateRef.current.keysDown.add(key);
       if (["a", "d", "w", "s", " ", "e"].includes(key)) e.preventDefault();
-      if (key === "e" && stateRef.current.nearBoat && !stateRef.current.showBoatPrompt && stateRef.current.gameState === "idle") {
-        stateRef.current.showBoatPrompt = true;
-        syncUI();
+      if (key === "e" && stateRef.current.gameState === "idle" && !stateRef.current.showBoatPrompt) {
+        if (stateRef.current.inBoat) {
+          const canvas = canvasRef.current;
+          if (canvas) {
+            const pierLeftBound = canvas.width * 0.45 - 80;
+            const boatRight = stateRef.current.boatX + 74 * 2.5;
+            const distToPier = Math.abs(boatRight - pierLeftBound);
+            if (distToPier < 80) {
+              stateRef.current.inBoat = false;
+              stateRef.current.playerX = pierLeftBound + 20;
+              stateRef.current.facingLeft = true;
+              syncUI();
+            }
+          }
+        } else if (stateRef.current.nearBoat) {
+          stateRef.current.showBoatPrompt = true;
+          syncUI();
+        }
       }
     };
     const onKeyUp = (e: KeyboardEvent) => {
@@ -445,7 +467,7 @@ export default function FishingGame() {
       const SWIM_SPEED = 2.0;
       const pierLeftBound = defaultFishermanX - 80;
 
-      if (s.gameState === "idle" || s.gameState === "casting") {
+      if ((s.gameState === "idle" || s.gameState === "casting") && !s.inBoat) {
         let moving = false;
         if (s.keysDown.has("a")) {
           s.playerX -= WALK_SPEED * dt;
@@ -460,11 +482,11 @@ export default function FishingGame() {
         s.playerX = Math.max(pierLeftBound, Math.min(W - 40, s.playerX));
 
         if (s.gameState === "casting") {
-          s.aimX = Math.max(10, Math.min(s.playerX - 30, s.mouseX));
+          s.aimX = Math.max(10, Math.min(W - 10, s.mouseX));
           s.aimY = Math.max(waterY + 20, Math.min(H - 40, s.mouseY));
         }
 
-        if (s.keysDown.has(" ") && s.gameState === "idle") {
+        if (s.keysDown.has(" ") && s.gameState === "idle" && !s.inBoat) {
           s.keysDown.delete(" ");
           s.gameState = "swimming";
           s.isSwimming = true;
@@ -477,7 +499,7 @@ export default function FishingGame() {
         }
       }
 
-      if (s.gameState === "reeling") {
+      if (s.gameState === "reeling" && !s.inBoat) {
         const REEL_WALK_SPEED = 1.8;
         if (s.keysDown.has("a")) {
           s.playerX -= REEL_WALK_SPEED * dt;
@@ -525,17 +547,102 @@ export default function FishingGame() {
         }
       }
 
+      const boatScale = 2.5;
+
+      if (s.gameState === "boarding") {
+        if (s.boardingPhase === 0) {
+          const targetX = pierLeftBound - 10;
+          const dx = targetX - s.playerX;
+          if (Math.abs(dx) > 3) {
+            s.playerX += Math.sign(dx) * 2.5 * dt;
+            s.facingLeft = dx < 0;
+          } else {
+            s.boardingPhase = 1;
+            s.jumpVY = -6;
+            s.boardingTimer = 0;
+            s.facingLeft = true;
+          }
+        } else if (s.boardingPhase === 1) {
+          s.boardingTimer += dt;
+          s.playerX -= 1.5 * dt;
+          s.jumpVY += 0.2 * dt;
+          s.playerVY += s.jumpVY * dt;
+          if (s.boardingTimer > 18 || s.playerVY > 20) {
+            s.boardingPhase = 2;
+            s.boardingTimer = 0;
+            s.playerVY = 0;
+            s.jumpVY = 0;
+          }
+        } else if (s.boardingPhase === 2) {
+          s.boardingTimer += dt;
+          if (s.boardingTimer > 15) {
+            s.inBoat = true;
+            s.gameState = "idle";
+            s.playerVY = 0;
+            s.jumpVY = 0;
+            s.facingLeft = true;
+            syncUI();
+          }
+        }
+      }
+
+      const BOAT_SPEED = 2.0;
+      if (s.inBoat && (s.gameState === "idle" || s.gameState === "casting")) {
+        if (s.keysDown.has("a")) {
+          s.boatX -= BOAT_SPEED * dt;
+        }
+        if (s.keysDown.has("d")) {
+          s.boatX += BOAT_SPEED * dt;
+        }
+        s.boatX = Math.max(20, Math.min(W - 74 * boatScale - 20, s.boatX));
+        if (s.gameState === "casting") {
+          s.aimX = Math.max(10, Math.min(W - 10, s.mouseX));
+          s.aimY = Math.max(waterY + 20, Math.min(H - 40, s.mouseY));
+        }
+      }
+      if (s.inBoat && s.gameState === "reeling") {
+        if (s.keysDown.has("a")) {
+          s.boatX -= 1.5 * dt;
+        }
+        if (s.keysDown.has("d")) {
+          s.boatX += 1.5 * dt;
+        }
+        s.boatX = Math.max(20, Math.min(W - 74 * boatScale - 20, s.boatX));
+      }
+
       const hookInWater = s.gameState === "waiting" || s.gameState === "bite" || s.gameState === "reeling";
       const nearBoatDist = Math.abs(s.playerX - pierLeftBound);
-      s.nearBoat = nearBoatDist < 30 && !hookInWater && s.gameState === "idle" && !s.isSwimming;
+      s.nearBoat = nearBoatDist < 30 && !hookInWater && s.gameState === "idle" && !s.isSwimming && !s.inBoat;
       if (!s.nearBoat && s.showBoatPrompt) {
         s.showBoatPrompt = false;
       }
 
-      const fishermanX = s.isSwimming ? s.swimX : s.playerX;
-      const fishermanY = s.isSwimming
-        ? s.swimY - FRAME_H * SCALE * 0.5
-        : pierY - FRAME_H * SCALE + 12;
+      const boatBobVal = Math.sin(s.time * 0.025) * 2;
+      const boatDeckY = waterY - 10 * boatScale + boatBobVal + 4 * boatScale;
+      let fishermanX: number;
+      let fishermanY: number;
+      if (s.isSwimming) {
+        fishermanX = s.swimX;
+        fishermanY = s.swimY - FRAME_H * SCALE * 0.5;
+      } else if (s.inBoat) {
+        fishermanX = s.boatX + 30 * boatScale;
+        fishermanY = boatDeckY - FRAME_H * SCALE + 12;
+        s.playerX = fishermanX;
+      } else if (s.gameState === "boarding") {
+        fishermanX = s.playerX;
+        if (s.boardingPhase === 1) {
+          fishermanY = pierY - FRAME_H * SCALE + 12 - s.playerVY;
+        } else if (s.boardingPhase === 2) {
+          fishermanY = boatDeckY - FRAME_H * SCALE + 12;
+          s.playerX = s.boatX + 30 * boatScale;
+          fishermanX = s.playerX;
+        } else {
+          fishermanY = pierY - FRAME_H * SCALE + 12;
+        }
+      } else {
+        fishermanX = s.playerX;
+        fishermanY = pierY - FRAME_H * SCALE + 12;
+      }
 
       ctx.imageSmoothingEnabled = false;
 
@@ -757,9 +864,9 @@ export default function FishingGame() {
       drawImage("/assets/objects/Fishing_hut.png", hutX, hutY, hutScale);
 
       // Boat floating on water (subtle bob)
-      const boatBob = Math.sin(s.time * 0.025) * 2;
-      const boatScale = 2.5;
-      drawImage("/assets/objects/Boat.png", pierStartX - 74 * boatScale - 30, waterY - 10 * boatScale + boatBob, boatScale);
+      const boatBob = boatBobVal;
+      const boatDrawX = s.inBoat || s.gameState === "boarding" ? s.boatX : pierStartX - 74 * boatScale - 30;
+      drawImage("/assets/objects/Boat.png", boatDrawX, waterY - 10 * boatScale + boatBob, boatScale);
 
       // Decorative objects on pier - positioned relative to pier surface
       const objY = pierY - 2;
@@ -888,7 +995,7 @@ export default function FishingGame() {
       let fishermanFrameCount = 4;
       let rodTipKey = "idle";
       let isWalking = false;
-      let fishingFlip = (s.gameState === "idle" || s.gameState === "casting" || s.gameState === "waiting" || s.gameState === "bite" || s.gameState === "reeling" || s.gameState === "caught" || s.gameState === "missed");
+      let fishingFlip = (s.gameState === "idle" || s.gameState === "casting" || s.gameState === "waiting" || s.gameState === "bite" || s.gameState === "reeling" || s.gameState === "caught" || s.gameState === "missed" || s.gameState === "boarding");
 
       if (s.gameState === "swimming") {
         const isMoving = s.keysDown.has("a") || s.keysDown.has("d") || s.keysDown.has("w") || s.keysDown.has("s");
@@ -916,9 +1023,27 @@ export default function FishingGame() {
           addParticles(s.swimX + (s.facingLeft ? -20 : 20), s.swimY, 2, "#88ccff", 1.5, "bubble");
         }
         ctx.globalAlpha = 1;
+      } else if (s.gameState === "boarding") {
+        if (s.boardingPhase === 0) {
+          fishermanSprite = "/assets/fisherman/Fisherman_walk.png";
+          fishermanFrameCount = 6;
+          fishermanFrame = Math.floor(s.time * 0.12) % 6;
+          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, s.facingLeft);
+        } else if (s.boardingPhase === 1) {
+          fishermanSprite = "/assets/fisherman/Fisherman_jump.png";
+          fishermanFrameCount = 6;
+          fishermanFrame = Math.min(Math.floor(s.boardingTimer / 4), 5);
+          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, true);
+        } else {
+          fishermanSprite = "/assets/fisherman/Fisherman_idle.png";
+          fishermanFrameCount = 4;
+          fishermanFrame = 0;
+          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, true);
+        }
+        rodTipKey = "";
       } else if (s.gameState === "idle") {
         const moving = s.keysDown.has("a") || s.keysDown.has("d");
-        if (moving) {
+        if (moving && !s.inBoat) {
           fishermanSprite = "/assets/fisherman/Fisherman_walk.png";
           fishermanFrameCount = 6;
           fishermanFrame = Math.floor(s.time * 0.12) % 6;
@@ -1530,7 +1655,7 @@ export default function FishingGame() {
       return;
     }
 
-    if (s.gameState === "swimming") {
+    if (s.gameState === "swimming" || s.gameState === "boarding") {
       return;
     }
 
@@ -1538,8 +1663,13 @@ export default function FishingGame() {
       s.gameState = "casting";
       s.castPower = 0;
       s.castDirection = 1;
-      s.aimX = s.playerX - 100;
-      s.aimY = waterY + 60;
+      if (s.inBoat) {
+        s.aimX = s.mouseX || (s.playerX - 100);
+        s.aimY = Math.max(waterY + 20, s.mouseY || (waterY + 60));
+      } else {
+        s.aimX = s.playerX - 100;
+        s.aimY = waterY + 60;
+      }
       syncUI();
       return;
     }
@@ -1775,10 +1905,16 @@ export default function FishingGame() {
           )}
 
           {/* Idle Prompt */}
-          {uiState.gameState === "idle" && (
+          {uiState.gameState === "idle" && !uiState.inBoat && (
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center px-4 py-2 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8, pointerEvents: "none" }} data-testid="idle-prompt">
               <span style={{ color: "#b0bec5", fontSize: 10, textShadow: "1px 1px 0 #000" }}>Click to cast  |  A/D to walk</span>
               <span style={{ color: "#5dade2", fontSize: 8, textShadow: "1px 1px 0 #000" }}>SPACE to dive in</span>
+            </div>
+          )}
+          {uiState.gameState === "idle" && uiState.inBoat && (
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center px-4 py-2 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8, pointerEvents: "none" }} data-testid="boat-idle-prompt">
+              <span style={{ color: "#b0bec5", fontSize: 10, textShadow: "1px 1px 0 #000" }}>Click to cast  |  A/D to move boat</span>
+              <span style={{ color: "#f1c40f", fontSize: 8, textShadow: "1px 1px 0 #000" }}>E near pier to exit boat</span>
             </div>
           )}
 
@@ -1798,7 +1934,22 @@ export default function FishingGame() {
                   <button
                     className="cursor-pointer px-5 py-2"
                     style={{ background: "rgba(46,204,113,0.25)", borderRadius: 8, border: "1px solid rgba(46,204,113,0.5)", fontFamily: "'Press Start 2P', monospace", color: "#2ecc71", fontSize: 10 }}
-                    onClick={(e) => { e.stopPropagation(); stateRef.current.showBoatPrompt = false; syncUI(); }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const s = stateRef.current;
+                      const canvas = canvasRef.current;
+                      s.showBoatPrompt = false;
+                      s.gameState = "boarding";
+                      s.boardingPhase = 0;
+                      s.boardingTimer = 0;
+                      s.playerVY = 0;
+                      s.jumpVY = 0;
+                      if (canvas) {
+                        const pierStartX = canvas.width * 0.45 - 80;
+                        s.boatX = pierStartX - 74 * 2.5 - 30;
+                      }
+                      syncUI();
+                    }}
                     data-testid="button-boat-yes"
                   >
                     Yes
