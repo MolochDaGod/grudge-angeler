@@ -36,7 +36,67 @@ const JUNK_ITEMS = [
   { name: "Treasure Chest", asset: "/assets/catch/Chest.png", w: 22, h: 12, points: 100, description: "A chest glittering with gold coins!" },
 ];
 
-type GameState = "title" | "idle" | "casting" | "waiting" | "bite" | "reeling" | "caught" | "missed" | "swimming" | "boarding";
+const CHARACTER_VARIANTS = [
+  { name: "Classic", tint: null, color: "#f1c40f" },
+  { name: "Ocean Blue", tint: "rgba(30,120,200,0.35)", color: "#5dade2" },
+  { name: "Crimson", tint: "rgba(200,50,50,0.35)", color: "#e74c3c" },
+];
+
+interface Rod {
+  name: string;
+  price: number;
+  catchZoneBonus: number;
+  reelSpeedMult: number;
+  lineStrength: number;
+  description: string;
+  icon: string;
+}
+
+const RODS: Rod[] = [
+  { name: "Bamboo Rod", price: 0, catchZoneBonus: 0, reelSpeedMult: 1.0, lineStrength: 1.0, description: "A simple bamboo rod. Gets the job done.", icon: "/assets/icons/Icons_07.png" },
+  { name: "Fiberglass Rod", price: 150, catchZoneBonus: 0.015, reelSpeedMult: 1.1, lineStrength: 1.15, description: "Lighter and more responsive.", icon: "/assets/icons/Icons_07.png" },
+  { name: "Carbon Rod", price: 400, catchZoneBonus: 0.025, reelSpeedMult: 1.2, lineStrength: 1.3, description: "High-tech carbon fiber build.", icon: "/assets/icons/Icons_07.png" },
+  { name: "Titanium Rod", price: 800, catchZoneBonus: 0.035, reelSpeedMult: 1.35, lineStrength: 1.5, description: "Ultra-strong titanium alloy.", icon: "/assets/icons/Icons_07.png" },
+  { name: "Legendary Rod", price: 1500, catchZoneBonus: 0.05, reelSpeedMult: 1.5, lineStrength: 1.8, description: "Forged from the anchor of a ghost ship.", icon: "/assets/icons/Icons_07.png" },
+];
+
+interface Lure {
+  name: string;
+  price: number;
+  effect: string;
+  description: string;
+  icon: string;
+  rarityBoost: number;
+  sizeBoost: number;
+  speedBoost: number;
+  targetFish: string[];
+  targetBonus: number;
+}
+
+const LURES: Lure[] = [
+  { name: "Basic Worm", price: 0, effect: "None", description: "A plain earthworm. The classic bait.", icon: "/assets/icons/Icons_09.png", rarityBoost: 1.0, sizeBoost: 0, speedBoost: 1.0, targetFish: [], targetBonus: 1.0 },
+  { name: "Silver Spinner", price: 80, effect: "Attracts Minnows & Perch", description: "A flashy silver spinner that small fish love.", icon: "/assets/icons/Icons_09.png", rarityBoost: 1.0, sizeBoost: 0, speedBoost: 1.2, targetFish: ["Minnow", "Perch"], targetBonus: 3.0 },
+  { name: "Deep Diver", price: 120, effect: "Better deep fish", description: "Dives deep to attract bottom dwellers.", icon: "/assets/icons/Icons_09.png", rarityBoost: 1.2, sizeBoost: 0.3, speedBoost: 1.0, targetFish: ["Catfish", "Eel"], targetBonus: 2.5 },
+  { name: "Golden Fly", price: 200, effect: "Rare fish boost", description: "An iridescent golden fly. Rare fish can't resist.", icon: "/assets/icons/Icons_09.png", rarityBoost: 2.0, sizeBoost: 0, speedBoost: 1.0, targetFish: ["Swordfish"], targetBonus: 2.0 },
+  { name: "Glow Jig", price: 300, effect: "Bigger fish", description: "Bioluminescent lure that attracts larger specimens.", icon: "/assets/icons/Icons_09.png", rarityBoost: 1.3, sizeBoost: 0.8, speedBoost: 1.1, targetFish: [], targetBonus: 1.0 },
+  { name: "Storm Shad", price: 250, effect: "Faster bites", description: "Mimics injured baitfish. Fish bite faster.", icon: "/assets/icons/Icons_09.png", rarityBoost: 1.0, sizeBoost: 0.2, speedBoost: 2.0, targetFish: ["Bass", "Salmon"], targetBonus: 2.0 },
+  { name: "Kraken Bait", price: 500, effect: "Legendary attraction", description: "Mysterious bait from the ocean depths.", icon: "/assets/icons/Icons_09.png", rarityBoost: 3.0, sizeBoost: 0.5, speedBoost: 0.8, targetFish: ["Whale"], targetBonus: 4.0 },
+  { name: "Prismatic Lure", price: 750, effect: "All bonuses", description: "A rainbow-shifting lure. Boosts everything.", icon: "/assets/icons/Icons_09.png", rarityBoost: 1.8, sizeBoost: 0.5, speedBoost: 1.5, targetFish: [], targetBonus: 1.0 },
+];
+
+interface MarketEntry {
+  recentSold: number;
+  lastSoldTime: number;
+}
+
+interface Bounty {
+  fishName: string;
+  minSize: number;
+  reward: number;
+  label: string;
+}
+
+type GameState = "title" | "idle" | "casting" | "waiting" | "bite" | "reeling" | "caught" | "missed" | "swimming" | "boarding" | "store";
 
 interface SwimmingFish {
   x: number;
@@ -156,6 +216,25 @@ export default function FishingGame() {
     lastFishermanX: 0,
     lastFishermanY: 0,
     cameraX: 0,
+    selectedCharacter: 0,
+    characterSelected: false,
+    equippedRod: 0,
+    equippedLure: 0,
+    ownedRods: [true, false, false, false, false] as boolean[],
+    ownedLures: [true, false, false, false, false, false, false, false] as boolean[],
+    money: 50,
+    marketPrices: new Map<string, MarketEntry>(),
+    nearHut: false,
+    showStorePrompt: false,
+    storeTab: "rod" as "rod" | "lure",
+    billboardSlide: 0,
+    billboardTimer: 0,
+    bounties: [] as Bounty[],
+    biggestCatchName: "",
+    biggestCatchSize: 0,
+    biggestCatchWeight: 0,
+    lastSellPrice: 0,
+    lastFishWeight: 0,
   });
 
   const imagesRef = useRef<Map<string, HTMLImageElement>>(new Map());
@@ -180,6 +259,23 @@ export default function FishingGame() {
     showBoatPrompt: false,
     nearBoat: false,
     inBoat: false,
+    selectedCharacter: 0,
+    characterSelected: false,
+    equippedRod: 0,
+    equippedLure: 0,
+    ownedRods: [true, false, false, false, false] as boolean[],
+    ownedLures: [true, false, false, false, false, false, false, false] as boolean[],
+    money: 50,
+    nearHut: false,
+    showStorePrompt: false,
+    storeTab: "rod" as "rod" | "lure",
+    billboardSlide: 0,
+    bounties: [] as Bounty[],
+    biggestCatchName: "",
+    biggestCatchSize: 0,
+    biggestCatchWeight: 0,
+    lastSellPrice: 0,
+    lastFishWeight: 0,
   });
 
   const loadImage = useCallback((src: string): Promise<HTMLImageElement> => {
@@ -200,13 +296,15 @@ export default function FishingGame() {
     const distFromShore = Math.max(0, pierWorldX - centerX);
     const distRatio = Math.min(1, distFromShore / (canvasW * 3));
 
+    const lure = LURES[s.equippedLure];
     const adjustedWeights = FISH_TYPES.map(ft => {
       let w = ft.weight;
       const rarityBoost = distRatio;
-      if (ft.rarity === "legendary") w *= (1 + rarityBoost * 15);
-      else if (ft.rarity === "rare") w *= (1 + rarityBoost * 8);
+      if (ft.rarity === "legendary") w *= (1 + rarityBoost * 15) * lure.rarityBoost;
+      else if (ft.rarity === "rare") w *= (1 + rarityBoost * 8) * lure.rarityBoost;
       else if (ft.rarity === "uncommon") w *= (1 + rarityBoost * 3);
       else w *= Math.max(0.3, 1 - rarityBoost * 0.5);
+      if (lure.targetFish.includes(ft.name)) w *= lure.targetBonus;
       return { ft, w };
     });
 
@@ -226,7 +324,7 @@ export default function FishingGame() {
     const viewRight = -s.cameraX + canvasW + 100;
     const x = direction > 0 ? viewLeft - 80 : viewRight + 80;
     const baseSizeMult = 0.5 + Math.random() * Math.random() * 4.5;
-    const sizeMultiplier = baseSizeMult * (1 + distRatio * 0.8);
+    const sizeMultiplier = baseSizeMult * (1 + distRatio * 0.8) + lure.sizeBoost;
     s.swimmingFish.push({
       x, y, baseY: y, type: fishType, direction, frame: 0, frameTimer: 0,
       speed: fishType.speed * (0.7 + Math.random() * 0.6),
@@ -256,6 +354,38 @@ export default function FishingGame() {
 
   const addRipple = useCallback((x: number, y: number, maxR = 30) => {
     stateRef.current.ripples.push({ x, y, radius: 2, maxRadius: maxR, alpha: 0.6 });
+  }, []);
+
+  const generateBounties = useCallback(() => {
+    const s = stateRef.current;
+    const shuffled = [...FISH_TYPES].sort(() => Math.random() - 0.5);
+    s.bounties = shuffled.slice(0, 3).map(ft => {
+      const ms = Math.round((1.5 + Math.random() * 2) * 10) / 10;
+      return {
+        fishName: ft.name,
+        minSize: ms,
+        reward: Math.floor((ft.points * 2 + Math.random() * 100) / 10) * 10,
+        label: `Catch a ${ft.name} (${ms.toFixed(1)}x+)`,
+      };
+    });
+  }, []);
+
+  const getSellPrice = useCallback((fishType: FishType | null, junk: typeof JUNK_ITEMS[0] | null, size: number) => {
+    const s = stateRef.current;
+    if (!fishType && !junk) return 0;
+    const basePts = fishType?.points || junk?.points || 5;
+    const rarityMult = fishType ? (fishType.rarity === "legendary" ? 5 : fishType.rarity === "rare" ? 3 : fishType.rarity === "uncommon" ? 1.8 : 1) : 0.5;
+    const basePrice = Math.floor(basePts * rarityMult * size * 0.4);
+    const name = fishType?.name || junk?.name || "";
+    const market = s.marketPrices.get(name);
+    let demandMult = 1.0;
+    if (market) {
+      const timeSinceLast = s.time - market.lastSoldTime;
+      const recovered = Math.min(market.recentSold, Math.floor(timeSinceLast / 600));
+      const effectiveSold = Math.max(0, market.recentSold - recovered);
+      demandMult = Math.max(0.3, 1 - effectiveSold * 0.12);
+    }
+    return Math.max(1, Math.floor(basePrice * demandMult));
   }, []);
 
   useEffect(() => {
@@ -297,7 +427,8 @@ export default function FishingGame() {
       ...Array.from({length: 17}, (_, i) => `/assets/icons/Icons_${String(i+1).padStart(2,'0')}.png`),
     ];
     Promise.all(assets.map(a => loadImage(a)));
-  }, [loadImage]);
+    generateBounties();
+  }, [loadImage, generateBounties]);
 
   const syncUI = useCallback(() => {
     const s = stateRef.current;
@@ -325,6 +456,23 @@ export default function FishingGame() {
       showBoatPrompt: s.showBoatPrompt,
       nearBoat: s.nearBoat,
       inBoat: s.inBoat,
+      selectedCharacter: s.selectedCharacter,
+      characterSelected: s.characterSelected,
+      equippedRod: s.equippedRod,
+      equippedLure: s.equippedLure,
+      ownedRods: [...s.ownedRods],
+      ownedLures: [...s.ownedLures],
+      money: s.money,
+      nearHut: s.nearHut,
+      showStorePrompt: s.showStorePrompt,
+      storeTab: s.storeTab,
+      billboardSlide: s.billboardSlide,
+      bounties: [...s.bounties],
+      biggestCatchName: s.biggestCatchName,
+      biggestCatchSize: s.biggestCatchSize,
+      biggestCatchWeight: s.biggestCatchWeight,
+      lastSellPrice: s.lastSellPrice,
+      lastFishWeight: s.lastFishWeight,
     });
   }, []);
 
@@ -391,7 +539,11 @@ export default function FishingGame() {
       const key = e.key.toLowerCase();
       stateRef.current.keysDown.add(key);
       if (["a", "d", "w", "s", " ", "e"].includes(key)) e.preventDefault();
-      if (key === "e" && stateRef.current.gameState === "idle" && !stateRef.current.showBoatPrompt) {
+      if (key === "escape" && stateRef.current.gameState === "store") {
+        stateRef.current.gameState = "idle";
+        syncUI();
+      }
+      if (key === "e" && stateRef.current.gameState === "idle" && !stateRef.current.showBoatPrompt && !stateRef.current.showStorePrompt) {
         if (stateRef.current.inBoat) {
           const canvas = canvasRef.current;
           if (canvas) {
@@ -408,6 +560,10 @@ export default function FishingGame() {
         } else if (stateRef.current.nearBoat) {
           stateRef.current.showBoatPrompt = true;
           syncUI();
+        } else if (stateRef.current.nearHut) {
+          stateRef.current.gameState = "store";
+          stateRef.current.storeTab = "rod";
+          syncUI();
         }
       }
     };
@@ -423,7 +579,7 @@ export default function FishingGame() {
 
     const getImg = (src: string) => imagesRef.current.get(src);
 
-    const drawSprite = (src: string, frameIndex: number, totalFrames: number, x: number, y: number, scale: number, flipX = false) => {
+    const drawSprite = (src: string, frameIndex: number, totalFrames: number, x: number, y: number, scale: number, flipX = false, tint: string | null = null) => {
       const img = getImg(src);
       if (!img || !img.complete) return;
       const fw = img.width / totalFrames;
@@ -433,8 +589,20 @@ export default function FishingGame() {
         ctx.translate(x + fw * scale, y);
         ctx.scale(-1, 1);
         ctx.drawImage(img, frameIndex * fw, 0, fw, fh, 0, 0, fw * scale, fh * scale);
+        if (tint) {
+          ctx.globalCompositeOperation = "source-atop";
+          ctx.fillStyle = tint;
+          ctx.fillRect(0, 0, fw * scale, fh * scale);
+          ctx.globalCompositeOperation = "source-over";
+        }
       } else {
         ctx.drawImage(img, frameIndex * fw, 0, fw, fh, x, y, fw * scale, fh * scale);
+        if (tint) {
+          ctx.globalCompositeOperation = "source-atop";
+          ctx.fillStyle = tint;
+          ctx.fillRect(x, y, fw * scale, fh * scale);
+          ctx.globalCompositeOperation = "source-over";
+        }
       }
       ctx.restore();
     };
@@ -477,6 +645,12 @@ export default function FishingGame() {
       s.time += dt;
       s.waterOffset += 0.12 * dt;
 
+      s.billboardTimer += dt;
+      if (s.billboardTimer > 300) {
+        s.billboardTimer = 0;
+        s.billboardSlide = (s.billboardSlide + 1) % 4;
+      }
+
       const WALK_SPEED = 2.5;
       const SWIM_SPEED = 2.0;
       const pierLeftBound = defaultFishermanX - 80;
@@ -494,6 +668,9 @@ export default function FishingGame() {
           moving = true;
         }
         s.playerX = Math.max(pierLeftBound, Math.min(W - 40, s.playerX));
+
+        const hutX = W - 80;
+        s.nearHut = !s.inBoat && s.playerX > hutX - 60 && s.gameState === "idle";
 
         if (s.gameState === "casting") {
           s.aimX = Math.max(10, Math.min(W - 10, s.mouseX - s.cameraX));
@@ -901,6 +1078,69 @@ export default function FishingGame() {
       const hutY = pierY - hutH + 50 * hutScale;
       drawImage("/assets/objects/Fishing_hut.png", hutX, hutY, hutScale);
 
+      // Billboard near hut
+      if (s.gameState !== "title") {
+        const bbX = W - 160;
+        const bbY = waterY - 95;
+        const bbW = 70;
+        const bbH = 50;
+        
+        // Sign post
+        ctx.fillStyle = "#5d4037";
+        ctx.fillRect(bbX + bbW/2 - 3, bbY + bbH, 6, 30);
+        
+        // Sign board
+        ctx.fillStyle = "rgba(139,90,43,0.95)";
+        drawRoundRect(bbX, bbY, bbW, bbH, 4);
+        ctx.fill();
+        ctx.strokeStyle = "#8B5E3C";
+        ctx.lineWidth = 2;
+        drawRoundRect(bbX, bbY, bbW, bbH, 4);
+        ctx.stroke();
+        
+        // Billboard content based on slide
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#ffd54f";
+        ctx.font = "bold 6px 'Press Start 2P', monospace";
+        
+        const slide = s.billboardSlide % 4;
+        if (slide === 0) {
+          ctx.fillText("BOUNTIES", bbX + bbW/2, bbY + 12);
+          ctx.fillStyle = "#e0e0e0";
+          ctx.font = "4px 'Press Start 2P', monospace";
+          if (s.bounties.length > 0) {
+            ctx.fillText(s.bounties[0].fishName, bbX + bbW/2, bbY + 24);
+            ctx.fillText("$" + s.bounties[0].reward, bbX + bbW/2, bbY + 32);
+          } else {
+            ctx.fillText("None", bbX + bbW/2, bbY + 24);
+          }
+        } else if (slide === 1) {
+          ctx.fillText("RECORD", bbX + bbW/2, bbY + 12);
+          ctx.fillStyle = "#e0e0e0";
+          ctx.font = "4px 'Press Start 2P', monospace";
+          if (s.biggestCatchName) {
+            ctx.fillText(s.biggestCatchName, bbX + bbW/2, bbY + 24);
+            ctx.fillText(s.biggestCatchSize.toFixed(1) + "x", bbX + bbW/2, bbY + 32);
+          } else {
+            ctx.fillText("No catches", bbX + bbW/2, bbY + 24);
+          }
+        } else if (slide === 2) {
+          ctx.fillText("DEALS", bbX + bbW/2, bbY + 12);
+          ctx.fillStyle = "#2ecc71";
+          ctx.font = "4px 'Press Start 2P', monospace";
+          ctx.fillText("Rare fish", bbX + bbW/2, bbY + 24);
+          ctx.fillText("pay more!", bbX + bbW/2, bbY + 32);
+        } else {
+          ctx.fillText("PIXEL", bbX + bbW/2, bbY + 15);
+          ctx.fillStyle = "#4fc3f7";
+          ctx.fillText("FISHER", bbX + bbW/2, bbY + 28);
+          ctx.fillStyle = "#78909c";
+          ctx.font = "3px 'Press Start 2P', monospace";
+          ctx.fillText("v1.0", bbX + bbW/2, bbY + 38);
+        }
+        ctx.textAlign = "left";
+      }
+
       // Boat floating on water (subtle bob)
       const boatBob = boatBobVal;
       const boatDrawX = s.inBoat || s.gameState === "boarding" ? s.boatX : pierStartX - 74 * boatScale - 30;
@@ -1065,7 +1305,7 @@ export default function FishingGame() {
         const swimmerDepth = (s.swimY - waterY) / (H - waterY);
         const swimAlpha = Math.max(0.3, 0.95 - swimmerDepth * 0.4);
         ctx.globalAlpha = swimAlpha;
-        drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, s.facingLeft);
+        drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, s.facingLeft, CHARACTER_VARIANTS[s.selectedCharacter].tint);
 
         if (isMoving && s.jumpVY === 0 && Math.random() < 0.06 * dt) {
           addParticles(s.swimX + (s.facingLeft ? -20 : 20), s.swimY, 2, "#88ccff", 1.5, "bubble");
@@ -1076,17 +1316,17 @@ export default function FishingGame() {
           fishermanSprite = "/assets/fisherman/Fisherman_walk.png";
           fishermanFrameCount = 6;
           fishermanFrame = Math.floor(s.time * 0.12) % 6;
-          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, s.facingLeft);
+          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, s.facingLeft, CHARACTER_VARIANTS[s.selectedCharacter].tint);
         } else if (s.boardingPhase === 1) {
           fishermanSprite = "/assets/fisherman/Fisherman_jump.png";
           fishermanFrameCount = 6;
           fishermanFrame = Math.min(Math.floor(s.boardingTimer / 4), 5);
-          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, true);
+          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, true, CHARACTER_VARIANTS[s.selectedCharacter].tint);
         } else {
           fishermanSprite = "/assets/fisherman/Fisherman_idle.png";
           fishermanFrameCount = 4;
           fishermanFrame = 0;
-          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, true);
+          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, true, CHARACTER_VARIANTS[s.selectedCharacter].tint);
         }
         rodTipKey = "";
       } else if (s.gameState === "idle") {
@@ -1096,12 +1336,12 @@ export default function FishingGame() {
           fishermanFrameCount = 6;
           fishermanFrame = Math.floor(s.time * 0.12) % 6;
           isWalking = true;
-          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, s.facingLeft);
+          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, s.facingLeft, CHARACTER_VARIANTS[s.selectedCharacter].tint);
         } else {
           fishermanSprite = "/assets/fisherman/Fisherman_idle.png";
           fishermanFrameCount = 4;
           fishermanFrame = Math.floor(s.time * 0.04) % 4;
-          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, fishingFlip);
+          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, fishingFlip, CHARACTER_VARIANTS[s.selectedCharacter].tint);
         }
       } else {
         if (s.gameState === "casting") {
@@ -1125,7 +1365,7 @@ export default function FishingGame() {
           fishermanFrame = 3;
           rodTipKey = "fish";
         }
-        drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, fishingFlip);
+        drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, fishingFlip, CHARACTER_VARIANTS[s.selectedCharacter].tint);
       }
 
       // Calculate rod tip position in screen coords from sprite-local coords
@@ -1382,7 +1622,7 @@ export default function FishingGame() {
                 newFish.approachingHook = true;
               }
             }
-            s.waitTimer = 30 + Math.random() * 50;
+            s.waitTimer = (30 + Math.random() * 50) / LURES[s.equippedLure].speedBoost;
           }
         }
       }
@@ -1451,16 +1691,17 @@ export default function FishingGame() {
           s.reelProgress = Math.min(0.95, s.reelProgress + driftRight);
         }
 
-        const catchZoneHalf = (0.08 + s.rodLevel * 0.015);
+        const rod = RODS[s.equippedRod];
+        const catchZoneHalf = (0.08 + s.rodLevel * 0.015 + rod.catchZoneBonus);
         const fishInZone = s.reelTarget >= (s.reelProgress - catchZoneHalf) && s.reelTarget <= (s.reelProgress + catchZoneHalf);
 
-        const gaugeGainRate = 0.003 * alignmentBonus;
+        const gaugeGainRate = 0.003 * alignmentBonus * rod.reelSpeedMult;
         if (fishInZone) {
           s.reelGauge = Math.min(1.0, s.reelGauge + gaugeGainRate * dt);
           s.hookedFishY -= 0.3 * dt;
           if (Math.random() < 0.04 * dt) addParticles(s.hookedFishX, s.hookedFishY, 2, "#2ecc71", 1.5, "sparkle");
         } else {
-          s.reelGauge = Math.max(0, s.reelGauge - 0.004 * difficultyMult * dt);
+          s.reelGauge = Math.max(0, s.reelGauge - 0.004 * difficultyMult * dt / rod.lineStrength);
           s.hookedFishY += 0.15 * dt;
         }
 
@@ -1485,6 +1726,33 @@ export default function FishingGame() {
             existing.totalWeight += fishWeight;
           } else {
             s.caughtCollection.set(name, { type: s.currentCatch, junk: s.currentJunk, count: 1, bestCombo: s.combo, biggestSize: sizeBonus, totalWeight: fishWeight });
+          }
+
+          const sellPrice = getSellPrice(s.currentCatch, s.currentJunk, sizeBonus);
+          s.money += sellPrice;
+          s.lastSellPrice = sellPrice;
+          s.lastFishWeight = fishWeight;
+
+          const mName = s.currentCatch?.name || s.currentJunk?.name || "";
+          const mEntry = s.marketPrices.get(mName);
+          if (mEntry) {
+            mEntry.recentSold++;
+            mEntry.lastSoldTime = s.time;
+          } else {
+            s.marketPrices.set(mName, { recentSold: 1, lastSoldTime: s.time });
+          }
+
+          if (sizeBonus > s.biggestCatchSize) {
+            s.biggestCatchSize = sizeBonus;
+            s.biggestCatchName = name;
+            s.biggestCatchWeight = fishWeight;
+          }
+
+          const bountyIdx = s.bounties.findIndex(b => b.fishName === name && sizeBonus >= b.minSize);
+          if (bountyIdx >= 0) {
+            s.money += s.bounties[bountyIdx].reward;
+            s.bounties.splice(bountyIdx, 1);
+            if (s.bounties.length === 0) generateBounties();
           }
 
           if (s.totalCaught % 5 === 0 && s.rodLevel < 5) s.rodLevel++;
@@ -1581,10 +1849,13 @@ export default function FishingGame() {
         ctx.fillStyle = "#f1c40f";
         ctx.font = "bold 12px 'Press Start 2P', monospace";
         ctx.fillText(`+${Math.floor(pts * comboMult)} pts`, W / 2, boxY + boxH - 25);
+        ctx.fillStyle = "#2ecc71";
+        ctx.font = "10px 'Press Start 2P', monospace";
+        ctx.fillText(`+ $${s.lastSellPrice}`, W / 2, boxY + boxH - 10);
         if (s.combo > 1) {
           ctx.fillStyle = "#e74c3c";
           ctx.font = "10px 'Press Start 2P', monospace";
-          ctx.fillText(`x${s.combo} COMBO BONUS!`, W / 2, boxY + boxH - 8);
+          ctx.fillText(`x${s.combo} COMBO BONUS!`, W / 2, boxY + boxH + 5);
         }
 
         ctx.globalAlpha = 1;
@@ -1669,12 +1940,53 @@ export default function FishingGame() {
         ctx.font = "10px 'Press Start 2P', monospace";
         ctx.fillText("A Pixel Art Fishing Adventure", W / 2, titleY + 90);
 
-        // Start prompt
-        const blink = Math.sin(s.time * 0.06) > -0.2;
-        if (blink) {
-          ctx.fillStyle = "#ecf0f1";
-          ctx.font = "14px 'Press Start 2P', monospace";
-          ctx.fillText("CLICK TO START", W / 2, titleY + 130);
+        // Character Select
+        if (!s.characterSelected) {
+          ctx.fillStyle = "#b0bec5";
+          ctx.font = "10px 'Press Start 2P', monospace";
+          ctx.fillText("CHOOSE YOUR FISHER", W / 2, titleY + 120);
+          
+          const selW = 80;
+          const selGap = 20;
+          const totalSelW = CHARACTER_VARIANTS.length * selW + (CHARACTER_VARIANTS.length - 1) * selGap;
+          const selStartX = W / 2 - totalSelW / 2;
+          
+          for (let ci = 0; ci < CHARACTER_VARIANTS.length; ci++) {
+            const cv = CHARACTER_VARIANTS[ci];
+            const cx = selStartX + ci * (selW + selGap);
+            const cy = titleY + 138;
+            const isHovered = s.mouseX >= cx && s.mouseX <= cx + selW && s.mouseY >= cy && s.mouseY <= cy + 100;
+            const isSelected = s.selectedCharacter === ci;
+            
+            ctx.fillStyle = isSelected ? "rgba(241,196,15,0.15)" : isHovered ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.3)";
+            drawRoundRect(cx, cy, selW, 100, 8);
+            ctx.fill();
+            ctx.strokeStyle = isSelected ? "#f1c40f" : isHovered ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.1)";
+            ctx.lineWidth = isSelected ? 2 : 1;
+            drawRoundRect(cx, cy, selW, 100, 8);
+            ctx.stroke();
+            
+            const previewFrame = Math.floor(s.time * 0.05) % 4;
+            drawSprite("/assets/fisherman/Fisherman_idle.png", previewFrame, 4, cx + selW/2 - 24, cy + 8, 2.5, false, cv.tint);
+            
+            ctx.fillStyle = isSelected ? cv.color : "#78909c";
+            ctx.font = "7px 'Press Start 2P', monospace";
+            ctx.fillText(cv.name, cx + selW/2, cy + 88);
+          }
+          
+          const blink = Math.sin(s.time * 0.06) > -0.2;
+          if (blink) {
+            ctx.fillStyle = "#ecf0f1";
+            ctx.font = "11px 'Press Start 2P', monospace";
+            ctx.fillText("CLICK TO CONFIRM", W / 2, titleY + 265);
+          }
+        } else {
+          const blink = Math.sin(s.time * 0.06) > -0.2;
+          if (blink) {
+            ctx.fillStyle = "#ecf0f1";
+            ctx.font = "14px 'Press Start 2P', monospace";
+            ctx.fillText("CLICK TO START", W / 2, titleY + 130);
+          }
         }
 
         // Controls
@@ -1704,7 +2016,7 @@ export default function FishingGame() {
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("keyup", onKeyUp);
     };
-  }, [loadImage, spawnFish, addParticles, addRipple, syncUI]);
+  }, [loadImage, spawnFish, addParticles, addRipple, syncUI, generateBounties, getSellPrice]);
 
   const handleClick = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     const s = stateRef.current;
@@ -1717,10 +2029,44 @@ export default function FishingGame() {
     const defaultFX = W * 0.45;
 
     if (s.gameState === "title") {
+      if (!s.characterSelected) {
+        const titleY = H * 0.2;
+        const selW = 80;
+        const selGap = 20;
+        const totalSelW = CHARACTER_VARIANTS.length * selW + (CHARACTER_VARIANTS.length - 1) * selGap;
+        const selStartX = W / 2 - totalSelW / 2;
+        const rect = canvas.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const clickY = e.clientY - rect.top;
+        
+        let clickedChar = false;
+        for (let ci = 0; ci < CHARACTER_VARIANTS.length; ci++) {
+          const cx = selStartX + ci * (selW + selGap);
+          const cy = titleY + 138;
+          if (clickX >= cx && clickX <= cx + selW && clickY >= cy && clickY <= cy + 100) {
+            if (s.selectedCharacter === ci) {
+              s.characterSelected = true;
+            } else {
+              s.selectedCharacter = ci;
+            }
+            clickedChar = true;
+            break;
+          }
+        }
+        if (!clickedChar) {
+          s.characterSelected = true;
+        }
+        syncUI();
+        return;
+      }
       s.gameState = "idle";
       s.playerX = defaultFX;
       for (let i = 0; i < 6; i++) spawnFish(W, waterY, H);
       syncUI();
+      return;
+    }
+
+    if (s.gameState === "store") {
       return;
     }
 
@@ -1784,6 +2130,7 @@ export default function FishingGame() {
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     stateRef.current.mouseX = e.clientX;
+    stateRef.current.mouseY = e.clientY;
   }, []);
 
   const handleTouchMove = useCallback((_e: React.TouchEvent<HTMLCanvasElement>) => {
@@ -1839,6 +2186,9 @@ export default function FishingGame() {
                 <span style={{ color: "#e74c3c", fontSize: 10 }}>x{uiState.combo} COMBO</span>
               </div>
             )}
+            <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(46,204,113,0.3)" }}>
+              <span style={{ color: "#2ecc71", fontSize: 11 }}>$ {uiState.money}</span>
+            </div>
           </div>
 
           {/* HUD Top Right - Rod Level */}
@@ -1846,6 +2196,14 @@ export default function FishingGame() {
             <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(155,89,182,0.3)" }}>
               <img src="/assets/icons/Icons_07.png" alt="" className="w-6 h-6" style={{ imageRendering: "pixelated" }} />
               <span style={{ color: "#9b59b6", fontSize: 10 }}>Lv.{uiState.rodLevel}</span>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(46,204,113,0.3)" }}>
+              <img src="/assets/icons/Icons_07.png" alt="" className="w-4 h-4" style={{ imageRendering: "pixelated" }} />
+              <span style={{ color: "#2ecc71", fontSize: 7 }}>{RODS[uiState.equippedRod].name}</span>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(52,152,219,0.3)" }}>
+              <img src="/assets/icons/Icons_09.png" alt="" className="w-4 h-4" style={{ imageRendering: "pixelated" }} />
+              <span style={{ color: "#5dade2", fontSize: 7 }}>{LURES[uiState.equippedLure].name}</span>
             </div>
             <button
               className="flex items-center gap-2 px-3 py-1.5 cursor-pointer"
@@ -1888,12 +2246,13 @@ export default function FishingGame() {
           {/* Reeling Minigame - Palworld Style */}
           {uiState.gameState === "reeling" && (() => {
             const barW = Math.min(340, window.innerWidth * 0.75);
-            const catchZoneW = (0.16 + uiState.rodLevel * 0.03) * 100;
-            const catchZoneLeft = Math.max(0, Math.min(100 - catchZoneW, (uiState.reelProgress - 0.08 - uiState.rodLevel * 0.015) * 100));
+            const eqRod = RODS[uiState.equippedRod];
+            const catchZoneW = (0.16 + uiState.rodLevel * 0.03 + eqRod.catchZoneBonus * 2) * 100;
+            const catchZoneLeft = Math.max(0, Math.min(100 - catchZoneW, (uiState.reelProgress - 0.08 - uiState.rodLevel * 0.015 - eqRod.catchZoneBonus) * 100));
             const fishLeft = uiState.reelTarget * 100;
             const gaugePercent = uiState.reelGauge * 100;
-            const fishInZone = uiState.reelTarget >= (uiState.reelProgress - 0.08 - uiState.rodLevel * 0.015) &&
-                               uiState.reelTarget <= (uiState.reelProgress + 0.08 + uiState.rodLevel * 0.015);
+            const fishInZone = uiState.reelTarget >= (uiState.reelProgress - 0.08 - uiState.rodLevel * 0.015 - eqRod.catchZoneBonus) &&
+                               uiState.reelTarget <= (uiState.reelProgress + 0.08 + uiState.rodLevel * 0.015 + eqRod.catchZoneBonus);
             return (
               <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2" style={{ pointerEvents: "none" }} data-testid="reel-bar">
                 <div style={{
@@ -2030,6 +2389,176 @@ export default function FishingGame() {
                   >
                     No
                   </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Hut/Shop Hint */}
+          {uiState.nearHut && !uiState.showStorePrompt && uiState.gameState === "idle" && (
+            <div className="absolute bottom-24 left-1/2 -translate-x-1/2 text-center px-5 py-3 flex flex-col items-center gap-2" style={{ background: "rgba(8,15,25,0.9)", borderRadius: 10, border: "1px solid rgba(46,204,113,0.4)", zIndex: 50 }} data-testid="hut-hint">
+              <span style={{ color: "#2ecc71", fontSize: 10, textShadow: "1px 1px 0 #000" }}>Press E to enter shop</span>
+            </div>
+          )}
+
+          {/* Store Overlay */}
+          {uiState.gameState === "store" && (
+            <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 80, background: "rgba(0,0,0,0.6)" }} data-testid="store-overlay">
+              <div className="flex flex-col" style={{ background: "rgba(8,15,25,0.97)", borderRadius: 12, border: "1px solid rgba(46,204,113,0.4)", width: Math.min(440, window.innerWidth * 0.92), maxHeight: "85vh", overflow: "hidden" }} data-testid="store-panel">
+                {/* Store Header */}
+                <div className="flex items-center justify-between p-3" style={{ borderBottom: "1px solid rgba(46,204,113,0.2)" }}>
+                  <div className="flex items-center gap-2">
+                    <span style={{ color: "#2ecc71", fontSize: 12 }}>FISHING SHOP</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span style={{ color: "#2ecc71", fontSize: 10 }}>$ {uiState.money}</span>
+                    <button
+                      className="cursor-pointer px-2 py-1"
+                      style={{ background: "rgba(255,255,255,0.08)", borderRadius: 4, border: "1px solid rgba(255,255,255,0.15)", fontFamily: "'Press Start 2P', monospace", color: "#78909c", fontSize: 10 }}
+                      onClick={(e) => { e.stopPropagation(); stateRef.current.gameState = "idle"; syncUI(); }}
+                      data-testid="button-close-store"
+                    >
+                      X
+                    </button>
+                  </div>
+                </div>
+                {/* Tabs */}
+                <div className="flex" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                  <button
+                    className="flex-1 px-3 py-2 cursor-pointer"
+                    style={{ background: uiState.storeTab === "rod" ? "rgba(46,204,113,0.15)" : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.storeTab === "rod" ? "#2ecc71" : "#607d8b", fontSize: 9, borderBottom: uiState.storeTab === "rod" ? "2px solid #2ecc71" : "2px solid transparent" }}
+                    onClick={(e) => { e.stopPropagation(); stateRef.current.storeTab = "rod"; syncUI(); }}
+                    data-testid="button-tab-rod"
+                  >
+                    RODS
+                  </button>
+                  <button
+                    className="flex-1 px-3 py-2 cursor-pointer"
+                    style={{ background: uiState.storeTab === "lure" ? "rgba(46,204,113,0.15)" : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.storeTab === "lure" ? "#2ecc71" : "#607d8b", fontSize: 9, borderBottom: uiState.storeTab === "lure" ? "2px solid #2ecc71" : "2px solid transparent" }}
+                    onClick={(e) => { e.stopPropagation(); stateRef.current.storeTab = "lure"; syncUI(); }}
+                    data-testid="button-tab-lure"
+                  >
+                    LURES
+                  </button>
+                </div>
+                {/* Items List */}
+                <div className="flex-1 overflow-y-auto p-2.5 flex flex-col gap-2">
+                  {uiState.storeTab === "rod" && RODS.map((rod, i) => {
+                    const owned = uiState.ownedRods[i];
+                    const equipped = uiState.equippedRod === i;
+                    const canAfford = uiState.money >= rod.price;
+                    return (
+                      <div key={rod.name} className="flex items-start gap-2.5 p-2.5" style={{ background: equipped ? "rgba(46,204,113,0.12)" : "rgba(255,255,255,0.03)", borderRadius: 8, border: equipped ? "1px solid rgba(46,204,113,0.4)" : "1px solid rgba(255,255,255,0.06)" }}>
+                        <div className="flex items-center justify-center" style={{ width: 44, height: 44, background: "rgba(0,0,0,0.3)", borderRadius: 6 }}>
+                          <img src={rod.icon} alt="" style={{ width: 32, height: 32, imageRendering: "pixelated" }} />
+                        </div>
+                        <div className="flex-1 min-w-0 flex flex-col gap-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span style={{ color: equipped ? "#2ecc71" : "#e0e0e0", fontSize: 9 }}>{rod.name}</span>
+                            {equipped && <span style={{ color: "#2ecc71", fontSize: 6, background: "rgba(46,204,113,0.2)", padding: "1px 4px", borderRadius: 3 }}>EQUIPPED</span>}
+                          </div>
+                          <span style={{ color: "#78909c", fontSize: 7, lineHeight: "1.5" }}>{rod.description}</span>
+                          <div className="flex flex-wrap gap-x-3 gap-y-0.5">
+                            <span style={{ color: "#5dade2", fontSize: 6 }}>Zone +{(rod.catchZoneBonus * 100).toFixed(0)}%</span>
+                            <span style={{ color: "#f1c40f", fontSize: 6 }}>Speed x{rod.reelSpeedMult.toFixed(1)}</span>
+                            <span style={{ color: "#9b59b6", fontSize: 6 }}>Str x{rod.lineStrength.toFixed(1)}</span>
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-1">
+                          {!owned ? (
+                            <button
+                              className="cursor-pointer px-3 py-1.5"
+                              style={{ background: canAfford ? "rgba(46,204,113,0.25)" : "rgba(255,255,255,0.05)", borderRadius: 6, border: canAfford ? "1px solid rgba(46,204,113,0.5)" : "1px solid rgba(255,255,255,0.1)", fontFamily: "'Press Start 2P', monospace", color: canAfford ? "#2ecc71" : "#455a64", fontSize: 8, opacity: canAfford ? 1 : 0.5 }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (!canAfford) return;
+                                const st = stateRef.current;
+                                st.money -= rod.price;
+                                st.ownedRods[i] = true;
+                                st.equippedRod = i;
+                                syncUI();
+                              }}
+                              data-testid={`button-buy-rod-${i}`}
+                            >
+                              ${rod.price}
+                            </button>
+                          ) : !equipped ? (
+                            <button
+                              className="cursor-pointer px-3 py-1.5"
+                              style={{ background: "rgba(52,152,219,0.2)", borderRadius: 6, border: "1px solid rgba(52,152,219,0.4)", fontFamily: "'Press Start 2P', monospace", color: "#5dade2", fontSize: 8 }}
+                              onClick={(e) => { e.stopPropagation(); stateRef.current.equippedRod = i; syncUI(); }}
+                              data-testid={`button-equip-rod-${i}`}
+                            >
+                              EQUIP
+                            </button>
+                          ) : null}
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {uiState.storeTab === "lure" && LURES.map((lure, i) => {
+                    const owned = uiState.ownedLures[i];
+                    const equipped = uiState.equippedLure === i;
+                    const canAfford = uiState.money >= lure.price;
+                    return (
+                      <div key={lure.name} className="flex items-start gap-2.5 p-2.5" style={{ background: equipped ? "rgba(46,204,113,0.12)" : "rgba(255,255,255,0.03)", borderRadius: 8, border: equipped ? "1px solid rgba(46,204,113,0.4)" : "1px solid rgba(255,255,255,0.06)" }}>
+                        <div className="flex items-center justify-center" style={{ width: 44, height: 44, background: "rgba(0,0,0,0.3)", borderRadius: 6 }}>
+                          <img src={lure.icon} alt="" style={{ width: 32, height: 32, imageRendering: "pixelated" }} />
+                        </div>
+                        <div className="flex-1 min-w-0 flex flex-col gap-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span style={{ color: equipped ? "#2ecc71" : "#e0e0e0", fontSize: 9 }}>{lure.name}</span>
+                            {equipped && <span style={{ color: "#2ecc71", fontSize: 6, background: "rgba(46,204,113,0.2)", padding: "1px 4px", borderRadius: 3 }}>EQUIPPED</span>}
+                          </div>
+                          <span style={{ color: "#78909c", fontSize: 7, lineHeight: "1.5" }}>{lure.description}</span>
+                          <div className="flex flex-wrap gap-x-3 gap-y-0.5">
+                            <span style={{ color: "#f1c40f", fontSize: 6 }}>Effect: {lure.effect}</span>
+                          </div>
+                          <div className="flex flex-wrap gap-x-3 gap-y-0.5">
+                            {lure.rarityBoost > 1 && <span style={{ color: "#a855f7", fontSize: 6 }}>Rare x{lure.rarityBoost.toFixed(1)}</span>}
+                            {lure.sizeBoost > 0 && <span style={{ color: "#e74c3c", fontSize: 6 }}>Size +{lure.sizeBoost.toFixed(1)}</span>}
+                            {lure.speedBoost > 1 && <span style={{ color: "#5dade2", fontSize: 6 }}>Bite x{lure.speedBoost.toFixed(1)}</span>}
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-1">
+                          {!owned ? (
+                            <button
+                              className="cursor-pointer px-3 py-1.5"
+                              style={{ background: canAfford ? "rgba(46,204,113,0.25)" : "rgba(255,255,255,0.05)", borderRadius: 6, border: canAfford ? "1px solid rgba(46,204,113,0.5)" : "1px solid rgba(255,255,255,0.1)", fontFamily: "'Press Start 2P', monospace", color: canAfford ? "#2ecc71" : "#455a64", fontSize: 8, opacity: canAfford ? 1 : 0.5 }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (!canAfford) return;
+                                const st = stateRef.current;
+                                st.money -= lure.price;
+                                st.ownedLures[i] = true;
+                                st.equippedLure = i;
+                                syncUI();
+                              }}
+                              data-testid={`button-buy-lure-${i}`}
+                            >
+                              ${lure.price}
+                            </button>
+                          ) : !equipped ? (
+                            <button
+                              className="cursor-pointer px-3 py-1.5"
+                              style={{ background: "rgba(52,152,219,0.2)", borderRadius: 6, border: "1px solid rgba(52,152,219,0.4)", fontFamily: "'Press Start 2P', monospace", color: "#5dade2", fontSize: 8 }}
+                              onClick={(e) => { e.stopPropagation(); stateRef.current.equippedLure = i; syncUI(); }}
+                              data-testid={`button-equip-lure-${i}`}
+                            >
+                              EQUIP
+                            </button>
+                          ) : null}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                {/* Current Equipment Summary */}
+                <div className="flex items-center justify-between px-3 py-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.02)" }}>
+                  <div className="flex flex-col gap-0.5">
+                    <span style={{ color: "#78909c", fontSize: 6 }}>EQUIPPED</span>
+                    <span style={{ color: "#e0e0e0", fontSize: 7 }}>{RODS[uiState.equippedRod].name} + {LURES[uiState.equippedLure].name}</span>
+                  </div>
                 </div>
               </div>
             </div>

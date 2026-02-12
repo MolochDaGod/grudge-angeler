@@ -37,13 +37,41 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 - Reeling minigame (Palworld-style): horizontal bar with fish icon, catch zone moves LEFT on click (2x speed), drifts RIGHT when released; circular progress gauge fills/depletes based on alignment
 
 ## Game Mechanics
-1. **Title Screen** - Click to start
-2. **Idle** - Click to begin casting, A/D to walk on pier, Space to dive
-3. **Casting** - Mouse-aim crosshair system: move mouse to aim where bobber lands, click to cast; dashed line from rod tip to crosshair; cursor becomes crosshair
-4. **Waiting** - Bobber in water, fish swim nearby; a fish will approach and bite the hook
-5. **Bite** - Fish grabs line! Line connects to fish sprite's mouth; click to start reeling
-6. **Reeling** - Palworld-style minigame with hooked fish visible in water; fish moves left/right; player can move A/D to align with fish; alignment bonus: closer = slower tension bar + faster gauge fill
-7. **Caught/Missed** - Result shown, click to continue
+1. **Title Screen** - Character selection (3 color-tinted variants), then click to start
+2. **Idle** - Click to begin casting, A/D to walk on pier, Space to dive, E near hut to open shop
+3. **Casting** - Mouse-aim crosshair system: move mouse to aim where bobber lands, click to cast
+4. **Waiting** - Bobber in water, fish swim nearby; lure effects modify bite timing and fish attraction
+5. **Bite** - Fish grabs line! Click to start reeling
+6. **Reeling** - Palworld-style minigame; rod stats affect catch zone width, reel speed, and line strength
+7. **Caught** - Celebration popup with fish image, weight, rarity, sell price, and bounty completion
+8. **Store** - Full-screen shop overlay with Rod (5 types) and Lure (8 types) tabs, buy/equip system
+
+## Character System
+- 3 selectable variants: Classic (no tint), Ocean Blue, Crimson
+- Uses canvas globalCompositeOperation "source-atop" to tint existing fisherman sprites
+- Selected on title screen before game start
+
+## Equipment System
+- **Rods** (5): Bamboo, Fiberglass, Carbon, Titanium, Legendary - affect catch zone, reel speed, line strength
+- **Lures** (8): Basic Worm, Silver Spinner, Deep Diver, Golden Fly, Glow Jig, Storm Shad, Kraken Bait, Prismatic - affect rarity boost, size boost, bite speed, and targeted fish attraction
+- Equipment purchased with money from fishing hut shop (E key near hut)
+
+## Money & Market System
+- Fish sell for money based on rarity * weight * size * demand multiplier
+- Market dynamics: prices drop when same fish sold repeatedly (0.12 per sale), recover over time (1 per 600 ticks)
+- Minimum demand multiplier: 0.3
+- Money used to purchase rods and lures at the fishing hut shop
+
+## Bounty System
+- 3 random bounties generated at game start
+- Each bounty targets a fish species with minimum size requirement
+- Bounty rewards added to money on fulfillment
+- New bounties generated when all are completed
+
+## Billboard System
+- Canvas-rendered sign near the fishing hut
+- 4-slide rotation: Bounties, Records, Deals, Logo
+- Auto-cycles every 300 ticks
 
 ## Fish Behavior
 - SwimmingFish have wobblePhase/wobbleAmp for vertical bobbing, dirChangeTimer for random direction changes
