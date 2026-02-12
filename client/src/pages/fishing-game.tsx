@@ -996,6 +996,10 @@ export default function FishingGame() {
       let rodTipKey = "idle";
       let isWalking = false;
       let fishingFlip = (s.gameState === "idle" || s.gameState === "casting" || s.gameState === "waiting" || s.gameState === "bite" || s.gameState === "reeling" || s.gameState === "caught" || s.gameState === "missed" || s.gameState === "boarding");
+      if (s.gameState === "casting") {
+        const charCenterX = fishermanX + (SPRITE_FRAME_W * SCALE) / 2;
+        fishingFlip = s.aimX < charCenterX;
+      }
 
       if (s.gameState === "swimming") {
         const isMoving = s.keysDown.has("a") || s.keysDown.has("d") || s.keysDown.has("w") || s.keysDown.has("s");
