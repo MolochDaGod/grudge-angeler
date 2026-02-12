@@ -104,6 +104,46 @@ const LURES: Lure[] = [
   { name: "Prismatic Lure", price: 750, effect: "All bonuses", description: "A rainbow-shifting lure. Boosts everything.", icon: "/assets/lures/prismatic_lure.png", rarityBoost: 1.8, sizeBoost: 0.5, speedBoost: 1.5, targetFish: [], targetBonus: 1.0, type: "lure" },
 ];
 
+interface ChumItem {
+  name: string;
+  price: number;
+  description: string;
+  icon: string;
+  effect: string;
+  duration: number;
+  rarityBoost: number;
+  biteSpeedBoost: number;
+  fishAttract: number;
+  cooldown: number;
+  catchable: boolean;
+  type: "chum" | "special";
+}
+
+const CHUM_ITEMS: ChumItem[] = [
+  { name: "Fish Scraps", price: 15, description: "Basic chum. A slight fish attract.", icon: "/assets/icons/Icons_01.png", effect: "Slight attract", duration: 300, rarityBoost: 1.0, biteSpeedBoost: 1.0, fishAttract: 1.2, cooldown: 120, catchable: false, type: "chum" },
+  { name: "Bread Crumbs", price: 20, description: "Attracts small fish nearby.", icon: "/assets/icons/Icons_02.png", effect: "Small fish attract", duration: 350, rarityBoost: 1.0, biteSpeedBoost: 1.1, fishAttract: 1.4, cooldown: 120, catchable: false, type: "chum" },
+  { name: "Corn Mash", price: 25, description: "Attracts bottom feeders.", icon: "/assets/icons/Icons_03.png", effect: "Bottom feeder attract", duration: 400, rarityBoost: 1.05, biteSpeedBoost: 1.0, fishAttract: 1.5, cooldown: 140, catchable: false, type: "chum" },
+  { name: "Blood Meal", price: 40, description: "Attracts predators with its scent.", icon: "/assets/icons/Icons_04.png", effect: "Predator attract", duration: 350, rarityBoost: 1.15, biteSpeedBoost: 1.05, fishAttract: 1.6, cooldown: 160, catchable: false, type: "chum" },
+  { name: "Shrimp Paste", price: 50, description: "Good all-around chum.", icon: "/assets/icons/Icons_05.png", effect: "All-around attract", duration: 400, rarityBoost: 1.1, biteSpeedBoost: 1.15, fishAttract: 1.7, cooldown: 150, catchable: false, type: "chum" },
+  { name: "Squid Ink", price: 60, description: "Attracts deep fish.", icon: "/assets/icons/Icons_06.png", effect: "Deep fish attract", duration: 350, rarityBoost: 1.2, biteSpeedBoost: 1.0, fishAttract: 1.5, cooldown: 180, catchable: false, type: "chum" },
+  { name: "Fish Oil Slick", price: 75, description: "Wide area attract effect.", icon: "/assets/icons/Icons_08.png", effect: "Wide area attract", duration: 500, rarityBoost: 1.1, biteSpeedBoost: 1.1, fishAttract: 2.0, cooldown: 200, catchable: false, type: "chum" },
+  { name: "Sardine Chunks", price: 45, description: "Fast bite speed boost.", icon: "/assets/icons/Icons_09.png", effect: "Fast bites", duration: 300, rarityBoost: 1.0, biteSpeedBoost: 1.5, fishAttract: 1.3, cooldown: 130, catchable: false, type: "chum" },
+  { name: "Crab Guts", price: 55, description: "Attracts rare fish.", icon: "/assets/icons/Icons_10.png", effect: "Rare fish attract", duration: 350, rarityBoost: 1.3, biteSpeedBoost: 1.0, fishAttract: 1.4, cooldown: 170, catchable: false, type: "chum" },
+  { name: "Mussel Mix", price: 35, description: "Steady and reliable attract.", icon: "/assets/icons/Icons_11.png", effect: "Steady attract", duration: 450, rarityBoost: 1.05, biteSpeedBoost: 1.05, fishAttract: 1.5, cooldown: 140, catchable: false, type: "chum" },
+  { name: "Fermented Brine", price: 80, description: "Strong rarity boost.", icon: "/assets/icons/Icons_12.png", effect: "Rarity boost", duration: 400, rarityBoost: 1.5, biteSpeedBoost: 1.0, fishAttract: 1.6, cooldown: 200, catchable: false, type: "chum" },
+  { name: "Whale Blubber", price: 100, description: "Attracts legendary fish.", icon: "/assets/icons/Icons_13.png", effect: "Legendary attract", duration: 350, rarityBoost: 1.7, biteSpeedBoost: 1.0, fishAttract: 1.8, cooldown: 250, catchable: false, type: "chum" },
+  { name: "Phosphor Dust", price: 120, description: "Glowing effect. Ultra rare boost.", icon: "/assets/icons/Icons_14.png", effect: "Glowing ultra rare", duration: 300, rarityBoost: 2.0, biteSpeedBoost: 1.1, fishAttract: 1.5, cooldown: 280, catchable: false, type: "chum" },
+  { name: "Coral Powder", price: 90, description: "Attracts reef fish.", icon: "/assets/icons/Icons_15.png", effect: "Reef fish attract", duration: 400, rarityBoost: 1.3, biteSpeedBoost: 1.1, fishAttract: 1.7, cooldown: 200, catchable: false, type: "chum" },
+  { name: "Deep Sea Extract", price: 150, description: "Deep water mega boost.", icon: "/assets/icons/Icons_16.png", effect: "Deep mega boost", duration: 350, rarityBoost: 1.8, biteSpeedBoost: 1.2, fishAttract: 2.0, cooldown: 300, catchable: false, type: "chum" },
+  { name: "Thunder Chum", price: 130, description: "Attracts storm fish.", icon: "/assets/icons/Icons_17.png", effect: "Storm fish attract", duration: 300, rarityBoost: 1.6, biteSpeedBoost: 1.3, fishAttract: 1.8, cooldown: 260, catchable: false, type: "chum" },
+  { name: "Moonlight Essence", price: 200, description: "Celestial boost to all catches.", icon: "/assets/icons/Icons_18.png", effect: "Celestial boost", duration: 400, rarityBoost: 2.0, biteSpeedBoost: 1.2, fishAttract: 2.2, cooldown: 350, catchable: false, type: "chum" },
+  { name: "Kraken Bile", price: 180, description: "Massive rarity increase.", icon: "/assets/icons/Icons_19.png", effect: "Massive rarity", duration: 300, rarityBoost: 2.5, biteSpeedBoost: 1.0, fishAttract: 1.6, cooldown: 320, catchable: false, type: "chum" },
+  { name: "Golden Flakes", price: 250, description: "Boosts everything.", icon: "/assets/icons/Icons_20.png", effect: "Everything boost", duration: 500, rarityBoost: 2.0, biteSpeedBoost: 1.4, fishAttract: 2.5, cooldown: 400, catchable: false, type: "chum" },
+  { name: "Abyssal Ooze", price: 300, description: "The ultimate chum.", icon: "/assets/icons/Icons_01.png", effect: "Ultimate attract", duration: 600, rarityBoost: 2.5, biteSpeedBoost: 1.5, fishAttract: 3.0, cooldown: 500, catchable: false, type: "chum" },
+  { name: "Live Shrimp Cluster", price: 0, description: "Caught live shrimp. Good bait for medium fish.", icon: "/assets/icons/Icons_05.png", effect: "Medium fish attract", duration: 250, rarityBoost: 1.2, biteSpeedBoost: 1.3, fishAttract: 1.8, cooldown: 100, catchable: true, type: "special" },
+  { name: "Glowing Plankton", price: 0, description: "Caught glowing plankton. Attracts rare fish.", icon: "/assets/icons/Icons_14.png", effect: "Rare glow attract", duration: 200, rarityBoost: 1.8, biteSpeedBoost: 1.1, fishAttract: 1.5, cooldown: 100, catchable: true, type: "special" },
+];
+
 interface MarketEntry {
   recentSold: number;
   lastSoldTime: number;
@@ -361,7 +401,7 @@ export default function FishingGame() {
     marketPrices: new Map<string, MarketEntry>(),
     nearHut: false,
     showStorePrompt: false,
-    storeTab: "rod" as "rod" | "lure",
+    storeTab: "rod" as "rod" | "lure" | "chum",
     billboardSlide: 0,
     billboardTimer: 0,
     bounties: [] as Bounty[],
@@ -376,6 +416,31 @@ export default function FishingGame() {
     attributePoints: 3,
     attributes: { Strength: 1, Intellect: 1, Vitality: 1, Dexterity: 1, Endurance: 1, Wisdom: 1, Agility: 1, Tactics: 1 } as FishingAttributes,
     catchHistory: [] as CatchHistoryEntry[],
+    forceBar: 1.0,
+    forceBarMax: 1.0,
+    resilience: 2,
+    resilienceMax: 2,
+    activeReelHeld: false,
+    letOutLineCooldown: 0,
+    hookedFishVY: 0,
+    hookedFishDiveTimer: 0,
+    hookLineMaxDist: 0,
+    selectedHotbar: 1,
+    showLurePopup: false,
+    showChumPopup: false,
+    ownedChum: Array.from({ length: 22 }, () => 0) as number[],
+    equippedChum: -1,
+    chumActiveTimer: 0,
+    chumActiveType: -1,
+    chumCooldown: 0,
+    toolMode: "rod" as "rod" | "net",
+    netCooldown: 0,
+    netCastX: 0,
+    netCastY: 0,
+    netWidth: 0,
+    netDepth: 0,
+    netActive: false,
+    netTimer: 0,
   });
 
   const imagesRef = useRef<Map<string, HTMLImageElement>>(new Map());
@@ -410,7 +475,7 @@ export default function FishingGame() {
     money: 50,
     nearHut: false,
     showStorePrompt: false,
-    storeTab: "rod" as "rod" | "lure",
+    storeTab: "rod" as "rod" | "lure" | "chum",
     billboardSlide: 0,
     bounties: [] as Bounty[],
     biggestCatchName: "",
@@ -424,6 +489,18 @@ export default function FishingGame() {
     attributePoints: 3,
     attributes: { Strength: 1, Intellect: 1, Vitality: 1, Dexterity: 1, Endurance: 1, Wisdom: 1, Agility: 1, Tactics: 1 } as FishingAttributes,
     catchHistory: [] as CatchHistoryEntry[],
+    forceBar: 1.0,
+    resilience: 2,
+    resilienceMax: 2,
+    selectedHotbar: 1,
+    showLurePopup: false,
+    showChumPopup: false,
+    ownedChum: Array.from({ length: 22 }, () => 0) as number[],
+    equippedChum: -1,
+    chumActiveTimer: 0,
+    chumActiveType: -1,
+    toolMode: "rod" as "rod" | "net",
+    netActive: false,
   });
 
   const loadImage = useCallback((src: string): Promise<HTMLImageElement> => {
@@ -446,6 +523,7 @@ export default function FishingGame() {
 
     const lure = LURES[s.equippedLure];
     const wisdomBoost = 1 + s.attributes.Wisdom * 0.01 * (1 + s.attributes.Tactics * 0.005);
+    const chumRarityBoost = s.chumActiveType >= 0 ? CHUM_ITEMS[s.chumActiveType].rarityBoost : 1;
     const ce = s.celestialEvent;
     const ceFade = s.celestialFade;
     const celestialRare = ce === "red_sun" ? 1 + ceFade * 1.5 : 1;
@@ -454,9 +532,9 @@ export default function FishingGame() {
     const adjustedWeights = FISH_TYPES.map(ft => {
       let w = ft.weight;
       const rarityBoost = distRatio;
-      if (ft.rarity === "ultra_rare") w *= (1 + rarityBoost * 25) * lure.rarityBoost * wisdomBoost * celestialUltra;
-      else if (ft.rarity === "legendary") w *= (1 + rarityBoost * 15) * lure.rarityBoost * wisdomBoost * celestialLegendary;
-      else if (ft.rarity === "rare") w *= (1 + rarityBoost * 8) * lure.rarityBoost * wisdomBoost * celestialRare;
+      if (ft.rarity === "ultra_rare") w *= (1 + rarityBoost * 25) * lure.rarityBoost * wisdomBoost * celestialUltra * chumRarityBoost;
+      else if (ft.rarity === "legendary") w *= (1 + rarityBoost * 15) * lure.rarityBoost * wisdomBoost * celestialLegendary * chumRarityBoost;
+      else if (ft.rarity === "rare") w *= (1 + rarityBoost * 8) * lure.rarityBoost * wisdomBoost * celestialRare * chumRarityBoost;
       else if (ft.rarity === "uncommon") w *= (1 + rarityBoost * 3) * (1 + (wisdomBoost - 1) * 0.5);
       else w *= Math.max(0.3, 1 - rarityBoost * 0.5);
       if (lure.targetFish.includes(ft.name)) w *= lure.targetBonus;
@@ -654,6 +732,18 @@ export default function FishingGame() {
       attributePoints: s.attributePoints,
       attributes: { ...s.attributes },
       catchHistory: [...s.catchHistory],
+      forceBar: s.forceBar,
+      resilience: s.resilience,
+      resilienceMax: s.resilienceMax,
+      selectedHotbar: s.selectedHotbar,
+      showLurePopup: s.showLurePopup,
+      showChumPopup: s.showChumPopup,
+      ownedChum: [...s.ownedChum],
+      equippedChum: s.equippedChum,
+      chumActiveTimer: s.chumActiveTimer,
+      chumActiveType: s.chumActiveType,
+      toolMode: s.toolMode,
+      netActive: s.netActive,
     });
   }, []);
 
@@ -720,7 +810,52 @@ export default function FishingGame() {
       if (stateRef.current.gameState === "charSelect" || stateRef.current.gameState === "intro") return;
       const key = e.key.toLowerCase();
       stateRef.current.keysDown.add(key);
+      if (key === " " && stateRef.current.gameState === "reeling") {
+        e.preventDefault();
+        stateRef.current.activeReelHeld = true;
+        return;
+      }
+      if (key === "s" && stateRef.current.gameState === "reeling" && stateRef.current.letOutLineCooldown <= 0 && stateRef.current.resilience > 0) {
+        e.preventDefault();
+        const st = stateRef.current;
+        st.resilience--;
+        st.reelTarget += (st.reelProgress - st.reelTarget) * 0.6;
+        st.hookedFishVX *= 0.3;
+        st.hookedFishVY *= 0.3;
+        st.letOutLineCooldown = 30;
+        return;
+      }
       if (["a", "d", "w", "s", " ", "e"].includes(key)) e.preventDefault();
+      if (key === "1") {
+        stateRef.current.selectedHotbar = 1;
+        stateRef.current.toolMode = "rod";
+        stateRef.current.showLurePopup = false;
+        stateRef.current.showChumPopup = false;
+        syncUI();
+        return;
+      }
+      if (key === "2") {
+        stateRef.current.selectedHotbar = 2;
+        stateRef.current.showLurePopup = !stateRef.current.showLurePopup;
+        stateRef.current.showChumPopup = false;
+        syncUI();
+        return;
+      }
+      if (key === "3") {
+        stateRef.current.selectedHotbar = 3;
+        stateRef.current.showChumPopup = !stateRef.current.showChumPopup;
+        stateRef.current.showLurePopup = false;
+        syncUI();
+        return;
+      }
+      if (key === "4") {
+        stateRef.current.selectedHotbar = 4;
+        stateRef.current.toolMode = "net";
+        stateRef.current.showLurePopup = false;
+        stateRef.current.showChumPopup = false;
+        syncUI();
+        return;
+      }
       if (key === "tab") {
         e.preventDefault();
         setShowCharPanel(prev => !prev);
@@ -755,6 +890,7 @@ export default function FishingGame() {
       }
     };
     const onKeyUp = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() === " ") stateRef.current.activeReelHeld = false;
       stateRef.current.keysDown.delete(e.key.toLowerCase());
     };
     document.addEventListener("keydown", onKeyDown);
@@ -1088,10 +1224,10 @@ export default function FishingGame() {
       }
       if (s.celestialEvent === "none" && Math.random() < 0.0003 * dt) {
         const dayP = Math.sin(s.time * 0.002) * 0.5 + 0.5;
-        const nightEvents: typeof s.celestialEvent[] = ["green_moon", "blood_moon"];
-        const dayEvents: typeof s.celestialEvent[] = ["red_sun", "tentacle_sun"];
+        const nightEvents = ["green_moon", "blood_moon"] as ("none" | "red_sun" | "green_moon" | "tentacle_sun" | "blood_moon")[];
+        const dayEvents = ["red_sun", "tentacle_sun"] as ("none" | "red_sun" | "green_moon" | "tentacle_sun" | "blood_moon")[];
         const events = dayP > 0.5 ? dayEvents : nightEvents;
-        s.celestialEvent = events[Math.floor(Math.random() * events.length)];
+        s.celestialEvent = events[Math.floor(Math.random() * events.length)] ?? "none";
         s.celestialTimer = 800 + Math.random() * 600;
         s.celestialFade = 0;
       }
@@ -2232,7 +2368,8 @@ export default function FishingGame() {
               }
             }
             const vitWaitReduction = 1 + s.attributes.Vitality * 0.006 * (1 + s.attributes.Tactics * 0.005);
-            s.waitTimer = (30 + Math.random() * 50) / (LURES[s.equippedLure].speedBoost * vitWaitReduction);
+            const chumSpeedBoost = s.chumActiveType >= 0 ? CHUM_ITEMS[s.chumActiveType].biteSpeedBoost : 1;
+            s.waitTimer = (30 + Math.random() * 50) / (LURES[s.equippedLure].speedBoost * vitWaitReduction * chumSpeedBoost);
           }
         }
       }
@@ -2272,21 +2409,45 @@ export default function FishingGame() {
         const dragDecel = Math.max(0, netForce * 0.02);
 
         s.hookedFishVX *= Math.max(0.85, 1 - dragDecel * dt * 0.01);
+        s.hookedFishVY *= Math.max(0.88, 1 - dragDecel * dt * 0.008);
         s.hookedFishX += s.hookedFishVX * dt;
+        s.hookedFishY += s.hookedFishVY * dt;
         s.hookedFishFrameTimer += dt;
         if (s.hookedFishFrameTimer > 6) {
           s.hookedFishFrameTimer = 0;
           s.hookedFishFrame = (s.hookedFishFrame + 1) % (s.currentCatch?.walkFrames || 4);
         }
+        s.hookedFishDiveTimer -= dt;
         const dirChangeChance = (0.012 * difficultyMult) / (1 + a.Dexterity * 0.03 * tacticsGlobal);
         if (Math.random() < dirChangeChance * dt) {
           const burstForce = fishMoveSpeed * (0.5 + Math.random() * 0.8);
-          s.hookedFishVX = (Math.random() > 0.5 ? 1 : -1) * burstForce / strMod;
+          const roll = Math.random();
+          if (roll < 0.40) {
+            s.hookedFishVX = (Math.random() > 0.5 ? 1 : -1) * burstForce / strMod;
+          } else if (roll < 0.65) {
+            s.hookedFishVY = burstForce * 0.6 / strMod;
+            s.hookedFishDiveTimer = 30 + Math.random() * 40;
+          } else if (roll < 0.85) {
+            s.hookedFishVY = -burstForce * 0.5 / strMod;
+          } else {
+            s.hookedFishVX *= -1.2;
+            s.hookedFishVY *= -0.8;
+          }
         }
         s.hookedFishDir = s.hookedFishVX > 0 ? 1 : -1;
         s.hookedFishX = Math.max(worldLeft + 20, Math.min(worldRight - 20, s.hookedFishX));
-        s.hookedFishY += Math.sin(s.time * 0.04) * 0.15;
         s.hookedFishY = Math.max(waterY + 15, Math.min(H - 30, s.hookedFishY));
+        if (s.hookLineMaxDist > 0) {
+          const dx = s.hookedFishX - s.playerX;
+          const dy = s.hookedFishY - waterY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist > s.hookLineMaxDist) {
+            const ratio = s.hookLineMaxDist / dist;
+            s.hookedFishX = s.playerX + dx * ratio;
+            s.hookedFishY = waterY + dy * ratio;
+          }
+        }
+        s.letOutLineCooldown = Math.max(0, s.letOutLineCooldown - dt);
 
         if (Math.random() < 0.03 * dt) {
           addParticles(s.hookedFishX, s.hookedFishY - 5, 2, "#88ccff", 1, "bubble");
@@ -2324,8 +2485,16 @@ export default function FishingGame() {
         const catchZoneHalf = (0.08 + s.rodLevel * 0.015 + rod.catchZoneBonus + a.Strength * 0.003 * tacticsGlobal);
         const fishInZone = s.reelTarget >= (s.reelProgress - catchZoneHalf) && s.reelTarget <= (s.reelProgress + catchZoneHalf);
 
-        const gaugeGainRate = 0.003 * alignmentBonus * rod.reelSpeedMult * strMod;
+        let gaugeGainRate = 0.003 * alignmentBonus * rod.reelSpeedMult * strMod;
         if (fishInZone) {
+          if (s.activeReelHeld && s.forceBar > 0) {
+            const forceDrain = 0.008 * difficultyMult / (1 + a.Agility * 0.01 * tacticsGlobal);
+            s.forceBar = Math.max(0, s.forceBar - forceDrain * dt);
+            gaugeGainRate *= 2.0;
+            const pullForce = 0.5 * strMod;
+            s.hookedFishX += (s.playerX - s.hookedFishX) * 0.002 * pullForce * dt;
+            if (Math.random() < 0.06 * dt) addParticles(s.hookedFishX, s.hookedFishY, 3, "#3b82f6", 2, "sparkle");
+          }
           s.reelGauge = Math.min(1.0, s.reelGauge + gaugeGainRate * dt);
           const liftForce = 0.3 * strMod;
           s.hookedFishY -= liftForce * dt;
@@ -2335,6 +2504,10 @@ export default function FishingGame() {
           s.reelGauge = Math.max(0, s.reelGauge - gaugeDrain * dt);
           const sinkForce = 0.15 / endMod;
           s.hookedFishY += sinkForce * dt;
+        }
+        if (!s.activeReelHeld || !fishInZone) {
+          const regenRate = 0.003 * (1 + a.Vitality * 0.01 * tacticsGlobal);
+          s.forceBar = Math.min(s.forceBarMax, s.forceBar + regenRate * dt);
         }
 
         if (s.reelGauge >= 1.0) {
@@ -2404,6 +2577,11 @@ export default function FishingGame() {
           s.catchHistory.unshift({ name, rarity: s.currentCatch?.rarity || "junk", size: sizeBonus, weight: fishWeight, sellPrice, timestamp: Date.now() });
           if (s.catchHistory.length > 50) s.catchHistory.length = 50;
 
+          if (Math.random() < 0.05) {
+            const catchableChumIdx = Math.random() < 0.5 ? 20 : 21;
+            s.ownedChum[catchableChumIdx]++;
+          }
+
           addParticles(s.hookedFishX, waterY, 25, "#f1c40f", 5, "sparkle");
           addParticles(s.hookedFishX, waterY, 15, "#ffffff", 3, "splash");
           addRipple(s.hookedFishX, waterY, 50);
@@ -2419,6 +2597,54 @@ export default function FishingGame() {
         }
 
         if (s.time % 2 === 0) syncUI();
+      }
+
+      if (s.chumActiveTimer > 0) {
+        s.chumActiveTimer -= dt;
+        if (Math.random() < 0.05 * dt) {
+          addParticles(s.playerX + (Math.random() - 0.5) * 40, waterY + 5, 1, "#88ffcc", 1, "bubble");
+        }
+        if (s.chumActiveTimer <= 0) {
+          s.chumActiveType = -1;
+          s.chumActiveTimer = 0;
+        }
+      }
+      if (s.chumCooldown > 0) s.chumCooldown -= dt;
+      if (s.netCooldown > 0) s.netCooldown -= dt;
+
+      if (s.netActive) {
+        s.netTimer -= dt;
+        if (s.netTimer <= 0) {
+          const netLeft = s.netCastX - s.netWidth / 2;
+          const netRight = s.netCastX + s.netWidth / 2;
+          const netTop = s.netCastY;
+          const netBottom = s.netCastY + s.netDepth;
+          const caughtFish = s.swimmingFish.filter(f =>
+            f.x >= netLeft && f.x <= netRight && f.y >= netTop && f.y <= netBottom &&
+            (f.type.rarity === "common" || f.type.rarity === "uncommon")
+          );
+          for (const fish of caughtFish) {
+            const idx = s.swimmingFish.indexOf(fish);
+            if (idx >= 0) s.swimmingFish.splice(idx, 1);
+            const sz = fish.sizeMultiplier;
+            const halfPrice = Math.floor(getSellPrice(fish.type, null, sz) * 0.5);
+            s.money += halfPrice;
+            s.totalCaught++;
+            s.score += Math.floor(fish.type.points * sz * 0.5);
+            const fishWeight = Math.round(sz * fish.type.points * 0.3 * 10) / 10;
+            const existing = s.caughtCollection.get(fish.type.name);
+            if (existing) { existing.count++; existing.totalWeight += fishWeight; }
+            else { s.caughtCollection.set(fish.type.name, { type: fish.type, junk: null, count: 1, bestCombo: 0, biggestSize: sz, totalWeight: fishWeight }); }
+            addParticles(fish.x, fish.y, 5, "#5dade2", 2, "splash");
+          }
+          if (Math.random() < 0.10) {
+            const catchableChumIdx = Math.random() < 0.5 ? 20 : 21;
+            s.ownedChum[catchableChumIdx]++;
+          }
+          s.netActive = false;
+          s.netCooldown = 600;
+          syncUI();
+        }
       }
 
       if (s.gameState === "caught" || s.gameState === "missed") {
@@ -2683,6 +2909,19 @@ export default function FishingGame() {
     }
 
     if (s.gameState === "idle") {
+      if (s.toolMode === "net") {
+        if (s.netCooldown > 0) return;
+        s.netActive = true;
+        s.netCastX = (s.mouseX - s.cameraX) || (s.playerX - 100);
+        s.netCastY = Math.max(waterY + 20, s.mouseY || (waterY + 60));
+        s.netWidth = 60 + s.attributes.Strength * 3 + s.attributes.Dexterity * 2;
+        s.netDepth = 40 + s.attributes.Endurance * 2;
+        s.netTimer = 120;
+        addParticles(s.netCastX, waterY, 10, "#5dade2", 3, "splash");
+        addRipple(s.netCastX, waterY);
+        syncUI();
+        return;
+      }
       s.gameState = "casting";
       s.castPower = 0;
       s.castDirection = 1;
@@ -2720,6 +2959,11 @@ export default function FishingGame() {
       s.reelGauge = 0.5;
       s.isReeling = false;
       s.isRightMouseDown = false;
+      s.resilience = Math.min(8, 2 + Math.floor(s.attributes.Endurance / 5));
+      s.resilienceMax = s.resilience;
+      s.forceBar = 1.0;
+      s.hookedFishVY = 0;
+      s.hookLineMaxDist = Math.sqrt((s.hookedFishX - s.playerX) ** 2 + (s.hookedFishY - (canvas ? canvas.height * 0.42 : 300)) ** 2);
       syncUI();
       return;
     }
@@ -3074,8 +3318,21 @@ export default function FishingGame() {
             const gaugePercent = uiState.reelGauge * 100;
             const fishInZone = uiState.reelTarget >= (uiState.reelProgress - catchZoneHalf) &&
                                uiState.reelTarget <= (uiState.reelProgress + catchZoneHalf);
+            const forceBarPercent = uiState.forceBar * 100;
+            const resilience = uiState.resilience;
+            const resilienceMax = uiState.resilienceMax;
             return (
               <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2" style={{ pointerEvents: "none" }} data-testid="reel-bar">
+                <div style={{ width: barW, height: 10, background: "rgba(8,15,25,0.85)", borderRadius: 5, border: "1px solid rgba(59,130,246,0.3)", overflow: "hidden", marginBottom: 4 }} data-testid="force-bar">
+                  <div style={{ width: `${forceBarPercent}%`, height: "100%", background: forceBarPercent > 30 ? "linear-gradient(90deg, #3b82f6, #60a5fa)" : "linear-gradient(90deg, #ef4444, #f87171)", borderRadius: 5, transition: "width 0.1s" }} />
+                </div>
+                <span style={{ color: "#60a5fa", fontSize: 6 }}>FORCE [SPACE]</span>
+                <div className="flex items-center gap-1" style={{ marginBottom: 4 }} data-testid="resilience-bar">
+                  <span style={{ color: "#f59e0b", fontSize: 6, marginRight: 4 }}>RES [S]</span>
+                  {Array.from({length: resilienceMax}, (_, i) => (
+                    <div key={i} style={{ width: 12, height: 12, borderRadius: 3, background: i < resilience ? "rgba(245,158,11,0.8)" : "rgba(245,158,11,0.15)", border: "1px solid rgba(245,158,11,0.4)", transition: "background 0.2s" }} />
+                  ))}
+                </div>
                 <div style={{
                   width: 44, height: 44, borderRadius: "50%",
                   border: `3px solid ${fishInZone ? "#2ecc71" : "#e74c3c"}`,
@@ -3155,14 +3412,96 @@ export default function FishingGame() {
           {/* Idle Prompt */}
           {uiState.gameState === "idle" && !uiState.inBoat && (
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center px-4 py-2 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8, pointerEvents: "none" }} data-testid="idle-prompt">
-              <span style={{ color: "#b0bec5", fontSize: 10, textShadow: "1px 1px 0 #000" }}>Click to cast  |  A/D to walk</span>
-              <span style={{ color: "#5dade2", fontSize: 8, textShadow: "1px 1px 0 #000" }}>SPACE to dive in</span>
+              <span style={{ color: "#b0bec5", fontSize: 10, textShadow: "1px 1px 0 #000" }}>Click to {uiState.toolMode === "net" ? "cast net" : "cast"}  |  A/D to walk</span>
+              <span style={{ color: "#5dade2", fontSize: 8, textShadow: "1px 1px 0 #000" }}>SPACE to dive in  |  1-4 hotbar</span>
             </div>
           )}
           {uiState.gameState === "idle" && uiState.inBoat && (
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center px-4 py-2 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8, pointerEvents: "none" }} data-testid="boat-idle-prompt">
-              <span style={{ color: "#b0bec5", fontSize: 10, textShadow: "1px 1px 0 #000" }}>Click to cast  |  A/D to row  |  SPACE to stand</span>
-              <span style={{ color: "#f1c40f", fontSize: 8, textShadow: "1px 1px 0 #000" }}>E near pier to exit boat</span>
+              <span style={{ color: "#b0bec5", fontSize: 10, textShadow: "1px 1px 0 #000" }}>Click to {uiState.toolMode === "net" ? "cast net" : "cast"}  |  A/D to row  |  SPACE to stand</span>
+              <span style={{ color: "#f1c40f", fontSize: 8, textShadow: "1px 1px 0 #000" }}>E near pier to exit boat  |  1-4 hotbar</span>
+            </div>
+          )}
+
+          {["idle","casting","waiting","bite","reeling","caught","missed"].includes(uiState.gameState) && (
+            <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex items-end gap-1" style={{ zIndex: 30 }} data-testid="hotbar">
+              <div onClick={(e) => { e.stopPropagation(); stateRef.current.selectedHotbar = 1; stateRef.current.toolMode = "rod"; stateRef.current.showLurePopup = false; stateRef.current.showChumPopup = false; syncUI(); }}
+                className="flex flex-col items-center cursor-pointer"
+                style={{ padding: "4px 6px", borderRadius: 6, background: uiState.selectedHotbar === 1 ? "rgba(46,204,113,0.25)" : "rgba(8,15,25,0.75)", border: uiState.selectedHotbar === 1 ? "1px solid rgba(46,204,113,0.5)" : "1px solid rgba(255,255,255,0.1)", transition: "all 0.15s" }}
+                data-testid="hotbar-slot-1">
+                <img src={RODS[uiState.equippedRod].icon} alt="" style={{ width: 24, height: 24, imageRendering: "pixelated" }} />
+                <span style={{ fontSize: 5, color: uiState.selectedHotbar === 1 ? "#2ecc71" : "#607d8b" }}>1</span>
+              </div>
+
+              <div style={{ position: "relative" }}>
+                {uiState.showLurePopup && (
+                  <div style={{ position: "absolute", bottom: "100%", left: "50%", transform: "translateX(-50%)", marginBottom: 4, background: "rgba(8,15,25,0.95)", borderRadius: 8, border: "1px solid rgba(52,152,219,0.3)", padding: 6, minWidth: 140, maxHeight: 200, overflowY: "auto", zIndex: 40 }} data-testid="lure-popup">
+                    {LURES.map((lure, i) => uiState.ownedLures[i] && (
+                      <div key={i} onClick={(e) => { e.stopPropagation(); stateRef.current.equippedLure = i; stateRef.current.showLurePopup = false; syncUI(); }}
+                        className="flex items-center gap-2 cursor-pointer"
+                        style={{ padding: "3px 4px", borderRadius: 4, background: uiState.equippedLure === i ? "rgba(52,152,219,0.2)" : "transparent", marginBottom: 2 }}
+                        data-testid={`lure-popup-item-${i}`}>
+                        <img src={lure.icon} alt="" style={{ width: 16, height: 16, imageRendering: "pixelated" }} />
+                        <span style={{ color: uiState.equippedLure === i ? "#5dade2" : "#b0bec5", fontSize: 6, flex: 1 }}>{lure.name}</span>
+                        {uiState.equippedLure === i && <span style={{ color: "#5dade2", fontSize: 5 }}>EQ</span>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div onClick={(e) => { e.stopPropagation(); stateRef.current.showLurePopup = !stateRef.current.showLurePopup; stateRef.current.showChumPopup = false; stateRef.current.selectedHotbar = 2; syncUI(); }}
+                  className="flex flex-col items-center cursor-pointer"
+                  style={{ padding: "4px 6px", borderRadius: 6, background: uiState.selectedHotbar === 2 ? "rgba(52,152,219,0.25)" : "rgba(8,15,25,0.75)", border: uiState.selectedHotbar === 2 ? "1px solid rgba(52,152,219,0.5)" : "1px solid rgba(255,255,255,0.1)", transition: "all 0.15s" }}
+                  data-testid="hotbar-slot-2">
+                  <img src={LURES[uiState.equippedLure].icon} alt="" style={{ width: 24, height: 24, imageRendering: "pixelated" }} />
+                  <span style={{ fontSize: 5, color: uiState.selectedHotbar === 2 ? "#5dade2" : "#607d8b" }}>2</span>
+                </div>
+              </div>
+
+              <div style={{ position: "relative" }}>
+                {uiState.showChumPopup && (
+                  <div style={{ position: "absolute", bottom: "100%", left: "50%", transform: "translateX(-50%)", marginBottom: 4, background: "rgba(8,15,25,0.95)", borderRadius: 8, border: "1px solid rgba(245,158,11,0.3)", padding: 6, minWidth: 160, maxHeight: 200, overflowY: "auto", zIndex: 40 }} data-testid="chum-popup">
+                    {CHUM_ITEMS.map((chum, i) => uiState.ownedChum[i] > 0 && (
+                      <div key={i} onClick={(e) => {
+                          e.stopPropagation();
+                          const st = stateRef.current;
+                          if (st.chumCooldown > 0) return;
+                          st.ownedChum[i]--;
+                          st.chumActiveTimer = chum.duration;
+                          st.chumActiveType = i;
+                          st.chumCooldown = chum.cooldown;
+                          st.equippedChum = i;
+                          st.showChumPopup = false;
+                          syncUI();
+                        }}
+                        className="flex items-center gap-2 cursor-pointer"
+                        style={{ padding: "3px 4px", borderRadius: 4, background: uiState.chumActiveType === i ? "rgba(245,158,11,0.2)" : "transparent", marginBottom: 2, opacity: stateRef.current.chumCooldown > 0 ? 0.5 : 1 }}
+                        data-testid={`chum-popup-item-${i}`}>
+                        <img src={chum.icon} alt="" style={{ width: 16, height: 16, imageRendering: "pixelated" }} />
+                        <span style={{ color: "#f59e0b", fontSize: 6, flex: 1 }}>{chum.name}</span>
+                        <span style={{ color: "#78909c", fontSize: 5 }}>x{uiState.ownedChum[i]}</span>
+                      </div>
+                    ))}
+                    {uiState.ownedChum.every(c => c === 0) && (
+                      <span style={{ color: "#455a64", fontSize: 6, padding: 4 }}>No chum owned</span>
+                    )}
+                  </div>
+                )}
+                <div onClick={(e) => { e.stopPropagation(); stateRef.current.showChumPopup = !stateRef.current.showChumPopup; stateRef.current.showLurePopup = false; stateRef.current.selectedHotbar = 3; syncUI(); }}
+                  className="flex flex-col items-center cursor-pointer"
+                  style={{ padding: "4px 6px", borderRadius: 6, background: uiState.selectedHotbar === 3 ? "rgba(245,158,11,0.25)" : "rgba(8,15,25,0.75)", border: uiState.selectedHotbar === 3 ? "1px solid rgba(245,158,11,0.5)" : "1px solid rgba(255,255,255,0.1)", transition: "all 0.15s" }}
+                  data-testid="hotbar-slot-3">
+                  <img src="/assets/icons/Icons_09.png" alt="" style={{ width: 24, height: 24, imageRendering: "pixelated" }} />
+                  <span style={{ fontSize: 5, color: uiState.selectedHotbar === 3 ? "#f59e0b" : "#607d8b" }}>3</span>
+                </div>
+              </div>
+
+              <div onClick={(e) => { e.stopPropagation(); stateRef.current.selectedHotbar = 4; stateRef.current.toolMode = "net"; stateRef.current.showLurePopup = false; stateRef.current.showChumPopup = false; syncUI(); }}
+                className="flex flex-col items-center cursor-pointer"
+                style={{ padding: "4px 6px", borderRadius: 6, background: uiState.selectedHotbar === 4 ? "rgba(168,85,247,0.25)" : "rgba(8,15,25,0.75)", border: uiState.selectedHotbar === 4 ? "1px solid rgba(168,85,247,0.5)" : "1px solid rgba(255,255,255,0.1)", transition: "all 0.15s" }}
+                data-testid="hotbar-slot-4">
+                <img src="/assets/icons/Icons_11.png" alt="" style={{ width: 24, height: 24, imageRendering: "pixelated" }} />
+                <span style={{ fontSize: 5, color: uiState.selectedHotbar === 4 ? "#a855f7" : "#607d8b" }}>4</span>
+              </div>
             </div>
           )}
 
@@ -3261,6 +3600,14 @@ export default function FishingGame() {
                     data-testid="button-tab-lure"
                   >
                     BAIT & LURES
+                  </button>
+                  <button
+                    className="flex-1 px-3 py-2 cursor-pointer"
+                    style={{ background: uiState.storeTab === "chum" ? "rgba(245,158,11,0.15)" : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.storeTab === "chum" ? "#f59e0b" : "#607d8b", fontSize: 9, borderBottom: uiState.storeTab === "chum" ? "2px solid #f59e0b" : "2px solid transparent" }}
+                    onClick={(e) => { e.stopPropagation(); stateRef.current.storeTab = "chum"; syncUI(); }}
+                    data-testid="button-tab-chum"
+                  >
+                    CHUM
                   </button>
                 </div>
                 {/* Items List */}
@@ -3385,6 +3732,47 @@ export default function FishingGame() {
                             </div>
                           );
                         })}
+                      </div>
+                    );
+                  })}
+                  {uiState.storeTab === "chum" && CHUM_ITEMS.filter(c => !c.catchable).map((chum, i) => {
+                    const canAfford = uiState.money >= chum.price;
+                    const owned = uiState.ownedChum[i];
+                    return (
+                      <div key={chum.name} className="flex items-start gap-2.5 p-2.5" style={{ background: "rgba(255,255,255,0.03)", borderRadius: 8, border: "1px solid rgba(245,158,11,0.1)" }}>
+                        <div className="flex items-center justify-center" style={{ width: 44, height: 44, background: "rgba(0,0,0,0.3)", borderRadius: 6 }}>
+                          <img src={chum.icon} alt="" style={{ width: 32, height: 32, imageRendering: "pixelated" }} />
+                        </div>
+                        <div className="flex-1 min-w-0 flex flex-col gap-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span style={{ color: "#e0e0e0", fontSize: 9 }}>{chum.name}</span>
+                            {owned > 0 && <span style={{ color: "#f59e0b", fontSize: 6, background: "rgba(245,158,11,0.2)", padding: "1px 4px", borderRadius: 3 }}>x{owned}</span>}
+                          </div>
+                          <span style={{ color: "#78909c", fontSize: 7, lineHeight: "1.5" }}>{chum.description}</span>
+                          <div className="flex flex-wrap gap-x-3 gap-y-0.5">
+                            <span style={{ color: "#f59e0b", fontSize: 6 }}>Effect: {chum.effect}</span>
+                            {chum.rarityBoost > 1 && <span style={{ color: "#a855f7", fontSize: 6 }}>Rarity x{chum.rarityBoost.toFixed(1)}</span>}
+                            {chum.biteSpeedBoost > 1 && <span style={{ color: "#5dade2", fontSize: 6 }}>Bite x{chum.biteSpeedBoost.toFixed(1)}</span>}
+                            <span style={{ color: "#22c55e", fontSize: 6 }}>Attract x{chum.fishAttract.toFixed(1)}</span>
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-1">
+                          <button
+                            className="cursor-pointer px-3 py-1.5"
+                            style={{ background: canAfford ? "rgba(245,158,11,0.25)" : "rgba(255,255,255,0.05)", borderRadius: 6, border: canAfford ? "1px solid rgba(245,158,11,0.5)" : "1px solid rgba(255,255,255,0.1)", fontFamily: "'Press Start 2P', monospace", color: canAfford ? "#f59e0b" : "#455a64", fontSize: 8, opacity: canAfford ? 1 : 0.5 }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (!canAfford) return;
+                              const st = stateRef.current;
+                              st.money -= chum.price;
+                              st.ownedChum[i]++;
+                              syncUI();
+                            }}
+                            data-testid={`button-buy-chum-${i}`}
+                          >
+                            <img src="/assets/icons/gbux.png" alt="gbux" style={{ width: 10, height: 10, verticalAlign: "middle", marginRight: 2 }} />{chum.price}
+                          </button>
+                        </div>
                       </div>
                     );
                   })}

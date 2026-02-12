@@ -26,6 +26,23 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 8. **Caught** - Celebration popup with fish image, weight, rarity, sell price, and bounty completion
 9. **Store** - Full-screen shop overlay with Rod (5 types) and Bait & Lures (16 types: 5 live bait + 11 artificial lures) tabs, buy/equip system
 
+## Hotbar System
+- 4-slot hotbar at bottom center, visible during gameplay states
+- Slot 1: Rod (shows equipped rod, click or press 1 to select)
+- Slot 2: Lure/Bait selector (click or press 2 to open popup, pick from owned lures)
+- Slot 3: Chum selector (click or press 3 to open popup, pick from owned chum to throw)
+- Slot 4: Net tool (click or press 4 to switch to net fishing mode)
+- Popups show owned items with equip/use actions
+
+## Net Tool
+- Alternative fishing method selected via hotbar slot 4
+- Same casting mechanics as rod but renders net area at cast position
+- Net width = 60 + Strength*3 + Dexterity*2, depth = 40 + Endurance*2
+- Auto-catches fish in net area after 2 seconds
+- Only catches common/uncommon fish at 50% sell price
+- 600-frame cooldown between uses
+- 10% chance to catch catchable chum items per net cast
+
 ## Asset Structure
 - `assets/fisherman/` - Classic character sprite sheets (48x48 frames)
 - `assets/fisherman2/` - Ocean Blue character sprite sheets
@@ -41,6 +58,10 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 - Walking/swimming sprites use `s.facingLeft` to face direction of movement
 - Rod tip coords are mirrored when flipped: `(SPRITE_FRAME_W - 1 - tipLocal[0]) * SCALE`
 - Reeling minigame (Palworld-style): horizontal bar with fish icon, catch zone moves LEFT on click (2x speed), drifts RIGHT when released; circular progress gauge fills/depletes based on alignment
+- Force Bar: spacebar active reel (2x gauge gain, pulls fish closer) drains force bar, regenerates based on Vitality stat
+- Resilience Bar: S-key lets out line snapping fish toward catch zone, consumes discrete charges (2-8 based on Endurance), 30-tick cooldown
+- Enhanced fish movement: 4 behavior patterns (lateral bursts 40%, deep dives 25%, surface dashes 20%, quick reversals 15%) with vertical velocity and drag
+- Line distance capped at initial hook distance to prevent fish from extending too far
 
 ## Character System
 - 3 selectable variants: Classic (no tint), Ocean Blue, Crimson
@@ -61,8 +82,17 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 - **Rods** (5): Bamboo, Fiberglass, Carbon, Titanium, Legendary - affect catch zone, reel speed, line strength
 - **Live Bait** (5): Basic Worm, Nightcrawler, Leech, Maggots, Minnow Bait - organic baits with unique fish attraction
 - **Lures** (11): Beginner Lure, Crankbait, Silver Spoon, Grub Worm, Spinnerbait, Deep Diver, Golden Fly, Glow Jig, Storm Shad, Kraken Bait, Prismatic - artificial lures affecting rarity boost, size boost, bite speed, and targeted fish attraction
+- **Chum** (22 total: 20 shop + 2 catchable): Throwable items that boost fish spawns, rarity, and bite speed for a duration
 - Each bait/lure has a `type` field ("live" or "lure") for shop categorization
 - Equipment purchased with gbux from fishing hut shop (E key near hut)
+
+## Chum System
+- 20 purchasable chum items (Fish Scraps to Abyssal Ooze, 15-300 gbux) + 2 catchable items (Live Shrimp Cluster, Glowing Plankton)
+- Each chum has: duration (ticks), rarityBoost, biteSpeedBoost, fishAttract
+- Activated through hotbar slot 3 popup selector
+- Active chum applies rarity weight multiplier to fish spawning and bite speed multiplier to waiting timer
+- Catchable chum has 5% drop chance on fish catch
+- Chum tab added to fishing hut store
 
 ## Rarity System
 - 5 tiers: common, uncommon, rare, legendary, ultra_rare
