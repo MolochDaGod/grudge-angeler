@@ -95,6 +95,8 @@ export default function FishingGame() {
     reelProgress: 0.5,
     reelTarget: 0.5,
     reelDirection: 1,
+    reelGauge: 0.5,
+    isReeling: false,
     currentCatch: null as FishType | null,
     currentJunk: null as typeof JUNK_ITEMS[0] | null,
     swimmingFish: [] as SwimmingFish[],
@@ -136,6 +138,8 @@ export default function FishingGame() {
     currentCatch: null as FishType | null,
     currentJunk: null as typeof JUNK_ITEMS[0] | null,
     reelProgress: 0.5,
+    reelGauge: 0.5,
+    reelTarget: 0.5,
     castPower: 0,
     rodLevel: 1,
     bestCombo: 0,
@@ -247,6 +251,8 @@ export default function FishingGame() {
       currentCatch: s.currentCatch,
       currentJunk: s.currentJunk,
       reelProgress: s.reelProgress,
+      reelGauge: s.reelGauge,
+      reelTarget: s.reelTarget,
       castPower: s.castPower,
       rodLevel: s.rodLevel,
       bestCombo: s.bestCombo,
@@ -272,18 +278,24 @@ export default function FishingGame() {
     const onDocMouseMove = (e: MouseEvent) => {
       const st = stateRef.current;
       st.mouseX = e.clientX;
-      if (st.gameState === "reeling") {
-        st.reelProgress = e.clientX / canvas.width;
-      }
     };
-    const onDocTouchMove = (e: TouchEvent) => {
-      const st = stateRef.current;
-      if (st.gameState === "reeling" && e.touches[0]) {
-        st.reelProgress = e.touches[0].clientX / canvas.width;
-      }
+    const onDocMouseDown = () => {
+      stateRef.current.isReeling = true;
+    };
+    const onDocMouseUp = () => {
+      stateRef.current.isReeling = false;
+    };
+    const onDocTouchStart = () => {
+      stateRef.current.isReeling = true;
+    };
+    const onDocTouchEnd = () => {
+      stateRef.current.isReeling = false;
     };
     document.addEventListener("mousemove", onDocMouseMove);
-    document.addEventListener("touchmove", onDocTouchMove);
+    document.addEventListener("mousedown", onDocMouseDown);
+    document.addEventListener("mouseup", onDocMouseUp);
+    document.addEventListener("touchstart", onDocTouchStart);
+    document.addEventListener("touchend", onDocTouchEnd);
 
     const onKeyDown = (e: KeyboardEvent) => {
       const key = e.key.toLowerCase();
@@ -948,7 +960,7 @@ export default function FishingGame() {
           );
           if (nearbyFish.length > 0 || Math.random() < 0.2) {
             s.gameState = "bite";
-            s.biteTimer = 70 + Math.random() * 50;
+            s.biteTimer = 120 + Math.random() * 80;
             s.exclamationTimer = 0;
             if (nearbyFish.length > 0) {
               s.currentCatch = nearbyFish[0].type;
@@ -983,55 +995,72 @@ export default function FishingGame() {
       }
 
       if (s.gameState === "reeling") {
-        const difficultyMult = s.currentCatch ? (s.currentCatch.rarity === "legendary" ? 1.5 : s.currentCatch.rarity === "rare" ? 1.2 : 1) : 1;
-        s.reelTarget += s.reelDirection * (0.006 + s.rodLevel * 0.001) * difficultyMult * dt;
-        if (Math.random() < 0.005 * dt) s.reelDirection *= -1;
-        if (s.reelTarget >= 0.85) { s.reelTarget = 0.85; s.reelDirection = -1; }
-        if (s.reelTarget <= 0.15) { s.reelTarget = 0.15; s.reelDirection = 1; }
+        const difficultyMult = s.currentCatch
+          ? (s.currentCatch.rarity === "legendary" ? 1.8 : s.currentCatch.rarity === "rare" ? 1.4 : s.currentCatch.rarity === "uncommon" ? 1.15 : 1)
+          : 1;
 
-        const greenZone = 0.12 + s.rodLevel * 0.02;
-        const diff = Math.abs(s.reelProgress - s.reelTarget);
-        if (diff < greenZone) {
-          s.hookY -= (1.2 + s.rodLevel * 0.3) * dt;
-          if (Math.random() < 0.05 * dt) addParticles(s.hookX, s.hookY, 2, "#2ecc71", 1.5, "sparkle");
-          if (s.hookY <= waterY) {
-            s.gameState = "caught";
-            s.showCatchTimer = 200;
-            s.catchPopY = 0;
-            s.combo++;
-            if (s.combo > s.bestCombo) s.bestCombo = s.combo;
-            s.totalCaught++;
-            const pts = (s.currentCatch?.points || s.currentJunk?.points || 10) * (1 + (s.combo - 1) * 0.15);
-            s.score += Math.floor(pts);
+        const fishSpeed = (0.004 + s.rodLevel * 0.0005) * difficultyMult;
+        s.reelTarget += s.reelDirection * fishSpeed * dt;
+        if (Math.random() < (0.008 * difficultyMult) * dt) s.reelDirection *= -1;
+        if (s.reelTarget >= 0.88) { s.reelTarget = 0.88; s.reelDirection = -1; }
+        if (s.reelTarget <= 0.12) { s.reelTarget = 0.12; s.reelDirection = 1; }
 
-            const name = s.currentCatch?.name || s.currentJunk?.name || "Unknown";
-            const existing = s.caughtCollection.get(name);
-            if (existing) {
-              existing.count++;
-              if (s.combo > existing.bestCombo) existing.bestCombo = s.combo;
-            } else {
-              s.caughtCollection.set(name, { type: s.currentCatch, junk: s.currentJunk, count: 1, bestCombo: s.combo });
-            }
-
-            if (s.totalCaught % 5 === 0 && s.rodLevel < 5) s.rodLevel++;
-
-            addParticles(s.hookX, waterY, 25, "#f1c40f", 5, "sparkle");
-            addParticles(s.hookX, waterY, 15, "#ffffff", 3, "splash");
-            addRipple(s.hookX, waterY, 50);
-            s.flashTimer = 12;
-            s.screenShake = 5;
-            syncUI();
-          }
-        } else if (diff > 0.35) {
-          s.hookY += 0.6 * dt;
-          if (s.hookY > H - 40) {
-            s.gameState = "missed";
-            s.missReason = "The fish broke free!";
-            s.combo = 0;
-            s.showCatchTimer = 100;
-            syncUI();
-          }
+        const zoneDriftRight = 0.004 * dt;
+        const zoneMoveLeft = 0.008 * dt;
+        if (s.isReeling) {
+          s.reelProgress = Math.max(0.05, s.reelProgress - zoneMoveLeft);
+        } else {
+          s.reelProgress = Math.min(0.95, s.reelProgress + zoneDriftRight);
         }
+
+        const catchZoneHalf = (0.08 + s.rodLevel * 0.015);
+        const fishInZone = s.reelTarget >= (s.reelProgress - catchZoneHalf) && s.reelTarget <= (s.reelProgress + catchZoneHalf);
+
+        if (fishInZone) {
+          s.reelGauge = Math.min(1.0, s.reelGauge + 0.003 * dt);
+          s.hookY -= 0.8 * dt;
+          if (Math.random() < 0.04 * dt) addParticles(s.hookX, s.hookY, 2, "#2ecc71", 1.5, "sparkle");
+        } else {
+          s.reelGauge = Math.max(0, s.reelGauge - 0.004 * difficultyMult * dt);
+          s.hookY += 0.3 * dt;
+        }
+
+        if (s.reelGauge >= 1.0) {
+          s.gameState = "caught";
+          s.showCatchTimer = 200;
+          s.catchPopY = 0;
+          s.combo++;
+          if (s.combo > s.bestCombo) s.bestCombo = s.combo;
+          s.totalCaught++;
+          const pts = (s.currentCatch?.points || s.currentJunk?.points || 10) * (1 + (s.combo - 1) * 0.15);
+          s.score += Math.floor(pts);
+
+          const name = s.currentCatch?.name || s.currentJunk?.name || "Unknown";
+          const existing = s.caughtCollection.get(name);
+          if (existing) {
+            existing.count++;
+            if (s.combo > existing.bestCombo) existing.bestCombo = s.combo;
+          } else {
+            s.caughtCollection.set(name, { type: s.currentCatch, junk: s.currentJunk, count: 1, bestCombo: s.combo });
+          }
+
+          if (s.totalCaught % 5 === 0 && s.rodLevel < 5) s.rodLevel++;
+
+          addParticles(s.hookX, waterY, 25, "#f1c40f", 5, "sparkle");
+          addParticles(s.hookX, waterY, 15, "#ffffff", 3, "splash");
+          addRipple(s.hookX, waterY, 50);
+          s.flashTimer = 12;
+          s.screenShake = 5;
+          syncUI();
+        } else if (s.reelGauge <= 0) {
+          s.gameState = "missed";
+          s.missReason = "The fish broke free!";
+          s.combo = 0;
+          s.showCatchTimer = 100;
+          syncUI();
+        }
+
+        if (s.time % 2 === 0) syncUI();
       }
 
       if (s.gameState === "caught" || s.gameState === "missed") {
@@ -1188,7 +1217,10 @@ export default function FishingGame() {
       cancelAnimationFrame(gameLoopRef.current);
       window.removeEventListener("resize", resize);
       document.removeEventListener("mousemove", onDocMouseMove);
-      document.removeEventListener("touchmove", onDocTouchMove);
+      document.removeEventListener("mousedown", onDocMouseDown);
+      document.removeEventListener("mouseup", onDocMouseUp);
+      document.removeEventListener("touchstart", onDocTouchStart);
+      document.removeEventListener("touchend", onDocTouchEnd);
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("keyup", onKeyUp);
     };
@@ -1241,8 +1273,10 @@ export default function FishingGame() {
     if (s.gameState === "bite") {
       s.gameState = "reeling";
       s.reelProgress = 0.5;
-      s.reelTarget = 0.5;
+      s.reelTarget = 0.3 + Math.random() * 0.4;
       s.reelDirection = Math.random() > 0.5 ? 1 : -1;
+      s.reelGauge = 0.5;
+      s.isReeling = false;
       syncUI();
       return;
     }
@@ -1262,23 +1296,10 @@ export default function FishingGame() {
   }, [spawnFish, addParticles, addRipple, syncUI]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
-    const s = stateRef.current;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    s.mouseX = e.clientX;
-    if (s.gameState === "reeling") {
-      s.reelProgress = e.clientX / canvas.width;
-    }
+    stateRef.current.mouseX = e.clientX;
   }, []);
 
-  const handleTouchMove = useCallback((e: React.TouchEvent<HTMLCanvasElement>) => {
-    const s = stateRef.current;
-    const canvas = canvasRef.current;
-    if (!canvas || !e.touches[0]) return;
-    if (s.gameState === "reeling") {
-      e.preventDefault();
-      s.reelProgress = e.touches[0].clientX / canvas.width;
-    }
+  const handleTouchMove = useCallback((_e: React.TouchEvent<HTMLCanvasElement>) => {
   }, []);
 
   const rarityColor = (rarity: string) => {
@@ -1390,34 +1411,69 @@ export default function FishingGame() {
             </div>
           )}
 
-          {/* Reeling Minigame */}
-          {uiState.gameState === "reeling" && (
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2" style={{ pointerEvents: "none" }} data-testid="reel-bar">
-              <span style={{ color: "#ecf0f1", fontSize: 9, textShadow: "1px 1px 0 #000" }}>KEEP THE RED BAR IN THE GREEN ZONE!</span>
-              <div className="relative" style={{ width: Math.min(320, window.innerWidth * 0.7), height: 28, background: "rgba(8,15,25,0.85)", borderRadius: 10, border: "1px solid rgba(255,255,255,0.2)", overflow: "hidden" }}>
-                <div
-                  className="absolute h-full"
-                  style={{
-                    left: `${Math.max(0, (stateRef.current.reelTarget - 0.12 - stateRef.current.rodLevel * 0.02) * 100)}%`,
-                    width: `${(0.24 + stateRef.current.rodLevel * 0.04) * 100}%`,
-                    background: "rgba(46,204,113,0.3)",
-                    borderRadius: 6,
-                  }}
-                />
-                <div
-                  className="absolute top-0.5 w-3"
-                  style={{
-                    left: `calc(${uiState.reelProgress * 100}% - 6px)`,
-                    height: 24,
-                    background: "#e74c3c",
-                    borderRadius: 4,
-                    boxShadow: "0 0 8px rgba(231,76,60,0.6)",
-                  }}
-                />
+          {/* Reeling Minigame - Palworld Style */}
+          {uiState.gameState === "reeling" && (() => {
+            const barW = Math.min(340, window.innerWidth * 0.75);
+            const catchZoneW = (0.16 + uiState.rodLevel * 0.03) * 100;
+            const catchZoneLeft = Math.max(0, Math.min(100 - catchZoneW, (uiState.reelProgress - 0.08 - uiState.rodLevel * 0.015) * 100));
+            const fishLeft = uiState.reelTarget * 100;
+            const gaugePercent = uiState.reelGauge * 100;
+            const fishInZone = uiState.reelTarget >= (uiState.reelProgress - 0.08 - uiState.rodLevel * 0.015) &&
+                               uiState.reelTarget <= (uiState.reelProgress + 0.08 + uiState.rodLevel * 0.015);
+            return (
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2" style={{ pointerEvents: "none" }} data-testid="reel-bar">
+                <div style={{
+                  width: 44, height: 44, borderRadius: "50%",
+                  border: `3px solid ${fishInZone ? "#2ecc71" : "#e74c3c"}`,
+                  background: `conic-gradient(${fishInZone ? "#2ecc71" : "#e74c3c"} ${gaugePercent * 3.6}deg, rgba(8,15,25,0.7) ${gaugePercent * 3.6}deg)`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  boxShadow: fishInZone ? "0 0 12px rgba(46,204,113,0.4)" : "0 0 12px rgba(231,76,60,0.3)",
+                  transition: "border-color 0.15s, box-shadow 0.15s",
+                }} data-testid="reel-gauge">
+                  <div style={{
+                    width: 34, height: 34, borderRadius: "50%",
+                    background: "rgba(8,15,25,0.9)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 16,
+                  }}>
+                    <img src="/assets/icons/Icons_05.png" alt="" style={{ width: 20, height: 20, imageRendering: "pixelated" }} />
+                  </div>
+                </div>
+                <div className="relative" style={{
+                  width: barW, height: 32,
+                  background: "rgba(8,15,25,0.85)",
+                  borderRadius: 12,
+                  border: "1px solid rgba(255,255,255,0.15)",
+                  overflow: "hidden",
+                }}>
+                  <div className="absolute h-full" style={{
+                    left: `${catchZoneLeft}%`,
+                    width: `${catchZoneW}%`,
+                    background: fishInZone ? "rgba(46,204,113,0.35)" : "rgba(46,204,113,0.18)",
+                    borderRadius: 8,
+                    transition: "background 0.1s",
+                    border: "1px solid rgba(46,204,113,0.4)",
+                  }} data-testid="catch-zone" />
+                  <div className="absolute" style={{
+                    left: `calc(${fishLeft}% - 12px)`,
+                    top: 2, width: 28, height: 28,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    filter: fishInZone ? "drop-shadow(0 0 6px rgba(46,204,113,0.8))" : "drop-shadow(0 0 4px rgba(231,76,60,0.6))",
+                    transition: "filter 0.1s",
+                  }} data-testid="fish-icon">
+                    <img
+                      src={stateRef.current.currentCatch?.catchAsset || stateRef.current.currentJunk?.asset || "/assets/icons/Icons_05.png"}
+                      alt=""
+                      style={{ width: 24, height: 24, imageRendering: "pixelated" }}
+                    />
+                  </div>
+                </div>
+                <span style={{ color: "#b0bec5", fontSize: 8, textShadow: "1px 1px 0 #000" }}>
+                  Hold click to reel in!
+                </span>
               </div>
-              <span style={{ color: "#78909c", fontSize: 8, textShadow: "1px 1px 0 #000" }}>Move your mouse left and right!</span>
-            </div>
-          )}
+            );
+          })()}
 
           {/* Missed */}
           {uiState.gameState === "missed" && (
