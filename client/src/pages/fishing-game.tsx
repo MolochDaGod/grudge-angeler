@@ -330,23 +330,17 @@ export default function FishingGame() {
       const st = stateRef.current;
       st.mouseX = e.clientX;
       st.mouseY = e.clientY;
-      if (st.draggingRodTip && st.gameState === "casting") {
+      if (st.draggingRodTip && (st.gameState === "waiting" || st.gameState === "bite" || st.gameState === "reeling")) {
         const ox = e.clientX - st.lastFishermanX;
         const oy = e.clientY - st.lastFishermanY;
-        const isLeft = st.aimX < (st.lastFishermanX + 24 * 3);
-        if (isLeft) {
-          st.customRodTipLeft = { ox, oy };
-        } else {
-          st.customRodTipRight = { ox, oy };
-        }
+        st.customRodTipLeft = { ox, oy };
       }
     };
     const onDocMouseDown = (e: MouseEvent) => {
       if (e.button === 0) {
         const st = stateRef.current;
-        if (st.gameState === "casting") {
-          const isLeft = st.aimX < (st.lastFishermanX + 24 * 3);
-          const existing = isLeft ? st.customRodTipLeft : st.customRodTipRight;
+        if (st.gameState === "waiting" || st.gameState === "bite" || st.gameState === "reeling") {
+          const existing = st.customRodTipLeft;
           if (existing) {
             const tipScreenX = st.lastFishermanX + existing.ox;
             const tipScreenY = st.lastFishermanY + existing.oy;
@@ -384,14 +378,8 @@ export default function FishingGame() {
           st.draggingRodTip = false;
           const ox = e.clientX - st.lastFishermanX;
           const oy = e.clientY - st.lastFishermanY;
-          const isLeft = st.aimX < (st.lastFishermanX + 24 * 3);
-          if (isLeft) {
-            st.customRodTipLeft = { ox, oy };
-            console.log(`Rod tip LEFT offset: (${ox}, ${oy})`);
-          } else {
-            st.customRodTipRight = { ox, oy };
-            console.log(`Rod tip RIGHT offset: (${ox}, ${oy})`);
-          }
+          st.customRodTipLeft = { ox, oy };
+          console.log(`Rod tip offset: (${ox}, ${oy})`);
           return;
         }
         stateRef.current.isReeling = false;
@@ -1146,9 +1134,9 @@ export default function FishingGame() {
       s.lastFishermanX = fishermanX;
       s.lastFishermanY = fishermanY;
 
-      // Use custom rod tip offset if set
-      if (s.gameState === "casting" || s.gameState === "waiting" || s.gameState === "bite" || s.gameState === "reeling") {
-        const customTip = fishingFlip ? s.customRodTipLeft : s.customRodTipRight;
+      // Use custom rod tip offset if set (for when line is in water)
+      if (s.gameState === "waiting" || s.gameState === "bite" || s.gameState === "reeling") {
+        const customTip = s.customRodTipLeft;
         if (customTip) {
           rodTipX = fishermanX + customTip.ox;
           rodTipY = fishermanY + customTip.oy;
@@ -1278,35 +1266,15 @@ export default function FishingGame() {
 
       // Crosshair and aim line during casting
       if (s.gameState === "casting") {
-        // Custom fishing line from rod tip to crosshair
-        ctx.strokeStyle = "rgba(200,190,170,0.7)";
-        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = "rgba(200,190,170,0.5)";
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
         ctx.beginPath();
         ctx.moveTo(rodTipX, rodTipY);
-        const lineMidX = (rodTipX + s.aimX) / 2;
-        const lineSag = Math.max(20, Math.abs(rodTipX - s.aimX) * 0.1);
-        ctx.quadraticCurveTo(lineMidX, Math.max(rodTipY, s.aimY) + lineSag, s.aimX, s.aimY);
+        ctx.lineTo(s.aimX, s.aimY);
         ctx.stroke();
+        ctx.setLineDash([]);
 
-        // Draggable rod tip handle
-        const handlePulse = 0.6 + Math.sin(s.time * 0.12) * 0.4;
-        ctx.globalAlpha = s.draggingRodTip ? 1 : handlePulse;
-        ctx.fillStyle = s.draggingRodTip ? "#ff6b6b" : "#4ecdc4";
-        ctx.strokeStyle = "#fff";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(rodTipX, rodTipY, s.draggingRodTip ? 8 : 6, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-        ctx.globalAlpha = 1;
-
-        // Label for the handle
-        ctx.fillStyle = "rgba(0,0,0,0.7)";
-        ctx.font = "10px 'Press Start 2P', monospace";
-        ctx.textAlign = "center";
-        ctx.fillText("DRAG", rodTipX, rodTipY - 14);
-
-        // Crosshair at aim point
         const crossSize = 10;
         const pulse = 0.7 + Math.sin(s.time * 0.1) * 0.3;
         ctx.globalAlpha = pulse;
@@ -1323,6 +1291,25 @@ export default function FishingGame() {
         ctx.arc(s.aimX, s.aimY, crossSize + 4, 0, Math.PI * 2);
         ctx.stroke();
         ctx.globalAlpha = 1;
+      }
+
+      // Draggable rod tip handle when line is in water
+      if (s.gameState === "waiting" || s.gameState === "bite" || s.gameState === "reeling") {
+        const handlePulse = 0.6 + Math.sin(s.time * 0.12) * 0.4;
+        ctx.globalAlpha = s.draggingRodTip ? 1 : handlePulse;
+        ctx.fillStyle = s.draggingRodTip ? "#ff6b6b" : "#4ecdc4";
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(rodTipX, rodTipY, s.draggingRodTip ? 8 : 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+
+        ctx.fillStyle = "rgba(0,0,0,0.7)";
+        ctx.font = "10px 'Press Start 2P', monospace";
+        ctx.textAlign = "center";
+        ctx.fillText("DRAG", rodTipX, rodTipY - 14);
       }
 
       // Show dock climb indicator when swimming near dock
