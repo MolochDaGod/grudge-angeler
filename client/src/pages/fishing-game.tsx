@@ -106,7 +106,6 @@ export default function FishingGame() {
     reelGauge: 0.5,
     isReeling: false,
     isRightMouseDown: false,
-    leftClickQueued: 0,
     currentCatch: null as FishType | null,
     currentJunk: null as typeof JUNK_ITEMS[0] | null,
     swimmingFish: [] as SwimmingFish[],
@@ -331,9 +330,6 @@ export default function FishingGame() {
     const onDocMouseDown = (e: MouseEvent) => {
       if (e.button === 0) {
         stateRef.current.isReeling = true;
-        if (stateRef.current.gameState === "reeling") {
-          stateRef.current.leftClickQueued++;
-        }
       }
       if (e.button === 2) {
         stateRef.current.isRightMouseDown = true;
@@ -361,9 +357,6 @@ export default function FishingGame() {
     };
     const onDocTouchStart = () => {
       stateRef.current.isReeling = true;
-      if (stateRef.current.gameState === "reeling") {
-        stateRef.current.leftClickQueued++;
-      }
     };
     const onDocTouchEnd = () => {
       stateRef.current.isReeling = false;
@@ -1394,15 +1387,11 @@ export default function FishingGame() {
 
         const dtSec = dt / 60;
 
-        const clickMoveRight = 0.05;
-        while (s.leftClickQueued > 0) {
-          s.reelProgress = Math.min(0.95, s.reelProgress + clickMoveRight);
-          s.leftClickQueued--;
-        }
-
-        if (s.isRightMouseDown) {
+        if (s.isReeling) {
+          s.reelProgress = Math.min(0.95, s.reelProgress + 0.40 * dtSec);
+        } else if (s.isRightMouseDown) {
           s.reelProgress = Math.max(0.05, s.reelProgress - 0.40 * dtSec);
-        } else if (!s.isReeling) {
+        } else {
           const driftRight = 0.05 * (1.0 / alignmentBonus) * dtSec;
           s.reelProgress = Math.min(0.95, s.reelProgress + driftRight);
         }
@@ -1720,7 +1709,6 @@ export default function FishingGame() {
       s.reelGauge = 0.5;
       s.isReeling = false;
       s.isRightMouseDown = false;
-      s.leftClickQueued = 0;
       syncUI();
       return;
     }
