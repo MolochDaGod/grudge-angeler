@@ -1429,7 +1429,12 @@ export default function FishingGame() {
         const alignment = Math.max(0, 1 - alignDist / maxAlignDist);
         const alignmentBonus = 0.6 + alignment * 0.4;
 
-        const fishSpeed = (0.004 + s.rodLevel * 0.0005) * difficultyMult * (1.0 / alignmentBonus);
+        const pierWorldX = W * 0.45 - 80;
+        const distFromDock = Math.max(0, pierWorldX - s.playerX);
+        const maxDist = W * 3;
+        const distRatio = Math.min(1, distFromDock / maxDist);
+        const distanceMult = 0.5 + distRatio * 0.5;
+        const fishSpeed = (0.004 + s.rodLevel * 0.0005) * difficultyMult * (1.0 / alignmentBonus) * distanceMult;
         s.reelTarget += s.reelDirection * fishSpeed * dt;
         if (Math.random() < (0.008 * difficultyMult) * dt) s.reelDirection *= -1;
         if (s.reelTarget >= 0.88) { s.reelTarget = 0.88; s.reelDirection = -1; }
