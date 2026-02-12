@@ -113,8 +113,12 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 - Clicking "Yes" starts boarding cutscene: fisherman walks to boat edge, hops onto boat
 - Boarding has 3 phases: walk (phase 0), jump (phase 1), land (phase 2)
 - GameState "boarding" handles cutscene, transitions to "idle" with inBoat=true
-- When inBoat: A/D moves the entire boat left/right on water, fisherman rides on deck
+- When inBoat: A/D moves boat with rowing animation (Fisherman_row.png), fisherman rides on deck
+- Spacebar toggles standing/sitting position in boat; standing required for casting
+- Bottom 20% of fisherman sprite clipped when in boat (legs hidden by boat hull)
+- Boat naturally drifts toward nearest fish within 400px range (gentle physics pull)
 - Fishing mechanics work identically from boat (cast, wait, reel, catch)
+- Casting auto-stands fisherman up; returning to idle after catch goes back to sitting
 - boatX tracks boat horizontal position; fisherman position derived from boatX + offset
 - Fisherman bobs with boat using boatBobVal
 - Press E near pier to exit boat (returns to pier walking)
