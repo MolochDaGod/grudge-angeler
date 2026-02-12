@@ -320,6 +320,17 @@ export default function FishingGame() {
       }
       if (e.button === 2) {
         stateRef.current.isRightMouseDown = true;
+        const gs = stateRef.current.gameState;
+        if (gs === "casting") {
+          stateRef.current.gameState = "idle";
+          stateRef.current.hookX = -100;
+          stateRef.current.hookY = -100;
+        } else if (gs === "waiting") {
+          stateRef.current.gameState = "idle";
+          stateRef.current.hookX = -100;
+          stateRef.current.hookY = -100;
+          stateRef.current.swimmingFish.forEach(f => { f.approachingHook = false; });
+        }
       }
     };
     const onDocMouseUp = (e: MouseEvent) => {
@@ -329,7 +340,7 @@ export default function FishingGame() {
       if (e.button === 2) stateRef.current.isRightMouseDown = false;
     };
     const onContextMenu = (e: Event) => {
-      if (stateRef.current.gameState === "reeling") e.preventDefault();
+      e.preventDefault();
     };
     const onDocTouchStart = () => {
       stateRef.current.isReeling = true;
@@ -420,7 +431,7 @@ export default function FishingGame() {
       if (s.playerX === 0) s.playerX = defaultFishermanX;
 
       s.time += dt;
-      s.waterOffset += 0.3 * dt;
+      s.waterOffset += 0.12 * dt;
 
       const WALK_SPEED = 2.5;
       const SWIM_SPEED = 2.0;
@@ -612,43 +623,38 @@ export default function FishingGame() {
       ctx.fillStyle = waterGrad;
       ctx.fillRect(0, waterY, W, H - waterY);
 
-      const waterTile = getImg("/assets/objects/Water.png");
-      if (waterTile && waterTile.complete) {
-        const tileScale = 2.5;
-        const tileW = 96 * tileScale;
-        const tileH = 96 * tileScale;
-        ctx.globalAlpha = 0.18;
-        const scrollX = (s.waterOffset * 8) % tileW;
-        for (let ty = waterY; ty < H; ty += tileH) {
-          for (let tx = -scrollX - tileW; tx < W + tileW; tx += tileW) {
-            ctx.drawImage(waterTile, tx, ty, tileW, tileH);
-          }
-        }
-        ctx.globalAlpha = 1;
-      }
+      // Surface highlight band - soft glow at water line
+      const surfGrad = ctx.createLinearGradient(0, waterY - 2, 0, waterY + 18);
+      surfGrad.addColorStop(0, "rgba(136,204,238,0.0)");
+      surfGrad.addColorStop(0.3, "rgba(136,204,238,0.12)");
+      surfGrad.addColorStop(1, "rgba(136,204,238,0.0)");
+      ctx.fillStyle = surfGrad;
+      ctx.fillRect(0, waterY - 2, W, 20);
 
-      ctx.globalAlpha = 0.08;
-      ctx.fillStyle = "#ffffff";
-      for (let x = 0; x < W; x += 3) {
-        const waveH = Math.sin((x + s.waterOffset * 12) * 0.025) * 3 +
-                      Math.sin((x + s.waterOffset * 8) * 0.04) * 1.5;
-        if (waveH > 1) {
-          ctx.fillRect(x, waterY + waveH - 2, 2, 2);
-        }
+      // Surface shimmer - small horizontal highlight dashes that drift
+      for (let i = 0; i < 30; i++) {
+        const sx = ((i * 73.7 + s.waterOffset * 3) % (W + 40)) - 20;
+        const sy = waterY + 2 + Math.sin(s.time * 0.02 + i * 2.1) * 3;
+        const sw = 6 + Math.sin(i * 1.3) * 4;
+        const shimmerAlpha = 0.06 + Math.sin(s.time * 0.03 + i * 0.9) * 0.04;
+        ctx.globalAlpha = Math.max(0, shimmerAlpha);
+        ctx.fillStyle = "#c8e6f8";
+        ctx.fillRect(sx, sy, sw, 1);
       }
       ctx.globalAlpha = 1;
 
-      // Water waves
-      for (let row = 0; row < 10; row++) {
-        const wy = waterY + row * 25 + 8;
-        const waveAlpha = 0.08 - row * 0.005;
+      // Gentle wave lines - fewer, softer, slower
+      for (let row = 0; row < 6; row++) {
+        const wy = waterY + row * 35 + 12;
+        const depth = row / 6;
+        const waveAlpha = 0.06 * (1 - depth * 0.6);
         ctx.globalAlpha = Math.max(0, waveAlpha);
-        ctx.strokeStyle = row % 2 === 0 ? "#88ccee" : "#2980b9";
-        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = `rgba(${100 + row * 8},${180 - row * 10},${220 - row * 8},1)`;
+        ctx.lineWidth = 1;
         ctx.beginPath();
         for (let x = 0; x < W; x += 2) {
-          const wave = Math.sin((x + s.waterOffset * 10 + row * 40) * 0.02) * 3 +
-                       Math.sin((x + s.waterOffset * 14 + row * 25) * 0.035) * 2;
+          const wave = Math.sin((x + s.waterOffset * 2.5 + row * 50) * 0.015) * (3 - depth * 1.5) +
+                       Math.sin((x + s.waterOffset * 1.8 + row * 30) * 0.028) * (2 - depth);
           if (x === 0) ctx.moveTo(x, wy + wave);
           else ctx.lineTo(x, wy + wave);
         }
@@ -656,26 +662,43 @@ export default function FishingGame() {
       }
       ctx.globalAlpha = 1;
 
-      // Light rays in water
-      ctx.globalAlpha = 0.025 + dayPhase * 0.015;
-      for (let i = 0; i < 7; i++) {
-        const rx = W * 0.1 + i * W * 0.12 + Math.sin(s.time * 0.004 + i * 1.5) * 30;
+      // Soft caustic light patches - dappled light on water
+      for (let i = 0; i < 12; i++) {
+        const cx = ((i * 127 + s.waterOffset * 1.2) % (W + 80)) - 40;
+        const cy = waterY + 20 + (i * 67) % Math.max(1, (H - waterY) * 0.7);
+        const cr = 15 + Math.sin(s.time * 0.015 + i * 2.3) * 8;
+        const ca = 0.02 + Math.sin(s.time * 0.012 + i * 1.7) * 0.015;
+        if (ca > 0) {
+          ctx.globalAlpha = ca;
+          const cGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, cr);
+          cGrad.addColorStop(0, dayPhase > 0.5 ? "rgba(255,255,200,1)" : "rgba(150,200,255,1)");
+          cGrad.addColorStop(1, "rgba(255,255,255,0)");
+          ctx.fillStyle = cGrad;
+          ctx.fillRect(cx - cr, cy - cr, cr * 2, cr * 2);
+        }
+      }
+      ctx.globalAlpha = 1;
+
+      // Light rays in water - softer, slower sway
+      ctx.globalAlpha = 0.02 + dayPhase * 0.012;
+      for (let i = 0; i < 5; i++) {
+        const rx = W * 0.12 + i * W * 0.18 + Math.sin(s.time * 0.002 + i * 1.8) * 25;
         ctx.fillStyle = dayPhase > 0.5 ? "#ffffcc" : "#aaccff";
         ctx.beginPath();
-        ctx.moveTo(rx - 8, waterY);
-        ctx.lineTo(rx + 40, H);
-        ctx.lineTo(rx + 55, H);
-        ctx.lineTo(rx + 12, waterY);
+        ctx.moveTo(rx - 5, waterY);
+        ctx.lineTo(rx + 30, H);
+        ctx.lineTo(rx + 42, H);
+        ctx.lineTo(rx + 8, waterY);
         ctx.fill();
       }
       ctx.globalAlpha = 1;
 
-      // Underwater bubbles
-      ctx.globalAlpha = 0.15;
-      for (let i = 0; i < 20; i++) {
-        const bx = (i * 137 + s.time * 0.4) % W;
-        const by = waterY + 40 + ((i * 97 + s.time * 0.25) % Math.max(1, H - waterY - 50));
-        const br = 1 + Math.sin(s.time * 0.04 + i) * 0.5 + Math.random() * 0.5;
+      // Underwater bubbles - fewer, gentler
+      ctx.globalAlpha = 0.12;
+      for (let i = 0; i < 12; i++) {
+        const bx = (i * 137 + s.time * 0.2) % W;
+        const by = waterY + 40 + ((i * 97 + s.time * 0.12) % Math.max(1, H - waterY - 50));
+        const br = 1 + Math.sin(s.time * 0.03 + i) * 0.5;
         ctx.fillStyle = "#88ccff";
         ctx.beginPath();
         ctx.arc(bx, by, br, 0, Math.PI * 2);
@@ -884,12 +907,20 @@ export default function FishingGame() {
           addParticles(s.swimX + (s.facingLeft ? -20 : 20), s.swimY, 2, "#88ccff", 1.5, "bubble");
         }
         ctx.globalAlpha = 1;
-      } else if (s.gameState === "idle" && (s.keysDown.has("a") || s.keysDown.has("d"))) {
-        fishermanSprite = "/assets/fisherman/Fisherman_walk.png";
-        fishermanFrameCount = 6;
-        fishermanFrame = Math.floor(s.time * 0.12) % 6;
-        isWalking = true;
-        drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, s.facingLeft);
+      } else if (s.gameState === "idle") {
+        const moving = s.keysDown.has("a") || s.keysDown.has("d");
+        if (moving) {
+          fishermanSprite = "/assets/fisherman/Fisherman_walk.png";
+          fishermanFrameCount = 6;
+          fishermanFrame = Math.floor(s.time * 0.12) % 6;
+          isWalking = true;
+          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, s.facingLeft);
+        } else {
+          fishermanSprite = "/assets/fisherman/Fisherman_idle.png";
+          fishermanFrameCount = 4;
+          fishermanFrame = Math.floor(s.time * 0.04) % 4;
+          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, fishingFlip);
+        }
       } else {
         if (s.gameState === "casting") {
           fishermanSprite = "/assets/fisherman/Fisherman_hook.png";
