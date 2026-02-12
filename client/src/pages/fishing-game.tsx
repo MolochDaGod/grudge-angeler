@@ -528,7 +528,7 @@ export default function FishingGame() {
     }));
 
     const spriteNames = [
-      "Fisherman_idle.png", "Fisherman_fish.png", "Fisherman_hook.png",
+      "Fisherman_idle.png", "Fisherman_fish.png", "Fisherman_attack.png",
       "Fisherman_hurt.png", "Fisherman_walk.png", "Fisherman_swim.png",
       "Fisherman_swim2.png", "Fisherman_jump.png", "Fisherman_idle2.png",
     ];
@@ -1516,7 +1516,7 @@ export default function FishingGame() {
         }
       } else {
         if (s.gameState === "casting") {
-          fishermanSprite = `/assets/${charFolder}/Fisherman_hook.png`;
+          fishermanSprite = `/assets/${charFolder}/Fisherman_attack.png`;
           fishermanFrameCount = 6;
           fishermanFrame = Math.floor(s.time * 0.08) % 6;
           rodTipKey = "hook";
