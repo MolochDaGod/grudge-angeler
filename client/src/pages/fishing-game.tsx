@@ -2006,12 +2006,6 @@ export default function FishingGame() {
         ctx.shadowColor = "#3498db";
         ctx.shadowBlur = 30;
         ctx.fillStyle = "#4fc3f7";
-        const logoImg = imagesRef.current.get("/assets/logo.png");
-        if (logoImg && logoImg.complete) {
-          const logoSize = 80;
-          ctx.drawImage(logoImg, W / 2 - logoSize / 2, titleY - logoSize - 10, logoSize, logoSize);
-        }
-
         ctx.font = "bold 48px 'Press Start 2P', monospace";
         ctx.textAlign = "center";
         ctx.fillText("GRUDGE", W / 2, titleY);
@@ -2029,6 +2023,12 @@ export default function FishingGame() {
           ctx.fillStyle = "#ecf0f1";
           ctx.font = "14px 'Press Start 2P', monospace";
           ctx.fillText("CLICK TO ENTER", W / 2, titleY + 150);
+        }
+
+        const logoImg = imagesRef.current.get("/assets/logo.png");
+        if (logoImg && logoImg.complete) {
+          const logoSize = 320;
+          ctx.drawImage(logoImg, W / 2 - logoSize / 2, titleY + 170, logoSize, logoSize);
         }
 
         ctx.fillStyle = "#607d8b";
