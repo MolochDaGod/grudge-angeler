@@ -301,6 +301,21 @@ export default function FishingGame() {
     starCount: 50,
     stars: [] as { x: number; y: number; size: number; twinkle: number }[],
     screenShake: 0,
+    weather: "clear" as "clear" | "cloudy" | "rain" | "storm" | "fog",
+    weatherTimer: 0,
+    weatherTransition: 0,
+    rainDrops: [] as { x: number; y: number; speed: number; length: number }[],
+    lightningTimer: 0,
+    lightningFlash: 0,
+    celestialEvent: "none" as "none" | "red_sun" | "green_moon" | "tentacle_sun" | "blood_moon",
+    celestialTimer: 0,
+    celestialFade: 0,
+    windSpeed: 0,
+    windTarget: 0,
+    bgBirds: [] as { x: number; y: number; frame: number; speed: number; wingPhase: number }[],
+    bgShips: [] as { x: number; y: number; size: number; speed: number; type: number }[],
+    shootingStars: [] as { x: number; y: number; vx: number; vy: number; life: number; trail: number[] }[],
+    auroraPhase: 0,
     catchPopY: 0,
     mouseX: 0,
     mouseY: 0,
@@ -429,12 +444,17 @@ export default function FishingGame() {
 
     const lure = LURES[s.equippedLure];
     const wisdomBoost = 1 + s.attributes.Wisdom * 0.01 * (1 + s.attributes.Tactics * 0.005);
+    const ce = s.celestialEvent;
+    const ceFade = s.celestialFade;
+    const celestialRare = ce === "red_sun" ? 1 + ceFade * 1.5 : 1;
+    const celestialLegendary = ce === "green_moon" ? 1 + ceFade * 2.5 : ce === "blood_moon" ? 1 + ceFade * 1.5 : 1;
+    const celestialUltra = ce === "tentacle_sun" ? 1 + ceFade * 3.5 : ce === "blood_moon" ? 1 + ceFade * 2 : 1;
     const adjustedWeights = FISH_TYPES.map(ft => {
       let w = ft.weight;
       const rarityBoost = distRatio;
-      if (ft.rarity === "ultra_rare") w *= (1 + rarityBoost * 25) * lure.rarityBoost * wisdomBoost;
-      else if (ft.rarity === "legendary") w *= (1 + rarityBoost * 15) * lure.rarityBoost * wisdomBoost;
-      else if (ft.rarity === "rare") w *= (1 + rarityBoost * 8) * lure.rarityBoost * wisdomBoost;
+      if (ft.rarity === "ultra_rare") w *= (1 + rarityBoost * 25) * lure.rarityBoost * wisdomBoost * celestialUltra;
+      else if (ft.rarity === "legendary") w *= (1 + rarityBoost * 15) * lure.rarityBoost * wisdomBoost * celestialLegendary;
+      else if (ft.rarity === "rare") w *= (1 + rarityBoost * 8) * lure.rarityBoost * wisdomBoost * celestialRare;
       else if (ft.rarity === "uncommon") w *= (1 + rarityBoost * 3) * (1 + (wisdomBoost - 1) * 0.5);
       else w *= Math.max(0.3, 1 - rarityBoost * 0.5);
       if (lure.targetFish.includes(ft.name)) w *= lure.targetBonus;
@@ -527,6 +547,16 @@ export default function FishingGame() {
     const s = stateRef.current;
     s.stars = Array.from({ length: s.starCount }, () => ({
       x: Math.random(), y: Math.random() * 0.4, size: 1 + Math.random() * 2, twinkle: Math.random() * Math.PI * 2,
+    }));
+    s.weatherTimer = 600 + Math.random() * 1200;
+    s.bgBirds = Array.from({ length: 4 }, () => ({
+      x: Math.random() * 1600, y: 30 + Math.random() * 60, frame: 0, speed: 0.3 + Math.random() * 0.5, wingPhase: Math.random() * Math.PI * 2,
+    }));
+    s.bgShips = Array.from({ length: 2 }, () => ({
+      x: -200 - Math.random() * 400, y: 0, size: 0.5 + Math.random() * 0.5, speed: 0.08 + Math.random() * 0.1, type: Math.floor(Math.random() * 3),
+    }));
+    s.rainDrops = Array.from({ length: 200 }, () => ({
+      x: Math.random() * 1600, y: Math.random() * 600, speed: 4 + Math.random() * 6, length: 4 + Math.random() * 8,
     }));
 
     const spriteNames = [
@@ -1011,81 +1041,399 @@ export default function FishingGame() {
         ctx.translate(shakeX, shakeY);
       }
 
-      // Sky gradient - day/night cycle based on score milestones
+      // === WEATHER & CELESTIAL UPDATE ===
+      s.weatherTimer -= dt;
+      if (s.weatherTimer <= 0) {
+        const weathers: typeof s.weather[] = ["clear", "clear", "clear", "cloudy", "cloudy", "rain", "storm", "fog"];
+        const prev = s.weather;
+        s.weather = weathers[Math.floor(Math.random() * weathers.length)];
+        if (s.weather !== prev) s.weatherTransition = 0;
+        s.weatherTimer = 1200 + Math.random() * 2400;
+      }
+      if (s.celestialEvent === "none" && Math.random() < 0.0003 * dt) {
+        const dayP = Math.sin(s.time * 0.002) * 0.5 + 0.5;
+        const nightEvents: typeof s.celestialEvent[] = ["green_moon", "blood_moon"];
+        const dayEvents: typeof s.celestialEvent[] = ["red_sun", "tentacle_sun"];
+        const events = dayP > 0.5 ? dayEvents : nightEvents;
+        s.celestialEvent = events[Math.floor(Math.random() * events.length)];
+        s.celestialTimer = 800 + Math.random() * 600;
+        s.celestialFade = 0;
+      }
+      s.weatherTransition = Math.min(1, s.weatherTransition + 0.002 * dt);
+      if (s.celestialEvent !== "none") {
+        s.celestialTimer -= dt;
+        s.celestialFade = s.celestialTimer > 100 ? Math.min(1, s.celestialFade + 0.005 * dt) : Math.max(0, s.celestialFade - 0.008 * dt);
+        if (s.celestialTimer <= 0) { s.celestialEvent = "none"; s.celestialFade = 0; }
+      }
+      s.windTarget += (Math.random() - 0.5) * 0.01 * dt;
+      s.windTarget = Math.max(-1.5, Math.min(1.5, s.windTarget));
+      s.windSpeed += (s.windTarget - s.windSpeed) * 0.01 * dt;
+      if (s.weather === "storm") s.windSpeed = Math.max(Math.abs(s.windSpeed), 0.8) * Math.sign(s.windSpeed || 1);
+      s.auroraPhase += 0.003 * dt;
+      if (s.lightningFlash > 0) s.lightningFlash -= 0.05 * dt;
+      if (s.weather === "storm" && Math.random() < 0.003 * dt) { s.lightningFlash = 1; s.lightningTimer = 3; }
+
+      for (const bird of s.bgBirds) {
+        bird.x += bird.speed * dt + s.windSpeed * 0.3 * dt;
+        bird.wingPhase += 0.08 * dt;
+        if (bird.x > W + 100) { bird.x = -60; bird.y = 25 + Math.random() * 70; }
+        if (bird.x < -100) { bird.x = W + 60; bird.y = 25 + Math.random() * 70; }
+      }
+      for (const ship of s.bgShips) {
+        ship.x += ship.speed * dt;
+        if (ship.x > W + 300) { ship.x = -250; ship.size = 0.4 + Math.random() * 0.5; ship.type = Math.floor(Math.random() * 3); }
+      }
+      if (Math.random() < 0.002 * dt && s.shootingStars.length < 3) {
+        s.shootingStars.push({ x: Math.random() * W, y: Math.random() * waterY * 0.3, vx: 3 + Math.random() * 4, vy: 1.5 + Math.random() * 2, life: 40, trail: [] });
+      }
+      for (let i = s.shootingStars.length - 1; i >= 0; i--) {
+        const ss = s.shootingStars[i];
+        ss.trail.push(ss.x, ss.y);
+        if (ss.trail.length > 20) ss.trail.splice(0, 2);
+        ss.x += ss.vx * dt; ss.y += ss.vy * dt; ss.life -= dt;
+        if (ss.life <= 0) s.shootingStars.splice(i, 1);
+      }
+
+      // Sky gradient - day/night cycle
       const dayPhase = Math.sin(s.time * 0.002) * 0.5 + 0.5;
+      let skyR = Math.floor(30 + dayPhase * 105);
+      let skyG = Math.floor(30 + dayPhase * 176);
+      let skyB = Math.floor(62 + dayPhase * 173);
+      const isStormy = s.weather === "storm" || s.weather === "rain";
+      const stormDarken = isStormy ? s.weatherTransition * 0.4 : 0;
+      const fogBrighten = s.weather === "fog" ? s.weatherTransition * 0.15 : 0;
+      skyR = Math.floor(skyR * (1 - stormDarken) + skyR * fogBrighten * 0.3);
+      skyG = Math.floor(skyG * (1 - stormDarken) + skyG * fogBrighten * 0.3);
+      skyB = Math.floor(skyB * (1 - stormDarken * 0.6) + skyB * fogBrighten * 0.2);
+      if (s.celestialEvent === "red_sun" && dayPhase > 0.5) {
+        const cf = s.celestialFade * 0.5;
+        skyR = Math.floor(skyR + (180 - skyR) * cf); skyG = Math.floor(skyG * (1 - cf * 0.4)); skyB = Math.floor(skyB * (1 - cf * 0.5));
+      } else if (s.celestialEvent === "green_moon" && dayPhase <= 0.5) {
+        const cf = s.celestialFade * 0.4;
+        skyG = Math.floor(skyG + (80 - skyG) * cf); skyR = Math.floor(skyR * (1 - cf * 0.3)); skyB = Math.floor(skyB + (40 - skyB) * cf * 0.3);
+      } else if (s.celestialEvent === "blood_moon" && dayPhase <= 0.5) {
+        const cf = s.celestialFade * 0.4;
+        skyR = Math.floor(skyR + (90 - skyR) * cf); skyG = Math.floor(skyG * (1 - cf * 0.5)); skyB = Math.floor(skyB * (1 - cf * 0.4));
+      } else if (s.celestialEvent === "tentacle_sun" && dayPhase > 0.5) {
+        const cf = s.celestialFade * 0.3;
+        skyR = Math.floor(skyR + (60 - skyR) * cf); skyG = Math.floor(skyG * (1 - cf * 0.2)); skyB = Math.floor(skyB + (80 - skyB) * cf);
+      }
       const skyGrad = ctx.createLinearGradient(0, 0, 0, waterY);
-      const skyR = Math.floor(30 + dayPhase * 105);
-      const skyG = Math.floor(30 + dayPhase * 176);
-      const skyB = Math.floor(62 + dayPhase * 173);
       skyGrad.addColorStop(0, `rgb(${skyR},${skyG},${skyB})`);
-      skyGrad.addColorStop(0.6, `rgb(${Math.min(255, skyR + 40)},${Math.min(255, skyG + 30)},${Math.min(255, skyB + 20)})`);
+      skyGrad.addColorStop(0.4, `rgb(${Math.min(255, skyR + 20)},${Math.min(255, skyG + 15)},${Math.min(255, skyB + 10)})`);
+      skyGrad.addColorStop(0.7, `rgb(${Math.min(255, skyR + 50)},${Math.min(255, skyG + 35)},${Math.min(255, skyB + 20)})`);
       skyGrad.addColorStop(1, `rgb(${Math.min(255, skyR + 80)},${Math.min(255, skyG + 50)},${Math.min(255, skyB + 30)})`);
       ctx.fillStyle = skyGrad;
       ctx.fillRect(0, 0, W, waterY + 5);
 
       // Stars (visible when dark)
-      if (dayPhase < 0.4) {
+      if (dayPhase < 0.4 && !isStormy) {
         const starAlpha = (0.4 - dayPhase) / 0.4;
         for (const star of s.stars) {
           const twinkle = Math.sin(s.time * 0.05 + star.twinkle) * 0.5 + 0.5;
-          ctx.globalAlpha = starAlpha * twinkle;
-          ctx.fillStyle = "#ffffff";
+          ctx.globalAlpha = starAlpha * twinkle * (s.weather === "cloudy" ? 0.4 : 1);
+          ctx.fillStyle = s.celestialEvent === "green_moon" ? `hsl(${120 + Math.sin(star.twinkle) * 30}, 80%, 80%)` :
+            s.celestialEvent === "blood_moon" ? `hsl(${0 + Math.sin(star.twinkle) * 15}, 70%, 75%)` : "#ffffff";
           ctx.fillRect(star.x * W, star.y * H, star.size, star.size);
         }
         ctx.globalAlpha = 1;
       }
 
-      // Sun/Moon
-      const sunX = W * 0.85;
-      const sunY = 50 + dayPhase * 30;
-      if (dayPhase > 0.5) {
-        ctx.fillStyle = "#f39c12";
-        ctx.shadowColor = "#f39c12";
-        ctx.shadowBlur = 40;
-        ctx.beginPath();
-        ctx.arc(sunX, sunY, 25, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-      } else {
-        ctx.fillStyle = "#ecf0f1";
-        ctx.shadowColor = "#bdc3c7";
-        ctx.shadowBlur = 20;
-        ctx.beginPath();
-        ctx.arc(sunX, sunY + 20, 18, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
+      // Shooting stars
+      for (const ss of s.shootingStars) {
+        if (dayPhase >= 0.4) continue;
+        const alpha = Math.min(1, ss.life / 10) * ((0.4 - dayPhase) / 0.4);
+        for (let t = 0; t < ss.trail.length - 2; t += 2) {
+          ctx.globalAlpha = alpha * (t / ss.trail.length) * 0.6;
+          ctx.fillStyle = "#ffffcc";
+          ctx.fillRect(ss.trail[t], ss.trail[t + 1], 2, 1);
+        }
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = "#ffffee";
+        ctx.fillRect(ss.x, ss.y, 3, 2);
+        ctx.globalAlpha = 1;
       }
 
-      // Clouds
-      ctx.globalAlpha = 0.25 + dayPhase * 0.15;
-      for (let i = 0; i < 6; i++) {
-        const cx = ((s.time * 0.15 + i * 220) % (W + 300)) - 150;
-        const cy = 50 + i * 25 + Math.sin(s.time * 0.008 + i * 2) * 4;
-        ctx.fillStyle = dayPhase > 0.5 ? "#ffffff" : "#8899aa";
-        ctx.beginPath();
-        ctx.ellipse(cx, cy, 50 + i * 8, 14 + i * 2, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.ellipse(cx + 35, cy - 4, 35 + i * 5, 10 + i * 2, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.ellipse(cx - 20, cy + 2, 30 + i * 4, 10 + i, 0, 0, Math.PI * 2);
-        ctx.fill();
+      // Aurora borealis (appears during green_moon or blood_moon)
+      if ((s.celestialEvent === "green_moon" || s.celestialEvent === "blood_moon") && dayPhase < 0.4) {
+        const auroraAlpha = s.celestialFade * 0.25 * ((0.4 - dayPhase) / 0.4);
+        for (let band = 0; band < 5; band++) {
+          ctx.globalAlpha = auroraAlpha * (0.6 + Math.sin(s.auroraPhase + band * 0.8) * 0.4);
+          const baseHue = s.celestialEvent === "green_moon" ? 120 : 340;
+          const hue = baseHue + band * 15 + Math.sin(s.auroraPhase * 0.7 + band) * 20;
+          const bandY = 30 + band * 18 + Math.sin(s.auroraPhase + band * 1.5) * 10;
+          const aGrad = ctx.createLinearGradient(0, bandY - 15, 0, bandY + 20);
+          aGrad.addColorStop(0, `hsla(${hue}, 80%, 60%, 0)`);
+          aGrad.addColorStop(0.5, `hsla(${hue}, 80%, 60%, 0.6)`);
+          aGrad.addColorStop(1, `hsla(${hue}, 80%, 60%, 0)`);
+          ctx.fillStyle = aGrad;
+          ctx.beginPath();
+          ctx.moveTo(0, bandY - 15);
+          for (let x = 0; x <= W; x += 10) {
+            const wave = Math.sin(x * 0.008 + s.auroraPhase * 2 + band * 0.5) * 12 + Math.sin(x * 0.015 + s.auroraPhase) * 6;
+            ctx.lineTo(x, bandY + wave);
+          }
+          ctx.lineTo(W, bandY + 30); ctx.lineTo(0, bandY + 30);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+      }
+
+      // === CELESTIAL BODIES ===
+      const sunX = W * 0.82;
+      const sunY = 45 + dayPhase * 35;
+      const ceF = s.celestialFade;
+
+      if (dayPhase > 0.5) {
+        if (s.celestialEvent === "red_sun" && ceF > 0) {
+          const pulse = Math.sin(s.time * 0.03) * 0.3 + 0.7;
+          ctx.shadowColor = `rgba(255,40,20,${ceF * pulse})`;
+          ctx.shadowBlur = 60 + pulse * 30;
+          ctx.fillStyle = `rgb(${200 + Math.floor(55 * pulse)},${Math.floor(40 * (1 - ceF * 0.5))},${Math.floor(20 * (1 - ceF * 0.7))})`;
+          ctx.beginPath(); ctx.arc(sunX, sunY, 28, 0, Math.PI * 2); ctx.fill();
+          ctx.shadowColor = `rgba(255,80,0,${ceF * 0.5})`;
+          ctx.shadowBlur = 40;
+          for (let ray = 0; ray < 8; ray++) {
+            const angle = (ray / 8) * Math.PI * 2 + s.time * 0.01;
+            const rLen = 12 + Math.sin(s.time * 0.05 + ray) * 8;
+            ctx.fillStyle = `rgba(255,${60 + Math.floor(Math.sin(s.time * 0.04 + ray * 0.7) * 40)},0,${ceF * 0.7})`;
+            ctx.beginPath();
+            ctx.moveTo(sunX + Math.cos(angle) * 30, sunY + Math.sin(angle) * 30);
+            ctx.lineTo(sunX + Math.cos(angle - 0.15) * (30 + rLen), sunY + Math.sin(angle - 0.15) * (30 + rLen));
+            ctx.lineTo(sunX + Math.cos(angle + 0.15) * (30 + rLen), sunY + Math.sin(angle + 0.15) * (30 + rLen));
+            ctx.fill();
+          }
+          ctx.shadowBlur = 0;
+        } else if (s.celestialEvent === "tentacle_sun" && ceF > 0) {
+          const pulse = Math.sin(s.time * 0.02) * 0.2 + 0.8;
+          ctx.shadowColor = `rgba(120,0,200,${ceF * pulse * 0.8})`;
+          ctx.shadowBlur = 50 + pulse * 20;
+          const grad = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, 30);
+          grad.addColorStop(0, `rgba(200,150,255,${ceF})`);
+          grad.addColorStop(0.5, `rgba(140,40,200,${ceF * 0.9})`);
+          grad.addColorStop(1, `rgba(80,0,120,${ceF * 0.6})`);
+          ctx.fillStyle = grad;
+          ctx.beginPath(); ctx.arc(sunX, sunY, 26, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = `rgba(30,0,40,${ceF * 0.8})`;
+          ctx.beginPath(); ctx.arc(sunX, sunY, 10, 0, Math.PI * 2); ctx.fill();
+          for (let t = 0; t < 6; t++) {
+            const baseA = (t / 6) * Math.PI * 2 + s.time * 0.008;
+            ctx.strokeStyle = `rgba(${140 + Math.floor(Math.sin(s.time * 0.03 + t) * 60)},${30 + Math.floor(Math.sin(s.time * 0.02 + t * 2) * 30)},${180 + Math.floor(Math.sin(s.time * 0.04 + t * 0.5) * 60)},${ceF * 0.7})`;
+            ctx.lineWidth = 2 + Math.sin(s.time * 0.05 + t) * 1;
+            ctx.beginPath();
+            let tx = sunX + Math.cos(baseA) * 28;
+            let ty = sunY + Math.sin(baseA) * 28;
+            ctx.moveTo(tx, ty);
+            for (let seg = 0; seg < 8; seg++) {
+              const segA = baseA + Math.sin(s.time * 0.015 + t * 0.8 + seg * 0.3) * 0.6;
+              const segLen = 6 + Math.sin(s.time * 0.02 + seg + t) * 2;
+              tx += Math.cos(segA) * segLen; ty += Math.sin(segA) * segLen;
+              ctx.lineTo(tx, ty);
+            }
+            ctx.stroke();
+          }
+          ctx.shadowBlur = 0;
+          ctx.lineWidth = 1;
+        } else {
+          ctx.fillStyle = "#f39c12";
+          ctx.shadowColor = "#f39c12";
+          ctx.shadowBlur = 40 - (isStormy ? 20 * s.weatherTransition : 0);
+          ctx.beginPath(); ctx.arc(sunX, sunY, 25, 0, Math.PI * 2); ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+      } else {
+        const moonY = sunY + 20;
+        if (s.celestialEvent === "green_moon" && ceF > 0) {
+          const pulse = Math.sin(s.time * 0.025) * 0.3 + 0.7;
+          ctx.shadowColor = `rgba(0,255,100,${ceF * pulse * 0.8})`;
+          ctx.shadowBlur = 50 + pulse * 25;
+          const mGrad = ctx.createRadialGradient(sunX, moonY, 0, sunX, moonY, 22);
+          mGrad.addColorStop(0, `rgba(180,255,200,${ceF})`);
+          mGrad.addColorStop(0.4, `rgba(80,220,120,${ceF * 0.9})`);
+          mGrad.addColorStop(1, `rgba(20,160,60,${ceF * 0.7})`);
+          ctx.fillStyle = mGrad;
+          ctx.beginPath(); ctx.arc(sunX, moonY, 20, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = `rgba(40,100,50,${ceF * 0.4})`;
+          ctx.beginPath(); ctx.arc(sunX - 5, moonY - 4, 5, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(sunX + 6, moonY + 3, 3, 0, Math.PI * 2); ctx.fill();
+          for (let sp = 0; sp < 12; sp++) {
+            const angle = Math.random() * Math.PI * 2;
+            const dist = 22 + Math.random() * 15;
+            ctx.globalAlpha = ceF * 0.5 * Math.random();
+            ctx.fillStyle = `hsl(${120 + Math.random() * 40}, 80%, 70%)`;
+            ctx.fillRect(sunX + Math.cos(angle) * dist, moonY + Math.sin(angle) * dist, 2, 2);
+          }
+          ctx.globalAlpha = 1;
+          ctx.shadowBlur = 0;
+        } else if (s.celestialEvent === "blood_moon" && ceF > 0) {
+          const pulse = Math.sin(s.time * 0.02) * 0.25 + 0.75;
+          ctx.shadowColor = `rgba(200,30,30,${ceF * pulse})`;
+          ctx.shadowBlur = 45 + pulse * 20;
+          const mGrad = ctx.createRadialGradient(sunX, moonY, 0, sunX, moonY, 20);
+          mGrad.addColorStop(0, `rgba(220,80,60,${ceF})`);
+          mGrad.addColorStop(0.6, `rgba(160,20,20,${ceF * 0.9})`);
+          mGrad.addColorStop(1, `rgba(100,10,10,${ceF * 0.6})`);
+          ctx.fillStyle = mGrad;
+          ctx.beginPath(); ctx.arc(sunX, moonY, 20, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = `rgba(80,0,0,${ceF * 0.3})`;
+          ctx.beginPath(); ctx.arc(sunX - 4, moonY - 3, 4, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(sunX + 5, moonY + 4, 3, 0, Math.PI * 2); ctx.fill();
+          ctx.shadowBlur = 0;
+        } else {
+          const stormFade = isStormy ? 1 - s.weatherTransition * 0.7 : 1;
+          ctx.fillStyle = "#ecf0f1";
+          ctx.shadowColor = "#bdc3c7";
+          ctx.shadowBlur = 20 * stormFade;
+          ctx.globalAlpha = stormFade;
+          ctx.beginPath(); ctx.arc(sunX, moonY, 18, 0, Math.PI * 2); ctx.fill();
+          ctx.globalAlpha = 1;
+          ctx.shadowBlur = 0;
+        }
+      }
+
+      // === CLOUDS (weather-responsive) ===
+      const cloudCount = s.weather === "clear" ? 4 : s.weather === "cloudy" ? 8 : s.weather === "fog" ? 10 : isStormy ? 12 : 6;
+      const cloudAlphaBase = s.weather === "clear" ? 0.2 : s.weather === "cloudy" ? 0.5 : s.weather === "fog" ? 0.6 : 0.7;
+      const cloudDrift = s.windSpeed * 0.5;
+      ctx.globalAlpha = (cloudAlphaBase + dayPhase * 0.1) * s.weatherTransition + (0.25 + dayPhase * 0.15) * (1 - s.weatherTransition);
+      for (let i = 0; i < cloudCount; i++) {
+        const cx = ((s.time * (0.12 + cloudDrift) + i * (W / cloudCount) * 1.3) % (W + 350)) - 175;
+        const cy = 35 + (i % 5) * 28 + Math.sin(s.time * 0.006 + i * 1.7) * 5;
+        const cScale = 0.8 + (i % 3) * 0.2;
+        ctx.fillStyle = isStormy ? `rgb(${70 + dayPhase * 30},${75 + dayPhase * 30},${85 + dayPhase * 30})` :
+          dayPhase > 0.5 ? "#ffffff" : "#8899aa";
+        ctx.beginPath(); ctx.ellipse(cx, cy, (50 + i * 6) * cScale, (14 + i * 2) * cScale, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(cx + 35 * cScale, cy - 4 * cScale, (35 + i * 4) * cScale, (10 + i) * cScale, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(cx - 20 * cScale, cy + 2 * cScale, (30 + i * 3) * cScale, (10 + i * 0.5) * cScale, 0, 0, Math.PI * 2); ctx.fill();
       }
       ctx.globalAlpha = 1;
 
-      // Distant mountains/hills (parallax - moves at 20% of camera speed)
+      // === RAIN & STORM EFFECTS ===
+      if ((s.weather === "rain" || s.weather === "storm") && s.weatherTransition > 0.3) {
+        const rainAlpha = s.weatherTransition * (s.weather === "storm" ? 0.5 : 0.3);
+        ctx.strokeStyle = `rgba(170,190,220,${rainAlpha})`;
+        ctx.lineWidth = 1;
+        const dropCount = s.weather === "storm" ? 200 : 120;
+        for (let i = 0; i < Math.min(dropCount, s.rainDrops.length); i++) {
+          const drop = s.rainDrops[i];
+          drop.y += drop.speed * dt;
+          drop.x += s.windSpeed * 2 * dt;
+          if (drop.y > waterY) { drop.y = -10 - Math.random() * 20; drop.x = Math.random() * W; }
+          if (drop.x > W + 20) drop.x = -10;
+          if (drop.x < -20) drop.x = W + 10;
+          ctx.beginPath();
+          ctx.moveTo(drop.x, drop.y);
+          ctx.lineTo(drop.x + s.windSpeed * 2, drop.y + drop.length);
+          ctx.stroke();
+        }
+        ctx.lineWidth = 1;
+      }
+
+      // === FOG EFFECT ===
+      if (s.weather === "fog" && s.weatherTransition > 0.2) {
+        const fogAlpha = s.weatherTransition * 0.35;
+        const fogGrad = ctx.createLinearGradient(0, waterY * 0.3, 0, waterY + 30);
+        fogGrad.addColorStop(0, `rgba(180,190,200,${fogAlpha * 0.3})`);
+        fogGrad.addColorStop(0.5, `rgba(180,190,200,${fogAlpha})`);
+        fogGrad.addColorStop(1, `rgba(180,190,200,${fogAlpha * 0.5})`);
+        ctx.fillStyle = fogGrad;
+        ctx.fillRect(0, 0, W, waterY + 30);
+        for (let i = 0; i < 4; i++) {
+          const fx = ((s.time * 0.08 + i * 400) % (W + 500)) - 250;
+          const fy = waterY * 0.6 + i * 20 + Math.sin(s.time * 0.004 + i) * 8;
+          ctx.globalAlpha = fogAlpha * 0.5;
+          ctx.fillStyle = `rgba(200,210,220,0.4)`;
+          ctx.beginPath(); ctx.ellipse(fx, fy, 120, 25, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.ellipse(fx + 80, fy + 5, 90, 20, 0, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+      }
+
+      // === FAR BACKGROUND: MOUNTAINS (parallax 20%) ===
       const hillParallax = s.cameraX * 0.2;
-      ctx.fillStyle = `rgba(${40 + dayPhase * 60}, ${50 + dayPhase * 80}, ${60 + dayPhase * 80}, 0.4)`;
+      const hillR = Math.floor(40 + dayPhase * 60 - (isStormy ? 15 * s.weatherTransition : 0));
+      const hillG = Math.floor(50 + dayPhase * 80 - (isStormy ? 20 * s.weatherTransition : 0));
+      const hillB = Math.floor(60 + dayPhase * 80 - (isStormy ? 10 * s.weatherTransition : 0));
+      ctx.fillStyle = `rgba(${hillR}, ${hillG}, ${hillB}, 0.5)`;
       ctx.beginPath();
       ctx.moveTo(0, waterY);
-      for (let x = 0; x <= W; x += 20) {
+      for (let x = 0; x <= W; x += 10) {
         const wx = x - hillParallax;
-        const hillY = waterY - 20 - Math.sin(wx * 0.003) * 30 - Math.sin(wx * 0.007 + 2) * 15;
+        const hillY = waterY - 25 - Math.sin(wx * 0.003) * 35 - Math.sin(wx * 0.007 + 2) * 18 - Math.sin(wx * 0.012 + 5) * 8;
         ctx.lineTo(x, hillY);
       }
       ctx.lineTo(W, waterY);
       ctx.fill();
+      ctx.fillStyle = `rgba(${hillR + 15}, ${hillG + 10}, ${hillB + 10}, 0.3)`;
+      ctx.beginPath();
+      ctx.moveTo(0, waterY);
+      for (let x = 0; x <= W; x += 10) {
+        const wx = x - hillParallax * 0.6;
+        const hillY = waterY - 15 - Math.sin(wx * 0.005 + 1) * 22 - Math.sin(wx * 0.009 + 4) * 12;
+        ctx.lineTo(x, hillY);
+      }
+      ctx.lineTo(W, waterY);
+      ctx.fill();
+
+      // === FAR BACKGROUND: DISTANT SHIPS ===
+      for (const ship of s.bgShips) {
+        const sy = waterY - 8 * ship.size;
+        const sz = ship.size;
+        ctx.globalAlpha = 0.25 * sz;
+        ctx.fillStyle = dayPhase > 0.5 ? `rgba(80,60,40,0.6)` : `rgba(40,40,50,0.5)`;
+        ctx.fillRect(ship.x, sy - 6 * sz, 20 * sz, 6 * sz);
+        ctx.fillStyle = dayPhase > 0.5 ? `rgba(200,180,160,0.5)` : `rgba(120,120,140,0.4)`;
+        if (ship.type === 0) {
+          ctx.beginPath();
+          ctx.moveTo(ship.x + 10 * sz, sy - 6 * sz);
+          ctx.lineTo(ship.x + 10 * sz, sy - 25 * sz);
+          ctx.lineTo(ship.x + 22 * sz, sy - 8 * sz);
+          ctx.fill();
+        } else {
+          ctx.fillRect(ship.x + 8 * sz, sy - 20 * sz, 2 * sz, 14 * sz);
+          ctx.fillRect(ship.x + 4 * sz, sy - 18 * sz, 10 * sz, 3 * sz);
+        }
+        ctx.globalAlpha = 1;
+      }
+
+      // === FAR BACKGROUND: BIRDS ===
+      for (const bird of s.bgBirds) {
+        const by = bird.y + Math.sin(bird.wingPhase * 0.5) * 3;
+        ctx.strokeStyle = dayPhase > 0.5 ? "rgba(30,30,30,0.4)" : "rgba(150,150,170,0.35)";
+        ctx.lineWidth = 1.5;
+        const wingUp = Math.sin(bird.wingPhase) * 5;
+        ctx.beginPath();
+        ctx.moveTo(bird.x - 6, by + wingUp);
+        ctx.quadraticCurveTo(bird.x - 3, by + wingUp * 0.3, bird.x, by);
+        ctx.quadraticCurveTo(bird.x + 3, by + wingUp * 0.3, bird.x + 6, by + wingUp);
+        ctx.stroke();
+        ctx.lineWidth = 1;
+      }
+
+      // === CELESTIAL EVENT INDICATOR (subtle hint text) ===
+      if (s.celestialEvent !== "none" && s.celestialFade > 0.5 && s.gameState !== "intro" && s.gameState !== "charSelect") {
+        const hintAlpha = (s.celestialFade - 0.5) * 0.6;
+        const hintMap: Record<string, { text: string; color: string }> = {
+          red_sun: { text: "The sun burns crimson...", color: `rgba(255,100,80,${hintAlpha})` },
+          green_moon: { text: "An eerie green glow...", color: `rgba(100,255,150,${hintAlpha})` },
+          tentacle_sun: { text: "Something writhes in the sky...", color: `rgba(180,100,255,${hintAlpha})` },
+          blood_moon: { text: "The moon bleeds red...", color: `rgba(220,60,60,${hintAlpha})` },
+        };
+        const hint = hintMap[s.celestialEvent];
+        if (hint) {
+          ctx.font = "italic 11px monospace";
+          ctx.fillStyle = hint.color;
+          ctx.textAlign = "center";
+          ctx.fillText(hint.text, W / 2, 18);
+          ctx.textAlign = "start";
+        }
+      }
+
+      // Lightning flash overlay (renders last to wash out all sky elements)
+      if (s.lightningFlash > 0) {
+        ctx.fillStyle = `rgba(255,255,240,${s.lightningFlash * 0.6})`;
+        ctx.fillRect(0, 0, W, H);
+      }
 
       // Apply camera offset for all world-space rendering
       ctx.save();

@@ -140,7 +140,11 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 - Combo system for consecutive catches
 - Rod leveling (every 5 catches)
 - Fish collection log with detailed stats (biggest size, total weight, rarity badges)
-- Day/night sky cycle
+- Animated skybox with dynamic weather system (clear, cloudy, rain, storm, fog)
+- Special celestial events: Red Sun (rare boost), Green Moon (legendary boost), Tentacle Sun (ultra-rare boost), Blood Moon (legendary+ultra boost)
+- Aurora borealis during green/blood moon events
+- Far background parallax: layered mountains, distant ships, flying birds, shooting stars
+- Rain particles with wind-affected angle, lightning flashes during storms, fog overlays
 - Water ripples, particles, and screen shake effects
 - Character walking on pier (A/D keys)
 - Swimming mechanics (Space to dive, WASD underwater, Space near dock to climb out)
