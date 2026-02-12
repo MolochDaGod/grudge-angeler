@@ -448,6 +448,7 @@ export default function FishingGame() {
       ]),
       ...Array.from({length: 17}, (_, i) => `/assets/icons/Icons_${String(i+1).padStart(2,'0')}.png`),
       "/assets/logo.png",
+      "/assets/icons/gbux.png",
     ];
     Promise.all(assets.map(a => loadImage(a)));
     generateBounties();
@@ -1135,7 +1136,12 @@ export default function FishingGame() {
           ctx.font = "4px 'Press Start 2P', monospace";
           if (s.bounties.length > 0) {
             ctx.fillText(s.bounties[0].fishName, bbX + bbW/2, bbY + 24);
-            ctx.fillText("$" + s.bounties[0].reward, bbX + bbW/2, bbY + 32);
+            const gbuxBB = getImg("/assets/icons/gbux.png");
+            const rewardTxt = "" + s.bounties[0].reward;
+            const rTxtW = ctx.measureText(rewardTxt).width;
+            const gbuxSzBB = 6;
+            if (gbuxBB) ctx.drawImage(gbuxBB, bbX + bbW/2 - rTxtW/2 - gbuxSzBB - 1, bbY + 29, gbuxSzBB, gbuxSzBB);
+            ctx.fillText(rewardTxt, bbX + bbW/2 + gbuxSzBB/2, bbY + 32);
           } else {
             ctx.fillText("None", bbX + bbW/2, bbY + 24);
           }
@@ -1911,7 +1917,12 @@ export default function FishingGame() {
         ctx.fillText(`+${Math.floor(pts * comboMult)} pts`, W / 2, boxY + boxH - 25);
         ctx.fillStyle = "#2ecc71";
         ctx.font = "10px 'Press Start 2P', monospace";
-        ctx.fillText(`+ $${s.lastSellPrice}`, W / 2, boxY + boxH - 10);
+        const sellTxt = `+ ${s.lastSellPrice}`;
+        const sellTxtW = ctx.measureText(sellTxt).width;
+        const gbuxCatch = getImg("/assets/icons/gbux.png");
+        const gbuxSzC = 10;
+        if (gbuxCatch) ctx.drawImage(gbuxCatch, W / 2 - sellTxtW / 2 - gbuxSzC - 2, boxY + boxH - 18, gbuxSzC, gbuxSzC);
+        ctx.fillText(sellTxt, W / 2, boxY + boxH - 10);
         if (s.combo > 1) {
           ctx.fillStyle = "#e74c3c";
           ctx.font = "10px 'Press Start 2P', monospace";
@@ -2432,7 +2443,8 @@ export default function FishingGame() {
               </div>
             )}
             <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(46,204,113,0.3)" }}>
-              <span style={{ color: "#2ecc71", fontSize: 11 }}>$ {uiState.money}</span>
+              <img src="/assets/icons/gbux.png" alt="gbux" style={{ width: 14, height: 14 }} />
+              <span style={{ color: "#2ecc71", fontSize: 11 }}>{uiState.money}</span>
             </div>
           </div>
 
@@ -2656,7 +2668,8 @@ export default function FishingGame() {
                     <span style={{ color: "#2ecc71", fontSize: 12 }}>FISHING SHOP</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span style={{ color: "#2ecc71", fontSize: 10 }}>$ {uiState.money}</span>
+                    <img src="/assets/icons/gbux.png" alt="gbux" style={{ width: 12, height: 12 }} />
+                    <span style={{ color: "#2ecc71", fontSize: 10 }}>{uiState.money}</span>
                     <button
                       className="cursor-pointer px-2 py-1"
                       style={{ background: "rgba(255,255,255,0.08)", borderRadius: 4, border: "1px solid rgba(255,255,255,0.15)", fontFamily: "'Press Start 2P', monospace", color: "#78909c", fontSize: 10 }}
@@ -2725,7 +2738,7 @@ export default function FishingGame() {
                               }}
                               data-testid={`button-buy-rod-${i}`}
                             >
-                              ${rod.price}
+                              <img src="/assets/icons/gbux.png" alt="gbux" style={{ width: 10, height: 10, verticalAlign: "middle", marginRight: 2 }} />{rod.price}
                             </button>
                           ) : !equipped ? (
                             <button
@@ -2792,7 +2805,7 @@ export default function FishingGame() {
                                     }}
                                     data-testid={`button-buy-lure-${i}`}
                                   >
-                                    ${lure.price}
+                                    <img src="/assets/icons/gbux.png" alt="gbux" style={{ width: 10, height: 10, verticalAlign: "middle", marginRight: 2 }} />{lure.price}
                                   </button>
                                 ) : !equipped ? (
                                   <button

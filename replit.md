@@ -62,7 +62,7 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 - **Live Bait** (5): Basic Worm, Nightcrawler, Leech, Maggots, Minnow Bait - organic baits with unique fish attraction
 - **Lures** (11): Beginner Lure, Crankbait, Silver Spoon, Grub Worm, Spinnerbait, Deep Diver, Golden Fly, Glow Jig, Storm Shad, Kraken Bait, Prismatic - artificial lures affecting rarity boost, size boost, bite speed, and targeted fish attraction
 - Each bait/lure has a `type` field ("live" or "lure") for shop categorization
-- Equipment purchased with money from fishing hut shop (E key near hut)
+- Equipment purchased with gbux from fishing hut shop (E key near hut)
 
 ## Rarity System
 - 5 tiers: common, uncommon, rare, legendary, ultra_rare
@@ -70,16 +70,17 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 - Sell price multipliers: common=1x, uncommon=1.8x, rare=3x, legendary=5x, ultra_rare=10x
 - Reeling difficulty multipliers: common=1x, uncommon=1.15x, rare=1.4x, legendary=1.8x, ultra_rare=2.2x
 
-## Money & Market System
-- Fish sell for money based on rarity * weight * size * demand multiplier
+## Gbux & Market System
+- Currency is "gbux" (displayed with gbux icon from /assets/icons/gbux.png)
+- Fish sell for gbux based on rarity * weight * size * demand multiplier
 - Market dynamics: prices drop when same fish sold repeatedly (0.12 per sale), recover over time (1 per 600 ticks)
 - Minimum demand multiplier: 0.3
-- Money used to purchase rods and lures at the fishing hut shop
+- Gbux used to purchase rods and lures at the fishing hut shop
 
 ## Bounty System
 - 3 random bounties generated at game start
 - Each bounty targets a fish species with minimum size requirement
-- Bounty rewards added to money on fulfillment
+- Bounty rewards added to gbux on fulfillment
 - New bounties generated when all are completed
 
 ## Billboard System
