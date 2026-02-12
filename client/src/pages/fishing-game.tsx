@@ -407,6 +407,7 @@ export default function FishingGame() {
       "/assets/fisherman/Fisherman_idle.png",
       "/assets/fisherman/Fisherman_fish.png",
       "/assets/fisherman/Fisherman_hook.png",
+      "/assets/fisherman/Fisherman_hurt.png",
       "/assets/fisherman/Fisherman_walk.png",
       "/assets/fisherman/Fisherman_swim.png",
       "/assets/fisherman/Fisherman_swim2.png",
@@ -1358,10 +1359,15 @@ export default function FishingGame() {
           fishermanFrameCount = 6;
           fishermanFrame = Math.floor(s.time * 0.08) % 6;
           rodTipKey = "hook";
-        } else if (s.gameState === "waiting" || s.gameState === "bite") {
+        } else if (s.gameState === "waiting") {
           fishermanSprite = "/assets/fisherman/Fisherman_fish.png";
           fishermanFrameCount = 4;
           fishermanFrame = Math.floor(s.time * 0.05) % 4;
+          rodTipKey = "fish";
+        } else if (s.gameState === "bite") {
+          fishermanSprite = "/assets/fisherman/Fisherman_hurt.png";
+          fishermanFrameCount = 2;
+          fishermanFrame = Math.floor(s.time * 0.2) % 2;
           rodTipKey = "fish";
         } else if (s.gameState === "reeling") {
           fishermanSprite = "/assets/fisherman/Fisherman_fish.png";
