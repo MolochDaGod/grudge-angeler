@@ -326,6 +326,10 @@ export default function FishingGame() {
     resize();
     window.addEventListener("resize", resize);
 
+    const isLineFacingLeft = (st: typeof stateRef.current) => {
+      const charCenter = st.lastFishermanX + (48 * 3) / 2;
+      return st.hookX < charCenter;
+    };
     const onDocMouseMove = (e: MouseEvent) => {
       const st = stateRef.current;
       st.mouseX = e.clientX;
@@ -333,14 +337,18 @@ export default function FishingGame() {
       if (st.draggingRodTip && (st.gameState === "waiting" || st.gameState === "bite" || st.gameState === "reeling")) {
         const ox = e.clientX - st.lastFishermanX;
         const oy = e.clientY - st.lastFishermanY;
-        st.customRodTipLeft = { ox, oy };
+        if (isLineFacingLeft(st)) {
+          st.customRodTipLeft = { ox, oy };
+        } else {
+          st.customRodTipRight = { ox, oy };
+        }
       }
     };
     const onDocMouseDown = (e: MouseEvent) => {
       if (e.button === 0) {
         const st = stateRef.current;
         if (st.gameState === "waiting" || st.gameState === "bite" || st.gameState === "reeling") {
-          const existing = st.customRodTipLeft;
+          const existing = isLineFacingLeft(st) ? st.customRodTipLeft : st.customRodTipRight;
           if (existing) {
             const tipScreenX = st.lastFishermanX + existing.ox;
             const tipScreenY = st.lastFishermanY + existing.oy;
@@ -378,8 +386,13 @@ export default function FishingGame() {
           st.draggingRodTip = false;
           const ox = e.clientX - st.lastFishermanX;
           const oy = e.clientY - st.lastFishermanY;
-          st.customRodTipLeft = { ox, oy };
-          console.log(`Rod tip offset: (${ox}, ${oy})`);
+          const dir = isLineFacingLeft(st) ? "LEFT" : "RIGHT";
+          if (isLineFacingLeft(st)) {
+            st.customRodTipLeft = { ox, oy };
+          } else {
+            st.customRodTipRight = { ox, oy };
+          }
+          console.log(`Rod tip ${dir} offset: (${ox}, ${oy})`);
           return;
         }
         stateRef.current.isReeling = false;
@@ -1028,9 +1041,11 @@ export default function FishingGame() {
       let rodTipKey = "idle";
       let isWalking = false;
       let fishingFlip = (s.gameState === "idle" || s.gameState === "casting" || s.gameState === "waiting" || s.gameState === "bite" || s.gameState === "reeling" || s.gameState === "caught" || s.gameState === "missed" || s.gameState === "boarding");
+      const charCenterX = fishermanX + (SPRITE_FRAME_W * SCALE) / 2;
       if (s.gameState === "casting") {
-        const charCenterX = fishermanX + (SPRITE_FRAME_W * SCALE) / 2;
         fishingFlip = s.aimX < charCenterX;
+      } else if (s.gameState === "waiting" || s.gameState === "bite" || s.gameState === "reeling" || s.gameState === "caught" || s.gameState === "missed") {
+        fishingFlip = s.hookX < charCenterX;
       }
 
       if (s.gameState === "swimming") {
@@ -1136,7 +1151,7 @@ export default function FishingGame() {
 
       // Use custom rod tip offset if set (for when line is in water)
       if (s.gameState === "waiting" || s.gameState === "bite" || s.gameState === "reeling") {
-        const customTip = s.customRodTipLeft;
+        const customTip = fishingFlip ? s.customRodTipLeft : s.customRodTipRight;
         if (customTip) {
           rodTipX = fishermanX + customTip.ox;
           rodTipY = fishermanY + customTip.oy;
@@ -1150,19 +1165,25 @@ export default function FishingGame() {
         let bobberY = waterY + s.bobberBob;
         s.lineWobble *= 0.93;
 
-        ctx.strokeStyle = "rgba(200,190,170,0.85)";
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.moveTo(rodTipX, rodTipY);
         const midX = (rodTipX + bobberX) / 2 + s.lineWobble;
         const sagAmount = Math.max(15, Math.abs(rodTipX - bobberX) * 0.08);
         const sagY = Math.max(rodTipY, bobberY) + sagAmount + Math.sin(s.time * 0.04) * 2;
-        ctx.bezierCurveTo(
-          rodTipX + (midX - rodTipX) * 0.4, rodTipY + sagAmount * 0.3,
-          midX, sagY,
-          bobberX, bobberY
-        );
-        ctx.stroke();
+        const drawLineCurve = () => {
+          ctx.beginPath();
+          ctx.moveTo(rodTipX, rodTipY);
+          ctx.bezierCurveTo(
+            rodTipX + (midX - rodTipX) * 0.4, rodTipY + sagAmount * 0.3,
+            midX, sagY,
+            bobberX, bobberY
+          );
+          ctx.stroke();
+        };
+        ctx.strokeStyle = "rgba(0,0,0,0.6)";
+        ctx.lineWidth = 4;
+        drawLineCurve();
+        ctx.strokeStyle = "rgba(200,190,170,0.95)";
+        ctx.lineWidth = 2;
+        drawLineCurve();
 
         const bobberSize = 5;
         ctx.fillStyle = "#ffffff";
@@ -1209,19 +1230,25 @@ export default function FishingGame() {
 
         s.lineWobble = s.gameState === "bite" ? Math.sin(s.time * 0.25) * 6 : Math.sin(s.time * 0.15) * 2;
 
-        ctx.strokeStyle = s.gameState === "bite" ? "rgba(220,180,120,0.9)" : "rgba(200,190,170,0.85)";
-        ctx.lineWidth = s.gameState === "bite" ? 2 : 1.5;
-        ctx.beginPath();
-        ctx.moveTo(rodTipX, rodTipY);
         const midX = (rodTipX + fishMouthX) / 2 + s.lineWobble;
         const sagAmount = Math.max(10, Math.abs(rodTipX - fishMouthX) * 0.06);
         const sagY = Math.min(waterY + 5, Math.max(rodTipY, fishMouthY - 20)) + sagAmount;
-        ctx.bezierCurveTo(
-          rodTipX + (midX - rodTipX) * 0.3, rodTipY + sagAmount * 0.2,
-          midX, sagY,
-          fishMouthX, fishMouthY
-        );
-        ctx.stroke();
+        const drawFightLine = () => {
+          ctx.beginPath();
+          ctx.moveTo(rodTipX, rodTipY);
+          ctx.bezierCurveTo(
+            rodTipX + (midX - rodTipX) * 0.3, rodTipY + sagAmount * 0.2,
+            midX, sagY,
+            fishMouthX, fishMouthY
+          );
+          ctx.stroke();
+        };
+        ctx.strokeStyle = "rgba(0,0,0,0.6)";
+        ctx.lineWidth = s.gameState === "bite" ? 5 : 4;
+        drawFightLine();
+        ctx.strokeStyle = s.gameState === "bite" ? "rgba(220,180,120,0.95)" : "rgba(200,190,170,0.95)";
+        ctx.lineWidth = s.gameState === "bite" ? 3 : 2;
+        drawFightLine();
 
         if (s.gameState === "bite") {
           if (Math.random() < 0.1 * dt) addRipple(fishMouthX + (Math.random() - 0.5) * 10, waterY);
