@@ -88,6 +88,19 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 - 4-slide rotation: Bounties, Records, Deals, Logo
 - Auto-cycles every 300 ticks
 
+## Attribute Physics System (2D Force Model)
+- All 8 attributes are wired into gameplay via a 2D physics-inspired force model
+- **Tactics** acts as a global amplifier: `tacticsGlobal = 1 + Tactics * 0.005` — multiplies all other stat bonuses
+- **Strength**: Increases drag force on hooked fish (decelerates escape velocity), widens catch zone, boosts gauge gain rate, increases fish lift when in zone
+- **Agility**: Faster catch zone movement speed (reel progress per tick)
+- **Dexterity**: Reduces idle drift of catch zone, reduces fish direction-change frequency, slows fish bar movement speed
+- **Endurance**: Reduces gauge drain when fish escapes zone, reduces fish sink speed when out of zone (lineStrength amplifier)
+- **Vitality**: Extends bite window timer, reduces wait time between fish approaches
+- **Wisdom**: Increases spawn weight for rare/legendary/ultra-rare fish during spawn selection
+- **Intellect**: Increases sell price (intBonus multiplier), increases XP gain per catch
+- Physics model: Fish has mass (based on difficulty * size), player applies drag force (Strength-based); net force = dragForce - fishEscapeForce; positive net force decelerates fish velocity each tick
+- Fish burst velocity on direction change is divided by strMod (stronger = weaker bursts)
+
 ## Fish Behavior
 - SwimmingFish have wobblePhase/wobbleAmp for vertical bobbing, dirChangeTimer for random direction changes
 - Fish approach hook when selected (approachingHook flag), swim toward hook position
