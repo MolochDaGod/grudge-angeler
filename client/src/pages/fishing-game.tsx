@@ -51,6 +51,7 @@ interface SwimmingFish {
   baseY: number;
   approachingHook: boolean;
   dirChangeTimer: number;
+  sizeMultiplier: number;
 }
 
 interface CaughtEntry {
@@ -58,6 +59,8 @@ interface CaughtEntry {
   junk: typeof JUNK_ITEMS[0] | null;
   count: number;
   bestCombo: number;
+  biggestSize: number;
+  totalWeight: number;
 }
 
 interface Particle {
@@ -133,6 +136,7 @@ export default function FishingGame() {
     hookedFishFrame: 0,
     hookedFishFrameTimer: 0,
     hookedFishVX: 0,
+    hookedFishSize: 1,
     playerX: 0,
     playerVX: 0,
     playerVY: 0,
@@ -162,6 +166,7 @@ export default function FishingGame() {
     rodLevel: 1,
     alignment: 0,
     bestCombo: 0,
+    currentFishSize: 1,
     caughtCollection: [] as [string, CaughtEntry][],
     missReason: "",
     showCatchTimer: 0,
@@ -195,6 +200,7 @@ export default function FishingGame() {
     const y = minY + Math.random() * Math.max(10, maxY - minY);
     const direction = Math.random() > 0.5 ? 1 : -1;
     const x = direction > 0 ? -80 : canvasW + 80;
+    const sizeMultiplier = 0.5 + Math.random() * Math.random() * 4.5;
     s.swimmingFish.push({
       x, y, baseY: y, type: fishType, direction, frame: 0, frameTimer: 0,
       speed: fishType.speed * (0.7 + Math.random() * 0.6),
@@ -202,6 +208,7 @@ export default function FishingGame() {
       wobbleAmp: 2 + Math.random() * 4,
       approachingHook: false,
       dirChangeTimer: 60 + Math.random() * 120,
+      sizeMultiplier,
     });
   }, []);
 
@@ -285,6 +292,7 @@ export default function FishingGame() {
       rodLevel: s.rodLevel,
       alignment: s.gameState === "reeling" ? alignVal : 0,
       bestCombo: s.bestCombo,
+      currentFishSize: s.hookedFishSize,
       caughtCollection: Array.from(s.caughtCollection.entries()),
       missReason: s.missReason,
       showCatchTimer: s.showCatchTimer,
@@ -814,6 +822,7 @@ export default function FishingGame() {
             s.hookedFishFrame = 0;
             s.hookedFishFrameTimer = 0;
             s.hookedFishVX = (Math.random() > 0.5 ? 1 : -1) * fish.speed;
+            s.hookedFishSize = fish.sizeMultiplier;
             if (Math.random() < 0.08) {
               s.currentCatch = null;
               s.currentJunk = JUNK_ITEMS[Math.floor(Math.random() * JUNK_ITEMS.length)];
@@ -856,7 +865,7 @@ export default function FishingGame() {
         const depthAlpha = 0.9 - fishDepth * 0.3;
         ctx.globalAlpha = depthAlpha;
 
-        const creatureScale = SCALE * 0.65;
+        const creatureScale = SCALE * 0.65 * fish.sizeMultiplier;
         drawSprite(
           `/assets/creatures/${fish.type.creatureFolder}/Walk.png`,
           fish.frame, fish.type.walkFrames,
@@ -1020,7 +1029,7 @@ export default function FishingGame() {
       }
 
       if (s.gameState === "bite" || s.gameState === "reeling") {
-        const creatureScale = SCALE * 0.65;
+        const creatureScale = SCALE * 0.65 * s.hookedFishSize;
         const fishSpriteW = 48 * creatureScale;
         const fishMouthX = s.hookedFishX + (s.hookedFishDir > 0 ? fishSpriteW * 0.8 : fishSpriteW * 0.2);
         const fishMouthY = s.hookedFishY + 12 * creatureScale;
@@ -1197,9 +1206,11 @@ export default function FishingGame() {
       }
 
       if (s.gameState === "reeling") {
-        const difficultyMult = s.currentCatch
+        const rarityDiff = s.currentCatch
           ? (s.currentCatch.rarity === "legendary" ? 1.8 : s.currentCatch.rarity === "rare" ? 1.4 : s.currentCatch.rarity === "uncommon" ? 1.15 : 1)
           : 1;
+        const sizeDiff = 1 + (s.hookedFishSize - 1) * 0.08;
+        const difficultyMult = rarityDiff * Math.min(1.5, sizeDiff);
 
         const fishMoveSpeed = (s.currentCatch?.speed || 1.0) * 1.2 * difficultyMult;
         s.hookedFishX += s.hookedFishVX * dt;
@@ -1266,16 +1277,20 @@ export default function FishingGame() {
           s.combo++;
           if (s.combo > s.bestCombo) s.bestCombo = s.combo;
           s.totalCaught++;
-          const pts = (s.currentCatch?.points || s.currentJunk?.points || 10) * (1 + (s.combo - 1) * 0.15);
+          const sizeBonus = s.hookedFishSize;
+          const pts = (s.currentCatch?.points || s.currentJunk?.points || 10) * sizeBonus * (1 + (s.combo - 1) * 0.15);
           s.score += Math.floor(pts);
 
+          const fishWeight = Math.round(sizeBonus * (s.currentCatch?.points || 5) * 0.3 * 10) / 10;
           const name = s.currentCatch?.name || s.currentJunk?.name || "Unknown";
           const existing = s.caughtCollection.get(name);
           if (existing) {
             existing.count++;
             if (s.combo > existing.bestCombo) existing.bestCombo = s.combo;
+            if (sizeBonus > existing.biggestSize) existing.biggestSize = sizeBonus;
+            existing.totalWeight += fishWeight;
           } else {
-            s.caughtCollection.set(name, { type: s.currentCatch, junk: s.currentJunk, count: 1, bestCombo: s.combo });
+            s.caughtCollection.set(name, { type: s.currentCatch, junk: s.currentJunk, count: 1, bestCombo: s.combo, biggestSize: sizeBonus, totalWeight: fishWeight });
           }
 
           if (s.totalCaught % 5 === 0 && s.rodLevel < 5) s.rodLevel++;
@@ -1347,19 +1362,27 @@ export default function FishingGame() {
         if (s.currentCatch) {
           ctx.fillStyle = "rgba(255,255,255,0.3)";
           ctx.font = "9px 'Press Start 2P', monospace";
-          ctx.fillText(s.currentCatch.rarity.toUpperCase(), W / 2, boxY + 88);
+          const sizeLabel = s.hookedFishSize < 1 ? "Tiny" : s.hookedFishSize < 1.5 ? "Small" : s.hookedFishSize < 2.5 ? "Medium" : s.hookedFishSize < 4 ? "Large" : "Massive";
+          ctx.fillText(`${s.currentCatch.rarity.toUpperCase()} - ${sizeLabel} (${s.hookedFishSize.toFixed(1)}x)`, W / 2, boxY + 88);
         }
 
         const catchAsset = s.currentCatch?.catchAsset || s.currentJunk?.asset;
         if (catchAsset) {
           const catchImg = getImg(catchAsset);
           if (catchImg && catchImg.complete) {
-            const cs = 5;
-            ctx.drawImage(catchImg, W / 2 - catchImg.width * cs / 2, boxY + 100, catchImg.width * cs, catchImg.height * cs);
+            const cs = 3 + Math.min(3, s.hookedFishSize);
+            ctx.drawImage(catchImg, W / 2 - catchImg.width * cs / 2, boxY + 98, catchImg.width * cs, catchImg.height * cs);
           }
         }
 
-        const pts = s.currentCatch?.points || s.currentJunk?.points || 0;
+        const fishWt = Math.round(s.hookedFishSize * (s.currentCatch?.points || 5) * 0.3 * 10) / 10;
+        if (s.currentCatch) {
+          ctx.fillStyle = "#78909c";
+          ctx.font = "8px 'Press Start 2P', monospace";
+          ctx.fillText(`${fishWt} lbs`, W / 2, boxY + boxH - 45);
+        }
+
+        const pts = (s.currentCatch?.points || s.currentJunk?.points || 0) * s.hookedFishSize;
         const comboMult = 1 + (s.combo - 1) * 0.15;
         ctx.fillStyle = "#f1c40f";
         ctx.font = "bold 12px 'Press Start 2P', monospace";
@@ -1808,7 +1831,7 @@ export default function FishingGame() {
         <div
           className="absolute top-0 right-0 h-full flex flex-col"
           style={{
-            width: Math.min(340, window.innerWidth * 0.85),
+            width: Math.min(380, window.innerWidth * 0.88),
             background: "rgba(8,15,25,0.96)",
             borderLeft: "2px solid rgba(52,152,219,0.3)",
             zIndex: 100,
@@ -1821,6 +1844,9 @@ export default function FishingGame() {
             <div className="flex items-center gap-2">
               <img src="/assets/icons/Icons_05.png" alt="" className="w-5 h-5" style={{ imageRendering: "pixelated" }} />
               <span style={{ color: "#3498db", fontSize: 10 }}>FISH LOG</span>
+              <span style={{ color: "#455a64", fontSize: 7 }}>
+                {uiState.caughtCollection.filter(([,e]) => e.type).length}/{FISH_TYPES.length} species
+              </span>
             </div>
             <button
               className="cursor-pointer px-2 py-1"
@@ -1832,23 +1858,33 @@ export default function FishingGame() {
             </button>
           </div>
 
-          {/* Stats bar */}
-          <div className="flex gap-3 px-3 py-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-            <div className="flex items-center gap-1">
-              <span style={{ color: "#f1c40f", fontSize: 8 }}>Score:</span>
-              <span style={{ color: "#ffd54f", fontSize: 8 }}>{uiState.score}</span>
+          {/* Player Stats */}
+          <div className="flex flex-wrap gap-3 px-3 py-2.5" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.02)" }}>
+            <div className="flex flex-col items-center gap-0.5" style={{ minWidth: 60 }}>
+              <span style={{ color: "#78909c", fontSize: 6 }}>SCORE</span>
+              <span style={{ color: "#ffd54f", fontSize: 10 }}>{uiState.score}</span>
             </div>
-            <div className="flex items-center gap-1">
-              <span style={{ color: "#3498db", fontSize: 8 }}>Caught:</span>
-              <span style={{ color: "#5dade2", fontSize: 8 }}>{uiState.totalCaught}</span>
+            <div className="flex flex-col items-center gap-0.5" style={{ minWidth: 50 }}>
+              <span style={{ color: "#78909c", fontSize: 6 }}>CAUGHT</span>
+              <span style={{ color: "#5dade2", fontSize: 10 }}>{uiState.totalCaught}</span>
             </div>
-            <div className="flex items-center gap-1">
-              <span style={{ color: "#e74c3c", fontSize: 8 }}>Best:</span>
-              <span style={{ color: "#f5b7b1", fontSize: 8 }}>x{uiState.bestCombo}</span>
+            <div className="flex flex-col items-center gap-0.5" style={{ minWidth: 50 }}>
+              <span style={{ color: "#78909c", fontSize: 6 }}>BEST COMBO</span>
+              <span style={{ color: "#f5b7b1", fontSize: 10 }}>x{uiState.bestCombo}</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5" style={{ minWidth: 50 }}>
+              <span style={{ color: "#78909c", fontSize: 6 }}>ROD LV</span>
+              <span style={{ color: "#9b59b6", fontSize: 10 }}>{uiState.rodLevel}</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5" style={{ minWidth: 60 }}>
+              <span style={{ color: "#78909c", fontSize: 6 }}>TOTAL WEIGHT</span>
+              <span style={{ color: "#78909c", fontSize: 10 }}>
+                {Math.round(uiState.caughtCollection.reduce((sum, [,e]) => sum + e.totalWeight, 0) * 10) / 10} lbs
+              </span>
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-2.5 flex flex-col gap-1.5">
+          <div className="flex-1 overflow-y-auto p-2.5 flex flex-col gap-2">
             {uiState.caughtCollection.length === 0 && (
               <div className="flex flex-col items-center justify-center mt-8 gap-3">
                 <img src="/assets/icons/Icons_03.png" alt="" className="w-10 h-10 opacity-30" style={{ imageRendering: "pixelated" }} />
@@ -1857,45 +1893,79 @@ export default function FishingGame() {
                 </span>
               </div>
             )}
-            {uiState.caughtCollection.map(([name, entry]) => (
+            {uiState.caughtCollection.map(([name, entry]) => {
+              const rarity = entry.type?.rarity || "common";
+              const sizeLabel = entry.biggestSize < 1 ? "Tiny" : entry.biggestSize < 1.5 ? "Small" : entry.biggestSize < 2.5 ? "Medium" : entry.biggestSize < 4 ? "Large" : "Massive";
+              return (
+                <div
+                  key={name}
+                  className="flex items-start gap-2.5 p-2.5"
+                  style={{
+                    background: rarityBg(rarity),
+                    borderRadius: 8,
+                    border: `1px solid ${rarityColor(rarity)}25`,
+                  }}
+                >
+                  <div className="flex flex-col items-center gap-1" style={{ minWidth: 52 }}>
+                    <div className="flex items-center justify-center" style={{ width: 48, height: 48, background: "rgba(0,0,0,0.3)", borderRadius: 6 }}>
+                      <img
+                        src={entry.type?.catchAsset || entry.junk?.asset || ""}
+                        alt={name}
+                        style={{ imageRendering: "pixelated", transform: "scale(2.5)", maxWidth: 40, maxHeight: 40 }}
+                      />
+                    </div>
+                    {entry.type && (
+                      <span style={{
+                        fontSize: 6, color: "#0a0f1a", fontWeight: "bold",
+                        background: rarityColor(rarity), borderRadius: 3,
+                        padding: "1px 4px", textTransform: "uppercase",
+                      }}>
+                        {rarity}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0 flex flex-col gap-1">
+                    <div className="truncate" style={{ color: rarityColor(rarity), fontSize: 10, fontWeight: "bold" }}>{name}</div>
+                    {entry.type && (
+                      <div style={{ color: "#607d8b", fontSize: 7, lineHeight: "1.6" }}>
+                        {entry.type.description}
+                      </div>
+                    )}
+                    <div className="flex flex-wrap gap-x-3 gap-y-0.5" style={{ marginTop: 2 }}>
+                      <span style={{ color: "#5dade2", fontSize: 7 }}>Caught: {entry.count}</span>
+                      <span style={{ color: "#f1c40f", fontSize: 7 }}>Pts: {entry.type?.points || 0}</span>
+                      <span style={{ color: "#e74c3c", fontSize: 7 }}>Combo: x{entry.bestCombo}</span>
+                    </div>
+                    <div className="flex flex-wrap gap-x-3 gap-y-0.5">
+                      <span style={{ color: "#9b59b6", fontSize: 7 }}>Biggest: {sizeLabel} ({entry.biggestSize.toFixed(1)}x)</span>
+                      <span style={{ color: "#78909c", fontSize: 7 }}>Total: {Math.round(entry.totalWeight * 10) / 10} lbs</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Undiscovered fish hints */}
+            {FISH_TYPES.filter(ft => !uiState.caughtCollection.some(([n]) => n === ft.name)).map(ft => (
               <div
-                key={name}
+                key={ft.name}
                 className="flex items-center gap-2.5 p-2.5"
                 style={{
-                  background: rarityBg(entry.type?.rarity || "common"),
+                  background: "rgba(255,255,255,0.02)",
                   borderRadius: 8,
-                  border: `1px solid ${rarityColor(entry.type?.rarity || "common")}30`,
+                  border: "1px solid rgba(255,255,255,0.06)",
                 }}
               >
-                <div className="flex items-center justify-center" style={{ width: 40, height: 40, background: "rgba(0,0,0,0.3)", borderRadius: 6 }}>
-                  <img
-                    src={entry.type?.catchAsset || entry.junk?.asset || ""}
-                    alt={name}
-                    style={{ imageRendering: "pixelated", transform: "scale(2.5)", maxWidth: 36, maxHeight: 36 }}
-                  />
+                <div className="flex items-center justify-center" style={{ width: 48, height: 48, background: "rgba(0,0,0,0.2)", borderRadius: 6 }}>
+                  <span style={{ fontSize: 18, color: "#2a3a4a" }}>?</span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="truncate" style={{ color: rarityColor(entry.type?.rarity || "common"), fontSize: 9 }}>{name}</div>
-                  <div style={{ color: "#607d8b", fontSize: 7, marginTop: 2 }}>
-                    Caught: {entry.count} | Best: x{entry.bestCombo}
-                  </div>
-                  {entry.type && (
-                    <div style={{ fontSize: 7, color: rarityColor(entry.type.rarity), marginTop: 1, opacity: 0.7 }}>
-                      {entry.type.rarity.toUpperCase()} - {entry.type.points}pts
-                    </div>
-                  )}
+                <div className="flex-1 min-w-0 flex flex-col gap-0.5">
+                  <div style={{ color: "#37474f", fontSize: 9 }}>???</div>
+                  <div style={{ color: rarityColor(ft.rarity), fontSize: 6, textTransform: "uppercase" }}>{ft.rarity}</div>
+                  <div style={{ color: "#2a3a4a", fontSize: 7 }}>Not yet discovered</div>
                 </div>
               </div>
             ))}
-
-            {/* Undiscovered fish */}
-            {uiState.caughtCollection.length > 0 && uiState.caughtCollection.length < FISH_TYPES.length + JUNK_ITEMS.length && (
-              <div className="mt-2 px-2">
-                <span style={{ color: "#37474f", fontSize: 7 }}>
-                  {FISH_TYPES.length + JUNK_ITEMS.length - uiState.caughtCollection.length} more species to discover...
-                </span>
-              </div>
-            )}
           </div>
         </div>
       )}
