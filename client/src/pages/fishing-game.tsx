@@ -1470,7 +1470,7 @@ export default function FishingGame() {
         }
 
         if (s.isRightMouseDown) {
-          s.reelProgress = Math.max(0.05, s.reelProgress - 0.20 * dtSec);
+          s.reelProgress = Math.max(0.05, s.reelProgress - 0.40 * dtSec);
         } else if (!s.isReeling) {
           const driftRight = 0.05 * (1.0 / alignmentBonus) * dtSec;
           s.reelProgress = Math.min(0.95, s.reelProgress + driftRight);
