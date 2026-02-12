@@ -1202,17 +1202,17 @@ export default function FishingGame() {
 
         const dtSec = dt / 60;
 
-        const clickMoveLeft = 0.05;
+        const clickMoveRight = 0.05;
         while (s.leftClickQueued > 0) {
-          s.reelProgress = Math.max(0.05, s.reelProgress - clickMoveLeft);
+          s.reelProgress = Math.min(0.95, s.reelProgress + clickMoveRight);
           s.leftClickQueued--;
         }
 
         if (s.isRightMouseDown) {
-          s.reelProgress = Math.max(0.05, s.reelProgress - 0.20 * dtSec);
+          s.reelProgress = Math.min(0.95, s.reelProgress + 0.20 * dtSec);
         } else if (!s.isReeling) {
-          const driftRight = 0.05 * (1.0 / alignmentBonus) * dtSec;
-          s.reelProgress = Math.min(0.95, s.reelProgress + driftRight);
+          const driftLeft = 0.05 * (1.0 / alignmentBonus) * dtSec;
+          s.reelProgress = Math.max(0.05, s.reelProgress - driftLeft);
         }
 
         const catchZoneHalf = (0.08 + s.rodLevel * 0.015);
