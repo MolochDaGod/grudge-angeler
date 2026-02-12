@@ -154,9 +154,6 @@ export default function FishingGame() {
     boardingPhase: 0 as number,
     boardingTargetX: 0,
     boardingTimer: 0,
-    draggingRodTip: false,
-    customRodTipLeft: null as { ox: number; oy: number } | null,
-    customRodTipRight: null as { ox: number; oy: number } | null,
     lastFishermanX: 0,
     lastFishermanY: 0,
   });
@@ -326,43 +323,13 @@ export default function FishingGame() {
     resize();
     window.addEventListener("resize", resize);
 
-    const isLineFacingLeft = (st: typeof stateRef.current) => {
-      const charCenter = st.lastFishermanX + (48 * 3) / 2;
-      return st.hookX < charCenter;
-    };
     const onDocMouseMove = (e: MouseEvent) => {
       const st = stateRef.current;
       st.mouseX = e.clientX;
       st.mouseY = e.clientY;
-      if (st.draggingRodTip && (st.gameState === "waiting" || st.gameState === "bite" || st.gameState === "reeling")) {
-        const ox = e.clientX - st.lastFishermanX;
-        const oy = e.clientY - st.lastFishermanY;
-        if (isLineFacingLeft(st)) {
-          st.customRodTipLeft = { ox, oy };
-        } else {
-          st.customRodTipRight = { ox, oy };
-        }
-      }
     };
     const onDocMouseDown = (e: MouseEvent) => {
       if (e.button === 0) {
-        const st = stateRef.current;
-        if (st.gameState === "waiting") {
-          const existing = isLineFacingLeft(st) ? st.customRodTipLeft : st.customRodTipRight;
-          let tipScreenX: number, tipScreenY: number;
-          if (existing) {
-            tipScreenX = st.lastFishermanX + existing.ox;
-            tipScreenY = st.lastFishermanY + existing.oy;
-          } else {
-            tipScreenX = st.lastFishermanX + 10 * 3;
-            tipScreenY = st.lastFishermanY + 8 * 3;
-          }
-          const dist = Math.sqrt((e.clientX - tipScreenX) ** 2 + (e.clientY - tipScreenY) ** 2);
-          if (dist < 50) {
-            st.draggingRodTip = true;
-            return;
-          }
-        }
         stateRef.current.isReeling = true;
         if (stateRef.current.gameState === "reeling") {
           stateRef.current.leftClickQueued++;
@@ -385,20 +352,6 @@ export default function FishingGame() {
     };
     const onDocMouseUp = (e: MouseEvent) => {
       if (e.button === 0) {
-        const st = stateRef.current;
-        if (st.draggingRodTip) {
-          st.draggingRodTip = false;
-          const ox = e.clientX - st.lastFishermanX;
-          const oy = e.clientY - st.lastFishermanY;
-          const dir = isLineFacingLeft(st) ? "LEFT" : "RIGHT";
-          if (isLineFacingLeft(st)) {
-            st.customRodTipLeft = { ox, oy };
-          } else {
-            st.customRodTipRight = { ox, oy };
-          }
-          console.log(`Rod tip ${dir} offset: (${ox}, ${oy})`);
-          return;
-        }
         stateRef.current.isReeling = false;
       }
       if (e.button === 2) stateRef.current.isRightMouseDown = false;
@@ -1034,9 +987,9 @@ export default function FishingGame() {
       // Fisherman sprite with per-frame rod tip tracking (coordinates in un-flipped sprite space, facing right)
       const SPRITE_FRAME_W = 48;
       const fishRodTips: Record<string, [number, number][]> = {
-        idle: [[10, 8], [10, 9], [10, 8], [10, 7]],
-        fish: [[4, 10], [3, 11], [4, 12], [5, 10]],
-        hook: [[38, 5], [30, 3], [18, 6], [8, 12], [4, 20], [6, 28]],
+        idle: [[43, 24], [43, 24], [43, 24], [43, 24]],
+        fish: [[43, 24], [42, 24], [42, 25], [43, 24]],
+        hook: [[43, 24], [36, 19], [35, 17], [34, 7], [27, 4], [25, 3]],
       };
 
       let fishermanFrame = Math.floor(s.time * 0.07) % 4;
@@ -1153,14 +1106,6 @@ export default function FishingGame() {
       s.lastFishermanX = fishermanX;
       s.lastFishermanY = fishermanY;
 
-      // Use custom rod tip offset if set (for when line is in water)
-      if (s.gameState === "waiting" || s.gameState === "bite" || s.gameState === "reeling") {
-        const customTip = fishingFlip ? s.customRodTipLeft : s.customRodTipRight;
-        if (customTip) {
-          rodTipX = fishermanX + customTip.ox;
-          rodTipY = fishermanY + customTip.oy;
-        }
-      }
 
       // Fishing line, bobber, hook, and hooked fish
       if (s.gameState === "waiting") {
@@ -1324,24 +1269,6 @@ export default function FishingGame() {
         ctx.globalAlpha = 1;
       }
 
-      // Draggable rod tip handle when line is in water
-      if (s.gameState === "waiting" || s.gameState === "bite" || s.gameState === "reeling") {
-        const handlePulse = 0.6 + Math.sin(s.time * 0.12) * 0.4;
-        ctx.globalAlpha = s.draggingRodTip ? 1 : handlePulse;
-        ctx.fillStyle = s.draggingRodTip ? "#ff6b6b" : "#4ecdc4";
-        ctx.strokeStyle = "#fff";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(rodTipX, rodTipY, s.draggingRodTip ? 8 : 6, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-        ctx.globalAlpha = 1;
-
-        ctx.fillStyle = "rgba(0,0,0,0.7)";
-        ctx.font = "10px 'Press Start 2P', monospace";
-        ctx.textAlign = "center";
-        ctx.fillText("DRAG", rodTipX, rodTipY - 14);
-      }
 
       // Show dock climb indicator when swimming near dock
       if (s.gameState === "swimming" && s.jumpVY === 0) {
