@@ -48,9 +48,9 @@ const JUNK_ITEMS = [
 ];
 
 const CHARACTER_VARIANTS = [
-  { name: "Classic", folder: "fisherman", tint: null, color: "#f1c40f" },
-  { name: "Ocean Blue", folder: "fisherman2", tint: null, color: "#5dade2" },
-  { name: "Crimson", folder: "fisherman3", tint: null, color: "#e74c3c" },
+  { name: "Fabled", folder: "fisherman", tint: null, color: "#2ecc71", factionIcon: "/assets/icons/faction_fabled.png" },
+  { name: "Legion", folder: "fisherman3", tint: null, color: "#e74c3c", factionIcon: "/assets/icons/faction_legion.png" },
+  { name: "Crusade", folder: "fisherman2", tint: null, color: "#5dade2", factionIcon: "/assets/icons/faction_crusade.png" },
 ];
 
 interface Rod {
@@ -449,6 +449,9 @@ export default function FishingGame() {
       ...Array.from({length: 17}, (_, i) => `/assets/icons/Icons_${String(i+1).padStart(2,'0')}.png`),
       "/assets/logo.png",
       "/assets/icons/gbux.png",
+      "/assets/icons/faction_fabled.png",
+      "/assets/icons/faction_legion.png",
+      "/assets/icons/faction_crusade.png",
     ];
     Promise.all(assets.map(a => loadImage(a)));
     generateBounties();
@@ -2246,90 +2249,60 @@ export default function FishingGame() {
               <div style={{ color: "#607d8b", fontSize: 8 }}>Choose your character</div>
             </div>
 
-            <div className="flex items-center justify-center gap-6">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  stateRef.current.selectedCharacter = (uiState.selectedCharacter - 1 + CHARACTER_VARIANTS.length) % CHARACTER_VARIANTS.length;
-                  syncUI();
-                }}
-                style={{
-                  background: "rgba(255,255,255,0.06)",
-                  border: "1px solid rgba(255,255,255,0.15)",
-                  borderRadius: 8,
-                  width: 36, height: 36,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  cursor: "pointer",
-                  color: "#90a4ae",
-                  fontSize: 18,
-                  transition: "all 0.2s",
-                }}
-                data-testid="button-char-prev"
-              >
-                ‹
-              </button>
-
-              <div className="flex flex-col items-center" style={{ minWidth: 120 }}>
-                <div style={{
-                  width: 96, height: 96,
-                  overflow: "hidden",
-                  imageRendering: "pixelated" as any,
-                  position: "relative",
-                }}>
-                  <img
-                    src={`/assets/${CHARACTER_VARIANTS[uiState.selectedCharacter].folder}/Fisherman_idle.png`}
-                    alt={CHARACTER_VARIANTS[uiState.selectedCharacter].name}
-                    style={{
-                      imageRendering: "pixelated",
-                      position: "absolute",
-                      height: 96,
-                      top: 0,
-                      left: 0,
-                      width: "auto",
+            <div className="flex items-end justify-center gap-4">
+              {CHARACTER_VARIANTS.map((cv, i) => {
+                const isSelected = uiState.selectedCharacter === i;
+                return (
+                  <div
+                    key={cv.name}
+                    className="flex flex-col items-center cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      stateRef.current.selectedCharacter = i;
+                      syncUI();
                     }}
-                  />
-                </div>
-                <span style={{
-                  color: CHARACTER_VARIANTS[uiState.selectedCharacter].color,
-                  fontSize: 10,
-                  marginTop: 10,
-                  fontWeight: "bold",
-                  textShadow: `0 0 10px ${CHARACTER_VARIANTS[uiState.selectedCharacter].color}55`,
-                }}>{CHARACTER_VARIANTS[uiState.selectedCharacter].name}</span>
-                <div className="flex gap-2 mt-2">
-                  {CHARACTER_VARIANTS.map((_, i) => (
-                    <div key={i} style={{
-                      width: 6, height: 6,
-                      borderRadius: "50%",
-                      background: uiState.selectedCharacter === i ? CHARACTER_VARIANTS[i].color : "rgba(255,255,255,0.15)",
-                      boxShadow: uiState.selectedCharacter === i ? `0 0 8px ${CHARACTER_VARIANTS[i].color}` : "none",
+                    style={{ transition: "all 0.3s", transform: isSelected ? "scale(1.15)" : "scale(0.9)", opacity: isSelected ? 1 : 0.7 }}
+                    data-testid={`button-char-${i}`}
+                  >
+                    {isSelected && (
+                      <img
+                        src={cv.factionIcon}
+                        alt={cv.name}
+                        style={{ width: 36, height: 36, marginBottom: 4, transition: "all 0.3s" }}
+                      />
+                    )}
+                    <div style={{
+                      width: 96, height: 96,
+                      overflow: "hidden",
+                      imageRendering: "pixelated" as any,
+                      position: "relative",
+                      filter: isSelected ? "none" : "brightness(0) drop-shadow(0 0 2px rgba(255,255,255,0.15))",
+                      transition: "filter 0.3s",
+                    }}>
+                      <img
+                        src={`/assets/${cv.folder}/Fisherman_idle.png`}
+                        alt={cv.name}
+                        style={{
+                          imageRendering: "pixelated",
+                          position: "absolute",
+                          height: 96,
+                          top: 0,
+                          left: 0,
+                          width: "auto",
+                        }}
+                      />
+                    </div>
+                    <span style={{
+                      color: isSelected ? cv.color : "#455a64",
+                      fontSize: isSelected ? 10 : 8,
+                      marginTop: 6,
+                      fontWeight: "bold",
+                      textShadow: isSelected ? `0 0 10px ${cv.color}55` : "none",
                       transition: "all 0.3s",
-                    }} />
-                  ))}
-                </div>
-              </div>
-
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  stateRef.current.selectedCharacter = (uiState.selectedCharacter + 1) % CHARACTER_VARIANTS.length;
-                  syncUI();
-                }}
-                style={{
-                  background: "rgba(255,255,255,0.06)",
-                  border: "1px solid rgba(255,255,255,0.15)",
-                  borderRadius: 8,
-                  width: 36, height: 36,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  cursor: "pointer",
-                  color: "#90a4ae",
-                  fontSize: 18,
-                  transition: "all 0.2s",
-                }}
-                data-testid="button-char-next"
-              >
-                ›
-              </button>
+                    }}>{cv.name}</span>
+                  </div>
+                );
+              })}
             </div>
 
             <div className="flex flex-col items-center gap-2" style={{ width: "100%" }}>
