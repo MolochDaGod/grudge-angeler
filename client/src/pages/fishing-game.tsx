@@ -48,9 +48,9 @@ const JUNK_ITEMS = [
 ];
 
 const CHARACTER_VARIANTS = [
-  { name: "Fabled", folder: "fisherman", tint: null, color: "#2ecc71", factionIcon: "/assets/icons/faction_fabled.png" },
-  { name: "Legion", folder: "fisherman3", tint: null, color: "#e74c3c", factionIcon: "/assets/icons/faction_legion.png" },
-  { name: "Crusade", folder: "fisherman2", tint: null, color: "#5dade2", factionIcon: "/assets/icons/faction_crusade.png" },
+  { name: "Fabled", folder: "fisherman", tint: null, color: "#2ecc71", factionIcon: "/assets/icons/faction_fabled.png", selectImg: "/assets/char_fabled.png" },
+  { name: "Legion", folder: "fisherman3", tint: null, color: "#e74c3c", factionIcon: "/assets/icons/faction_legion.png", selectImg: "/assets/char_legion.png" },
+  { name: "Crusade", folder: "fisherman2", tint: null, color: "#5dade2", factionIcon: "/assets/icons/faction_crusade.png", selectImg: "/assets/char_crusade.png" },
 ];
 
 interface Rod {
@@ -108,6 +108,103 @@ interface MarketEntry {
   recentSold: number;
   lastSoldTime: number;
 }
+
+interface FishingAttributes {
+  Strength: number;
+  Intellect: number;
+  Vitality: number;
+  Dexterity: number;
+  Endurance: number;
+  Wisdom: number;
+  Agility: number;
+  Tactics: number;
+}
+
+interface CatchHistoryEntry {
+  name: string;
+  rarity: string;
+  size: number;
+  weight: number;
+  sellPrice: number;
+  timestamp: number;
+}
+
+const FISHING_ATTR_DEFS: Record<keyof FishingAttributes, { description: string; color: string; gains: Record<string, { label: string; perPoint: number; unit: string }> }> = {
+  Strength: {
+    description: "Raw reeling power. Increases reel speed and line tension resistance.",
+    color: "#ef4444",
+    gains: {
+      reelPower: { label: "Reel Power", perPoint: 1.5, unit: "%" },
+      lineStrength: { label: "Line Strength", perPoint: 0.8, unit: "%" },
+      catchZone: { label: "Catch Zone", perPoint: 0.3, unit: "%" },
+    }
+  },
+  Intellect: {
+    description: "Fishing knowledge. Reveals fish info and improves sell prices.",
+    color: "#8b5cf6",
+    gains: {
+      sellBonus: { label: "Sell Price Bonus", perPoint: 1.2, unit: "%" },
+      fishReveal: { label: "Fish Info", perPoint: 0.5, unit: "%" },
+      xpBonus: { label: "XP Gain", perPoint: 0.8, unit: "%" },
+    }
+  },
+  Vitality: {
+    description: "Stamina and persistence. Longer bite windows and patience.",
+    color: "#22c55e",
+    gains: {
+      biteWindow: { label: "Bite Window", perPoint: 1.0, unit: "%" },
+      patience: { label: "Wait Reduction", perPoint: 0.6, unit: "%" },
+      comboKeep: { label: "Combo Sustain", perPoint: 0.4, unit: "%" },
+    }
+  },
+  Dexterity: {
+    description: "Precision and finesse. Better casting accuracy and hook control.",
+    color: "#f59e0b",
+    gains: {
+      castAccuracy: { label: "Cast Accuracy", perPoint: 1.0, unit: "%" },
+      hookControl: { label: "Hook Control", perPoint: 0.7, unit: "%" },
+      critCatch: { label: "Perfect Catch", perPoint: 0.5, unit: "%" },
+    }
+  },
+  Endurance: {
+    description: "Physical resilience. Resist line breaks and fight longer.",
+    color: "#78716c",
+    gains: {
+      lineResist: { label: "Break Resist", perPoint: 1.2, unit: "%" },
+      fightDuration: { label: "Fight Stamina", perPoint: 0.8, unit: "%" },
+      rodDurability: { label: "Rod Durability", perPoint: 0.5, unit: "%" },
+    }
+  },
+  Wisdom: {
+    description: "Deep ocean knowledge. Better rare fish attraction and lure efficiency.",
+    color: "#06b6d4",
+    gains: {
+      rarityBoost: { label: "Rarity Boost", perPoint: 1.0, unit: "%" },
+      lureEfficiency: { label: "Lure Efficiency", perPoint: 0.6, unit: "%" },
+      weatherRead: { label: "Spawn Insight", perPoint: 0.4, unit: "%" },
+    }
+  },
+  Agility: {
+    description: "Speed and reflexes. Faster reeling and quicker reactions.",
+    color: "#a3e635",
+    gains: {
+      reelSpeed: { label: "Reel Speed", perPoint: 0.8, unit: "%" },
+      reactionTime: { label: "Reaction Time", perPoint: 1.0, unit: "%" },
+      moveSpeed: { label: "Move Speed", perPoint: 0.5, unit: "%" },
+    }
+  },
+  Tactics: {
+    description: "Strategic mastery. Boosts all other stats and improves bounty rewards.",
+    color: "#ec4899",
+    gains: {
+      allStatsBonus: { label: "All Stats Boost", perPoint: 0.5, unit: "%" },
+      bountyBonus: { label: "Bounty Bonus", perPoint: 1.0, unit: "%" },
+      comboMulti: { label: "Combo Multiplier", perPoint: 0.3, unit: "%" },
+    }
+  },
+};
+
+const ATTR_KEYS = Object.keys(FISHING_ATTR_DEFS) as (keyof FishingAttributes)[];
 
 interface Bounty {
   fishName: string;
@@ -256,6 +353,12 @@ export default function FishingGame() {
     biggestCatchWeight: 0,
     lastSellPrice: 0,
     lastFishWeight: 0,
+    playerLevel: 1,
+    playerXP: 0,
+    playerXPToNext: 100,
+    attributePoints: 3,
+    attributes: { Strength: 1, Intellect: 1, Vitality: 1, Dexterity: 1, Endurance: 1, Wisdom: 1, Agility: 1, Tactics: 1 } as FishingAttributes,
+    catchHistory: [] as CatchHistoryEntry[],
   });
 
   const imagesRef = useRef<Map<string, HTMLImageElement>>(new Map());
@@ -298,6 +401,12 @@ export default function FishingGame() {
     biggestCatchWeight: 0,
     lastSellPrice: 0,
     lastFishWeight: 0,
+    playerLevel: 1,
+    playerXP: 0,
+    playerXPToNext: 100,
+    attributePoints: 3,
+    attributes: { Strength: 1, Intellect: 1, Vitality: 1, Dexterity: 1, Endurance: 1, Wisdom: 1, Agility: 1, Tactics: 1 } as FishingAttributes,
+    catchHistory: [] as CatchHistoryEntry[],
   });
 
   const loadImage = useCallback((src: string): Promise<HTMLImageElement> => {
@@ -452,6 +561,9 @@ export default function FishingGame() {
       "/assets/icons/faction_fabled.png",
       "/assets/icons/faction_legion.png",
       "/assets/icons/faction_crusade.png",
+      "/assets/char_fabled.png",
+      "/assets/char_legion.png",
+      "/assets/char_crusade.png",
     ];
     Promise.all(assets.map(a => loadImage(a)));
     generateBounties();
@@ -501,6 +613,12 @@ export default function FishingGame() {
       biggestCatchWeight: s.biggestCatchWeight,
       lastSellPrice: s.lastSellPrice,
       lastFishWeight: s.lastFishWeight,
+      playerLevel: s.playerLevel,
+      playerXP: s.playerXP,
+      playerXPToNext: s.playerXPToNext,
+      attributePoints: s.attributePoints,
+      attributes: { ...s.attributes },
+      catchHistory: [...s.catchHistory],
     });
   }, []);
 
@@ -568,6 +686,11 @@ export default function FishingGame() {
       const key = e.key.toLowerCase();
       stateRef.current.keysDown.add(key);
       if (["a", "d", "w", "s", " ", "e"].includes(key)) e.preventDefault();
+      if (key === "tab") {
+        e.preventDefault();
+        setShowCharPanel(prev => !prev);
+        return;
+      }
       if (key === "escape" && stateRef.current.gameState === "store") {
         stateRef.current.gameState = "idle";
         syncUI();
@@ -1823,6 +1946,19 @@ export default function FishingGame() {
 
           if (s.totalCaught % 5 === 0 && s.rodLevel < 5) s.rodLevel++;
 
+          const rarityXP: Record<string, number> = { common: 10, uncommon: 25, rare: 50, legendary: 100, ultra_rare: 200 };
+          const xpGain = Math.floor((rarityXP[s.currentCatch?.rarity || "common"] || 10) * sizeBonus);
+          s.playerXP += xpGain;
+          while (s.playerXP >= s.playerXPToNext) {
+            s.playerXP -= s.playerXPToNext;
+            s.playerLevel++;
+            s.attributePoints += 2;
+            s.playerXPToNext = Math.floor(100 * Math.pow(1.15, s.playerLevel - 1));
+          }
+
+          s.catchHistory.unshift({ name, rarity: s.currentCatch?.rarity || "junk", size: sizeBonus, weight: fishWeight, sellPrice, timestamp: Date.now() });
+          if (s.catchHistory.length > 50) s.catchHistory.length = 50;
+
           addParticles(s.hookedFishX, waterY, 25, "#f1c40f", 5, "sparkle");
           addParticles(s.hookedFishX, waterY, 15, "#ffffff", 3, "splash");
           addRipple(s.hookedFishX, waterY, 50);
@@ -2183,6 +2319,8 @@ export default function FishingGame() {
   };
 
   const [showCollection, setShowCollection] = useState(false);
+  const [showCharPanel, setShowCharPanel] = useState(false);
+  const [charPanelTab, setCharPanelTab] = useState<"stats" | "equipment" | "history" | "collection">("stats");
   const [introActive, setIntroActive] = useState(true);
   const introVideoRef = useRef<HTMLVideoElement>(null);
 
@@ -2249,7 +2387,7 @@ export default function FishingGame() {
               <div style={{ color: "#607d8b", fontSize: 8 }}>Choose your character</div>
             </div>
 
-            <div className="flex items-end justify-center gap-4">
+            <div className="flex items-end justify-center" style={{ gap: 0 }}>
               {CHARACTER_VARIANTS.map((cv, i) => {
                 const isSelected = uiState.selectedCharacter === i;
                 return (
@@ -2261,44 +2399,56 @@ export default function FishingGame() {
                       stateRef.current.selectedCharacter = i;
                       syncUI();
                     }}
-                    style={{ transition: "all 0.3s", transform: isSelected ? "scale(1.15)" : "scale(0.9)", opacity: isSelected ? 1 : 0.7 }}
+                    style={{
+                      transition: "all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                      transform: isSelected ? "scale(1.2) translateY(-8px)" : "scale(0.85)",
+                      zIndex: isSelected ? 10 : 1,
+                      position: "relative",
+                    }}
                     data-testid={`button-char-${i}`}
                   >
                     {isSelected && (
                       <img
                         src={cv.factionIcon}
                         alt={cv.name}
-                        style={{ width: 36, height: 36, marginBottom: 4, transition: "all 0.3s" }}
+                        style={{ width: 32, height: 32, marginBottom: 2, transition: "all 0.3s", filter: `drop-shadow(0 0 6px ${cv.color})` }}
                       />
                     )}
                     <div style={{
-                      width: 96, height: 96,
-                      overflow: "hidden",
-                      imageRendering: "pixelated" as any,
                       position: "relative",
-                      filter: isSelected ? "none" : "brightness(0) drop-shadow(0 0 2px rgba(255,255,255,0.15))",
-                      transition: "filter 0.3s",
+                      transition: "all 0.4s",
                     }}>
+                      {isSelected && (
+                        <div style={{
+                          position: "absolute",
+                          inset: -6,
+                          borderRadius: "50%",
+                          background: `radial-gradient(ellipse at center, ${cv.color}20 0%, transparent 70%)`,
+                          filter: `blur(8px)`,
+                          pointerEvents: "none",
+                        }} />
+                      )}
                       <img
-                        src={`/assets/${cv.folder}/Fisherman_idle.png`}
+                        src={cv.selectImg}
                         alt={cv.name}
                         style={{
                           imageRendering: "pixelated",
-                          position: "absolute",
-                          height: 96,
-                          top: 0,
-                          left: 0,
+                          height: 140,
                           width: "auto",
+                          filter: isSelected ? `drop-shadow(0 0 12px ${cv.color}60)` : "brightness(0.08) contrast(0.5)",
+                          transition: "filter 0.4s",
+                          position: "relative",
                         }}
                       />
                     </div>
                     <span style={{
-                      color: isSelected ? cv.color : "#455a64",
-                      fontSize: isSelected ? 10 : 8,
-                      marginTop: 6,
+                      color: isSelected ? cv.color : "#2a3a4a",
+                      fontSize: isSelected ? 10 : 7,
+                      marginTop: 4,
                       fontWeight: "bold",
-                      textShadow: isSelected ? `0 0 10px ${cv.color}55` : "none",
+                      textShadow: isSelected ? `0 0 12px ${cv.color}88` : "none",
                       transition: "all 0.3s",
+                      letterSpacing: isSelected ? "2px" : "0px",
                     }}>{cv.name}</span>
                   </div>
                 );
@@ -2807,6 +2957,324 @@ export default function FishingGame() {
             </div>
           )}
         </>
+      )}
+
+      {/* Character Panel (Tab) */}
+      {showCharPanel && uiState.characterSelected && (
+        <div
+          className="absolute inset-0 flex items-center justify-center"
+          style={{ zIndex: 200, background: "rgba(5,10,20,0.85)", backdropFilter: "blur(6px)" }}
+          onClick={(e) => { e.stopPropagation(); setShowCharPanel(false); }}
+          data-testid="char-panel-overlay"
+        >
+          <div
+            className="flex flex-col"
+            style={{
+              width: Math.min(680, window.innerWidth * 0.92),
+              maxHeight: "90vh",
+              background: "linear-gradient(135deg, rgba(14,22,48,0.97), rgba(20,26,43,0.95))",
+              border: `2px solid ${CHARACTER_VARIANTS[uiState.selectedCharacter].color}30`,
+              borderRadius: 14,
+              overflow: "hidden",
+              fontFamily: "'Press Start 2P', monospace",
+            }}
+            onClick={(e) => e.stopPropagation()}
+            data-testid="char-panel"
+          >
+            {/* Header */}
+            <div className="flex items-center gap-3 px-4 py-3" style={{ borderBottom: `1px solid ${CHARACTER_VARIANTS[uiState.selectedCharacter].color}25`, background: "rgba(0,0,0,0.2)" }}>
+              <img src={CHARACTER_VARIANTS[uiState.selectedCharacter].selectImg} alt="" style={{ height: 52, imageRendering: "pixelated", filter: `drop-shadow(0 0 6px ${CHARACTER_VARIANTS[uiState.selectedCharacter].color}50)` }} />
+              <div className="flex flex-col gap-1 flex-1">
+                <div className="flex items-center gap-2">
+                  <img src={CHARACTER_VARIANTS[uiState.selectedCharacter].factionIcon} alt="" style={{ width: 18, height: 18 }} />
+                  <span style={{ color: CHARACTER_VARIANTS[uiState.selectedCharacter].color, fontSize: 12, fontWeight: "bold" }}>{uiState.playerName || "Angler"}</span>
+                  <span style={{ color: "#607d8b", fontSize: 7 }}>Lv.{uiState.playerLevel}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span style={{ color: "#455a64", fontSize: 6 }}>{CHARACTER_VARIANTS[uiState.selectedCharacter].name} Faction</span>
+                  <div className="flex items-center gap-1">
+                    <img src="/assets/icons/gbux.png" alt="" style={{ width: 10, height: 10, imageRendering: "pixelated" }} />
+                    <span style={{ color: "#f1c40f", fontSize: 7 }}>{uiState.money}</span>
+                  </div>
+                </div>
+                {/* XP Bar */}
+                <div style={{ width: "100%", height: 6, background: "rgba(255,255,255,0.06)", borderRadius: 3, overflow: "hidden" }}>
+                  <div style={{ width: `${(uiState.playerXP / uiState.playerXPToNext) * 100}%`, height: "100%", background: `linear-gradient(90deg, ${CHARACTER_VARIANTS[uiState.selectedCharacter].color}, ${CHARACTER_VARIANTS[uiState.selectedCharacter].color}80)`, borderRadius: 3, transition: "width 0.3s" }} />
+                </div>
+                <span style={{ color: "#455a64", fontSize: 5 }}>XP: {uiState.playerXP}/{uiState.playerXPToNext}</span>
+              </div>
+              <button
+                className="cursor-pointer px-2 py-1"
+                style={{ background: "rgba(255,255,255,0.08)", borderRadius: 4, border: "1px solid rgba(255,255,255,0.15)", color: "#78909c", fontSize: 10, fontFamily: "'Press Start 2P', monospace" }}
+                onClick={() => setShowCharPanel(false)}
+                data-testid="button-close-char-panel"
+              >X</button>
+            </div>
+
+            {/* Tab Navigation */}
+            <div className="flex" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+              {([["stats", "STATS"], ["equipment", "EQUIP"], ["history", "HISTORY"], ["collection", "FISH LOG"]] as const).map(([tab, label]) => (
+                <button
+                  key={tab}
+                  className="flex-1 py-2 cursor-pointer"
+                  style={{
+                    background: charPanelTab === tab ? `${CHARACTER_VARIANTS[uiState.selectedCharacter].color}15` : "transparent",
+                    borderBottom: charPanelTab === tab ? `2px solid ${CHARACTER_VARIANTS[uiState.selectedCharacter].color}` : "2px solid transparent",
+                    color: charPanelTab === tab ? CHARACTER_VARIANTS[uiState.selectedCharacter].color : "#455a64",
+                    fontSize: 7,
+                    fontFamily: "'Press Start 2P', monospace",
+                    border: "none",
+                    borderBottomWidth: 2,
+                    borderBottomStyle: "solid",
+                    borderBottomColor: charPanelTab === tab ? CHARACTER_VARIANTS[uiState.selectedCharacter].color : "transparent",
+                    transition: "all 0.2s",
+                  }}
+                  onClick={() => setCharPanelTab(tab)}
+                  data-testid={`button-tab-${tab}`}
+                >{label}</button>
+              ))}
+            </div>
+
+            {/* Tab Content */}
+            <div className="flex-1 overflow-y-auto" style={{ maxHeight: "calc(90vh - 160px)", padding: 16 }}>
+
+              {/* STATS TAB */}
+              {charPanelTab === "stats" && (
+                <div className="flex flex-col gap-3">
+                  {uiState.attributePoints > 0 && (
+                    <div className="flex items-center gap-2 p-2" style={{ background: "rgba(110,231,183,0.08)", borderRadius: 8, border: "1px solid rgba(110,231,183,0.2)" }}>
+                      <span style={{ color: "#6ee7b7", fontSize: 8 }}>Attribute Points Available:</span>
+                      <span style={{ color: "#6ee7b7", fontSize: 14, fontWeight: "bold" }}>{uiState.attributePoints}</span>
+                    </div>
+                  )}
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                    {ATTR_KEYS.map(attrKey => {
+                      const def = FISHING_ATTR_DEFS[attrKey];
+                      const val = uiState.attributes[attrKey];
+                      return (
+                        <div key={attrKey} className="flex flex-col gap-1.5" style={{ background: "rgba(255,255,255,0.03)", borderRadius: 8, padding: 10, border: `1px solid ${def.color}18` }}>
+                          <div className="flex items-center justify-between">
+                            <span style={{ color: def.color, fontSize: 8, fontWeight: "bold" }}>{attrKey}</span>
+                            <span style={{ color: "#e8eaf6", fontSize: 12, fontWeight: "bold" }}>{val}</span>
+                          </div>
+                          <div style={{ color: "#607d8b", fontSize: 5, lineHeight: "1.6" }}>{def.description}</div>
+                          <div className="flex flex-col gap-0.5" style={{ marginTop: 2 }}>
+                            {Object.values(def.gains).map(g => (
+                              <div key={g.label} className="flex justify-between" style={{ fontSize: 5, color: "#78909c" }}>
+                                <span>{g.label}</span>
+                                <span style={{ color: def.color }}>+{(g.perPoint * val).toFixed(1)}{g.unit}</span>
+                              </div>
+                            ))}
+                          </div>
+                          {uiState.attributePoints > 0 && (
+                            <button
+                              className="cursor-pointer mt-1"
+                              style={{
+                                background: `${def.color}20`,
+                                border: `1px solid ${def.color}40`,
+                                borderRadius: 4,
+                                color: def.color,
+                                fontSize: 6,
+                                padding: "3px 0",
+                                fontFamily: "'Press Start 2P', monospace",
+                                transition: "all 0.2s",
+                              }}
+                              onClick={() => {
+                                const s = stateRef.current;
+                                if (s.attributePoints > 0) {
+                                  s.attributes[attrKey]++;
+                                  s.attributePoints--;
+                                  syncUI();
+                                }
+                              }}
+                              data-testid={`button-attr-${attrKey}`}
+                            >+ 1</button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {/* Derived Stats Summary */}
+                  <div style={{ background: "rgba(0,0,0,0.2)", borderRadius: 8, padding: 10, border: "1px solid rgba(255,255,255,0.06)" }}>
+                    <div style={{ color: "#6ee7b7", fontSize: 8, marginBottom: 8 }}>DERIVED STATS</div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6 }}>
+                      {[
+                        { label: "Reel Power", value: `+${(uiState.attributes.Strength * 1.5).toFixed(0)}%`, color: "#ef4444" },
+                        { label: "Sell Bonus", value: `+${(uiState.attributes.Intellect * 1.2).toFixed(0)}%`, color: "#8b5cf6" },
+                        { label: "Bite Window", value: `+${(uiState.attributes.Vitality * 1.0).toFixed(0)}%`, color: "#22c55e" },
+                        { label: "Cast Acc.", value: `+${(uiState.attributes.Dexterity * 1.0).toFixed(0)}%`, color: "#f59e0b" },
+                        { label: "Break Resist", value: `+${(uiState.attributes.Endurance * 1.2).toFixed(0)}%`, color: "#78716c" },
+                        { label: "Rarity Boost", value: `+${(uiState.attributes.Wisdom * 1.0).toFixed(0)}%`, color: "#06b6d4" },
+                        { label: "Reel Speed", value: `+${(uiState.attributes.Agility * 0.8).toFixed(0)}%`, color: "#a3e635" },
+                        { label: "All Stats", value: `+${(uiState.attributes.Tactics * 0.5).toFixed(1)}%`, color: "#ec4899" },
+                        { label: "Total Level", value: `${Object.values(uiState.attributes).reduce((a, b) => a + b, 0)}`, color: "#ffd54f" },
+                      ].map(stat => (
+                        <div key={stat.label} className="flex flex-col items-center gap-0.5" style={{ background: "rgba(255,255,255,0.02)", borderRadius: 4, padding: "4px 2px" }}>
+                          <span style={{ color: "#607d8b", fontSize: 5 }}>{stat.label}</span>
+                          <span style={{ color: stat.color, fontSize: 8, fontWeight: "bold" }}>{stat.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* EQUIPMENT TAB */}
+              {charPanelTab === "equipment" && (
+                <div className="flex flex-col gap-3">
+                  <div style={{ color: "#6ee7b7", fontSize: 8, marginBottom: 4 }}>EQUIPPED ROD</div>
+                  <div className="flex items-center gap-3 p-3" style={{ background: "rgba(255,255,255,0.03)", borderRadius: 8, border: "1px solid rgba(46,204,113,0.15)" }}>
+                    <img src={RODS[uiState.equippedRod].icon} alt="" style={{ width: 36, height: 36, imageRendering: "pixelated" }} />
+                    <div className="flex flex-col gap-1 flex-1">
+                      <span style={{ color: "#2ecc71", fontSize: 9, fontWeight: "bold" }}>{RODS[uiState.equippedRod].name}</span>
+                      <span style={{ color: "#607d8b", fontSize: 6 }}>{RODS[uiState.equippedRod].description}</span>
+                      <div className="flex flex-wrap gap-x-3 gap-y-0.5" style={{ marginTop: 2 }}>
+                        <span style={{ fontSize: 5, color: "#5dade2" }}>Catch Zone: +{(RODS[uiState.equippedRod].catchZoneBonus * 100).toFixed(1)}%</span>
+                        <span style={{ fontSize: 5, color: "#f1c40f" }}>Reel Speed: x{RODS[uiState.equippedRod].reelSpeedMult}</span>
+                        <span style={{ fontSize: 5, color: "#e74c3c" }}>Line Str: x{RODS[uiState.equippedRod].lineStrength}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ color: "#6ee7b7", fontSize: 8, marginTop: 8, marginBottom: 4 }}>EQUIPPED BAIT / LURE</div>
+                  <div className="flex items-center gap-3 p-3" style={{ background: "rgba(255,255,255,0.03)", borderRadius: 8, border: "1px solid rgba(46,204,113,0.15)" }}>
+                    <img src={LURES[uiState.equippedLure].icon} alt="" style={{ width: 36, height: 36, imageRendering: "pixelated" }} />
+                    <div className="flex flex-col gap-1 flex-1">
+                      <span style={{ color: "#2ecc71", fontSize: 9, fontWeight: "bold" }}>{LURES[uiState.equippedLure].name}</span>
+                      <span style={{ color: "#607d8b", fontSize: 6 }}>{LURES[uiState.equippedLure].description}</span>
+                      <div className="flex flex-wrap gap-x-3 gap-y-0.5" style={{ marginTop: 2 }}>
+                        <span style={{ fontSize: 5, color: "#a855f7" }}>Rarity: x{LURES[uiState.equippedLure].rarityBoost}</span>
+                        <span style={{ fontSize: 5, color: "#f59e0b" }}>Size: +{LURES[uiState.equippedLure].sizeBoost}</span>
+                        <span style={{ fontSize: 5, color: "#5dade2" }}>Speed: x{LURES[uiState.equippedLure].speedBoost}</span>
+                      </div>
+                      {LURES[uiState.equippedLure].targetFish.length > 0 && (
+                        <span style={{ fontSize: 5, color: "#78909c", marginTop: 2 }}>Targets: {LURES[uiState.equippedLure].targetFish.join(", ")}</span>
+                      )}
+                    </div>
+                  </div>
+                  <div style={{ color: "#6ee7b7", fontSize: 8, marginTop: 8, marginBottom: 4 }}>OWNED RODS</div>
+                  <div className="flex flex-col gap-1.5">
+                    {RODS.map((rod, i) => (
+                      <div key={rod.name} className="flex items-center gap-2 px-2 py-1.5" style={{
+                        background: uiState.ownedRods[i] ? "rgba(46,204,113,0.06)" : "rgba(255,255,255,0.02)",
+                        borderRadius: 6,
+                        border: i === uiState.equippedRod ? "1px solid rgba(46,204,113,0.3)" : "1px solid rgba(255,255,255,0.04)",
+                        opacity: uiState.ownedRods[i] ? 1 : 0.4,
+                      }}>
+                        <img src={rod.icon} alt="" style={{ width: 20, height: 20, imageRendering: "pixelated" }} />
+                        <span style={{ color: uiState.ownedRods[i] ? "#b0bec5" : "#37474f", fontSize: 7, flex: 1 }}>{rod.name}</span>
+                        {i === uiState.equippedRod && <span style={{ color: "#2ecc71", fontSize: 5 }}>EQUIPPED</span>}
+                        {!uiState.ownedRods[i] && <span style={{ color: "#455a64", fontSize: 5 }}>LOCKED</span>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* HISTORY TAB */}
+              {charPanelTab === "history" && (
+                <div className="flex flex-col gap-2">
+                  <div style={{ color: "#6ee7b7", fontSize: 8, marginBottom: 4 }}>RECENT CATCHES</div>
+                  {uiState.catchHistory.length === 0 && (
+                    <div className="flex flex-col items-center justify-center mt-6 gap-2">
+                      <img src="/assets/icons/Icons_03.png" alt="" className="w-8 h-8 opacity-30" style={{ imageRendering: "pixelated" }} />
+                      <span style={{ color: "#455a64", fontSize: 7 }}>No catches yet</span>
+                    </div>
+                  )}
+                  {uiState.catchHistory.map((entry, idx) => (
+                    <div key={idx} className="flex items-center gap-2.5 px-3 py-2" style={{
+                      background: rarityBg(entry.rarity),
+                      borderRadius: 6,
+                      border: `1px solid ${rarityColor(entry.rarity)}18`,
+                    }}>
+                      <div className="flex flex-col items-center" style={{ minWidth: 20 }}>
+                        <span style={{ color: "#455a64", fontSize: 5 }}>#{idx + 1}</span>
+                      </div>
+                      <div className="flex-1 flex flex-col gap-0.5">
+                        <span style={{ color: rarityColor(entry.rarity), fontSize: 8, fontWeight: "bold" }}>{entry.name}</span>
+                        <div className="flex flex-wrap gap-x-3 gap-y-0">
+                          <span style={{ color: "#78909c", fontSize: 5 }}>Size: {entry.size.toFixed(1)}x</span>
+                          <span style={{ color: "#78909c", fontSize: 5 }}>Weight: {entry.weight.toFixed(1)} lbs</span>
+                          <span className="flex items-center gap-0.5" style={{ fontSize: 5 }}>
+                            <img src="/assets/icons/gbux.png" alt="" style={{ width: 8, height: 8, imageRendering: "pixelated" }} />
+                            <span style={{ color: "#f1c40f" }}>{entry.sellPrice}</span>
+                          </span>
+                        </div>
+                      </div>
+                      <span style={{
+                        fontSize: 5, color: "#0a0f1a", fontWeight: "bold",
+                        background: rarityColor(entry.rarity), borderRadius: 3,
+                        padding: "1px 4px", textTransform: "uppercase",
+                      }}>{entry.rarity === "ultra_rare" ? "ULTRA" : entry.rarity}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* COLLECTION TAB */}
+              {charPanelTab === "collection" && (
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between mb-2">
+                    <div style={{ color: "#6ee7b7", fontSize: 8 }}>FISH COLLECTION</div>
+                    <span style={{ color: "#455a64", fontSize: 6 }}>{uiState.caughtCollection.filter(([,e]) => e.type).length}/{FISH_TYPES.length}</span>
+                  </div>
+                  <div className="flex flex-wrap gap-3 mb-3" style={{ background: "rgba(255,255,255,0.02)", borderRadius: 8, padding: 8 }}>
+                    <div className="flex flex-col items-center gap-0.5" style={{ minWidth: 50 }}>
+                      <span style={{ color: "#78909c", fontSize: 5 }}>TOTAL CAUGHT</span>
+                      <span style={{ color: "#5dade2", fontSize: 10 }}>{uiState.totalCaught}</span>
+                    </div>
+                    <div className="flex flex-col items-center gap-0.5" style={{ minWidth: 50 }}>
+                      <span style={{ color: "#78909c", fontSize: 5 }}>BEST COMBO</span>
+                      <span style={{ color: "#f5b7b1", fontSize: 10 }}>x{uiState.bestCombo}</span>
+                    </div>
+                    <div className="flex flex-col items-center gap-0.5" style={{ minWidth: 60 }}>
+                      <span style={{ color: "#78909c", fontSize: 5 }}>TOTAL WEIGHT</span>
+                      <span style={{ color: "#78909c", fontSize: 10 }}>{Math.round(uiState.caughtCollection.reduce((sum, [,e]) => sum + e.totalWeight, 0) * 10) / 10} lbs</span>
+                    </div>
+                  </div>
+                  {uiState.caughtCollection.map(([name, entry]) => {
+                    const rarity = entry.type?.rarity || "common";
+                    return (
+                      <div key={name} className="flex items-start gap-2.5 p-2.5" style={{ background: rarityBg(rarity), borderRadius: 8, border: `1px solid ${rarityColor(rarity)}25` }}>
+                        <div className="flex flex-col items-center gap-1" style={{ minWidth: 44 }}>
+                          <div className="flex items-center justify-center" style={{ width: 40, height: 40, background: "rgba(0,0,0,0.3)", borderRadius: 6 }}>
+                            <img src={entry.type?.catchAsset || entry.junk?.asset || ""} alt={name} style={{ imageRendering: "pixelated", transform: "scale(2)", maxWidth: 36, maxHeight: 36 }} />
+                          </div>
+                          <span style={{ fontSize: 5, color: "#0a0f1a", fontWeight: "bold", background: rarityColor(rarity), borderRadius: 3, padding: "1px 3px", textTransform: "uppercase" }}>
+                            {rarity === "ultra_rare" ? "ULTRA" : rarity}
+                          </span>
+                        </div>
+                        <div className="flex-1 min-w-0 flex flex-col gap-0.5">
+                          <span className="truncate" style={{ color: rarityColor(rarity), fontSize: 8, fontWeight: "bold" }}>{name}</span>
+                          <div className="flex flex-wrap gap-x-3 gap-y-0">
+                            <span style={{ color: "#5dade2", fontSize: 5 }}>x{entry.count}</span>
+                            <span style={{ color: "#9b59b6", fontSize: 5 }}>Best: {entry.biggestSize.toFixed(1)}x</span>
+                            <span style={{ color: "#78909c", fontSize: 5 }}>{Math.round(entry.totalWeight * 10) / 10} lbs</span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {FISH_TYPES.filter(ft => !uiState.caughtCollection.some(([n]) => n === ft.name)).map(ft => (
+                    <div key={ft.name} className="flex items-center gap-2.5 p-2" style={{ background: "rgba(255,255,255,0.02)", borderRadius: 8, border: "1px solid rgba(255,255,255,0.06)" }}>
+                      <div className="flex items-center justify-center" style={{ width: 40, height: 40, background: "rgba(0,0,0,0.2)", borderRadius: 6 }}>
+                        <span style={{ fontSize: 16, color: "#2a3a4a" }}>?</span>
+                      </div>
+                      <div className="flex-1 min-w-0 flex flex-col gap-0.5">
+                        <span style={{ color: "#37474f", fontSize: 7 }}>???</span>
+                        <span style={{ color: rarityColor(ft.rarity), fontSize: 5, textTransform: "uppercase" }}>{ft.rarity === "ultra_rare" ? "ULTRA RARE" : ft.rarity}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Footer hint */}
+            <div className="flex items-center justify-center py-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)", background: "rgba(0,0,0,0.15)" }}>
+              <span style={{ color: "#37474f", fontSize: 5 }}>Press TAB to close</span>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Collection Panel */}
