@@ -141,6 +141,8 @@ export default function FishingGame() {
     isSwimming: false,
     jumpVY: 0,
     splashDone: false,
+    showBoatPrompt: false,
+    nearBoat: false,
   });
 
   const imagesRef = useRef<Map<string, HTMLImageElement>>(new Map());
@@ -161,6 +163,8 @@ export default function FishingGame() {
     caughtCollection: [] as [string, CaughtEntry][],
     missReason: "",
     showCatchTimer: 0,
+    showBoatPrompt: false,
+    nearBoat: false,
   });
 
   const loadImage = useCallback((src: string): Promise<HTMLImageElement> => {
@@ -282,6 +286,8 @@ export default function FishingGame() {
       caughtCollection: Array.from(s.caughtCollection.entries()),
       missReason: s.missReason,
       showCatchTimer: s.showCatchTimer,
+      showBoatPrompt: s.showBoatPrompt,
+      nearBoat: s.nearBoat,
     });
   }, []);
 
@@ -324,7 +330,11 @@ export default function FishingGame() {
     const onKeyDown = (e: KeyboardEvent) => {
       const key = e.key.toLowerCase();
       stateRef.current.keysDown.add(key);
-      if (["a", "d", "w", "s", " "].includes(key)) e.preventDefault();
+      if (["a", "d", "w", "s", " ", "e"].includes(key)) e.preventDefault();
+      if (key === "e" && stateRef.current.nearBoat && !stateRef.current.showBoatPrompt && stateRef.current.gameState === "idle") {
+        stateRef.current.showBoatPrompt = true;
+        syncUI();
+      }
     };
     const onKeyUp = (e: KeyboardEvent) => {
       stateRef.current.keysDown.delete(e.key.toLowerCase());
@@ -474,6 +484,13 @@ export default function FishingGame() {
             syncUI();
           }
         }
+      }
+
+      const hookInWater = s.gameState === "waiting" || s.gameState === "bite" || s.gameState === "reeling";
+      const nearBoatDist = Math.abs(s.playerX - pierLeftBound);
+      s.nearBoat = nearBoatDist < 30 && !hookInWater && s.gameState === "idle" && !s.isSwimming;
+      if (!s.nearBoat && s.showBoatPrompt) {
+        s.showBoatPrompt = false;
       }
 
       const fishermanX = s.isSwimming ? s.swimX : s.playerX;
@@ -652,28 +669,12 @@ export default function FishingGame() {
           ctx.drawImage(pierTiles, 0, 0, srcW, plankSrcH, px, pierY, drawW, plankDrawH);
         }
 
-        // Pier support posts using vertical sections from tileset
-        const postSrcX = 80;
-        const postSrcY = 0;
-        const postSrcW = 10;
-        const postSrcH = 64;
-        const postDrawW = postSrcW * pierScale;
-        const postDrawH = postSrcH * pierScale;
-
-        for (let px = pierStartX + 40; px < pierRight - 30; px += 100) {
-          ctx.drawImage(pierTiles, postSrcX, postSrcY, postSrcW, postSrcH,
-            px, pierY + plankDrawH - 4, postDrawW, postDrawH);
-        }
       } else {
         const pierWidth = pierRight - pierStartX;
         const plankColors = ["#6b4423", "#5a3a1a", "#7a5030", "#634020", "#6b4423"];
         for (let py = 0; py < 5; py++) {
           ctx.fillStyle = plankColors[py];
           ctx.fillRect(pierStartX, pierY + py * 8, pierWidth, 8);
-        }
-        ctx.fillStyle = "#4a2a10";
-        for (let px = pierStartX + 40; px < pierRight - 30; px += 100) {
-          ctx.fillRect(px, pierY + 40, 8, 80);
         }
       }
 
@@ -683,12 +684,11 @@ export default function FishingGame() {
       ctx.fillRect(pierStartX, waterY, pierRight - pierStartX, 12);
       ctx.globalAlpha = 1;
 
-      // Fishing hut - positioned so stairs align with pier surface
       const hutScale = 2.2;
       const hutW = 192 * hutScale;
       const hutH = 122 * hutScale;
       const hutX = W - hutW - 20;
-      const hutY = pierY - hutH + 35 * hutScale;
+      const hutY = pierY - hutH + 50 * hutScale;
       drawImage("/assets/objects/Fishing_hut.png", hutX, hutY, hutScale);
 
       // Boat floating on water (subtle bob)
@@ -1653,6 +1653,40 @@ export default function FishingGame() {
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center px-4 py-2 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8, pointerEvents: "none" }} data-testid="idle-prompt">
               <span style={{ color: "#b0bec5", fontSize: 10, textShadow: "1px 1px 0 #000" }}>Click to cast  |  A/D to walk</span>
               <span style={{ color: "#5dade2", fontSize: 8, textShadow: "1px 1px 0 #000" }}>SPACE to dive in</span>
+            </div>
+          )}
+
+          {/* Boat Prompt */}
+          {uiState.nearBoat && !uiState.showBoatPrompt && (
+            <div className="absolute bottom-24 left-1/2 -translate-x-1/2 text-center px-5 py-3 flex flex-col items-center gap-2" style={{ background: "rgba(8,15,25,0.9)", borderRadius: 10, border: "1px solid rgba(241,196,15,0.4)", zIndex: 50 }} data-testid="boat-hint">
+              <span style={{ color: "#f1c40f", fontSize: 10, textShadow: "1px 1px 0 #000" }}>Press E to enter boat</span>
+            </div>
+          )}
+
+          {uiState.showBoatPrompt && (
+            <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 60, background: "rgba(0,0,0,0.4)" }} data-testid="boat-prompt-overlay">
+              <div className="flex flex-col items-center gap-4 px-8 py-6" style={{ background: "rgba(8,15,25,0.95)", borderRadius: 12, border: "1px solid rgba(241,196,15,0.5)", minWidth: 220 }} data-testid="boat-prompt">
+                <img src="/assets/objects/Boat.png" alt="" style={{ width: 80, imageRendering: "pixelated" }} />
+                <span style={{ color: "#f1c40f", fontSize: 12, textShadow: "1px 1px 0 #000" }}>Enter Boat?</span>
+                <div className="flex gap-4">
+                  <button
+                    className="cursor-pointer px-5 py-2"
+                    style={{ background: "rgba(46,204,113,0.25)", borderRadius: 8, border: "1px solid rgba(46,204,113,0.5)", fontFamily: "'Press Start 2P', monospace", color: "#2ecc71", fontSize: 10 }}
+                    onClick={(e) => { e.stopPropagation(); stateRef.current.showBoatPrompt = false; syncUI(); }}
+                    data-testid="button-boat-yes"
+                  >
+                    Yes
+                  </button>
+                  <button
+                    className="cursor-pointer px-5 py-2"
+                    style={{ background: "rgba(231,76,60,0.25)", borderRadius: 8, border: "1px solid rgba(231,76,60,0.5)", fontFamily: "'Press Start 2P', monospace", color: "#e74c3c", fontSize: 10 }}
+                    onClick={(e) => { e.stopPropagation(); stateRef.current.showBoatPrompt = false; syncUI(); }}
+                    data-testid="button-boat-no"
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 
