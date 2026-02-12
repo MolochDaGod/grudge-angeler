@@ -37,9 +37,9 @@ const JUNK_ITEMS = [
 ];
 
 const CHARACTER_VARIANTS = [
-  { name: "Classic", tint: null, color: "#f1c40f" },
-  { name: "Ocean Blue", tint: "rgba(30,120,200,0.35)", color: "#5dade2" },
-  { name: "Crimson", tint: "rgba(200,50,50,0.35)", color: "#e74c3c" },
+  { name: "Classic", folder: "fisherman", tint: null, color: "#f1c40f" },
+  { name: "Ocean Blue", folder: "fisherman2", tint: null, color: "#5dade2" },
+  { name: "Crimson", folder: "fisherman3", tint: null, color: "#e74c3c" },
 ];
 
 interface Rod {
@@ -403,16 +403,13 @@ export default function FishingGame() {
       x: Math.random(), y: Math.random() * 0.4, size: 1 + Math.random() * 2, twinkle: Math.random() * Math.PI * 2,
     }));
 
+    const spriteNames = [
+      "Fisherman_idle.png", "Fisherman_fish.png", "Fisherman_hook.png",
+      "Fisherman_hurt.png", "Fisherman_walk.png", "Fisherman_swim.png",
+      "Fisherman_swim2.png", "Fisherman_jump.png", "Fisherman_idle2.png",
+    ];
     const assets = [
-      "/assets/fisherman/Fisherman_idle.png",
-      "/assets/fisherman/Fisherman_fish.png",
-      "/assets/fisherman/Fisherman_hook.png",
-      "/assets/fisherman/Fisherman_hurt.png",
-      "/assets/fisherman/Fisherman_walk.png",
-      "/assets/fisherman/Fisherman_swim.png",
-      "/assets/fisherman/Fisherman_swim2.png",
-      "/assets/fisherman/Fisherman_jump.png",
-      "/assets/fisherman/Fisherman_idle2.png",
+      ...CHARACTER_VARIANTS.flatMap(cv => spriteNames.map(sn => `/assets/${cv.folder}/${sn}`)),
       "/assets/objects/Boat.png",
       "/assets/objects/Boat2.png",
       "/assets/objects/Water.png",
@@ -1283,7 +1280,8 @@ export default function FishingGame() {
       };
 
       let fishermanFrame = Math.floor(s.time * 0.07) % 4;
-      let fishermanSprite = "/assets/fisherman/Fisherman_idle.png";
+      const charFolder = CHARACTER_VARIANTS[s.selectedCharacter].folder;
+      let fishermanSprite = `/assets/${charFolder}/Fisherman_idle.png`;
       let fishermanFrameCount = 4;
       let rodTipKey = "idle";
       let isWalking = false;
@@ -1298,15 +1296,15 @@ export default function FishingGame() {
       if (s.gameState === "swimming") {
         const isMoving = s.keysDown.has("a") || s.keysDown.has("d") || s.keysDown.has("w") || s.keysDown.has("s");
         if (s.jumpVY !== 0) {
-          fishermanSprite = "/assets/fisherman/Fisherman_jump.png";
+          fishermanSprite = `/assets/${charFolder}/Fisherman_jump.png`;
           fishermanFrameCount = 6;
           fishermanFrame = Math.min(Math.floor((s.swimY - waterY + 50) / 15), 5);
         } else if (isMoving) {
-          fishermanSprite = "/assets/fisherman/Fisherman_swim.png";
+          fishermanSprite = `/assets/${charFolder}/Fisherman_swim.png`;
           fishermanFrameCount = 6;
           fishermanFrame = Math.floor(s.time * 0.12) % 6;
         } else {
-          fishermanSprite = "/assets/fisherman/Fisherman_swim2.png";
+          fishermanSprite = `/assets/${charFolder}/Fisherman_swim2.png`;
           fishermanFrameCount = 6;
           fishermanFrame = Math.floor(s.time * 0.06) % 6;
         }
@@ -1315,7 +1313,7 @@ export default function FishingGame() {
         const swimmerDepth = (s.swimY - waterY) / (H - waterY);
         const swimAlpha = Math.max(0.3, 0.95 - swimmerDepth * 0.4);
         ctx.globalAlpha = swimAlpha;
-        drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, s.facingLeft, CHARACTER_VARIANTS[s.selectedCharacter].tint);
+        drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, s.facingLeft);
 
         if (isMoving && s.jumpVY === 0 && Math.random() < 0.06 * dt) {
           addParticles(s.swimX + (s.facingLeft ? -20 : 20), s.swimY, 2, "#88ccff", 1.5, "bubble");
@@ -1323,64 +1321,64 @@ export default function FishingGame() {
         ctx.globalAlpha = 1;
       } else if (s.gameState === "boarding") {
         if (s.boardingPhase === 0) {
-          fishermanSprite = "/assets/fisherman/Fisherman_walk.png";
+          fishermanSprite = `/assets/${charFolder}/Fisherman_walk.png`;
           fishermanFrameCount = 6;
           fishermanFrame = Math.floor(s.time * 0.12) % 6;
-          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, s.facingLeft, CHARACTER_VARIANTS[s.selectedCharacter].tint);
+          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, s.facingLeft);
         } else if (s.boardingPhase === 1) {
-          fishermanSprite = "/assets/fisherman/Fisherman_jump.png";
+          fishermanSprite = `/assets/${charFolder}/Fisherman_jump.png`;
           fishermanFrameCount = 6;
           fishermanFrame = Math.min(Math.floor(s.boardingTimer / 4), 5);
-          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, true, CHARACTER_VARIANTS[s.selectedCharacter].tint);
+          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, true);
         } else {
-          fishermanSprite = "/assets/fisherman/Fisherman_idle.png";
+          fishermanSprite = `/assets/${charFolder}/Fisherman_idle.png`;
           fishermanFrameCount = 4;
           fishermanFrame = 0;
-          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, true, CHARACTER_VARIANTS[s.selectedCharacter].tint);
+          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, true);
         }
         rodTipKey = "";
       } else if (s.gameState === "idle") {
         const moving = s.keysDown.has("a") || s.keysDown.has("d");
         if (moving && !s.inBoat) {
-          fishermanSprite = "/assets/fisherman/Fisherman_walk.png";
+          fishermanSprite = `/assets/${charFolder}/Fisherman_walk.png`;
           fishermanFrameCount = 6;
           fishermanFrame = Math.floor(s.time * 0.12) % 6;
           isWalking = true;
-          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, s.facingLeft, CHARACTER_VARIANTS[s.selectedCharacter].tint);
+          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, s.facingLeft);
         } else {
-          fishermanSprite = "/assets/fisherman/Fisherman_idle.png";
+          fishermanSprite = `/assets/${charFolder}/Fisherman_idle.png`;
           fishermanFrameCount = 4;
           fishermanFrame = Math.floor(s.time * 0.04) % 4;
-          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, fishingFlip, CHARACTER_VARIANTS[s.selectedCharacter].tint);
+          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, fishingFlip);
         }
       } else {
         if (s.gameState === "casting") {
-          fishermanSprite = "/assets/fisherman/Fisherman_hook.png";
+          fishermanSprite = `/assets/${charFolder}/Fisherman_hook.png`;
           fishermanFrameCount = 6;
           fishermanFrame = Math.floor(s.time * 0.08) % 6;
           rodTipKey = "hook";
         } else if (s.gameState === "waiting") {
-          fishermanSprite = "/assets/fisherman/Fisherman_fish.png";
+          fishermanSprite = `/assets/${charFolder}/Fisherman_fish.png`;
           fishermanFrameCount = 4;
           fishermanFrame = Math.floor(s.time * 0.05) % 4;
           rodTipKey = "fish";
         } else if (s.gameState === "bite") {
-          fishermanSprite = "/assets/fisherman/Fisherman_hurt.png";
+          fishermanSprite = `/assets/${charFolder}/Fisherman_hurt.png`;
           fishermanFrameCount = 2;
           fishermanFrame = Math.floor(s.time * 0.2) % 2;
           rodTipKey = "fish";
         } else if (s.gameState === "reeling") {
-          fishermanSprite = "/assets/fisherman/Fisherman_fish.png";
+          fishermanSprite = `/assets/${charFolder}/Fisherman_fish.png`;
           fishermanFrameCount = 4;
           fishermanFrame = Math.floor(s.time * 0.15) % 4;
           rodTipKey = "fish";
         } else if (s.gameState === "caught") {
-          fishermanSprite = "/assets/fisherman/Fisherman_fish.png";
+          fishermanSprite = `/assets/${charFolder}/Fisherman_fish.png`;
           fishermanFrameCount = 4;
           fishermanFrame = 3;
           rodTipKey = "fish";
         }
-        drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, fishingFlip, CHARACTER_VARIANTS[s.selectedCharacter].tint);
+        drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, fishingFlip);
       }
 
       // Calculate rod tip position in screen coords from sprite-local coords
@@ -1982,7 +1980,7 @@ export default function FishingGame() {
             ctx.stroke();
             
             const previewFrame = Math.floor(s.time * 0.05) % 4;
-            drawSprite("/assets/fisherman/Fisherman_idle.png", previewFrame, 4, cx + selW/2 - 24, cy + 8, 2.5, false, cv.tint);
+            drawSprite(`/assets/${cv.folder}/Fisherman_idle.png`, previewFrame, 4, cx + selW/2 - 24, cy + 8, 2.5, false);
             
             ctx.fillStyle = isSelected ? cv.color : "#78909c";
             ctx.font = "7px 'Press Start 2P', monospace";
