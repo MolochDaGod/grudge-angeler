@@ -74,14 +74,14 @@ interface Lure {
 }
 
 const LURES: Lure[] = [
-  { name: "Basic Worm", price: 0, effect: "None", description: "A plain earthworm. The classic bait.", icon: "/assets/icons/Icons_09.png", rarityBoost: 1.0, sizeBoost: 0, speedBoost: 1.0, targetFish: [], targetBonus: 1.0 },
-  { name: "Silver Spinner", price: 80, effect: "Attracts Minnows & Perch", description: "A flashy silver spinner that small fish love.", icon: "/assets/icons/Icons_09.png", rarityBoost: 1.0, sizeBoost: 0, speedBoost: 1.2, targetFish: ["Minnow", "Perch"], targetBonus: 3.0 },
-  { name: "Deep Diver", price: 120, effect: "Better deep fish", description: "Dives deep to attract bottom dwellers.", icon: "/assets/icons/Icons_09.png", rarityBoost: 1.2, sizeBoost: 0.3, speedBoost: 1.0, targetFish: ["Catfish", "Eel"], targetBonus: 2.5 },
-  { name: "Golden Fly", price: 200, effect: "Rare fish boost", description: "An iridescent golden fly. Rare fish can't resist.", icon: "/assets/icons/Icons_09.png", rarityBoost: 2.0, sizeBoost: 0, speedBoost: 1.0, targetFish: ["Swordfish"], targetBonus: 2.0 },
-  { name: "Glow Jig", price: 300, effect: "Bigger fish", description: "Bioluminescent lure that attracts larger specimens.", icon: "/assets/icons/Icons_09.png", rarityBoost: 1.3, sizeBoost: 0.8, speedBoost: 1.1, targetFish: [], targetBonus: 1.0 },
-  { name: "Storm Shad", price: 250, effect: "Faster bites", description: "Mimics injured baitfish. Fish bite faster.", icon: "/assets/icons/Icons_09.png", rarityBoost: 1.0, sizeBoost: 0.2, speedBoost: 2.0, targetFish: ["Bass", "Salmon"], targetBonus: 2.0 },
-  { name: "Kraken Bait", price: 500, effect: "Legendary attraction", description: "Mysterious bait from the ocean depths.", icon: "/assets/icons/Icons_09.png", rarityBoost: 3.0, sizeBoost: 0.5, speedBoost: 0.8, targetFish: ["Whale"], targetBonus: 4.0 },
-  { name: "Prismatic Lure", price: 750, effect: "All bonuses", description: "A rainbow-shifting lure. Boosts everything.", icon: "/assets/icons/Icons_09.png", rarityBoost: 1.8, sizeBoost: 0.5, speedBoost: 1.5, targetFish: [], targetBonus: 1.0 },
+  { name: "Basic Worm", price: 0, effect: "None", description: "A plain earthworm. The classic bait.", icon: "/assets/lures/worm.png", rarityBoost: 1.0, sizeBoost: 0, speedBoost: 1.0, targetFish: [], targetBonus: 1.0 },
+  { name: "Silver Spinner", price: 80, effect: "Attracts Minnows & Perch", description: "A flashy silver spinner that small fish love.", icon: "/assets/lures/beginner_lure.png", rarityBoost: 1.0, sizeBoost: 0, speedBoost: 1.2, targetFish: ["Minnow", "Perch"], targetBonus: 3.0 },
+  { name: "Deep Diver", price: 120, effect: "Better deep fish", description: "Dives deep to attract bottom dwellers.", icon: "/assets/lures/deep_diver.png", rarityBoost: 1.2, sizeBoost: 0.3, speedBoost: 1.0, targetFish: ["Catfish", "Eel"], targetBonus: 2.5 },
+  { name: "Golden Fly", price: 200, effect: "Rare fish boost", description: "An iridescent golden fly. Rare fish can't resist.", icon: "/assets/lures/golden_fly.png", rarityBoost: 2.0, sizeBoost: 0, speedBoost: 1.0, targetFish: ["Swordfish"], targetBonus: 2.0 },
+  { name: "Glow Jig", price: 300, effect: "Bigger fish", description: "Bioluminescent lure that attracts larger specimens.", icon: "/assets/lures/glow_jig.png", rarityBoost: 1.3, sizeBoost: 0.8, speedBoost: 1.1, targetFish: [], targetBonus: 1.0 },
+  { name: "Storm Shad", price: 250, effect: "Faster bites", description: "Mimics injured baitfish. Fish bite faster.", icon: "/assets/lures/storm_shad.png", rarityBoost: 1.0, sizeBoost: 0.2, speedBoost: 2.0, targetFish: ["Bass", "Salmon"], targetBonus: 2.0 },
+  { name: "Kraken Bait", price: 500, effect: "Legendary attraction", description: "Mysterious bait from the ocean depths.", icon: "/assets/lures/kraken_bait.png", rarityBoost: 3.0, sizeBoost: 0.5, speedBoost: 0.8, targetFish: ["Whale"], targetBonus: 4.0 },
+  { name: "Prismatic Lure", price: 750, effect: "All bonuses", description: "A rainbow-shifting lure. Boosts everything.", icon: "/assets/lures/prismatic_lure.png", rarityBoost: 1.8, sizeBoost: 0.5, speedBoost: 1.5, targetFish: [], targetBonus: 1.0 },
 ];
 
 interface MarketEntry {
@@ -2502,8 +2502,8 @@ export default function FishingGame() {
                     const canAfford = uiState.money >= lure.price;
                     return (
                       <div key={lure.name} className="flex items-start gap-2.5 p-2.5" style={{ background: equipped ? "rgba(46,204,113,0.12)" : "rgba(255,255,255,0.03)", borderRadius: 8, border: equipped ? "1px solid rgba(46,204,113,0.4)" : "1px solid rgba(255,255,255,0.06)" }}>
-                        <div className="flex items-center justify-center" style={{ width: 44, height: 44, background: "rgba(0,0,0,0.3)", borderRadius: 6 }}>
-                          <img src={lure.icon} alt="" style={{ width: 32, height: 32, imageRendering: "pixelated" }} />
+                        <div className="flex items-center justify-center" style={{ width: 44, height: 44, background: "rgba(0,0,0,0.3)", borderRadius: 6, overflow: "hidden" }}>
+                          <img src={lure.icon} alt="" style={{ width: 40, height: 40, objectFit: "cover", borderRadius: 4 }} />
                         </div>
                         <div className="flex-1 min-w-0 flex flex-col gap-1">
                           <div className="flex items-center gap-2 flex-wrap">
