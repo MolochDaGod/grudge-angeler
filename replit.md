@@ -7,23 +7,29 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 - **Frontend**: React + HTML5 Canvas rendering, fullscreen game
 - **Backend**: Express (minimal, serves static assets only)
 - **No database needed** - game state is in-memory, client-side only
+- **Info Page**: Static HTML at `/info.html` - game advertisement/guide with all fish, equipment, and how-to
 
 ## Key Files
 - `client/src/pages/fishing-game.tsx` - Main game component with all game logic
 - `client/src/App.tsx` - App router
 - `client/public/assets/` - All pixel art sprite sheets
+- `client/public/info.html` - Game info/advertisement page
 
-## Game Mechanics
-1. **Title Screen** - Click to start
-2. **Idle** - Click to begin casting
-3. **Casting** - Power bar mechanic, click to release
-4. **Waiting** - Bobber in water, wait for fish
-5. **Bite** - Fish bites! Click quickly to start reeling
-6. **Reeling** - Mouse-based minigame, keep cursor in green zone
-7. **Caught/Missed** - Result shown, click to continue
+## Game Flow
+1. **Title Screen** - Animated sea creatures + "CLICK TO ENTER"
+2. **Character Select** - HTML overlay: pick character variant + enter username
+3. **Idle** - Click to begin casting, A/D to walk on pier, Space to dive, E near hut to open shop
+4. **Casting** - Mouse-aim crosshair system: move mouse to aim where bobber lands, click to cast
+5. **Waiting** - Bobber in water, fish swim nearby; lure effects modify bite timing and fish attraction
+6. **Bite** - Fish grabs line! Click to start reeling
+7. **Reeling** - Palworld-style minigame; rod stats affect catch zone width, reel speed, and line strength
+8. **Caught** - Celebration popup with fish image, weight, rarity, sell price, and bounty completion
+9. **Store** - Full-screen shop overlay with Rod (5 types) and Bait & Lures (16 types: 5 live bait + 11 artificial lures) tabs, buy/equip system
 
 ## Asset Structure
-- `assets/fisherman/` - Character sprite sheets (48x48 frames)
+- `assets/fisherman/` - Classic character sprite sheets (48x48 frames)
+- `assets/fisherman2/` - Ocean Blue character sprite sheets
+- `assets/fisherman3/` - Crimson character sprite sheets
 - `assets/creatures/1-6/` - Sea creature animations (Idle, Walk, Attack, etc.)
 - `assets/catch/` - Caught fish/item sprites
 - `assets/objects/` - Scene objects (pier, boat, hut, barrels)
@@ -36,20 +42,20 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 - Rod tip coords are mirrored when flipped: `(SPRITE_FRAME_W - 1 - tipLocal[0]) * SCALE`
 - Reeling minigame (Palworld-style): horizontal bar with fish icon, catch zone moves LEFT on click (2x speed), drifts RIGHT when released; circular progress gauge fills/depletes based on alignment
 
-## Game Mechanics
-1. **Title Screen** - Character selection (3 color-tinted variants), then click to start
-2. **Idle** - Click to begin casting, A/D to walk on pier, Space to dive, E near hut to open shop
-3. **Casting** - Mouse-aim crosshair system: move mouse to aim where bobber lands, click to cast
-4. **Waiting** - Bobber in water, fish swim nearby; lure effects modify bite timing and fish attraction
-5. **Bite** - Fish grabs line! Click to start reeling
-6. **Reeling** - Palworld-style minigame; rod stats affect catch zone width, reel speed, and line strength
-7. **Caught** - Celebration popup with fish image, weight, rarity, sell price, and bounty completion
-8. **Store** - Full-screen shop overlay with Rod (5 types) and Bait & Lures (16 types: 5 live bait + 11 artificial lures) tabs, buy/equip system
-
 ## Character System
 - 3 selectable variants: Classic (no tint), Ocean Blue, Crimson
-- Uses canvas globalCompositeOperation "source-atop" to tint existing fisherman sprites
-- Selected on title screen before game start
+- Each has a full set of 12 recolored sprite PNGs in their own folder
+- Selected on character selection screen (HTML overlay) before game start
+
+## Fish Species (17 total)
+- **Common (3)**: Minnow, Perch, Eel
+- **Uncommon (3)**: Bass, Catfish, Salmon
+- **Rare (1)**: Swordfish
+- **Legendary (1)**: Whale
+- **Ultra Rare (9)**: Phantom Minnow, Volcanic Perch, Abyssal Bass, Frost Catfish, Storm Swordfish, Celestial Whale, Neon Eel, Golden Salmon, Shadow Leviathan
+- Ultra-rare fish use tinted sprites (canvas globalCompositeOperation "source-atop") with glowing auras
+- Ultra-rare fish have baseScale multiplier for larger default sizes
+- Ultra-rare fish have extremely low spawn weights, boosted by distance from shore and lure rarityBoost
 
 ## Equipment System
 - **Rods** (5): Bamboo, Fiberglass, Carbon, Titanium, Legendary - affect catch zone, reel speed, line strength
@@ -57,6 +63,12 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 - **Lures** (11): Beginner Lure, Crankbait, Silver Spoon, Grub Worm, Spinnerbait, Deep Diver, Golden Fly, Glow Jig, Storm Shad, Kraken Bait, Prismatic - artificial lures affecting rarity boost, size boost, bite speed, and targeted fish attraction
 - Each bait/lure has a `type` field ("live" or "lure") for shop categorization
 - Equipment purchased with money from fishing hut shop (E key near hut)
+
+## Rarity System
+- 5 tiers: common, uncommon, rare, legendary, ultra_rare
+- Colors: common=#94a3b8, uncommon=#22c55e, rare=#a855f7, legendary=#f59e0b, ultra_rare=#ff2d55
+- Sell price multipliers: common=1x, uncommon=1.8x, rare=3x, legendary=5x, ultra_rare=10x
+- Reeling difficulty multipliers: common=1x, uncommon=1.15x, rare=1.4x, legendary=1.8x, ultra_rare=2.2x
 
 ## Money & Market System
 - Fish sell for money based on rarity * weight * size * demand multiplier
@@ -107,7 +119,8 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 - Distance-based fish spawning: rarer fish spawn more frequently further from shore
 
 ## Features
-- 8 fish species (common, uncommon, rare, legendary)
+- 17 fish species across 5 rarity tiers (common, uncommon, rare, legendary, ultra_rare)
+- 9 ultra-rare tinted/glowing variants with massive sizes
 - 3 junk items including treasure chest
 - Random fish sizes (0.5x-5x) affecting score, weight, difficulty
 - Combo system for consecutive catches
@@ -119,3 +132,4 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 - Swimming mechanics (Space to dive, WASD underwater, Space near dock to climb out)
 - Boat boarding cutscene and boat fishing (E to enter/exit)
 - Camera scrolling system following boat into open ocean (up to 3 screens left)
+- Info/advertisement page at /info.html

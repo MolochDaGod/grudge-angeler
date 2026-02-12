@@ -12,11 +12,13 @@ interface FishType {
   idleFrames: number;
   walkFrames: number;
   points: number;
-  rarity: "common" | "uncommon" | "rare" | "legendary";
+  rarity: "common" | "uncommon" | "rare" | "legendary" | "ultra_rare";
   weight: number;
   minDepth: number;
   speed: number;
   description: string;
+  tint?: string;
+  baseScale?: number;
 }
 
 const FISH_TYPES: FishType[] = [
@@ -28,6 +30,15 @@ const FISH_TYPES: FishType[] = [
   { name: "Whale", catchAsset: "/assets/catch/6.png", catchW: 108, catchH: 22, creatureFolder: "6", idleFrames: 6, walkFrames: 6, points: 300, rarity: "legendary", weight: 1, minDepth: 0.65, speed: 0.5, description: "The king of the deep. Incredibly rare!" },
   { name: "Eel", catchAsset: "/assets/catch/7.png", catchW: 60, catchH: 12, creatureFolder: "4", idleFrames: 4, walkFrames: 4, points: 40, rarity: "common", weight: 20, minDepth: 0.3, speed: 1.3, description: "A slippery serpentine fish." },
   { name: "Salmon", catchAsset: "/assets/catch/8.png", catchW: 60, catchH: 12, creatureFolder: "5", idleFrames: 4, walkFrames: 6, points: 60, rarity: "uncommon", weight: 12, minDepth: 0.35, speed: 1.1, description: "A prized pink-fleshed fish." },
+  { name: "Phantom Minnow", catchAsset: "/assets/catch/1.png", catchW: 24, catchH: 6, creatureFolder: "1", idleFrames: 4, walkFrames: 4, points: 500, rarity: "ultra_rare", weight: 0.3, minDepth: 0.55, speed: 2.2, description: "A ghostly minnow wreathed in spectral flame. Blinks in and out of reality.", tint: "rgba(0,255,200,0.35)", baseScale: 1.8 },
+  { name: "Volcanic Perch", catchAsset: "/assets/catch/2.png", catchW: 32, catchH: 12, creatureFolder: "2", idleFrames: 4, walkFrames: 6, points: 600, rarity: "ultra_rare", weight: 0.25, minDepth: 0.6, speed: 1.6, description: "A perch superheated by deep-sea vents. Its scales glow molten orange.", tint: "rgba(255,80,0,0.4)", baseScale: 2.0 },
+  { name: "Abyssal Bass", catchAsset: "/assets/catch/3.png", catchW: 40, catchH: 12, creatureFolder: "3", idleFrames: 4, walkFrames: 4, points: 750, rarity: "ultra_rare", weight: 0.2, minDepth: 0.65, speed: 1.4, description: "A colossal bass from the deepest trenches. Radiates dark energy.", tint: "rgba(120,0,255,0.35)", baseScale: 2.2 },
+  { name: "Frost Catfish", catchAsset: "/assets/catch/4.png", catchW: 52, catchH: 12, creatureFolder: "4", idleFrames: 4, walkFrames: 4, points: 800, rarity: "ultra_rare", weight: 0.18, minDepth: 0.6, speed: 0.9, description: "An ancient catfish encased in living ice. Freezes the water around it.", tint: "rgba(100,200,255,0.4)", baseScale: 2.3 },
+  { name: "Storm Swordfish", catchAsset: "/assets/catch/5.png", catchW: 56, catchH: 24, creatureFolder: "5", idleFrames: 4, walkFrames: 6, points: 1000, rarity: "ultra_rare", weight: 0.12, minDepth: 0.7, speed: 2.5, description: "A swordfish that rides lightning bolts. Crackles with electric fury.", tint: "rgba(255,255,0,0.35)", baseScale: 2.0 },
+  { name: "Celestial Whale", catchAsset: "/assets/catch/6.png", catchW: 108, catchH: 22, creatureFolder: "6", idleFrames: 6, walkFrames: 6, points: 2000, rarity: "ultra_rare", weight: 0.05, minDepth: 0.75, speed: 0.4, description: "A cosmic whale that swallowed a dying star. The rarest creature in existence.", tint: "rgba(255,180,255,0.3)", baseScale: 1.5 },
+  { name: "Neon Eel", catchAsset: "/assets/catch/7.png", catchW: 60, catchH: 12, creatureFolder: "4", idleFrames: 4, walkFrames: 4, points: 650, rarity: "ultra_rare", weight: 0.22, minDepth: 0.55, speed: 1.9, description: "A bioluminescent eel pulsing with neon colors. Mesmerizing.", tint: "rgba(0,255,100,0.4)", baseScale: 2.0 },
+  { name: "Golden Salmon", catchAsset: "/assets/catch/8.png", catchW: 60, catchH: 12, creatureFolder: "5", idleFrames: 4, walkFrames: 6, points: 700, rarity: "ultra_rare", weight: 0.2, minDepth: 0.6, speed: 1.5, description: "A legendary salmon with solid gold scales. Worth a fortune.", tint: "rgba(255,200,0,0.45)", baseScale: 2.1 },
+  { name: "Shadow Leviathan", catchAsset: "/assets/catch/6.png", catchW: 108, catchH: 22, creatureFolder: "6", idleFrames: 6, walkFrames: 6, points: 1500, rarity: "ultra_rare", weight: 0.08, minDepth: 0.8, speed: 0.6, description: "A titanic shadow beast from beyond the abyss. Feared by all ocean life.", tint: "rgba(180,0,50,0.35)", baseScale: 1.8 },
 ];
 
 const JUNK_ITEMS = [
@@ -311,7 +322,8 @@ export default function FishingGame() {
     const adjustedWeights = FISH_TYPES.map(ft => {
       let w = ft.weight;
       const rarityBoost = distRatio;
-      if (ft.rarity === "legendary") w *= (1 + rarityBoost * 15) * lure.rarityBoost;
+      if (ft.rarity === "ultra_rare") w *= (1 + rarityBoost * 25) * lure.rarityBoost;
+      else if (ft.rarity === "legendary") w *= (1 + rarityBoost * 15) * lure.rarityBoost;
       else if (ft.rarity === "rare") w *= (1 + rarityBoost * 8) * lure.rarityBoost;
       else if (ft.rarity === "uncommon") w *= (1 + rarityBoost * 3);
       else w *= Math.max(0.3, 1 - rarityBoost * 0.5);
@@ -335,7 +347,8 @@ export default function FishingGame() {
     const viewRight = -s.cameraX + canvasW + 100;
     const x = direction > 0 ? viewLeft - 80 : viewRight + 80;
     const baseSizeMult = 0.5 + Math.random() * Math.random() * 4.5;
-    const sizeMultiplier = baseSizeMult * (1 + distRatio * 0.8) + lure.sizeBoost;
+    const ultraScale = fishType.baseScale || 1;
+    const sizeMultiplier = (baseSizeMult * (1 + distRatio * 0.8) + lure.sizeBoost) * ultraScale;
     s.swimmingFish.push({
       x, y, baseY: y, type: fishType, direction, frame: 0, frameTimer: 0,
       speed: fishType.speed * (0.7 + Math.random() * 0.6),
@@ -385,7 +398,7 @@ export default function FishingGame() {
     const s = stateRef.current;
     if (!fishType && !junk) return 0;
     const basePts = fishType?.points || junk?.points || 5;
-    const rarityMult = fishType ? (fishType.rarity === "legendary" ? 5 : fishType.rarity === "rare" ? 3 : fishType.rarity === "uncommon" ? 1.8 : 1) : 0.5;
+    const rarityMult = fishType ? (fishType.rarity === "ultra_rare" ? 10 : fishType.rarity === "legendary" ? 5 : fishType.rarity === "rare" ? 3 : fishType.rarity === "uncommon" ? 1.8 : 1) : 0.5;
     const basePrice = Math.floor(basePts * rarityMult * size * 0.4);
     const name = fishType?.name || junk?.name || "";
     const market = s.marketPrices.get(name);
@@ -1270,8 +1283,21 @@ export default function FishingGame() {
           `/assets/creatures/${fish.type.creatureFolder}/Walk.png`,
           fish.frame, fish.type.walkFrames,
           fish.x, fish.y, creatureScale,
-          fish.direction < 0
+          fish.direction < 0,
+          fish.type.tint || null
         );
+        if (fish.type.rarity === "ultra_rare") {
+          ctx.globalAlpha = 0.15 + Math.sin(s.time * 0.08 + fish.x * 0.01) * 0.1;
+          ctx.shadowColor = fish.type.tint || "#ff2d55";
+          ctx.shadowBlur = 20;
+          drawSprite(
+            `/assets/creatures/${fish.type.creatureFolder}/Walk.png`,
+            fish.frame, fish.type.walkFrames,
+            fish.x, fish.y, creatureScale,
+            fish.direction < 0
+          );
+          ctx.shadowBlur = 0;
+        }
         ctx.globalAlpha = 1;
       }
 
@@ -1510,8 +1536,21 @@ export default function FishingGame() {
           `/assets/creatures/${creatureFolder}/Walk.png`,
           s.hookedFishFrame, walkFrames,
           s.hookedFishX, s.hookedFishY, creatureScale,
-          s.hookedFishDir < 0
+          s.hookedFishDir < 0,
+          s.currentCatch?.tint || null
         );
+        if (s.currentCatch?.rarity === "ultra_rare") {
+          ctx.globalAlpha = 0.2 + Math.sin(s.time * 0.1) * 0.1;
+          ctx.shadowColor = s.currentCatch.tint || "#ff2d55";
+          ctx.shadowBlur = 25;
+          drawSprite(
+            `/assets/creatures/${creatureFolder}/Walk.png`,
+            s.hookedFishFrame, walkFrames,
+            s.hookedFishX, s.hookedFishY, creatureScale,
+            s.hookedFishDir < 0
+          );
+          ctx.shadowBlur = 0;
+        }
         ctx.globalAlpha = 1;
 
         if (s.gameState === "bite") {
@@ -1657,7 +1696,7 @@ export default function FishingGame() {
 
       if (s.gameState === "reeling") {
         const rarityDiff = s.currentCatch
-          ? (s.currentCatch.rarity === "legendary" ? 1.8 : s.currentCatch.rarity === "rare" ? 1.4 : s.currentCatch.rarity === "uncommon" ? 1.15 : 1)
+          ? (s.currentCatch.rarity === "ultra_rare" ? 2.2 : s.currentCatch.rarity === "legendary" ? 1.8 : s.currentCatch.rarity === "rare" ? 1.4 : s.currentCatch.rarity === "uncommon" ? 1.15 : 1)
           : 1;
         const sizeDiff = 1 + (s.hookedFishSize - 1) * 0.08;
         const difficultyMult = rarityDiff * Math.min(1.5, sizeDiff);
@@ -1816,7 +1855,8 @@ export default function FishingGame() {
         ctx.fillStyle = "rgba(8,15,25,0.85)";
         drawRoundRect(boxX, boxY, boxW, boxH, 16);
         ctx.fill();
-        ctx.strokeStyle = s.currentCatch?.rarity === "legendary" ? "#f1c40f" :
+        ctx.strokeStyle = s.currentCatch?.rarity === "ultra_rare" ? "#ff2d55" :
+                          s.currentCatch?.rarity === "legendary" ? "#f1c40f" :
                           s.currentCatch?.rarity === "rare" ? "#9b59b6" :
                           s.currentCatch?.rarity === "uncommon" ? "#2ecc71" : "#3498db";
         ctx.lineWidth = 2;
@@ -1830,7 +1870,8 @@ export default function FishingGame() {
 
         const catchName = s.currentCatch?.name || s.currentJunk?.name || "";
         const rarityColor = s.currentCatch ?
-          (s.currentCatch.rarity === "legendary" ? "#f1c40f" :
+          (s.currentCatch.rarity === "ultra_rare" ? "#ff2d55" :
+           s.currentCatch.rarity === "legendary" ? "#f1c40f" :
            s.currentCatch.rarity === "rare" ? "#9b59b6" :
            s.currentCatch.rarity === "uncommon" ? "#2ecc71" : "#ecf0f1") : "#ecf0f1";
 
@@ -1842,7 +1883,8 @@ export default function FishingGame() {
           ctx.fillStyle = "rgba(255,255,255,0.3)";
           ctx.font = "9px 'Press Start 2P', monospace";
           const sizeLabel = s.hookedFishSize < 1 ? "Tiny" : s.hookedFishSize < 1.5 ? "Small" : s.hookedFishSize < 2.5 ? "Medium" : s.hookedFishSize < 4 ? "Large" : "Massive";
-          ctx.fillText(`${s.currentCatch.rarity.toUpperCase()} - ${sizeLabel} (${s.hookedFishSize.toFixed(1)}x)`, W / 2, boxY + 88);
+          const rarityDisplayLabel = s.currentCatch.rarity === "ultra_rare" ? "ULTRA RARE" : s.currentCatch.rarity.toUpperCase();
+          ctx.fillText(`${rarityDisplayLabel} - ${sizeLabel} (${s.hookedFishSize.toFixed(1)}x)`, W / 2, boxY + 88);
         }
 
         const catchAsset = s.currentCatch?.catchAsset || s.currentJunk?.asset;
@@ -2090,6 +2132,7 @@ export default function FishingGame() {
 
   const rarityColor = (rarity: string) => {
     switch (rarity) {
+      case "ultra_rare": return "#ff2d55";
       case "legendary": return "#f59e0b";
       case "rare": return "#a855f7";
       case "uncommon": return "#22c55e";
@@ -2099,6 +2142,7 @@ export default function FishingGame() {
 
   const rarityBg = (rarity: string) => {
     switch (rarity) {
+      case "ultra_rare": return "rgba(255,45,85,0.12)";
       case "legendary": return "rgba(245,158,11,0.1)";
       case "rare": return "rgba(168,85,247,0.1)";
       case "uncommon": return "rgba(34,197,94,0.1)";
@@ -2788,7 +2832,7 @@ export default function FishingGame() {
                         background: rarityColor(rarity), borderRadius: 3,
                         padding: "1px 4px", textTransform: "uppercase",
                       }}>
-                        {rarity}
+                        {rarity === "ultra_rare" ? "ULTRA RARE" : rarity}
                       </span>
                     )}
                   </div>
@@ -2829,7 +2873,7 @@ export default function FishingGame() {
                 </div>
                 <div className="flex-1 min-w-0 flex flex-col gap-0.5">
                   <div style={{ color: "#37474f", fontSize: 9 }}>???</div>
-                  <div style={{ color: rarityColor(ft.rarity), fontSize: 6, textTransform: "uppercase" }}>{ft.rarity}</div>
+                  <div style={{ color: rarityColor(ft.rarity), fontSize: 6, textTransform: "uppercase" }}>{ft.rarity === "ultra_rare" ? "ULTRA RARE" : ft.rarity}</div>
                   <div style={{ color: "#2a3a4a", fontSize: 7 }}>Not yet discovered</div>
                 </div>
               </div>
