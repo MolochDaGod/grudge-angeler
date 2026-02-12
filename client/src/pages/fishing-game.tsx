@@ -347,16 +347,20 @@ export default function FishingGame() {
     const onDocMouseDown = (e: MouseEvent) => {
       if (e.button === 0) {
         const st = stateRef.current;
-        if (st.gameState === "waiting" || st.gameState === "bite" || st.gameState === "reeling") {
+        if (st.gameState === "waiting") {
           const existing = isLineFacingLeft(st) ? st.customRodTipLeft : st.customRodTipRight;
+          let tipScreenX: number, tipScreenY: number;
           if (existing) {
-            const tipScreenX = st.lastFishermanX + existing.ox;
-            const tipScreenY = st.lastFishermanY + existing.oy;
-            const dist = Math.sqrt((e.clientX - tipScreenX) ** 2 + (e.clientY - tipScreenY) ** 2);
-            if (dist < 30) {
-              st.draggingRodTip = true;
-              return;
-            }
+            tipScreenX = st.lastFishermanX + existing.ox;
+            tipScreenY = st.lastFishermanY + existing.oy;
+          } else {
+            tipScreenX = st.lastFishermanX + 10 * 3;
+            tipScreenY = st.lastFishermanY + 8 * 3;
+          }
+          const dist = Math.sqrt((e.clientX - tipScreenX) ** 2 + (e.clientY - tipScreenY) ** 2);
+          if (dist < 50) {
+            st.draggingRodTip = true;
+            return;
           }
         }
         stateRef.current.isReeling = true;
