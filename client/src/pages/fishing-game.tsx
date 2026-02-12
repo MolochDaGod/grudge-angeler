@@ -26,8 +26,8 @@ const FISH_TYPES: FishType[] = [
   { name: "Catfish", catchAsset: "/assets/catch/4.png", catchW: 52, catchH: 12, creatureFolder: "4", idleFrames: 4, walkFrames: 4, points: 75, rarity: "uncommon", weight: 8, minDepth: 0.45, speed: 0.8, description: "A bottom-dweller with long whiskers." },
   { name: "Swordfish", catchAsset: "/assets/catch/5.png", catchW: 56, catchH: 24, creatureFolder: "5", idleFrames: 4, walkFrames: 6, points: 150, rarity: "rare", weight: 4, minDepth: 0.55, speed: 1.8, description: "A powerful ocean predator with a sharp bill." },
   { name: "Whale", catchAsset: "/assets/catch/6.png", catchW: 108, catchH: 22, creatureFolder: "6", idleFrames: 6, walkFrames: 6, points: 300, rarity: "legendary", weight: 1, minDepth: 0.65, speed: 0.5, description: "The king of the deep. Incredibly rare!" },
-  { name: "Eel", catchAsset: "/assets/catch/7.png", catchW: 60, catchH: 12, creatureFolder: "1", idleFrames: 4, walkFrames: 4, points: 40, rarity: "common", weight: 20, minDepth: 0.3, speed: 1.3, description: "A slippery serpentine fish." },
-  { name: "Salmon", catchAsset: "/assets/catch/8.png", catchW: 60, catchH: 12, creatureFolder: "3", idleFrames: 4, walkFrames: 4, points: 60, rarity: "uncommon", weight: 12, minDepth: 0.35, speed: 1.1, description: "A prized pink-fleshed fish." },
+  { name: "Eel", catchAsset: "/assets/catch/7.png", catchW: 60, catchH: 12, creatureFolder: "4", idleFrames: 4, walkFrames: 4, points: 40, rarity: "common", weight: 20, minDepth: 0.3, speed: 1.3, description: "A slippery serpentine fish." },
+  { name: "Salmon", catchAsset: "/assets/catch/8.png", catchW: 60, catchH: 12, creatureFolder: "5", idleFrames: 4, walkFrames: 6, points: 60, rarity: "uncommon", weight: 12, minDepth: 0.35, speed: 1.1, description: "A prized pink-fleshed fish." },
 ];
 
 const JUNK_ITEMS = [
@@ -612,7 +612,21 @@ export default function FishingGame() {
       ctx.fillStyle = waterGrad;
       ctx.fillRect(0, waterY, W, H - waterY);
 
-      // Water surface shimmer
+      const waterTile = getImg("/assets/objects/Water.png");
+      if (waterTile && waterTile.complete) {
+        const tileScale = 2.5;
+        const tileW = 96 * tileScale;
+        const tileH = 96 * tileScale;
+        ctx.globalAlpha = 0.18;
+        const scrollX = (s.waterOffset * 8) % tileW;
+        for (let ty = waterY; ty < H; ty += tileH) {
+          for (let tx = -scrollX - tileW; tx < W + tileW; tx += tileW) {
+            ctx.drawImage(waterTile, tx, ty, tileW, tileH);
+          }
+        }
+        ctx.globalAlpha = 1;
+      }
+
       ctx.globalAlpha = 0.08;
       ctx.fillStyle = "#ffffff";
       for (let x = 0; x < W; x += 3) {
@@ -1361,11 +1375,25 @@ export default function FishingGame() {
         ctx.font = "10px 'Press Start 2P', monospace";
         ctx.fillText("A Pixel Art Fishing Adventure", W / 2, titleY + 95);
 
-        // Animated fish icons
-        const fishIconY = titleY + 130;
-        for (let i = 0; i < 3; i++) {
-          const fOffset = Math.sin(s.time * 0.06 + i * 2) * 8;
-          drawSprite(`/assets/creatures/${i + 1}/Walk.png`, Math.floor(s.time * 0.08) % 4, (i === 1 ? 6 : 4), W / 2 - 80 + i * 60, fishIconY + fOffset, 1.5, i % 2 === 0);
+        const fishIconY = titleY + 120;
+        const creatureDefs = [
+          { folder: "1", walkFrames: 4, speed: 1.4, yOff: 0, scale: 1.6 },
+          { folder: "2", walkFrames: 6, speed: 1.0, yOff: 20, scale: 1.6 },
+          { folder: "3", walkFrames: 4, speed: 1.2, yOff: 45, scale: 1.6 },
+          { folder: "4", walkFrames: 4, speed: 0.8, yOff: 70, scale: 1.6 },
+          { folder: "5", walkFrames: 6, speed: 1.6, yOff: 10, scale: 1.5 },
+          { folder: "6", walkFrames: 6, speed: 0.5, yOff: 55, scale: 2.0 },
+        ];
+        for (let i = 0; i < creatureDefs.length; i++) {
+          const cd = creatureDefs[i];
+          const swimDir = i % 2 === 0 ? 1 : -1;
+          const swimRange = W * 0.7;
+          const baseX = W * 0.15;
+          const phase = (s.time * cd.speed * 0.6 + i * 200) % swimRange;
+          const cx = swimDir > 0 ? baseX + phase : baseX + swimRange - phase;
+          const bobY = Math.sin(s.time * 0.05 + i * 1.7) * 6;
+          const frame = Math.floor(s.time * 0.07 * cd.speed) % cd.walkFrames;
+          drawSprite(`/assets/creatures/${cd.folder}/Walk.png`, frame, cd.walkFrames, cx, fishIconY + cd.yOff + bobY, cd.scale, swimDir < 0);
         }
 
         // Start prompt
@@ -1373,23 +1401,23 @@ export default function FishingGame() {
         if (blink) {
           ctx.fillStyle = "#ecf0f1";
           ctx.font = "14px 'Press Start 2P', monospace";
-          ctx.fillText("CLICK TO START", W / 2, fishIconY + 70);
+          ctx.fillText("CLICK TO START", W / 2, fishIconY + 110);
         }
 
         // Controls
         ctx.fillStyle = "#607d8b";
         ctx.font = "9px 'Press Start 2P', monospace";
-        ctx.fillText("CLICK to cast | AIM with mouse", W / 2, fishIconY + 100);
-        ctx.fillText("A/D to walk  |  SPACE to swim", W / 2, fishIconY + 118);
-        ctx.fillText("A/D while reeling to align with fish", W / 2, fishIconY + 136);
+        ctx.fillText("CLICK to cast | AIM with mouse", W / 2, fishIconY + 140);
+        ctx.fillText("A/D to walk  |  SPACE to swim", W / 2, fishIconY + 158);
 
-        // Bottom decoration
-        const catchIcons = ["/assets/catch/1.png", "/assets/catch/3.png", "/assets/catch/5.png", "/assets/catch/Chest.png"];
+        // Bottom decoration - catch sprites
+        const catchIcons = ["/assets/catch/1.png", "/assets/catch/2.png", "/assets/catch/3.png", "/assets/catch/5.png", "/assets/catch/6.png", "/assets/catch/Chest.png"];
         for (let i = 0; i < catchIcons.length; i++) {
           const ci = getImg(catchIcons[i]);
           if (ci && ci.complete) {
-            const bob = Math.sin(s.time * 0.04 + i * 1.5) * 3;
-            ctx.drawImage(ci, W / 2 - 100 + i * 55, fishIconY + 150 + bob, ci.width * 3, ci.height * 3);
+            const bob = Math.sin(s.time * 0.04 + i * 1.2) * 3;
+            const iconScale = 2.5;
+            ctx.drawImage(ci, W / 2 - (catchIcons.length * 28) + i * 56, fishIconY + 178 + bob, ci.width * iconScale, ci.height * iconScale);
           }
         }
       }
