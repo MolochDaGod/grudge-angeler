@@ -2174,66 +2174,95 @@ export default function FishingGame() {
               <div style={{ color: "#607d8b", fontSize: 8 }}>Choose your character</div>
             </div>
 
-            <div className="flex gap-4 justify-center flex-wrap">
-              {CHARACTER_VARIANTS.map((cv, ci) => {
-                const isSelected = uiState.selectedCharacter === ci;
-                return (
-                  <button
-                    key={ci}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      stateRef.current.selectedCharacter = ci;
-                      syncUI();
-                    }}
-                    className="flex flex-col items-center cursor-pointer"
+            <div className="flex items-center justify-center gap-6">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  stateRef.current.selectedCharacter = (uiState.selectedCharacter - 1 + CHARACTER_VARIANTS.length) % CHARACTER_VARIANTS.length;
+                  syncUI();
+                }}
+                style={{
+                  background: "rgba(255,255,255,0.06)",
+                  border: "1px solid rgba(255,255,255,0.15)",
+                  borderRadius: 8,
+                  width: 36, height: 36,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  cursor: "pointer",
+                  color: "#90a4ae",
+                  fontSize: 18,
+                  transition: "all 0.2s",
+                }}
+                data-testid="button-char-prev"
+              >
+                ‹
+              </button>
+
+              <div className="flex flex-col items-center" style={{ minWidth: 120 }}>
+                <div style={{
+                  width: 96, height: 96,
+                  overflow: "hidden",
+                  imageRendering: "pixelated" as any,
+                  position: "relative",
+                  borderRadius: 12,
+                  border: `2px solid ${CHARACTER_VARIANTS[uiState.selectedCharacter].color}`,
+                  boxShadow: `0 0 24px ${CHARACTER_VARIANTS[uiState.selectedCharacter].color}44`,
+                  background: "rgba(0,0,0,0.3)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  <img
+                    src={`/assets/${CHARACTER_VARIANTS[uiState.selectedCharacter].folder}/Fisherman_idle.png`}
+                    alt={CHARACTER_VARIANTS[uiState.selectedCharacter].name}
                     style={{
-                      background: isSelected ? "rgba(241,196,15,0.12)" : "rgba(255,255,255,0.04)",
-                      borderRadius: 12,
-                      border: isSelected ? `2px solid ${cv.color}` : "2px solid rgba(255,255,255,0.1)",
-                      padding: "12px 16px 10px",
-                      transition: "all 0.2s",
-                      width: 120,
-                      boxShadow: isSelected ? `0 0 20px ${cv.color}33` : "none",
+                      imageRendering: "pixelated",
+                      position: "absolute",
+                      height: 96,
+                      top: 0,
+                      left: 0,
+                      width: "auto",
                     }}
-                    data-testid={`button-char-${ci}`}
-                  >
-                    <div style={{
-                      width: 64, height: 64,
-                      overflow: "hidden",
-                      imageRendering: "pixelated" as any,
-                      position: "relative",
-                    }}>
-                      <img
-                        src={`/assets/${cv.folder}/Fisherman_idle.png`}
-                        alt={cv.name}
-                        style={{
-                          imageRendering: "pixelated",
-                          position: "absolute",
-                          height: 64,
-                          top: 0,
-                          left: 0,
-                          width: "auto",
-                        }}
-                      />
-                    </div>
-                    <span style={{
-                      color: isSelected ? cv.color : "#78909c",
-                      fontSize: 7,
-                      marginTop: 8,
-                      transition: "color 0.2s",
-                    }}>{cv.name}</span>
-                    {isSelected && (
-                      <div style={{
-                        width: 6, height: 6,
-                        borderRadius: "50%",
-                        background: cv.color,
-                        marginTop: 6,
-                        boxShadow: `0 0 8px ${cv.color}`,
-                      }} />
-                    )}
-                  </button>
-                );
-              })}
+                  />
+                </div>
+                <span style={{
+                  color: CHARACTER_VARIANTS[uiState.selectedCharacter].color,
+                  fontSize: 10,
+                  marginTop: 10,
+                  fontWeight: "bold",
+                  textShadow: `0 0 10px ${CHARACTER_VARIANTS[uiState.selectedCharacter].color}55`,
+                }}>{CHARACTER_VARIANTS[uiState.selectedCharacter].name}</span>
+                <div className="flex gap-2 mt-2">
+                  {CHARACTER_VARIANTS.map((_, i) => (
+                    <div key={i} style={{
+                      width: 6, height: 6,
+                      borderRadius: "50%",
+                      background: uiState.selectedCharacter === i ? CHARACTER_VARIANTS[i].color : "rgba(255,255,255,0.15)",
+                      boxShadow: uiState.selectedCharacter === i ? `0 0 8px ${CHARACTER_VARIANTS[i].color}` : "none",
+                      transition: "all 0.3s",
+                    }} />
+                  ))}
+                </div>
+              </div>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  stateRef.current.selectedCharacter = (uiState.selectedCharacter + 1) % CHARACTER_VARIANTS.length;
+                  syncUI();
+                }}
+                style={{
+                  background: "rgba(255,255,255,0.06)",
+                  border: "1px solid rgba(255,255,255,0.15)",
+                  borderRadius: 8,
+                  width: 36, height: 36,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  cursor: "pointer",
+                  color: "#90a4ae",
+                  fontSize: 18,
+                  transition: "all 0.2s",
+                }}
+                data-testid="button-char-next"
+              >
+                ›
+              </button>
             </div>
 
             <div className="flex flex-col items-center gap-2" style={{ width: "100%" }}>
