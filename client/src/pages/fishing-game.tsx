@@ -1240,10 +1240,10 @@ export default function FishingGame() {
         }
 
         if (s.isRightMouseDown) {
-          s.reelProgress = Math.min(0.95, s.reelProgress + 0.20 * dtSec);
+          s.reelProgress = Math.max(0.05, s.reelProgress - 0.20 * dtSec);
         } else if (!s.isReeling) {
-          const driftLeft = 0.05 * (1.0 / alignmentBonus) * dtSec;
-          s.reelProgress = Math.max(0.05, s.reelProgress - driftLeft);
+          const driftRight = 0.05 * (1.0 / alignmentBonus) * dtSec;
+          s.reelProgress = Math.min(0.95, s.reelProgress + driftRight);
         }
 
         const catchZoneHalf = (0.08 + s.rodLevel * 0.015);
@@ -1384,12 +1384,59 @@ export default function FishingGame() {
 
       // Title screen
       if (s.gameState === "title") {
-        ctx.fillStyle = "rgba(0,0,0,0.55)";
+        ctx.fillStyle = "rgba(0,10,30,0.45)";
         ctx.fillRect(0, 0, W, H);
 
-        const titleY = H * 0.28;
+        // --- Underwater creature swarm across the whole screen ---
+        const creatureDefs = [
+          { folder: "1", walkFrames: 4, speed: 0.9, scale: 1.8, yBase: 0.48, yAmp: 8 },
+          { folder: "1", walkFrames: 4, speed: 1.3, scale: 1.4, yBase: 0.62, yAmp: 5 },
+          { folder: "2", walkFrames: 6, speed: 0.7, scale: 2.0, yBase: 0.55, yAmp: 10 },
+          { folder: "2", walkFrames: 6, speed: 1.1, scale: 1.5, yBase: 0.72, yAmp: 6 },
+          { folder: "3", walkFrames: 4, speed: 1.0, scale: 1.7, yBase: 0.50, yAmp: 7 },
+          { folder: "3", walkFrames: 4, speed: 1.4, scale: 1.3, yBase: 0.68, yAmp: 9 },
+          { folder: "4", walkFrames: 4, speed: 0.6, scale: 1.9, yBase: 0.58, yAmp: 12 },
+          { folder: "4", walkFrames: 4, speed: 1.2, scale: 1.4, yBase: 0.78, yAmp: 5 },
+          { folder: "5", walkFrames: 6, speed: 1.5, scale: 1.6, yBase: 0.45, yAmp: 6 },
+          { folder: "5", walkFrames: 6, speed: 0.8, scale: 1.3, yBase: 0.65, yAmp: 8 },
+          { folder: "6", walkFrames: 6, speed: 0.35, scale: 2.8, yBase: 0.82, yAmp: 14 },
+          { folder: "6", walkFrames: 6, speed: 0.55, scale: 2.2, yBase: 0.60, yAmp: 10 },
+          { folder: "1", walkFrames: 4, speed: 1.6, scale: 1.2, yBase: 0.88, yAmp: 4 },
+          { folder: "3", walkFrames: 4, speed: 0.5, scale: 2.1, yBase: 0.75, yAmp: 11 },
+          { folder: "5", walkFrames: 6, speed: 1.8, scale: 1.1, yBase: 0.52, yAmp: 5 },
+          { folder: "2", walkFrames: 6, speed: 0.9, scale: 1.7, yBase: 0.85, yAmp: 7 },
+        ];
+        for (let i = 0; i < creatureDefs.length; i++) {
+          const cd = creatureDefs[i];
+          const swimDir = i % 2 === 0 ? 1 : -1;
+          const swimRange = W + 120;
+          const phase = (s.time * cd.speed * 0.55 + i * 173) % swimRange;
+          const cx = swimDir > 0 ? -60 + phase : W + 60 - phase;
+          const bobY = Math.sin(s.time * 0.04 + i * 1.9) * cd.yAmp;
+          const frame = Math.floor(s.time * 0.065 * cd.speed) % cd.walkFrames;
+          const depth = cd.yBase;
+          const depthAlpha = depth > 0.75 ? 0.5 : depth > 0.6 ? 0.7 : 0.85;
+          ctx.globalAlpha = depthAlpha;
+          drawSprite(`/assets/creatures/${cd.folder}/Walk.png`, frame, cd.walkFrames, cx, H * cd.yBase + bobY, cd.scale, swimDir < 0);
+        }
+        ctx.globalAlpha = 1;
 
-        // Glow behind title
+        // --- Floating bubbles in title ---
+        ctx.globalAlpha = 0.2;
+        for (let i = 0; i < 25; i++) {
+          const bx = (i * 113 + s.time * 0.3) % W;
+          const by = H * 0.4 + ((i * 89 + s.time * 0.15) % (H * 0.55));
+          const br = 1.5 + Math.sin(s.time * 0.025 + i * 1.3) * 1;
+          ctx.fillStyle = "#88ccff";
+          ctx.beginPath();
+          ctx.arc(bx, by, br, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+
+        // --- Title text ---
+        const titleY = H * 0.2;
+
         ctx.shadowColor = "#3498db";
         ctx.shadowBlur = 30;
         ctx.fillStyle = "#4fc3f7";
@@ -1401,56 +1448,23 @@ export default function FishingGame() {
         ctx.fillText("FISHER", W / 2, titleY + 58);
         ctx.shadowBlur = 0;
 
-        // Subtitle
-        ctx.fillStyle = "#78909c";
+        ctx.fillStyle = "#90a4ae";
         ctx.font = "10px 'Press Start 2P', monospace";
-        ctx.fillText("A Pixel Art Fishing Adventure", W / 2, titleY + 95);
-
-        const fishIconY = titleY + 120;
-        const creatureDefs = [
-          { folder: "1", walkFrames: 4, speed: 1.4, yOff: 0, scale: 1.6 },
-          { folder: "2", walkFrames: 6, speed: 1.0, yOff: 20, scale: 1.6 },
-          { folder: "3", walkFrames: 4, speed: 1.2, yOff: 45, scale: 1.6 },
-          { folder: "4", walkFrames: 4, speed: 0.8, yOff: 70, scale: 1.6 },
-          { folder: "5", walkFrames: 6, speed: 1.6, yOff: 10, scale: 1.5 },
-          { folder: "6", walkFrames: 6, speed: 0.5, yOff: 55, scale: 2.0 },
-        ];
-        for (let i = 0; i < creatureDefs.length; i++) {
-          const cd = creatureDefs[i];
-          const swimDir = i % 2 === 0 ? 1 : -1;
-          const swimRange = W * 0.7;
-          const baseX = W * 0.15;
-          const phase = (s.time * cd.speed * 0.6 + i * 200) % swimRange;
-          const cx = swimDir > 0 ? baseX + phase : baseX + swimRange - phase;
-          const bobY = Math.sin(s.time * 0.05 + i * 1.7) * 6;
-          const frame = Math.floor(s.time * 0.07 * cd.speed) % cd.walkFrames;
-          drawSprite(`/assets/creatures/${cd.folder}/Walk.png`, frame, cd.walkFrames, cx, fishIconY + cd.yOff + bobY, cd.scale, swimDir < 0);
-        }
+        ctx.fillText("A Pixel Art Fishing Adventure", W / 2, titleY + 90);
 
         // Start prompt
         const blink = Math.sin(s.time * 0.06) > -0.2;
         if (blink) {
           ctx.fillStyle = "#ecf0f1";
           ctx.font = "14px 'Press Start 2P', monospace";
-          ctx.fillText("CLICK TO START", W / 2, fishIconY + 110);
+          ctx.fillText("CLICK TO START", W / 2, titleY + 130);
         }
 
         // Controls
         ctx.fillStyle = "#607d8b";
         ctx.font = "9px 'Press Start 2P', monospace";
-        ctx.fillText("CLICK to cast | AIM with mouse", W / 2, fishIconY + 140);
-        ctx.fillText("A/D to walk  |  SPACE to swim", W / 2, fishIconY + 158);
-
-        // Bottom decoration - catch sprites
-        const catchIcons = ["/assets/catch/1.png", "/assets/catch/2.png", "/assets/catch/3.png", "/assets/catch/5.png", "/assets/catch/6.png", "/assets/catch/Chest.png"];
-        for (let i = 0; i < catchIcons.length; i++) {
-          const ci = getImg(catchIcons[i]);
-          if (ci && ci.complete) {
-            const bob = Math.sin(s.time * 0.04 + i * 1.2) * 3;
-            const iconScale = 2.5;
-            ctx.drawImage(ci, W / 2 - (catchIcons.length * 28) + i * 56, fishIconY + 178 + bob, ci.width * iconScale, ci.height * iconScale);
-          }
-        }
+        ctx.fillText("CLICK to cast | AIM with mouse | A/D to walk", W / 2, H * 0.92);
+        ctx.fillText("SPACE to swim | RIGHT-CLICK to cancel", W / 2, H * 0.92 + 16);
       }
 
       ctx.restore();
