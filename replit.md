@@ -64,6 +64,18 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 - Press E near pier to exit boat (returns to pier walking)
 - Boat movement speed: 2.0 normal, 1.5 during reeling
 
+## Camera System
+- cameraX state tracks horizontal camera offset (positive = scrolled left into ocean)
+- Camera follows boat: `targetCameraX = max(0, W/2 - boatCenterX)` with smooth interpolation
+- `ctx.translate(s.cameraX, 0)` applied to all world-space rendering (water, pier, boat, fish, particles)
+- Screen-space UI (catch display, flash, title) rendered after `ctx.restore()` of camera transform
+- Visible area in world coords: `viewL = -cameraX`, `viewR = -cameraX + W`
+- Mouse input converted to world coords for aiming: `mouseX - cameraX`
+- Mountains have 20% parallax (slower scrolling)
+- Water effects (shimmer, waves, caustics, rays, bubbles) render relative to visible area
+- Fish culling uses camera-relative bounds with 300px margin
+- Distance-based fish spawning: rarer fish spawn more frequently further from shore
+
 ## Features
 - 8 fish species (common, uncommon, rare, legendary)
 - 3 junk items including treasure chest
@@ -76,3 +88,4 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 - Character walking on pier (A/D keys)
 - Swimming mechanics (Space to dive, WASD underwater, Space near dock to climb out)
 - Boat boarding cutscene and boat fishing (E to enter/exit)
+- Camera scrolling system following boat into open ocean (up to 3 screens left)

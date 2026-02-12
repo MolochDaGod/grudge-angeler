@@ -155,6 +155,7 @@ export default function FishingGame() {
     boardingTimer: 0,
     lastFishermanX: 0,
     lastFishermanY: 0,
+    cameraX: 0,
   });
 
   const imagesRef = useRef<Map<string, HTMLImageElement>>(new Map());
@@ -192,13 +193,28 @@ export default function FishingGame() {
     });
   }, []);
 
-  const spawnFish = useCallback((canvasW: number, waterStartY: number, canvasH: number) => {
+  const spawnFish = useCallback((canvasW: number, waterStartY: number, canvasH: number, spawnWorldX?: number) => {
     const s = stateRef.current;
-    const totalWeight = FISH_TYPES.reduce((a, f) => a + f.weight, 0);
+    const pierWorldX = canvasW * 0.45 - 80;
+    const centerX = spawnWorldX ?? (-s.cameraX + canvasW / 2);
+    const distFromShore = Math.max(0, pierWorldX - centerX);
+    const distRatio = Math.min(1, distFromShore / (canvasW * 3));
+
+    const adjustedWeights = FISH_TYPES.map(ft => {
+      let w = ft.weight;
+      const rarityBoost = distRatio;
+      if (ft.rarity === "legendary") w *= (1 + rarityBoost * 15);
+      else if (ft.rarity === "rare") w *= (1 + rarityBoost * 8);
+      else if (ft.rarity === "uncommon") w *= (1 + rarityBoost * 3);
+      else w *= Math.max(0.3, 1 - rarityBoost * 0.5);
+      return { ft, w };
+    });
+
+    const totalWeight = adjustedWeights.reduce((a, f) => a + f.w, 0);
     let r = Math.random() * totalWeight;
     let fishType = FISH_TYPES[0];
-    for (const ft of FISH_TYPES) {
-      r -= ft.weight;
+    for (const { ft, w } of adjustedWeights) {
+      r -= w;
       if (r <= 0) { fishType = ft; break; }
     }
     const waterRange = canvasH - waterStartY;
@@ -206,8 +222,11 @@ export default function FishingGame() {
     const maxY = canvasH - 60;
     const y = minY + Math.random() * Math.max(10, maxY - minY);
     const direction = Math.random() > 0.5 ? 1 : -1;
-    const x = direction > 0 ? -80 : canvasW + 80;
-    const sizeMultiplier = 0.5 + Math.random() * Math.random() * 4.5;
+    const viewLeft = -s.cameraX - 100;
+    const viewRight = -s.cameraX + canvasW + 100;
+    const x = direction > 0 ? viewLeft - 80 : viewRight + 80;
+    const baseSizeMult = 0.5 + Math.random() * Math.random() * 4.5;
+    const sizeMultiplier = baseSizeMult * (1 + distRatio * 0.8);
     s.swimmingFish.push({
       x, y, baseY: y, type: fishType, direction, frame: 0, frameTimer: 0,
       speed: fishType.speed * (0.7 + Math.random() * 0.6),
@@ -477,7 +496,7 @@ export default function FishingGame() {
         s.playerX = Math.max(pierLeftBound, Math.min(W - 40, s.playerX));
 
         if (s.gameState === "casting") {
-          s.aimX = Math.max(10, Math.min(W - 10, s.mouseX));
+          s.aimX = Math.max(10, Math.min(W - 10, s.mouseX - s.cameraX));
           s.aimY = Math.max(waterY + 20, Math.min(H - 40, s.mouseY));
         }
 
@@ -582,6 +601,8 @@ export default function FishingGame() {
       }
 
       const BOAT_SPEED = 2.0;
+      const boatMinX = -(W * 3);
+      const boatMaxX = pierLeftBound - 74 * boatScale - 30;
       if (s.inBoat && (s.gameState === "idle" || s.gameState === "casting")) {
         if (s.keysDown.has("a")) {
           s.boatX -= BOAT_SPEED * dt;
@@ -589,9 +610,9 @@ export default function FishingGame() {
         if (s.keysDown.has("d")) {
           s.boatX += BOAT_SPEED * dt;
         }
-        s.boatX = Math.max(20, Math.min(W - 74 * boatScale - 20, s.boatX));
+        s.boatX = Math.max(boatMinX, Math.min(boatMaxX, s.boatX));
         if (s.gameState === "casting") {
-          s.aimX = Math.max(10, Math.min(W - 10, s.mouseX));
+          s.aimX = Math.max(10, Math.min(W - 10, s.mouseX - s.cameraX));
           s.aimY = Math.max(waterY + 20, Math.min(H - 40, s.mouseY));
         }
       }
@@ -602,7 +623,7 @@ export default function FishingGame() {
         if (s.keysDown.has("d")) {
           s.boatX += 1.5 * dt;
         }
-        s.boatX = Math.max(20, Math.min(W - 74 * boatScale - 20, s.boatX));
+        s.boatX = Math.max(boatMinX, Math.min(boatMaxX, s.boatX));
       }
 
       const hookInWater = s.gameState === "waiting" || s.gameState === "bite" || s.gameState === "reeling";
@@ -620,7 +641,8 @@ export default function FishingGame() {
         fishermanX = s.swimX;
         fishermanY = s.swimY - FRAME_H * SCALE * 0.5;
       } else if (s.inBoat) {
-        fishermanX = s.boatX + 30 * boatScale;
+        const boatW = 74 * boatScale;
+        fishermanX = s.boatX + boatW / 2 - (FRAME_H * SCALE) / 2;
         fishermanY = boatDeckY - FRAME_H * SCALE + 12;
         s.playerX = fishermanX;
       } else if (s.gameState === "boarding") {
@@ -628,8 +650,9 @@ export default function FishingGame() {
         if (s.boardingPhase === 1) {
           fishermanY = pierY - FRAME_H * SCALE + 12 - s.playerVY;
         } else if (s.boardingPhase === 2) {
+          const boatW = 74 * boatScale;
           fishermanY = boatDeckY - FRAME_H * SCALE + 12;
-          s.playerX = s.boatX + 30 * boatScale;
+          s.playerX = s.boatX + boatW / 2 - (FRAME_H * SCALE) / 2;
           fishermanX = s.playerX;
         } else {
           fishermanY = pierY - FRAME_H * SCALE + 12;
@@ -640,6 +663,14 @@ export default function FishingGame() {
       }
 
       ctx.imageSmoothingEnabled = false;
+
+      let targetCameraX = 0;
+      if (s.inBoat || s.gameState === "boarding") {
+        const boatCenterX = s.boatX + (74 * boatScale) / 2;
+        targetCameraX = Math.max(0, W / 2 - boatCenterX);
+      }
+      s.cameraX += (targetCameraX - s.cameraX) * Math.min(1, 0.04 * dt);
+      if (Math.abs(s.cameraX - targetCameraX) < 0.5) s.cameraX = targetCameraX;
 
       ctx.save();
       if (s.screenShake > 0) {
@@ -712,18 +743,26 @@ export default function FishingGame() {
       }
       ctx.globalAlpha = 1;
 
-      // Distant mountains/hills
+      // Distant mountains/hills (parallax - moves at 20% of camera speed)
+      const hillParallax = s.cameraX * 0.2;
       ctx.fillStyle = `rgba(${40 + dayPhase * 60}, ${50 + dayPhase * 80}, ${60 + dayPhase * 80}, 0.4)`;
       ctx.beginPath();
       ctx.moveTo(0, waterY);
       for (let x = 0; x <= W; x += 20) {
-        const hillY = waterY - 20 - Math.sin(x * 0.003) * 30 - Math.sin(x * 0.007 + 2) * 15;
+        const wx = x - hillParallax;
+        const hillY = waterY - 20 - Math.sin(wx * 0.003) * 30 - Math.sin(wx * 0.007 + 2) * 15;
         ctx.lineTo(x, hillY);
       }
       ctx.lineTo(W, waterY);
       ctx.fill();
 
-      // Water
+      // Apply camera offset for all world-space rendering
+      ctx.save();
+      ctx.translate(s.cameraX, 0);
+
+      // Water - extends across entire world width
+      const worldLeft = -(W * 3) - 200;
+      const worldRight = W + 200;
       const waterGrad = ctx.createLinearGradient(0, waterY, 0, H);
       const wDeep = dayPhase > 0.5 ? 0 : 20;
       waterGrad.addColorStop(0, `rgb(${41 - wDeep},${128 - wDeep * 2},${185 - wDeep})`);
@@ -731,7 +770,7 @@ export default function FishingGame() {
       waterGrad.addColorStop(0.6, `rgb(${20 - wDeep},${85 - wDeep * 2},${128 - wDeep})`);
       waterGrad.addColorStop(1, `rgb(${13 - wDeep},${59 - wDeep},${94 - wDeep})`);
       ctx.fillStyle = waterGrad;
-      ctx.fillRect(0, waterY, W, H - waterY);
+      ctx.fillRect(worldLeft, waterY, worldRight - worldLeft, H - waterY);
 
       // Surface highlight band - soft glow at water line
       const surfGrad = ctx.createLinearGradient(0, waterY - 2, 0, waterY + 18);
@@ -739,11 +778,15 @@ export default function FishingGame() {
       surfGrad.addColorStop(0.3, "rgba(136,204,238,0.12)");
       surfGrad.addColorStop(1, "rgba(136,204,238,0.0)");
       ctx.fillStyle = surfGrad;
-      ctx.fillRect(0, waterY - 2, W, 20);
+      ctx.fillRect(worldLeft, waterY - 2, worldRight - worldLeft, 20);
+
+      // Visible area in world coords (since we're inside ctx.translate(cameraX))
+      const viewL = -s.cameraX;
+      const viewR = -s.cameraX + W;
 
       // Surface shimmer - small horizontal highlight dashes that drift
       for (let i = 0; i < 30; i++) {
-        const sx = ((i * 73.7 + s.waterOffset * 3) % (W + 40)) - 20;
+        const sx = viewL + ((i * 73.7 + s.waterOffset * 3) % (W + 40)) - 20;
         const sy = waterY + 2 + Math.sin(s.time * 0.02 + i * 2.1) * 3;
         const sw = 6 + Math.sin(i * 1.3) * 4;
         const shimmerAlpha = 0.06 + Math.sin(s.time * 0.03 + i * 0.9) * 0.04;
@@ -762,10 +805,10 @@ export default function FishingGame() {
         ctx.strokeStyle = `rgba(${100 + row * 8},${180 - row * 10},${220 - row * 8},1)`;
         ctx.lineWidth = 1;
         ctx.beginPath();
-        for (let x = 0; x < W; x += 2) {
+        for (let x = viewL; x < viewR; x += 2) {
           const wave = Math.sin((x + s.waterOffset * 2.5 + row * 50) * 0.015) * (3 - depth * 1.5) +
                        Math.sin((x + s.waterOffset * 1.8 + row * 30) * 0.028) * (2 - depth);
-          if (x === 0) ctx.moveTo(x, wy + wave);
+          if (x === viewL) ctx.moveTo(x, wy + wave);
           else ctx.lineTo(x, wy + wave);
         }
         ctx.stroke();
@@ -774,7 +817,7 @@ export default function FishingGame() {
 
       // Soft caustic light patches - dappled light on water
       for (let i = 0; i < 12; i++) {
-        const cx = ((i * 127 + s.waterOffset * 1.2) % (W + 80)) - 40;
+        const cx = viewL + ((i * 127 + s.waterOffset * 1.2) % (W + 80)) - 40;
         const cy = waterY + 20 + (i * 67) % Math.max(1, (H - waterY) * 0.7);
         const cr = 15 + Math.sin(s.time * 0.015 + i * 2.3) * 8;
         const ca = 0.02 + Math.sin(s.time * 0.012 + i * 1.7) * 0.015;
@@ -792,7 +835,7 @@ export default function FishingGame() {
       // Light rays in water - softer, slower sway
       ctx.globalAlpha = 0.02 + dayPhase * 0.012;
       for (let i = 0; i < 5; i++) {
-        const rx = W * 0.12 + i * W * 0.18 + Math.sin(s.time * 0.002 + i * 1.8) * 25;
+        const rx = viewL + W * 0.12 + i * W * 0.18 + Math.sin(s.time * 0.002 + i * 1.8) * 25;
         ctx.fillStyle = dayPhase > 0.5 ? "#ffffcc" : "#aaccff";
         ctx.beginPath();
         ctx.moveTo(rx - 5, waterY);
@@ -806,7 +849,7 @@ export default function FishingGame() {
       // Underwater bubbles - fewer, gentler
       ctx.globalAlpha = 0.12;
       for (let i = 0; i < 12; i++) {
-        const bx = (i * 137 + s.time * 0.2) % W;
+        const bx = viewL + (i * 137 + s.time * 0.2) % W;
         const by = waterY + 40 + ((i * 97 + s.time * 0.12) % Math.max(1, H - waterY - 50));
         const br = 1 + Math.sin(s.time * 0.03 + i) * 0.5;
         ctx.fillStyle = "#88ccff";
@@ -958,9 +1001,13 @@ export default function FishingGame() {
           fish.frame = (fish.frame + 1) % fish.type.walkFrames;
         }
 
-        if ((fish.direction > 0 && fish.x > W + 120) || (fish.direction < 0 && fish.x < -120)) {
-          s.swimmingFish.splice(i, 1);
-          continue;
+        const cullLeft = -s.cameraX - 300;
+        const cullRight = -s.cameraX + W + 300;
+        if ((fish.direction > 0 && fish.x > cullRight) || (fish.direction < 0 && fish.x < cullLeft)) {
+          if (!fish.approachingHook) {
+            s.swimmingFish.splice(i, 1);
+            continue;
+          }
         }
 
         const fishDepth = (fish.y - waterY) / (H - waterY);
@@ -1299,6 +1346,9 @@ export default function FishingGame() {
       }
       ctx.globalAlpha = 1;
 
+      // End camera transform - everything after this is screen-space UI
+      ctx.restore();
+
       // Game state logic
       if (s.gameState === "casting") {
         s.castPower += s.castDirection * 1.8 * dt;
@@ -1366,7 +1416,7 @@ export default function FishingGame() {
           s.hookedFishVX = (Math.random() > 0.5 ? 1 : -1) * fishMoveSpeed * (0.5 + Math.random() * 0.8);
         }
         s.hookedFishDir = s.hookedFishVX > 0 ? 1 : -1;
-        s.hookedFishX = Math.max(20, Math.min(W - 20, s.hookedFishX));
+        s.hookedFishX = Math.max(worldLeft + 20, Math.min(worldRight - 20, s.hookedFishX));
         s.hookedFishY += Math.sin(s.time * 0.04) * 0.15;
         s.hookedFishY = Math.max(waterY + 15, Math.min(H - 30, s.hookedFishY));
 
@@ -1678,7 +1728,7 @@ export default function FishingGame() {
       s.castPower = 0;
       s.castDirection = 1;
       if (s.inBoat) {
-        s.aimX = s.mouseX || (s.playerX - 100);
+        s.aimX = (s.mouseX - s.cameraX) || (s.playerX - 100);
         s.aimY = Math.max(waterY + 20, s.mouseY || (waterY + 60));
       } else {
         s.aimX = s.playerX - 100;
