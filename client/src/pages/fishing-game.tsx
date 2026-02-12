@@ -2180,21 +2180,17 @@ export default function FishingGame() {
   };
 
   const [showCollection, setShowCollection] = useState(false);
-  const [introPhase, setIntroPhase] = useState(0);
+  const [introActive, setIntroActive] = useState(true);
   const introVideoRef = useRef<HTMLVideoElement>(null);
 
   const advanceIntro = useCallback(() => {
-    if (introPhase === 0) {
-      setIntroPhase(1);
-    } else {
-      stateRef.current.gameState = "title";
-      syncUI();
-      setIntroPhase(-1);
-    }
-  }, [introPhase, syncUI]);
+    stateRef.current.gameState = "title";
+    syncUI();
+    setIntroActive(false);
+  }, [syncUI]);
 
   useEffect(() => {
-    if (uiState.gameState !== "intro" || introPhase < 0) return;
+    if (uiState.gameState !== "intro" || !introActive) return;
     const vid = introVideoRef.current;
     if (!vid) return;
     vid.currentTime = 0;
@@ -2202,7 +2198,7 @@ export default function FishingGame() {
     if (playPromise) playPromise.catch(() => {
       advanceIntro();
     });
-  }, [introPhase, uiState.gameState, advanceIntro]);
+  }, [uiState.gameState, introActive, advanceIntro]);
 
   return (
     <div className="relative w-screen h-screen overflow-hidden" style={{ fontFamily: "'Press Start 2P', monospace", background: "#0a0f1a" }}>
@@ -2217,7 +2213,7 @@ export default function FishingGame() {
         data-testid="game-canvas"
       />
 
-      {uiState.gameState === "intro" && introPhase >= 0 && (
+      {uiState.gameState === "intro" && introActive && (
         <div
           className="absolute inset-0 flex items-center justify-center"
           style={{ zIndex: 20, background: "#000", cursor: "pointer" }}
@@ -2226,8 +2222,7 @@ export default function FishingGame() {
         >
           <video
             ref={introVideoRef}
-            key={introPhase}
-            src={introPhase === 0 ? "https://i.imgur.com/sxWeOBP.mp4" : "https://i.imgur.com/wSesBRh.mp4"}
+            src="https://i.imgur.com/wSesBRh.mp4"
             onEnded={advanceIntro}
             playsInline
             muted
