@@ -102,6 +102,8 @@ export default function FishingGame() {
     reelDirection: 1,
     reelGauge: 0.5,
     isReeling: false,
+    isRightMouseDown: false,
+    leftClickQueued: 0,
     currentCatch: null as FishType | null,
     currentJunk: null as typeof JUNK_ITEMS[0] | null,
     swimmingFish: [] as SwimmingFish[],
@@ -309,14 +311,31 @@ export default function FishingGame() {
       st.mouseX = e.clientX;
       st.mouseY = e.clientY;
     };
-    const onDocMouseDown = () => {
-      stateRef.current.isReeling = true;
+    const onDocMouseDown = (e: MouseEvent) => {
+      if (e.button === 0) {
+        stateRef.current.isReeling = true;
+        if (stateRef.current.gameState === "reeling") {
+          stateRef.current.leftClickQueued++;
+        }
+      }
+      if (e.button === 2) {
+        stateRef.current.isRightMouseDown = true;
+      }
     };
-    const onDocMouseUp = () => {
-      stateRef.current.isReeling = false;
+    const onDocMouseUp = (e: MouseEvent) => {
+      if (e.button === 0) {
+        stateRef.current.isReeling = false;
+      }
+      if (e.button === 2) stateRef.current.isRightMouseDown = false;
+    };
+    const onContextMenu = (e: Event) => {
+      if (stateRef.current.gameState === "reeling") e.preventDefault();
     };
     const onDocTouchStart = () => {
       stateRef.current.isReeling = true;
+      if (stateRef.current.gameState === "reeling") {
+        stateRef.current.leftClickQueued++;
+      }
     };
     const onDocTouchEnd = () => {
       stateRef.current.isReeling = false;
@@ -324,6 +343,7 @@ export default function FishingGame() {
     document.addEventListener("mousemove", onDocMouseMove);
     document.addEventListener("mousedown", onDocMouseDown);
     document.addEventListener("mouseup", onDocMouseUp);
+    document.addEventListener("contextmenu", onContextMenu);
     document.addEventListener("touchstart", onDocTouchStart);
     document.addEventListener("touchend", onDocTouchEnd);
 
@@ -1166,12 +1186,19 @@ export default function FishingGame() {
         if (s.reelTarget >= 0.88) { s.reelTarget = 0.88; s.reelDirection = -1; }
         if (s.reelTarget <= 0.12) { s.reelTarget = 0.12; s.reelDirection = 1; }
 
-        const zoneDriftRight = 0.004 * (1.0 / alignmentBonus) * dt;
-        const zoneMoveLeft = 0.008 * dt;
-        if (s.isReeling) {
-          s.reelProgress = Math.max(0.05, s.reelProgress - zoneMoveLeft);
-        } else {
-          s.reelProgress = Math.min(0.95, s.reelProgress + zoneDriftRight);
+        const dtSec = dt / 60;
+
+        const clickMoveLeft = 0.05;
+        while (s.leftClickQueued > 0) {
+          s.reelProgress = Math.max(0.05, s.reelProgress - clickMoveLeft);
+          s.leftClickQueued--;
+        }
+
+        if (s.isRightMouseDown) {
+          s.reelProgress = Math.max(0.05, s.reelProgress - 0.20 * dtSec);
+        } else if (!s.isReeling) {
+          const driftRight = 0.05 * (1.0 / alignmentBonus) * dtSec;
+          s.reelProgress = Math.min(0.95, s.reelProgress + driftRight);
         }
 
         const catchZoneHalf = (0.08 + s.rodLevel * 0.015);
@@ -1381,6 +1408,7 @@ export default function FishingGame() {
       document.removeEventListener("mousemove", onDocMouseMove);
       document.removeEventListener("mousedown", onDocMouseDown);
       document.removeEventListener("mouseup", onDocMouseUp);
+      document.removeEventListener("contextmenu", onContextMenu);
       document.removeEventListener("touchstart", onDocTouchStart);
       document.removeEventListener("touchend", onDocTouchEnd);
       document.removeEventListener("keydown", onKeyDown);
@@ -1440,6 +1468,8 @@ export default function FishingGame() {
       s.reelDirection = Math.random() > 0.5 ? 1 : -1;
       s.reelGauge = 0.5;
       s.isReeling = false;
+      s.isRightMouseDown = false;
+      s.leftClickQueued = 0;
       syncUI();
       return;
     }
@@ -1634,7 +1664,7 @@ export default function FishingGame() {
                   </span>
                 </div>
                 <span style={{ color: "#b0bec5", fontSize: 8, textShadow: "1px 1px 0 #000" }}>
-                  Hold click to reel | A/D to align with fish
+                  Click to reel | Hold right-click for steady reel | A/D to align
                 </span>
               </div>
             );
