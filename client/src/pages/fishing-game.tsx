@@ -105,7 +105,7 @@ interface Bounty {
   label: string;
 }
 
-type GameState = "title" | "idle" | "casting" | "waiting" | "bite" | "reeling" | "caught" | "missed" | "swimming" | "boarding" | "store";
+type GameState = "title" | "charSelect" | "idle" | "casting" | "waiting" | "bite" | "reeling" | "caught" | "missed" | "swimming" | "boarding" | "store";
 
 interface SwimmingFish {
   x: number;
@@ -227,6 +227,7 @@ export default function FishingGame() {
     cameraX: 0,
     selectedCharacter: 0,
     characterSelected: false,
+    playerName: "",
     equippedRod: 0,
     equippedLure: 0,
     ownedRods: [true, false, false, false, false] as boolean[],
@@ -270,6 +271,7 @@ export default function FishingGame() {
     inBoat: false,
     selectedCharacter: 0,
     characterSelected: false,
+    playerName: "",
     equippedRod: 0,
     equippedLure: 0,
     ownedRods: [true, false, false, false, false] as boolean[],
@@ -465,6 +467,7 @@ export default function FishingGame() {
       inBoat: s.inBoat,
       selectedCharacter: s.selectedCharacter,
       characterSelected: s.characterSelected,
+      playerName: s.playerName,
       equippedRod: s.equippedRod,
       equippedLure: s.equippedLure,
       ownedRods: [...s.ownedRods],
@@ -543,6 +546,7 @@ export default function FishingGame() {
     document.addEventListener("touchend", onDocTouchEnd);
 
     const onKeyDown = (e: KeyboardEvent) => {
+      if (stateRef.current.gameState === "charSelect") return;
       const key = e.key.toLowerCase();
       stateRef.current.keysDown.add(key);
       if (["a", "d", "w", "s", " ", "e"].includes(key)) e.preventDefault();
@@ -1086,7 +1090,7 @@ export default function FishingGame() {
       drawImage("/assets/objects/Fishing_hut.png", hutX, hutY, hutScale);
 
       // Billboard near hut
-      if (s.gameState !== "title") {
+      if (s.gameState !== "title" && s.gameState !== "charSelect") {
         const bbX = W - 160;
         const bbY = waterY - 95;
         const bbW = 70;
@@ -1186,7 +1190,7 @@ export default function FishingGame() {
       ctx.globalAlpha = 1;
 
       // Swimming fish
-      if (s.gameState !== "title") {
+      if (s.gameState !== "title" && s.gameState !== "charSelect") {
         if (s.swimmingFish.length < 10 && Math.random() < 0.012 * dt) {
           spawnFish(W, waterY, H);
         }
@@ -1883,12 +1887,11 @@ export default function FishingGame() {
         ctx.globalAlpha = 1;
       }
 
-      // Title screen
-      if (s.gameState === "title") {
+      // Title screen & charSelect - shared background
+      if (s.gameState === "title" || s.gameState === "charSelect") {
         ctx.fillStyle = "rgba(0,10,30,0.45)";
         ctx.fillRect(0, 0, W, H);
 
-        // --- Underwater creature swarm across the whole screen ---
         const creatureDefs = [
           { folder: "1", walkFrames: 4, speed: 0.9, scale: 1.8, yBase: 0.48, yAmp: 8 },
           { folder: "1", walkFrames: 4, speed: 1.3, scale: 1.4, yBase: 0.62, yAmp: 5 },
@@ -1922,7 +1925,6 @@ export default function FishingGame() {
         }
         ctx.globalAlpha = 1;
 
-        // --- Floating bubbles in title ---
         ctx.globalAlpha = 0.2;
         for (let i = 0; i < 25; i++) {
           const bx = (i * 113 + s.time * 0.3) % W;
@@ -1934,9 +1936,11 @@ export default function FishingGame() {
           ctx.fill();
         }
         ctx.globalAlpha = 1;
+      }
 
-        // --- Title text ---
-        const titleY = H * 0.2;
+      // Title screen text only
+      if (s.gameState === "title") {
+        const titleY = H * 0.25;
 
         ctx.shadowColor = "#3498db";
         ctx.shadowBlur = 30;
@@ -1953,60 +1957,23 @@ export default function FishingGame() {
         ctx.font = "10px 'Press Start 2P', monospace";
         ctx.fillText("A Pixel Art Fishing Adventure", W / 2, titleY + 90);
 
-        // Character Select
-        if (!s.characterSelected) {
-          ctx.fillStyle = "#b0bec5";
-          ctx.font = "10px 'Press Start 2P', monospace";
-          ctx.fillText("CHOOSE YOUR FISHER", W / 2, titleY + 120);
-          
-          const selW = 80;
-          const selGap = 20;
-          const totalSelW = CHARACTER_VARIANTS.length * selW + (CHARACTER_VARIANTS.length - 1) * selGap;
-          const selStartX = W / 2 - totalSelW / 2;
-          
-          for (let ci = 0; ci < CHARACTER_VARIANTS.length; ci++) {
-            const cv = CHARACTER_VARIANTS[ci];
-            const cx = selStartX + ci * (selW + selGap);
-            const cy = titleY + 138;
-            const isHovered = s.mouseX >= cx && s.mouseX <= cx + selW && s.mouseY >= cy && s.mouseY <= cy + 100;
-            const isSelected = s.selectedCharacter === ci;
-            
-            ctx.fillStyle = isSelected ? "rgba(241,196,15,0.15)" : isHovered ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.3)";
-            drawRoundRect(cx, cy, selW, 100, 8);
-            ctx.fill();
-            ctx.strokeStyle = isSelected ? "#f1c40f" : isHovered ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.1)";
-            ctx.lineWidth = isSelected ? 2 : 1;
-            drawRoundRect(cx, cy, selW, 100, 8);
-            ctx.stroke();
-            
-            const previewFrame = Math.floor(s.time * 0.05) % 4;
-            drawSprite(`/assets/${cv.folder}/Fisherman_idle.png`, previewFrame, 4, cx + selW/2 - 24, cy + 8, 2.5, false);
-            
-            ctx.fillStyle = isSelected ? cv.color : "#78909c";
-            ctx.font = "7px 'Press Start 2P', monospace";
-            ctx.fillText(cv.name, cx + selW/2, cy + 88);
-          }
-          
-          const blink = Math.sin(s.time * 0.06) > -0.2;
-          if (blink) {
-            ctx.fillStyle = "#ecf0f1";
-            ctx.font = "11px 'Press Start 2P', monospace";
-            ctx.fillText("CLICK TO CONFIRM", W / 2, titleY + 265);
-          }
-        } else {
-          const blink = Math.sin(s.time * 0.06) > -0.2;
-          if (blink) {
-            ctx.fillStyle = "#ecf0f1";
-            ctx.font = "14px 'Press Start 2P', monospace";
-            ctx.fillText("CLICK TO START", W / 2, titleY + 130);
-          }
+        const blink = Math.sin(s.time * 0.06) > -0.2;
+        if (blink) {
+          ctx.fillStyle = "#ecf0f1";
+          ctx.font = "14px 'Press Start 2P', monospace";
+          ctx.fillText("CLICK TO ENTER", W / 2, titleY + 150);
         }
 
-        // Controls
         ctx.fillStyle = "#607d8b";
         ctx.font = "9px 'Press Start 2P', monospace";
         ctx.fillText("CLICK to cast | AIM with mouse | A/D to walk", W / 2, H * 0.92);
         ctx.fillText("SPACE to swim | RIGHT-CLICK to cancel", W / 2, H * 0.92 + 16);
+      }
+
+      // charSelect overlay dimming
+      if (s.gameState === "charSelect") {
+        ctx.fillStyle = "rgba(0,5,15,0.55)";
+        ctx.fillRect(0, 0, W, H);
       }
 
       ctx.restore();
@@ -2042,40 +2009,12 @@ export default function FishingGame() {
     const defaultFX = W * 0.45;
 
     if (s.gameState === "title") {
-      if (!s.characterSelected) {
-        const titleY = H * 0.2;
-        const selW = 80;
-        const selGap = 20;
-        const totalSelW = CHARACTER_VARIANTS.length * selW + (CHARACTER_VARIANTS.length - 1) * selGap;
-        const selStartX = W / 2 - totalSelW / 2;
-        const rect = canvas.getBoundingClientRect();
-        const clickX = e.clientX - rect.left;
-        const clickY = e.clientY - rect.top;
-        
-        let clickedChar = false;
-        for (let ci = 0; ci < CHARACTER_VARIANTS.length; ci++) {
-          const cx = selStartX + ci * (selW + selGap);
-          const cy = titleY + 138;
-          if (clickX >= cx && clickX <= cx + selW && clickY >= cy && clickY <= cy + 100) {
-            if (s.selectedCharacter === ci) {
-              s.characterSelected = true;
-            } else {
-              s.selectedCharacter = ci;
-            }
-            clickedChar = true;
-            break;
-          }
-        }
-        if (!clickedChar) {
-          s.characterSelected = true;
-        }
-        syncUI();
-        return;
-      }
-      s.gameState = "idle";
-      s.playerX = defaultFX;
-      for (let i = 0; i < 6; i++) spawnFish(W, waterY, H);
+      s.gameState = "charSelect";
       syncUI();
+      return;
+    }
+
+    if (s.gameState === "charSelect") {
       return;
     }
 
@@ -2182,7 +2121,161 @@ export default function FishingGame() {
         data-testid="game-canvas"
       />
 
-      {uiState.gameState !== "title" && (
+      {/* Character Select Screen - HTML Overlay */}
+      {uiState.gameState === "charSelect" && (
+        <div className="absolute inset-0 flex items-center justify-center" style={{ fontFamily: "'Press Start 2P', monospace", zIndex: 10 }} data-testid="char-select-screen">
+          <div className="flex flex-col items-center gap-6" style={{ background: "rgba(5,12,30,0.92)", borderRadius: 16, border: "2px solid rgba(79,195,247,0.3)", padding: "32px 40px", maxWidth: 520, width: "90%" }}>
+            <div className="text-center">
+              <div style={{ color: "#4fc3f7", fontSize: 20, marginBottom: 4, textShadow: "0 0 20px rgba(79,195,247,0.5)" }}>PIXEL FISHER</div>
+              <div style={{ color: "#607d8b", fontSize: 8 }}>Choose your character</div>
+            </div>
+
+            <div className="flex gap-4 justify-center flex-wrap">
+              {CHARACTER_VARIANTS.map((cv, ci) => {
+                const isSelected = uiState.selectedCharacter === ci;
+                return (
+                  <button
+                    key={ci}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      stateRef.current.selectedCharacter = ci;
+                      syncUI();
+                    }}
+                    className="flex flex-col items-center cursor-pointer"
+                    style={{
+                      background: isSelected ? "rgba(241,196,15,0.12)" : "rgba(255,255,255,0.04)",
+                      borderRadius: 12,
+                      border: isSelected ? `2px solid ${cv.color}` : "2px solid rgba(255,255,255,0.1)",
+                      padding: "12px 16px 10px",
+                      transition: "all 0.2s",
+                      width: 120,
+                      boxShadow: isSelected ? `0 0 20px ${cv.color}33` : "none",
+                    }}
+                    data-testid={`button-char-${ci}`}
+                  >
+                    <div style={{
+                      width: 64, height: 64,
+                      overflow: "hidden",
+                      imageRendering: "pixelated" as any,
+                      position: "relative",
+                    }}>
+                      <img
+                        src={`/assets/${cv.folder}/Fisherman_idle.png`}
+                        alt={cv.name}
+                        style={{
+                          imageRendering: "pixelated",
+                          position: "absolute",
+                          height: 64,
+                          top: 0,
+                          left: 0,
+                          width: "auto",
+                        }}
+                      />
+                    </div>
+                    <span style={{
+                      color: isSelected ? cv.color : "#78909c",
+                      fontSize: 7,
+                      marginTop: 8,
+                      transition: "color 0.2s",
+                    }}>{cv.name}</span>
+                    {isSelected && (
+                      <div style={{
+                        width: 6, height: 6,
+                        borderRadius: "50%",
+                        background: cv.color,
+                        marginTop: 6,
+                        boxShadow: `0 0 8px ${cv.color}`,
+                      }} />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="flex flex-col items-center gap-2" style={{ width: "100%" }}>
+              <label style={{ color: "#90a4ae", fontSize: 8 }}>ENTER YOUR NAME</label>
+              <input
+                type="text"
+                maxLength={16}
+                placeholder="Angler"
+                defaultValue={uiState.playerName}
+                onChange={(e) => {
+                  stateRef.current.playerName = e.target.value;
+                }}
+                onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => {
+                  e.stopPropagation();
+                  if (e.key === "Enter") {
+                    const s = stateRef.current;
+                    if (!s.playerName.trim()) s.playerName = "Angler";
+                    s.characterSelected = true;
+                    s.gameState = "idle";
+                    const canvas = canvasRef.current;
+                    if (canvas) {
+                      const W = canvas.width;
+                      const waterY = canvas.height * 0.42;
+                      const H = canvas.height;
+                      s.playerX = W * 0.45;
+                      for (let i = 0; i < 6; i++) spawnFish(W, waterY, H);
+                    }
+                    syncUI();
+                  }
+                }}
+                style={{
+                  background: "rgba(0,0,0,0.4)",
+                  border: "1px solid rgba(79,195,247,0.3)",
+                  borderRadius: 8,
+                  padding: "8px 14px",
+                  color: "#ecf0f1",
+                  fontSize: 12,
+                  fontFamily: "'Press Start 2P', monospace",
+                  width: "100%",
+                  maxWidth: 260,
+                  textAlign: "center",
+                  outline: "none",
+                }}
+                data-testid="input-player-name"
+              />
+            </div>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                const s = stateRef.current;
+                if (!s.playerName.trim()) s.playerName = "Angler";
+                s.characterSelected = true;
+                s.gameState = "idle";
+                const canvas = canvasRef.current;
+                if (canvas) {
+                  const W = canvas.width;
+                  const waterY = canvas.height * 0.42;
+                  const H = canvas.height;
+                  s.playerX = W * 0.45;
+                  for (let i = 0; i < 6; i++) spawnFish(W, waterY, H);
+                }
+                syncUI();
+              }}
+              style={{
+                background: "linear-gradient(135deg, rgba(79,195,247,0.25), rgba(241,196,15,0.2))",
+                border: "2px solid rgba(241,196,15,0.5)",
+                borderRadius: 10,
+                padding: "10px 32px",
+                color: "#ffd54f",
+                fontSize: 12,
+                fontFamily: "'Press Start 2P', monospace",
+                cursor: "pointer",
+                transition: "all 0.2s",
+                textShadow: "0 0 10px rgba(241,196,15,0.3)",
+              }}
+              data-testid="button-start-game"
+            >
+              START FISHING
+            </button>
+          </div>
+        </div>
+      )}
+
+      {uiState.gameState !== "title" && uiState.gameState !== "charSelect" && (
         <>
           {/* HUD Top Left - Score & Stats */}
           <div className="absolute top-3 left-3 flex flex-col gap-1.5" style={{ pointerEvents: "none" }} data-testid="hud-score">
