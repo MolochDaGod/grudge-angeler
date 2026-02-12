@@ -248,6 +248,22 @@ export default function FishingGame() {
     resize();
     window.addEventListener("resize", resize);
 
+    const onDocMouseMove = (e: MouseEvent) => {
+      const st = stateRef.current;
+      st.mouseX = e.clientX;
+      if (st.gameState === "reeling") {
+        st.reelProgress = e.clientX / canvas.width;
+      }
+    };
+    const onDocTouchMove = (e: TouchEvent) => {
+      const st = stateRef.current;
+      if (st.gameState === "reeling" && e.touches[0]) {
+        st.reelProgress = e.touches[0].clientX / canvas.width;
+      }
+    };
+    document.addEventListener("mousemove", onDocMouseMove);
+    document.addEventListener("touchmove", onDocTouchMove);
+
     const PIER_Y_RATIO = 0.38;
     const WATER_START_RATIO = 0.42;
     const FISHERMAN_X_RATIO = 0.45;
@@ -923,6 +939,8 @@ export default function FishingGame() {
     return () => {
       cancelAnimationFrame(gameLoopRef.current);
       window.removeEventListener("resize", resize);
+      document.removeEventListener("mousemove", onDocMouseMove);
+      document.removeEventListener("touchmove", onDocTouchMove);
     };
   }, [loadImage, spawnFish, addParticles, addRipple, syncUI]);
 
@@ -1042,7 +1060,7 @@ export default function FishingGame() {
       {uiState.gameState !== "title" && (
         <>
           {/* HUD Top Left - Score & Stats */}
-          <div className="absolute top-3 left-3 flex flex-col gap-1.5" data-testid="hud-score">
+          <div className="absolute top-3 left-3 flex flex-col gap-1.5" style={{ pointerEvents: "none" }} data-testid="hud-score">
             <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(241,196,15,0.3)" }}>
               <img src="/assets/icons/Icons_01.png" alt="" className="w-6 h-6" style={{ imageRendering: "pixelated" }} />
               <span style={{ color: "#f1c40f", fontSize: 11 }}>{uiState.score}</span>
@@ -1059,14 +1077,14 @@ export default function FishingGame() {
           </div>
 
           {/* HUD Top Right - Rod Level */}
-          <div className="absolute top-3 right-3 flex flex-col gap-1.5" data-testid="hud-rod">
+          <div className="absolute top-3 right-3 flex flex-col gap-1.5" style={{ pointerEvents: "none" }} data-testid="hud-rod">
             <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(155,89,182,0.3)" }}>
               <img src="/assets/icons/Icons_07.png" alt="" className="w-6 h-6" style={{ imageRendering: "pixelated" }} />
               <span style={{ color: "#9b59b6", fontSize: 10 }}>Lv.{uiState.rodLevel}</span>
             </div>
             <button
               className="flex items-center gap-2 px-3 py-1.5 cursor-pointer"
-              style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(46,204,113,0.3)", fontFamily: "'Press Start 2P', monospace" }}
+              style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(46,204,113,0.3)", fontFamily: "'Press Start 2P', monospace", pointerEvents: "auto" }}
               onClick={(e) => { e.stopPropagation(); setShowCollection(!showCollection); }}
               data-testid="button-collection"
             >
@@ -1077,7 +1095,7 @@ export default function FishingGame() {
 
           {/* Cast Power Bar */}
           {uiState.gameState === "casting" && (
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2" data-testid="cast-power-bar">
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2" style={{ pointerEvents: "none" }} data-testid="cast-power-bar">
               <span style={{ color: "#ecf0f1", fontSize: 10, textShadow: "1px 1px 0 #000" }}>CAST POWER</span>
               <div className="w-56 h-5 relative" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 10, border: "1px solid rgba(255,255,255,0.2)", overflow: "hidden" }}>
                 <div
@@ -1099,7 +1117,7 @@ export default function FishingGame() {
 
           {/* Waiting */}
           {uiState.gameState === "waiting" && (
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center px-4 py-2" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8 }} data-testid="waiting-indicator">
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center px-4 py-2" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8, pointerEvents: "none" }} data-testid="waiting-indicator">
               <span style={{ color: "#5dade2", fontSize: 10, textShadow: "1px 1px 0 #000" }}>
                 Waiting for a bite
                 <span style={{ animation: "pulse 1.5s infinite" }}>...</span>
@@ -1109,7 +1127,7 @@ export default function FishingGame() {
 
           {/* Bite Alert */}
           {uiState.gameState === "bite" && (
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center px-5 py-3" style={{ background: "rgba(241,196,15,0.15)", borderRadius: 10, border: "2px solid rgba(241,196,15,0.5)" }} data-testid="bite-alert">
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center px-5 py-3" style={{ background: "rgba(241,196,15,0.15)", borderRadius: 10, border: "2px solid rgba(241,196,15,0.5)", pointerEvents: "none" }} data-testid="bite-alert">
               <span style={{ color: "#f1c40f", fontSize: 14, textShadow: "2px 2px 0 #000", animation: "pulse 0.5s infinite" }}>
                 FISH ON! CLICK NOW!
               </span>
@@ -1118,7 +1136,7 @@ export default function FishingGame() {
 
           {/* Reeling Minigame */}
           {uiState.gameState === "reeling" && (
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2" data-testid="reel-bar">
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2" style={{ pointerEvents: "none" }} data-testid="reel-bar">
               <span style={{ color: "#ecf0f1", fontSize: 9, textShadow: "1px 1px 0 #000" }}>KEEP THE RED BAR IN THE GREEN ZONE!</span>
               <div className="relative" style={{ width: Math.min(320, window.innerWidth * 0.7), height: 28, background: "rgba(8,15,25,0.85)", borderRadius: 10, border: "1px solid rgba(255,255,255,0.2)", overflow: "hidden" }}>
                 <div
@@ -1147,7 +1165,7 @@ export default function FishingGame() {
 
           {/* Missed */}
           {uiState.gameState === "missed" && (
-            <div className="absolute bottom-16 left-1/2 -translate-x-1/2 text-center px-5 py-3 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 10, border: "1px solid rgba(231,76,60,0.3)" }} data-testid="missed-display">
+            <div className="absolute bottom-16 left-1/2 -translate-x-1/2 text-center px-5 py-3 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 10, border: "1px solid rgba(231,76,60,0.3)", pointerEvents: "none" }} data-testid="missed-display">
               <span style={{ color: "#e74c3c", fontSize: 11, textShadow: "1px 1px 0 #000" }}>{uiState.missReason}</span>
               <span style={{ color: "#607d8b", fontSize: 8 }}>Click to try again</span>
             </div>
@@ -1155,7 +1173,7 @@ export default function FishingGame() {
 
           {/* Idle Prompt */}
           {uiState.gameState === "idle" && (
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center px-4 py-2" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8 }} data-testid="idle-prompt">
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center px-4 py-2" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8, pointerEvents: "none" }} data-testid="idle-prompt">
               <span style={{ color: "#b0bec5", fontSize: 10, textShadow: "1px 1px 0 #000" }}>Click to cast your line!</span>
             </div>
           )}
