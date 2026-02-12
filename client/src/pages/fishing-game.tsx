@@ -2280,11 +2280,6 @@ export default function FishingGame() {
                   overflow: "hidden",
                   imageRendering: "pixelated" as any,
                   position: "relative",
-                  borderRadius: 12,
-                  border: `2px solid ${CHARACTER_VARIANTS[uiState.selectedCharacter].color}`,
-                  boxShadow: `0 0 24px ${CHARACTER_VARIANTS[uiState.selectedCharacter].color}44`,
-                  background: "rgba(0,0,0,0.3)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
                 }}>
                   <img
                     src={`/assets/${CHARACTER_VARIANTS[uiState.selectedCharacter].folder}/Fisherman_idle.png`}
