@@ -44,7 +44,7 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 5. **Bite** - Fish grabs line! Click to start reeling
 6. **Reeling** - Palworld-style minigame; rod stats affect catch zone width, reel speed, and line strength
 7. **Caught** - Celebration popup with fish image, weight, rarity, sell price, and bounty completion
-8. **Store** - Full-screen shop overlay with Rod (5 types) and Lure (8 types) tabs, buy/equip system
+8. **Store** - Full-screen shop overlay with Rod (5 types) and Bait & Lures (16 types: 5 live bait + 11 artificial lures) tabs, buy/equip system
 
 ## Character System
 - 3 selectable variants: Classic (no tint), Ocean Blue, Crimson
@@ -53,7 +53,9 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 
 ## Equipment System
 - **Rods** (5): Bamboo, Fiberglass, Carbon, Titanium, Legendary - affect catch zone, reel speed, line strength
-- **Lures** (8): Basic Worm, Silver Spinner, Deep Diver, Golden Fly, Glow Jig, Storm Shad, Kraken Bait, Prismatic - affect rarity boost, size boost, bite speed, and targeted fish attraction
+- **Live Bait** (5): Basic Worm, Nightcrawler, Leech, Maggots, Minnow Bait - organic baits with unique fish attraction
+- **Lures** (11): Beginner Lure, Crankbait, Silver Spoon, Grub Worm, Spinnerbait, Deep Diver, Golden Fly, Glow Jig, Storm Shad, Kraken Bait, Prismatic - artificial lures affecting rarity boost, size boost, bite speed, and targeted fish attraction
+- Each bait/lure has a `type` field ("live" or "lure") for shop categorization
 - Equipment purchased with money from fishing hut shop (E key near hut)
 
 ## Money & Market System

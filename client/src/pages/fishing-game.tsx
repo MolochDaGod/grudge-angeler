@@ -71,17 +71,26 @@ interface Lure {
   speedBoost: number;
   targetFish: string[];
   targetBonus: number;
+  type: "live" | "lure";
 }
 
 const LURES: Lure[] = [
-  { name: "Basic Worm", price: 0, effect: "None", description: "A plain earthworm. The classic bait.", icon: "/assets/lures/worm.png", rarityBoost: 1.0, sizeBoost: 0, speedBoost: 1.0, targetFish: [], targetBonus: 1.0 },
-  { name: "Silver Spinner", price: 80, effect: "Attracts Minnows & Perch", description: "A flashy silver spinner that small fish love.", icon: "/assets/lures/beginner_lure.png", rarityBoost: 1.0, sizeBoost: 0, speedBoost: 1.2, targetFish: ["Minnow", "Perch"], targetBonus: 3.0 },
-  { name: "Deep Diver", price: 120, effect: "Better deep fish", description: "Dives deep to attract bottom dwellers.", icon: "/assets/lures/deep_diver.png", rarityBoost: 1.2, sizeBoost: 0.3, speedBoost: 1.0, targetFish: ["Catfish", "Eel"], targetBonus: 2.5 },
-  { name: "Golden Fly", price: 200, effect: "Rare fish boost", description: "An iridescent golden fly. Rare fish can't resist.", icon: "/assets/lures/golden_fly.png", rarityBoost: 2.0, sizeBoost: 0, speedBoost: 1.0, targetFish: ["Swordfish"], targetBonus: 2.0 },
-  { name: "Glow Jig", price: 300, effect: "Bigger fish", description: "Bioluminescent lure that attracts larger specimens.", icon: "/assets/lures/glow_jig.png", rarityBoost: 1.3, sizeBoost: 0.8, speedBoost: 1.1, targetFish: [], targetBonus: 1.0 },
-  { name: "Storm Shad", price: 250, effect: "Faster bites", description: "Mimics injured baitfish. Fish bite faster.", icon: "/assets/lures/storm_shad.png", rarityBoost: 1.0, sizeBoost: 0.2, speedBoost: 2.0, targetFish: ["Bass", "Salmon"], targetBonus: 2.0 },
-  { name: "Kraken Bait", price: 500, effect: "Legendary attraction", description: "Mysterious bait from the ocean depths.", icon: "/assets/lures/kraken_bait.png", rarityBoost: 3.0, sizeBoost: 0.5, speedBoost: 0.8, targetFish: ["Whale"], targetBonus: 4.0 },
-  { name: "Prismatic Lure", price: 750, effect: "All bonuses", description: "A rainbow-shifting lure. Boosts everything.", icon: "/assets/lures/prismatic_lure.png", rarityBoost: 1.8, sizeBoost: 0.5, speedBoost: 1.5, targetFish: [], targetBonus: 1.0 },
+  { name: "Basic Worm", price: 0, effect: "None", description: "A plain earthworm. The classic bait.", icon: "/assets/lures/worm.png", rarityBoost: 1.0, sizeBoost: 0, speedBoost: 1.0, targetFish: [], targetBonus: 1.0, type: "live" },
+  { name: "Nightcrawler", price: 40, effect: "Faster bites", description: "A fat, juicy nightcrawler. Fish can't resist the wriggle.", icon: "/assets/lures/nightcrawler.png", rarityBoost: 1.0, sizeBoost: 0.1, speedBoost: 1.4, targetFish: ["Catfish", "Bass"], targetBonus: 1.5, type: "live" },
+  { name: "Leech", price: 90, effect: "Attracts bottom feeders", description: "A slimy leech that bottom dwellers love.", icon: "/assets/lures/leech.png", rarityBoost: 1.2, sizeBoost: 0.2, speedBoost: 1.1, targetFish: ["Catfish", "Eel"], targetBonus: 2.5, type: "live" },
+  { name: "Maggots", price: 60, effect: "Quick nibbles", description: "A cluster of wriggling maggots. Small fish go crazy.", icon: "/assets/lures/maggots.png", rarityBoost: 1.0, sizeBoost: 0, speedBoost: 2.0, targetFish: ["Minnow", "Perch"], targetBonus: 2.0, type: "live" },
+  { name: "Minnow Bait", price: 150, effect: "Attracts predators", description: "A live minnow on the hook. Big predators can't resist.", icon: "/assets/lures/minnow_bait.png", rarityBoost: 1.5, sizeBoost: 0.4, speedBoost: 1.0, targetFish: ["Bass", "Salmon", "Swordfish"], targetBonus: 2.0, type: "live" },
+  { name: "Beginner Lure", price: 50, effect: "Slight speed boost", description: "A basic crankbait for beginners. Better than bare hooks.", icon: "/assets/lures/beginner_lure.png", rarityBoost: 1.0, sizeBoost: 0, speedBoost: 1.2, targetFish: [], targetBonus: 1.0, type: "lure" },
+  { name: "Crankbait", price: 120, effect: "Attracts Perch & Bass", description: "A fat-bodied diving lure with a rattling action.", icon: "/assets/lures/crankbait.png", rarityBoost: 1.1, sizeBoost: 0.2, speedBoost: 1.3, targetFish: ["Perch", "Bass"], targetBonus: 2.5, type: "lure" },
+  { name: "Silver Spoon", price: 100, effect: "Flash attracts fish", description: "A hammered metal spoon that flashes in the water.", icon: "/assets/lures/spoon.png", rarityBoost: 1.0, sizeBoost: 0.1, speedBoost: 1.5, targetFish: ["Salmon", "Minnow"], targetBonus: 2.0, type: "lure" },
+  { name: "Grub Worm", price: 80, effect: "Versatile soft bait", description: "A soft plastic grub with a curly tail. Works on everything.", icon: "/assets/lures/grub_worm.png", rarityBoost: 1.1, sizeBoost: 0.1, speedBoost: 1.2, targetFish: [], targetBonus: 1.0, type: "lure" },
+  { name: "Spinnerbait", price: 200, effect: "Flash & vibration", description: "Spinning blades create flash and vibration underwater.", icon: "/assets/lures/spinnerbait.png", rarityBoost: 1.3, sizeBoost: 0.3, speedBoost: 1.4, targetFish: ["Bass", "Perch"], targetBonus: 2.5, type: "lure" },
+  { name: "Deep Diver", price: 180, effect: "Better deep fish", description: "Dives deep to attract bottom dwellers.", icon: "/assets/lures/deep_diver.png", rarityBoost: 1.2, sizeBoost: 0.3, speedBoost: 1.0, targetFish: ["Catfish", "Eel"], targetBonus: 2.5, type: "lure" },
+  { name: "Golden Fly", price: 250, effect: "Rare fish boost", description: "An iridescent golden fly. Rare fish can't resist.", icon: "/assets/lures/golden_fly.png", rarityBoost: 2.0, sizeBoost: 0, speedBoost: 1.0, targetFish: ["Swordfish"], targetBonus: 2.0, type: "lure" },
+  { name: "Glow Jig", price: 350, effect: "Bigger fish", description: "Bioluminescent lure that attracts larger specimens.", icon: "/assets/lures/glow_jig.png", rarityBoost: 1.3, sizeBoost: 0.8, speedBoost: 1.1, targetFish: [], targetBonus: 1.0, type: "lure" },
+  { name: "Storm Shad", price: 300, effect: "Faster bites", description: "Mimics injured baitfish. Fish bite faster.", icon: "/assets/lures/storm_shad.png", rarityBoost: 1.0, sizeBoost: 0.2, speedBoost: 2.0, targetFish: ["Bass", "Salmon"], targetBonus: 2.0, type: "lure" },
+  { name: "Kraken Bait", price: 500, effect: "Legendary attraction", description: "Mysterious bait from the ocean depths.", icon: "/assets/lures/kraken_bait.png", rarityBoost: 3.0, sizeBoost: 0.5, speedBoost: 0.8, targetFish: ["Whale"], targetBonus: 4.0, type: "lure" },
+  { name: "Prismatic Lure", price: 750, effect: "All bonuses", description: "A rainbow-shifting lure. Boosts everything.", icon: "/assets/lures/prismatic_lure.png", rarityBoost: 1.8, sizeBoost: 0.5, speedBoost: 1.5, targetFish: [], targetBonus: 1.0, type: "lure" },
 ];
 
 interface MarketEntry {
@@ -221,7 +230,7 @@ export default function FishingGame() {
     equippedRod: 0,
     equippedLure: 0,
     ownedRods: [true, false, false, false, false] as boolean[],
-    ownedLures: [true, false, false, false, false, false, false, false] as boolean[],
+    ownedLures: Array.from({ length: LURES.length }, (_, i) => i === 0) as boolean[],
     money: 50,
     marketPrices: new Map<string, MarketEntry>(),
     nearHut: false,
@@ -264,7 +273,7 @@ export default function FishingGame() {
     equippedRod: 0,
     equippedLure: 0,
     ownedRods: [true, false, false, false, false] as boolean[],
-    ownedLures: [true, false, false, false, false, false, false, false] as boolean[],
+    ownedLures: Array.from({ length: LURES.length }, (_, i) => i === 0) as boolean[],
     money: 50,
     nearHut: false,
     showStorePrompt: false,
@@ -2438,7 +2447,7 @@ export default function FishingGame() {
                     onClick={(e) => { e.stopPropagation(); stateRef.current.storeTab = "lure"; syncUI(); }}
                     data-testid="button-tab-lure"
                   >
-                    LURES
+                    BAIT & LURES
                   </button>
                 </div>
                 {/* Items List */}
@@ -2496,59 +2505,73 @@ export default function FishingGame() {
                       </div>
                     );
                   })}
-                  {uiState.storeTab === "lure" && LURES.map((lure, i) => {
-                    const owned = uiState.ownedLures[i];
-                    const equipped = uiState.equippedLure === i;
-                    const canAfford = uiState.money >= lure.price;
+                  {uiState.storeTab === "lure" && (["live", "lure"] as const).map(baitType => {
+                    const items = LURES.map((l, i) => ({ lure: l, idx: i })).filter(x => x.lure.type === baitType);
                     return (
-                      <div key={lure.name} className="flex items-start gap-2.5 p-2.5" style={{ background: equipped ? "rgba(46,204,113,0.12)" : "rgba(255,255,255,0.03)", borderRadius: 8, border: equipped ? "1px solid rgba(46,204,113,0.4)" : "1px solid rgba(255,255,255,0.06)" }}>
-                        <div className="flex items-center justify-center" style={{ width: 44, height: 44, background: "rgba(0,0,0,0.3)", borderRadius: 6, overflow: "hidden" }}>
-                          <img src={lure.icon} alt="" style={{ width: 40, height: 40, objectFit: "cover", borderRadius: 4 }} />
+                      <div key={baitType} className="flex flex-col gap-1.5">
+                        <div className="flex items-center gap-2 px-1 pt-1">
+                          <span style={{ color: baitType === "live" ? "#e67e22" : "#3498db", fontSize: 8, fontFamily: "'Press Start 2P', monospace", letterSpacing: 1 }}>
+                            {baitType === "live" ? "LIVE BAIT" : "LURES"}
+                          </span>
+                          <div style={{ flex: 1, height: 1, background: baitType === "live" ? "rgba(230,126,34,0.3)" : "rgba(52,152,219,0.3)" }} />
                         </div>
-                        <div className="flex-1 min-w-0 flex flex-col gap-1">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span style={{ color: equipped ? "#2ecc71" : "#e0e0e0", fontSize: 9 }}>{lure.name}</span>
-                            {equipped && <span style={{ color: "#2ecc71", fontSize: 6, background: "rgba(46,204,113,0.2)", padding: "1px 4px", borderRadius: 3 }}>EQUIPPED</span>}
-                          </div>
-                          <span style={{ color: "#78909c", fontSize: 7, lineHeight: "1.5" }}>{lure.description}</span>
-                          <div className="flex flex-wrap gap-x-3 gap-y-0.5">
-                            <span style={{ color: "#f1c40f", fontSize: 6 }}>Effect: {lure.effect}</span>
-                          </div>
-                          <div className="flex flex-wrap gap-x-3 gap-y-0.5">
-                            {lure.rarityBoost > 1 && <span style={{ color: "#a855f7", fontSize: 6 }}>Rare x{lure.rarityBoost.toFixed(1)}</span>}
-                            {lure.sizeBoost > 0 && <span style={{ color: "#e74c3c", fontSize: 6 }}>Size +{lure.sizeBoost.toFixed(1)}</span>}
-                            {lure.speedBoost > 1 && <span style={{ color: "#5dade2", fontSize: 6 }}>Bite x{lure.speedBoost.toFixed(1)}</span>}
-                          </div>
-                        </div>
-                        <div className="flex flex-col items-end gap-1">
-                          {!owned ? (
-                            <button
-                              className="cursor-pointer px-3 py-1.5"
-                              style={{ background: canAfford ? "rgba(46,204,113,0.25)" : "rgba(255,255,255,0.05)", borderRadius: 6, border: canAfford ? "1px solid rgba(46,204,113,0.5)" : "1px solid rgba(255,255,255,0.1)", fontFamily: "'Press Start 2P', monospace", color: canAfford ? "#2ecc71" : "#455a64", fontSize: 8, opacity: canAfford ? 1 : 0.5 }}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (!canAfford) return;
-                                const st = stateRef.current;
-                                st.money -= lure.price;
-                                st.ownedLures[i] = true;
-                                st.equippedLure = i;
-                                syncUI();
-                              }}
-                              data-testid={`button-buy-lure-${i}`}
-                            >
-                              ${lure.price}
-                            </button>
-                          ) : !equipped ? (
-                            <button
-                              className="cursor-pointer px-3 py-1.5"
-                              style={{ background: "rgba(52,152,219,0.2)", borderRadius: 6, border: "1px solid rgba(52,152,219,0.4)", fontFamily: "'Press Start 2P', monospace", color: "#5dade2", fontSize: 8 }}
-                              onClick={(e) => { e.stopPropagation(); stateRef.current.equippedLure = i; syncUI(); }}
-                              data-testid={`button-equip-lure-${i}`}
-                            >
-                              EQUIP
-                            </button>
-                          ) : null}
-                        </div>
+                        {items.map(({ lure, idx: i }) => {
+                          const owned = uiState.ownedLures[i];
+                          const equipped = uiState.equippedLure === i;
+                          const canAfford = uiState.money >= lure.price;
+                          return (
+                            <div key={lure.name} className="flex items-start gap-2.5 p-2.5" style={{ background: equipped ? "rgba(46,204,113,0.12)" : "rgba(255,255,255,0.03)", borderRadius: 8, border: equipped ? "1px solid rgba(46,204,113,0.4)" : "1px solid rgba(255,255,255,0.06)" }}>
+                              <div className="flex items-center justify-center" style={{ width: 44, height: 44, background: "rgba(0,0,0,0.3)", borderRadius: 6, overflow: "hidden" }}>
+                                <img src={lure.icon} alt="" style={{ width: 40, height: 40, objectFit: "cover", borderRadius: 4 }} />
+                              </div>
+                              <div className="flex-1 min-w-0 flex flex-col gap-1">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <span style={{ color: equipped ? "#2ecc71" : "#e0e0e0", fontSize: 9 }}>{lure.name}</span>
+                                  <span style={{ color: lure.type === "live" ? "#e67e22" : "#3498db", fontSize: 5, background: lure.type === "live" ? "rgba(230,126,34,0.15)" : "rgba(52,152,219,0.15)", padding: "1px 3px", borderRadius: 2 }}>{lure.type === "live" ? "LIVE" : "LURE"}</span>
+                                  {equipped && <span style={{ color: "#2ecc71", fontSize: 6, background: "rgba(46,204,113,0.2)", padding: "1px 4px", borderRadius: 3 }}>EQUIPPED</span>}
+                                </div>
+                                <span style={{ color: "#78909c", fontSize: 7, lineHeight: "1.5" }}>{lure.description}</span>
+                                <div className="flex flex-wrap gap-x-3 gap-y-0.5">
+                                  <span style={{ color: "#f1c40f", fontSize: 6 }}>Effect: {lure.effect}</span>
+                                </div>
+                                <div className="flex flex-wrap gap-x-3 gap-y-0.5">
+                                  {lure.rarityBoost > 1 && <span style={{ color: "#a855f7", fontSize: 6 }}>Rare x{lure.rarityBoost.toFixed(1)}</span>}
+                                  {lure.sizeBoost > 0 && <span style={{ color: "#e74c3c", fontSize: 6 }}>Size +{lure.sizeBoost.toFixed(1)}</span>}
+                                  {lure.speedBoost > 1 && <span style={{ color: "#5dade2", fontSize: 6 }}>Bite x{lure.speedBoost.toFixed(1)}</span>}
+                                </div>
+                              </div>
+                              <div className="flex flex-col items-end gap-1">
+                                {!owned ? (
+                                  <button
+                                    className="cursor-pointer px-3 py-1.5"
+                                    style={{ background: canAfford ? "rgba(46,204,113,0.25)" : "rgba(255,255,255,0.05)", borderRadius: 6, border: canAfford ? "1px solid rgba(46,204,113,0.5)" : "1px solid rgba(255,255,255,0.1)", fontFamily: "'Press Start 2P', monospace", color: canAfford ? "#2ecc71" : "#455a64", fontSize: 8, opacity: canAfford ? 1 : 0.5 }}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (!canAfford) return;
+                                      const st = stateRef.current;
+                                      st.money -= lure.price;
+                                      st.ownedLures[i] = true;
+                                      st.equippedLure = i;
+                                      syncUI();
+                                    }}
+                                    data-testid={`button-buy-lure-${i}`}
+                                  >
+                                    ${lure.price}
+                                  </button>
+                                ) : !equipped ? (
+                                  <button
+                                    className="cursor-pointer px-3 py-1.5"
+                                    style={{ background: "rgba(52,152,219,0.2)", borderRadius: 6, border: "1px solid rgba(52,152,219,0.4)", fontFamily: "'Press Start 2P', monospace", color: "#5dade2", fontSize: 8 }}
+                                    onClick={(e) => { e.stopPropagation(); stateRef.current.equippedLure = i; syncUI(); }}
+                                    data-testid={`button-equip-lure-${i}`}
+                                  >
+                                    EQUIP
+                                  </button>
+                                ) : null}
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     );
                   })}
