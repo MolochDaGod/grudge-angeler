@@ -757,10 +757,10 @@ export default function FishingGame() {
         const swimmerDepth = (s.swimY - waterY) / (H - waterY);
         const swimAlpha = Math.max(0.3, 0.95 - swimmerDepth * 0.4);
         ctx.globalAlpha = swimAlpha;
-        drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, !s.facingLeft);
+        drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, s.facingLeft);
 
         if (isMoving && s.jumpVY === 0 && Math.random() < 0.06 * dt) {
-          addParticles(s.swimX + (s.facingLeft ? 20 : -20), s.swimY, 2, "#88ccff", 1.5, "bubble");
+          addParticles(s.swimX + (s.facingLeft ? -20 : 20), s.swimY, 2, "#88ccff", 1.5, "bubble");
         }
         ctx.globalAlpha = 1;
       } else if (s.gameState === "idle" && (s.keysDown.has("a") || s.keysDown.has("d"))) {
@@ -768,7 +768,7 @@ export default function FishingGame() {
         fishermanFrameCount = 6;
         fishermanFrame = Math.floor(s.time * 0.12) % 6;
         isWalking = true;
-        drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, !s.facingLeft);
+        drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, s.facingLeft);
       } else {
         if (s.gameState === "casting") {
           fishermanSprite = "/assets/fisherman/Fisherman_hook.png";
