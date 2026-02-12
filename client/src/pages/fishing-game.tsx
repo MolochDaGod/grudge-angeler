@@ -1155,9 +1155,9 @@ export default function FishingGame() {
           ctx.fillText("Rare fish", bbX + bbW/2, bbY + 24);
           ctx.fillText("pay more!", bbX + bbW/2, bbY + 32);
         } else {
-          ctx.fillText("PIXEL", bbX + bbW/2, bbY + 15);
+          ctx.fillText("GRUDGE", bbX + bbW/2, bbY + 15);
           ctx.fillStyle = "#4fc3f7";
-          ctx.fillText("FISHER", bbX + bbW/2, bbY + 28);
+          ctx.fillText("ANGLER", bbX + bbW/2, bbY + 28);
           ctx.fillStyle = "#78909c";
           ctx.font = "3px 'Press Start 2P', monospace";
           ctx.fillText("v1.0", bbX + bbW/2, bbY + 38);
@@ -1989,10 +1989,10 @@ export default function FishingGame() {
         ctx.fillStyle = "#4fc3f7";
         ctx.font = "bold 48px 'Press Start 2P', monospace";
         ctx.textAlign = "center";
-        ctx.fillText("PIXEL", W / 2, titleY);
+        ctx.fillText("GRUDGE", W / 2, titleY);
         ctx.shadowColor = "#f1c40f";
         ctx.fillStyle = "#ffd54f";
-        ctx.fillText("FISHER", W / 2, titleY + 58);
+        ctx.fillText("ANGLER", W / 2, titleY + 58);
         ctx.shadowBlur = 0;
 
         ctx.fillStyle = "#90a4ae";
@@ -2170,7 +2170,7 @@ export default function FishingGame() {
         <div className="absolute inset-0 flex items-center justify-center" style={{ fontFamily: "'Press Start 2P', monospace", zIndex: 10 }} data-testid="char-select-screen">
           <div className="flex flex-col items-center gap-6" style={{ background: "rgba(5,12,30,0.92)", borderRadius: 16, border: "2px solid rgba(79,195,247,0.3)", padding: "32px 40px", maxWidth: 520, width: "90%" }}>
             <div className="text-center">
-              <div style={{ color: "#4fc3f7", fontSize: 20, marginBottom: 4, textShadow: "0 0 20px rgba(79,195,247,0.5)" }}>PIXEL FISHER</div>
+              <div style={{ color: "#4fc3f7", fontSize: 20, marginBottom: 4, textShadow: "0 0 20px rgba(79,195,247,0.5)" }}>GRUDGE ANGLER</div>
               <div style={{ color: "#607d8b", fontSize: 8 }}>Choose your character</div>
             </div>
 

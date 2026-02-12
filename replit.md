@@ -1,4 +1,4 @@
-# Pixel Fisher - Fishing Game
+# Grudge Angler - Fishing Game
 
 ## Overview
 A pixel art fishing game built with HTML5 Canvas and React. Players cast their fishing line, catch various fish species, and build their collection. Features animated pixel art sprites, day/night cycle, particle effects, and a reeling minigame.
