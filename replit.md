@@ -29,6 +29,13 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 - `assets/objects/` - Scene objects (pier, boat, hut, barrels)
 - `assets/icons/` - UI icons (32x32)
 
+## Sprite Orientation Convention
+- All fisherman sprites default to facing RIGHT in sprite sheets
+- Fishing states (idle, casting, waiting, bite, reeling, caught, missed) flip sprites with `flipX=true` so character faces LEFT toward water
+- Walking/swimming sprites use `s.facingLeft` to face direction of movement
+- Rod tip coords are mirrored when flipped: `(SPRITE_FRAME_W - 1 - tipLocal[0]) * SCALE`
+- Reeling minigame (Palworld-style): horizontal bar with fish icon, catch zone moves LEFT on click (2x speed), drifts RIGHT when released; circular progress gauge fills/depletes based on alignment
+
 ## Features
 - 8 fish species (common, uncommon, rare, legendary)
 - 3 junk items including treasure chest
@@ -37,3 +44,5 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 - Fish collection log
 - Day/night sky cycle
 - Water ripples, particles, and screen shake effects
+- Character walking on pier (A/D keys)
+- Swimming mechanics (Space to dive, WASD underwater, Space near dock to climb out)

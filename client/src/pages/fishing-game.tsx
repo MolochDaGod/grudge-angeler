@@ -724,7 +724,8 @@ export default function FishingGame() {
         ctx.globalAlpha = 1;
       }
 
-      // Fisherman sprite with per-frame rod tip tracking
+      // Fisherman sprite with per-frame rod tip tracking (coordinates in un-flipped sprite space, facing right)
+      const SPRITE_FRAME_W = 48;
       const fishRodTips: Record<string, [number, number][]> = {
         idle: [[10, 8], [10, 9], [10, 8], [10, 7]],
         fish: [[4, 10], [3, 11], [4, 12], [5, 10]],
@@ -736,6 +737,7 @@ export default function FishingGame() {
       let fishermanFrameCount = 4;
       let rodTipKey = "idle";
       let isWalking = false;
+      let fishingFlip = (s.gameState === "idle" || s.gameState === "casting" || s.gameState === "waiting" || s.gameState === "bite" || s.gameState === "reeling" || s.gameState === "caught" || s.gameState === "missed");
 
       if (s.gameState === "swimming") {
         const isMoving = s.keysDown.has("a") || s.keysDown.has("d") || s.keysDown.has("w") || s.keysDown.has("s");
@@ -781,26 +783,31 @@ export default function FishingGame() {
           fishermanFrame = Math.floor(s.time * 0.05) % 4;
           rodTipKey = "fish";
         } else if (s.gameState === "reeling") {
-          fishermanSprite = "/assets/fisherman/Fisherman_hook.png";
-          fishermanFrameCount = 6;
-          fishermanFrame = Math.floor(s.time * 0.18) % 6;
-          rodTipKey = "hook";
+          fishermanSprite = "/assets/fisherman/Fisherman_fish.png";
+          fishermanFrameCount = 4;
+          fishermanFrame = Math.floor(s.time * 0.15) % 4;
+          rodTipKey = "fish";
         } else if (s.gameState === "caught") {
           fishermanSprite = "/assets/fisherman/Fisherman_fish.png";
           fishermanFrameCount = 4;
           fishermanFrame = 3;
           rodTipKey = "fish";
         }
-        drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE);
+        drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, fishingFlip);
       }
 
       // Calculate rod tip position in screen coords from sprite-local coords
+      // When flipped (facing left toward water), mirror the X coordinate
       let rodTipX = fishermanX + 10 * SCALE;
       let rodTipY = fishermanY + 8 * SCALE;
       if (rodTipKey && fishRodTips[rodTipKey]) {
         const tips = fishRodTips[rodTipKey];
         const tipLocal = tips[Math.min(fishermanFrame, tips.length - 1)];
-        rodTipX = fishermanX + tipLocal[0] * SCALE;
+        if (fishingFlip) {
+          rodTipX = fishermanX + (SPRITE_FRAME_W - 1 - tipLocal[0]) * SCALE;
+        } else {
+          rodTipX = fishermanX + tipLocal[0] * SCALE;
+        }
         rodTipY = fishermanY + tipLocal[1] * SCALE;
       }
 
