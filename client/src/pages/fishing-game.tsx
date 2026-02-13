@@ -1080,6 +1080,14 @@ export default function FishingGame() {
       resilienceMax: s.resilienceMax,
       selectedHotbar: s.selectedHotbar,
       binoculars: s.binoculars,
+      binoX: s.binoX,
+      binoY: s.binoY,
+      binoTargetX: s.binoTargetX,
+      binoTargetY: s.binoTargetY,
+      swimAngle: s.swimAngle,
+      swimAngleTarget: s.swimAngleTarget,
+      jumpArc: s.jumpArc,
+      jumpPeakReached: s.jumpPeakReached,
       showLurePopup: s.showLurePopup,
       showChumPopup: s.showChumPopup,
       ownedChum: [...s.ownedChum],
@@ -1274,13 +1282,6 @@ export default function FishingGame() {
               syncUI();
             }
           }
-        } else if (stateRef.current.nearNpc >= 0) {
-          stateRef.current.activeNpc = stateRef.current.nearNpc;
-          stateRef.current.gameState = "npcChat";
-          stateRef.current.npcDialogueIndex = 0;
-          const npc = stateRef.current.npcs[stateRef.current.nearNpc];
-          stateRef.current.npcTab = npc.role === "shopkeeper" ? "shop" : npc.role === "requester" ? "request" : "mission";
-          syncUI();
         } else if (stateRef.current.nearBoat) {
           stateRef.current.showBoatPrompt = true;
           syncUI();
@@ -1443,21 +1444,7 @@ export default function FishingGame() {
         const hutCheckX = W * 0.85 + (192 * 2.2) / 2;
         s.nearHut = !s.inBoat && Math.abs(s.playerX - hutCheckX) < 80 && s.gameState === "idle";
 
-        if (!s.inBoat && s.gameState === "idle") {
-          let closestNpc = -1;
-          let closestDist = 60;
-          for (let ni = 0; ni < s.npcs.length; ni++) {
-            const npcWorldX = W * s.npcs[ni].worldX;
-            const dist = Math.abs(s.playerX - npcWorldX);
-            if (dist < closestDist) {
-              closestDist = dist;
-              closestNpc = ni;
-            }
-          }
-          s.nearNpc = closestNpc;
-        } else {
-          s.nearNpc = -1;
-        }
+        s.nearNpc = -1;
 
         if (s.gameState === "casting") {
           s.aimX = Math.max(10, Math.min(W - 10, s.mouseX - s.cameraX));
@@ -2606,60 +2593,7 @@ export default function FishingGame() {
         }
       });
 
-      for (let ni = 0; ni < s.npcs.length; ni++) {
-        const npc = s.npcs[ni];
-        const npcWorldX = W * npc.worldX;
-        const npcScale = 2.5;
-        const npcDrawW = NPC_FRAME_SIZE * npcScale;
-        const npcDrawH = NPC_FRAME_SIZE * npcScale;
-        const npcDrawX = npcWorldX - npcDrawW / 2;
-        const npcDrawY = pierY - npcDrawH + 8;
-
-        const idleSrc = `/assets/npcs/${npc.spriteFolder}/Idle.png`;
-        const idleImg = getImg(idleSrc);
-        if (idleImg && idleImg.complete) {
-          const totalFrames = Math.round(idleImg.width / NPC_FRAME_SIZE);
-          npc.frameTimer = (npc.frameTimer || 0) + 1;
-          if (npc.frameTimer >= 12) {
-            npc.frameTimer = 0;
-            npc.frame = ((npc.frame || 0) + 1) % totalFrames;
-          }
-          const sx = (npc.frame || 0) * NPC_FRAME_SIZE;
-          ctx.save();
-          if (npc.facingLeft) {
-            ctx.translate(npcDrawX + npcDrawW, 0);
-            ctx.scale(-1, 1);
-            ctx.drawImage(idleImg, sx, 0, NPC_FRAME_SIZE, NPC_FRAME_SIZE, 0, npcDrawY, npcDrawW, npcDrawH);
-          } else {
-            ctx.drawImage(idleImg, sx, 0, NPC_FRAME_SIZE, NPC_FRAME_SIZE, npcDrawX, npcDrawY, npcDrawW, npcDrawH);
-          }
-          ctx.restore();
-        }
-
-        ctx.save();
-        ctx.font = "bold 7px 'Press Start 2P', monospace";
-        ctx.textAlign = "center";
-        ctx.fillStyle = "rgba(0,0,0,0.6)";
-        ctx.fillText(npc.name, npcWorldX + 1, npcDrawY - 6 + 1);
-        const roleColors: Record<string, string> = { shopkeeper: "#2ecc71", requester: "#f39c12", mission_giver: "#e74c3c" };
-        ctx.fillStyle = roleColors[npc.role] || "#ffffff";
-        ctx.fillText(npc.name, npcWorldX, npcDrawY - 6);
-        ctx.restore();
-
-        if (s.nearNpc === ni && s.gameState === "idle") {
-          ctx.save();
-          ctx.font = "bold 8px 'Press Start 2P', monospace";
-          ctx.textAlign = "center";
-          ctx.fillStyle = "rgba(0,0,0,0.7)";
-          ctx.fillRect(npcWorldX - 50, npcDrawY - 26, 100, 16);
-          ctx.strokeStyle = roleColors[npc.role] || "#f1c40f";
-          ctx.lineWidth = 1;
-          ctx.strokeRect(npcWorldX - 50, npcDrawY - 26, 100, 16);
-          ctx.fillStyle = "#f1c40f";
-          ctx.fillText("Press E to talk", npcWorldX, npcDrawY - 15);
-          ctx.restore();
-        }
-      }
+      // NPC rendering disabled
 
       // Docks area objects (right side scenes)
       const dockObjY = pierY - 2;
