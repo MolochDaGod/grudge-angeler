@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState, useCallback } from "react";
+import beachCrabSheetUrl from "@assets/fish_sprite_sheet_16_1770947489402.png";
 
 const SCALE = 4;
 const FRAME_H = 48;
@@ -19,6 +20,10 @@ interface FishType {
   description: string;
   tint?: string;
   baseScale?: number;
+  spriteSheet?: string;
+  spriteRow?: number;
+  spriteFrameSize?: number;
+  beachCrab?: boolean;
 }
 
 const FISH_TYPES: FishType[] = [
@@ -39,6 +44,22 @@ const FISH_TYPES: FishType[] = [
   { name: "Neon Eel", catchAsset: "/assets/catch/7.png", catchW: 60, catchH: 12, creatureFolder: "4", idleFrames: 4, walkFrames: 4, points: 650, rarity: "ultra_rare", weight: 0.22, minDepth: 0.55, speed: 1.9, description: "A bioluminescent eel pulsing with neon colors. Mesmerizing.", tint: "rgba(0,255,100,0.4)", baseScale: 2.0 },
   { name: "Golden Salmon", catchAsset: "/assets/catch/8.png", catchW: 60, catchH: 12, creatureFolder: "5", idleFrames: 4, walkFrames: 6, points: 700, rarity: "ultra_rare", weight: 0.2, minDepth: 0.6, speed: 1.5, description: "A legendary salmon with solid gold scales. Worth a fortune.", tint: "rgba(255,200,0,0.45)", baseScale: 2.1 },
   { name: "Shadow Leviathan", catchAsset: "/assets/catch/6.png", catchW: 108, catchH: 22, creatureFolder: "6", idleFrames: 6, walkFrames: 6, points: 1500, rarity: "ultra_rare", weight: 0.08, minDepth: 0.8, speed: 0.6, description: "A titanic shadow beast from beyond the abyss. Feared by all ocean life.", tint: "rgba(180,0,50,0.35)", baseScale: 1.8 },
+];
+
+const CRAB_SHEET = beachCrabSheetUrl;
+const CRAB_FRAME = 16;
+const CRAB_COLS = 16;
+const CRAB_WALK_FRAMES = 4;
+
+const BEACH_CRABS: FishType[] = [
+  { name: "Red Crab", catchAsset: CRAB_SHEET, catchW: 16, catchH: 16, creatureFolder: "", idleFrames: 4, walkFrames: CRAB_WALK_FRAMES, points: 8, rarity: "common", weight: 50, minDepth: 0.05, speed: 0.9, description: "A small red crab that scuttles along the beach.", spriteSheet: CRAB_SHEET, spriteRow: 0, spriteFrameSize: CRAB_FRAME, beachCrab: true },
+  { name: "Blue Crab", catchAsset: CRAB_SHEET, catchW: 16, catchH: 16, creatureFolder: "", idleFrames: 4, walkFrames: CRAB_WALK_FRAMES, points: 10, rarity: "common", weight: 40, minDepth: 0.05, speed: 1.0, description: "A bright blue crab found near tidal pools.", spriteSheet: CRAB_SHEET, spriteRow: 3, spriteFrameSize: CRAB_FRAME, beachCrab: true },
+  { name: "Green Crab", catchAsset: CRAB_SHEET, catchW: 16, catchH: 16, creatureFolder: "", idleFrames: 4, walkFrames: CRAB_WALK_FRAMES, points: 8, rarity: "common", weight: 45, minDepth: 0.05, speed: 0.8, description: "A mossy green crab hiding in the seaweed.", spriteSheet: CRAB_SHEET, spriteRow: 5, spriteFrameSize: CRAB_FRAME, beachCrab: true },
+  { name: "Purple Crab", catchAsset: CRAB_SHEET, catchW: 16, catchH: 16, creatureFolder: "", idleFrames: 4, walkFrames: CRAB_WALK_FRAMES, points: 15, rarity: "uncommon", weight: 20, minDepth: 0.05, speed: 1.1, description: "An uncommon purple crab with iridescent shell.", spriteSheet: CRAB_SHEET, spriteRow: 2, spriteFrameSize: CRAB_FRAME, beachCrab: true },
+  { name: "Gold Crab", catchAsset: CRAB_SHEET, catchW: 16, catchH: 16, creatureFolder: "", idleFrames: 4, walkFrames: CRAB_WALK_FRAMES, points: 25, rarity: "uncommon", weight: 15, minDepth: 0.05, speed: 1.2, description: "A rare golden crab. Prized for its shimmering shell.", spriteSheet: CRAB_SHEET, spriteRow: 11, spriteFrameSize: CRAB_FRAME, beachCrab: true },
+  { name: "Cyan Crab", catchAsset: CRAB_SHEET, catchW: 16, catchH: 16, creatureFolder: "", idleFrames: 4, walkFrames: CRAB_WALK_FRAMES, points: 8, rarity: "common", weight: 45, minDepth: 0.05, speed: 0.85, description: "A pale cyan crab commonly found on sandy shores.", spriteSheet: CRAB_SHEET, spriteRow: 14, spriteFrameSize: CRAB_FRAME, beachCrab: true },
+  { name: "Pink Crab", catchAsset: CRAB_SHEET, catchW: 16, catchH: 16, creatureFolder: "", idleFrames: 4, walkFrames: CRAB_WALK_FRAMES, points: 12, rarity: "common", weight: 35, minDepth: 0.05, speed: 0.95, description: "A cute pink crab that loves warm shallow waters.", spriteSheet: CRAB_SHEET, spriteRow: 18, spriteFrameSize: CRAB_FRAME, beachCrab: true },
+  { name: "Dark Crab", catchAsset: CRAB_SHEET, catchW: 16, catchH: 16, creatureFolder: "", idleFrames: 4, walkFrames: CRAB_WALK_FRAMES, points: 20, rarity: "uncommon", weight: 18, minDepth: 0.05, speed: 1.15, description: "A dark-shelled crab with powerful pincers.", spriteSheet: CRAB_SHEET, spriteRow: 22, spriteFrameSize: CRAB_FRAME, beachCrab: true },
 ];
 
 const JUNK_ITEMS = [
@@ -629,6 +650,31 @@ export default function FishingGame() {
       wobbleAmp: 2 + Math.random() * 4,
       approachingHook: false,
       dirChangeTimer: 60 + Math.random() * 120,
+      sizeMultiplier,
+    });
+  }, []);
+
+  const spawnBeachCrab = useCallback((canvasW: number, waterStartY: number, canvasH: number) => {
+    const s = stateRef.current;
+    const centerX = -s.cameraX + canvasW / 2;
+    const beachStart = canvasW * 3.0;
+    if (centerX < beachStart - canvasW) return;
+
+    const crabType = BEACH_CRABS[Math.floor(Math.random() * BEACH_CRABS.length)];
+    const y = waterStartY + 5 + Math.random() * 40;
+    const direction = Math.random() > 0.5 ? 1 : -1;
+    const viewLeft = -s.cameraX - 50;
+    const viewRight = -s.cameraX + canvasW + 50;
+    const x = direction > 0 ? viewLeft - 40 : viewRight + 40;
+    const sizeMultiplier = 0.6 + Math.random() * 0.8;
+
+    s.swimmingFish.push({
+      x, y, baseY: y, type: crabType, direction, frame: 0, frameTimer: 0,
+      speed: crabType.speed * (0.7 + Math.random() * 0.5),
+      wobblePhase: Math.random() * Math.PI * 2,
+      wobbleAmp: 1 + Math.random() * 2,
+      approachingHook: false,
+      dirChangeTimer: 40 + Math.random() * 80,
       sizeMultiplier,
     });
   }, []);
@@ -2179,6 +2225,9 @@ export default function FishingGame() {
         if (s.swimmingFish.length < 10 && Math.random() < 0.012 * dt) {
           spawnFish(W, waterY, H);
         }
+        if (Math.random() < 0.008 * dt) {
+          spawnBeachCrab(W, waterY, H);
+        }
       }
 
       // Predator spawning
@@ -2267,13 +2316,32 @@ export default function FishingGame() {
         ctx.globalAlpha = finalAlpha;
 
         const creatureScale = SCALE * 0.65 * fish.sizeMultiplier;
-        drawSprite(
-          `/assets/creatures/${fish.type.creatureFolder}/Walk.png`,
-          fish.frame, fish.type.walkFrames,
-          fish.x, fish.y, creatureScale,
-          fish.direction < 0,
-          fish.type.tint || null
-        );
+        if (fish.type.spriteSheet && fish.type.spriteRow !== undefined) {
+          const crabImg = getImg(fish.type.spriteSheet);
+          if (crabImg && crabImg.complete) {
+            const fs = fish.type.spriteFrameSize || CRAB_FRAME;
+            const crabScale = SCALE * 1.2 * fish.sizeMultiplier;
+            const sx = fish.frame * fs;
+            const sy = fish.type.spriteRow * fs;
+            ctx.save();
+            if (fish.direction < 0) {
+              ctx.translate(fish.x + fs * crabScale, fish.y);
+              ctx.scale(-1, 1);
+              ctx.drawImage(crabImg, sx, sy, fs, fs, 0, 0, fs * crabScale, fs * crabScale);
+            } else {
+              ctx.drawImage(crabImg, sx, sy, fs, fs, fish.x, fish.y, fs * crabScale, fs * crabScale);
+            }
+            ctx.restore();
+          }
+        } else {
+          drawSprite(
+            `/assets/creatures/${fish.type.creatureFolder}/Walk.png`,
+            fish.frame, fish.type.walkFrames,
+            fish.x, fish.y, creatureScale,
+            fish.direction < 0,
+            fish.type.tint || null
+          );
+        }
         if (fish.type.rarity === "ultra_rare") {
           const glowPulse = 0.3 + Math.sin(s.time * 0.06 + fish.x * 0.01) * 0.15;
           const tintColor = fish.type.tint || "#ff2d55";
@@ -2988,8 +3056,6 @@ export default function FishingGame() {
           const catchImg = getImg(catchAsset);
           if (catchImg && catchImg.complete) {
             const cs = 3 + Math.min(3, s.hookedFishSize);
-            const imgW = catchImg.width * cs;
-            const imgH = catchImg.height * cs;
             
             ctx.save();
             ctx.translate(s.catchFishWorldX, s.catchFishWorldY);
@@ -3003,13 +3069,34 @@ export default function FishingGame() {
             if (s.currentCatch?.tint) {
               ctx.globalAlpha = 0.9;
             }
-            ctx.drawImage(catchImg, -imgW / 2, -imgH / 2, imgW, imgH);
+
+            if (s.currentCatch?.beachCrab && s.currentCatch?.spriteRow !== undefined) {
+              const cfs = s.currentCatch.spriteFrameSize || CRAB_FRAME;
+              const crabCS = cs * 2;
+              const dw = cfs * crabCS;
+              const dh = cfs * crabCS;
+              ctx.drawImage(catchImg, 0, s.currentCatch.spriteRow * cfs, cfs, cfs, -dw / 2, -dh / 2, dw, dh);
+            } else {
+              const imgW = catchImg.width * cs;
+              const imgH = catchImg.height * cs;
+              ctx.drawImage(catchImg, -imgW / 2, -imgH / 2, imgW, imgH);
+            }
             
             if (s.currentCatch?.rarity === "ultra_rare" && s.currentCatch?.tint) {
               ctx.globalAlpha = 0.3 + Math.sin(s.time * 0.08) * 0.15;
               ctx.shadowColor = s.currentCatch.tint;
               ctx.shadowBlur = 25;
-              ctx.drawImage(catchImg, -imgW / 2, -imgH / 2, imgW, imgH);
+              if (s.currentCatch?.beachCrab && s.currentCatch?.spriteRow !== undefined) {
+                const cfs = s.currentCatch.spriteFrameSize || CRAB_FRAME;
+                const crabCS = cs * 2;
+                const dw = cfs * crabCS;
+                const dh = cfs * crabCS;
+                ctx.drawImage(catchImg, 0, s.currentCatch.spriteRow * cfs, cfs, cfs, -dw / 2, -dh / 2, dw, dh);
+              } else {
+                const imgW = catchImg.width * cs;
+                const imgH = catchImg.height * cs;
+                ctx.drawImage(catchImg, -imgW / 2, -imgH / 2, imgW, imgH);
+              }
               ctx.shadowBlur = 0;
             }
             
@@ -3275,6 +3362,23 @@ export default function FishingGame() {
           if (Math.random() < 0.05) {
             const catchableChumIdx = Math.random() < 0.5 ? 20 : 21;
             s.ownedChum[catchableChumIdx]++;
+          }
+
+          if (s.currentCatch?.beachCrab) {
+            const baitCount = 1 + Math.floor(Math.random() * 2);
+            for (let bi = 0; bi < baitCount; bi++) {
+              const baitIdx = Math.random() < 0.5 ? 20 : 21;
+              s.ownedChum[baitIdx]++;
+            }
+            const bonusXP = Math.floor(5 + Math.random() * 10);
+            s.playerXP += bonusXP;
+            while (s.playerXP >= s.playerXPToNext) {
+              s.playerXP -= s.playerXPToNext;
+              s.playerLevel++;
+              s.attributePoints += 2;
+              s.playerXPToNext = Math.floor(100 * Math.pow(1.15, s.playerLevel - 1));
+            }
+            s.money += Math.floor(3 + Math.random() * 8);
           }
 
           const fishWtSlot = Math.round(s.hookedFishSize * (s.currentCatch?.points || 5) * 0.3 * 10) / 10;
@@ -4210,7 +4314,16 @@ export default function FishingGame() {
                     display: "flex", alignItems: "center", justifyContent: "center",
                     fontSize: 16,
                   }}>
-                    <img src={stateRef.current.currentCatch?.catchAsset || stateRef.current.currentJunk?.asset || "/assets/icons/Icons_05.png"} alt="" style={{ width: 20, height: 20, imageRendering: "pixelated" }} />
+                    {stateRef.current.currentCatch?.beachCrab && stateRef.current.currentCatch?.spriteRow !== undefined ? (
+                      <div style={{ width: 20, height: 20, overflow: "hidden", position: "relative" }}>
+                        <img src={stateRef.current.currentCatch.catchAsset} alt="" style={{ 
+                          position: "absolute", width: 256 * (20/16), height: 384 * (20/16), imageRendering: "pixelated",
+                          left: 0, top: -(stateRef.current.currentCatch.spriteRow * (20)),
+                        }} />
+                      </div>
+                    ) : (
+                      <img src={stateRef.current.currentCatch?.catchAsset || stateRef.current.currentJunk?.asset || "/assets/icons/Icons_05.png"} alt="" style={{ width: 20, height: 20, imageRendering: "pixelated" }} />
+                    )}
                   </div>
                 </div>
                 <div className="relative" style={{
@@ -4235,11 +4348,20 @@ export default function FishingGame() {
                     filter: fishInZone ? "drop-shadow(0 0 6px rgba(46,204,113,0.8))" : "drop-shadow(0 0 4px rgba(231,76,60,0.6))",
                     transition: "filter 0.1s",
                   }} data-testid="fish-icon">
-                    <img
-                      src={stateRef.current.currentCatch?.catchAsset || stateRef.current.currentJunk?.asset || "/assets/icons/Icons_05.png"}
-                      alt=""
-                      style={{ width: 24, height: 24, imageRendering: "pixelated" }}
-                    />
+                    {stateRef.current.currentCatch?.beachCrab && stateRef.current.currentCatch?.spriteRow !== undefined ? (
+                      <div style={{ width: 24, height: 24, overflow: "hidden", position: "relative" }}>
+                        <img src={stateRef.current.currentCatch.catchAsset} alt="" style={{ 
+                          position: "absolute", width: 256 * (24/16), height: 384 * (24/16), imageRendering: "pixelated",
+                          left: 0, top: -(stateRef.current.currentCatch.spriteRow * (24)),
+                        }} />
+                      </div>
+                    ) : (
+                      <img
+                        src={stateRef.current.currentCatch?.catchAsset || stateRef.current.currentJunk?.asset || "/assets/icons/Icons_05.png"}
+                        alt=""
+                        style={{ width: 24, height: 24, imageRendering: "pixelated" }}
+                      />
+                    )}
                   </div>
                 </div>
                 <div className="flex items-center gap-2" style={{ marginTop: 2 }}>
