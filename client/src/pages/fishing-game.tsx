@@ -2334,7 +2334,7 @@ export default function FishingGame() {
         cg.addColorStop(0.5, `rgba(${murkR},${murkG},${murkB},${mAlpha * 0.4})`);
         cg.addColorStop(1, `rgba(${murkR},${murkG},${murkB},0)`);
         ctx.fillStyle = cg;
-        ctx.fillRect(mx - mr, my - mr, mr * 2, mr * 2);
+        ctx.beginPath(); ctx.arc(mx, my, mr, 0, Math.PI * 2); ctx.fill();
       }
 
       // --- CLOUDY MURK LAYER 2: sediment haze bands ---
@@ -2384,7 +2384,7 @@ export default function FishingGame() {
         ztg.addColorStop(0, `rgba(8,20,45,${ztA})`);
         ztg.addColorStop(1, "rgba(8,20,45,0)");
         ctx.fillStyle = ztg;
-        ctx.fillRect(ztX - ztR, ztY - ztR, ztR * 2, ztR * 2);
+        ctx.beginPath(); ctx.arc(ztX, ztY, ztR, 0, Math.PI * 2); ctx.fill();
       }
       for (let zt = 0; zt < 6; zt++) {
         const ztX = zone3Right + Math.sin(s.time * 0.004 + zt * 3.1) * 80 - 40;
@@ -2395,7 +2395,7 @@ export default function FishingGame() {
         ztg.addColorStop(0, `rgba(4,10,28,${ztA})`);
         ztg.addColorStop(1, "rgba(4,10,28,0)");
         ctx.fillStyle = ztg;
-        ctx.fillRect(ztX - ztR, ztY - ztR, ztR * 2, ztR * 2);
+        ctx.beginPath(); ctx.arc(ztX, ztY, ztR, 0, Math.PI * 2); ctx.fill();
       }
 
       // --- WEATHER MURK (cloudy sediment swirls) ---
@@ -2417,7 +2417,7 @@ export default function FishingGame() {
             mcg.addColorStop(0.4, `rgba(65,80,45,${mcA * 0.5})`);
             mcg.addColorStop(1, "rgba(55,70,35,0)");
             ctx.fillStyle = mcg;
-            ctx.fillRect(mcX - mcR, mcY - mcR, mcR * 2, mcR * 2);
+            ctx.beginPath(); ctx.arc(mcX, mcY, mcR, 0, Math.PI * 2); ctx.fill();
           }
           ctx.globalAlpha = murkyAlpha * 0.2;
           for (let sw = 0; sw < 8; sw++) {
@@ -2448,7 +2448,7 @@ export default function FishingGame() {
         fg.addColorStop(0.6, `rgba(150,200,230,${fAlpha * 0.4})`);
         fg.addColorStop(1, "rgba(136,204,238,0)");
         ctx.fillStyle = fg;
-        ctx.fillRect(fx - fr, fy - fr, fr * 2, fr * 2);
+        ctx.beginPath(); ctx.arc(fx, fy, fr, 0, Math.PI * 2); ctx.fill();
       }
 
       // --- SUBSURFACE LIGHT SCATTER (soft glow just below surface) ---
@@ -2471,7 +2471,7 @@ export default function FishingGame() {
         sg.addColorStop(0, `rgba(200,230,245,${shimmerAlpha})`);
         sg.addColorStop(1, "rgba(200,230,245,0)");
         ctx.fillStyle = sg;
-        ctx.fillRect(sx - sr, sy - sr, sr * 2, sr * 2);
+        ctx.beginPath(); ctx.arc(sx, sy, sr, 0, Math.PI * 2); ctx.fill();
       }
 
       // --- INTERNAL WAVE TEXTURE (cloudy undulating bands, not hard lines) ---
@@ -2492,7 +2492,7 @@ export default function FishingGame() {
           wcg.addColorStop(0, `rgba(${wR},${wG},${wB},${ca})`);
           wcg.addColorStop(1, `rgba(${wR},${wG},${wB},0)`);
           ctx.fillStyle = wcg;
-          ctx.fillRect(wx - cloudR, wy + wave - cloudR, cloudR * 2, cloudR * 2);
+          ctx.beginPath(); ctx.arc(wx, wy + wave, cloudR, 0, Math.PI * 2); ctx.fill();
         }
       }
 
@@ -2510,7 +2510,7 @@ export default function FishingGame() {
           cGrad.addColorStop(0.5, dayPhase > 0.5 ? "rgba(255,255,210,0.3)" : "rgba(120,170,240,0.2)");
           cGrad.addColorStop(1, "rgba(255,255,255,0)");
           ctx.fillStyle = cGrad;
-          ctx.fillRect(cx - cr, cy - cr, cr * 2, cr * 2);
+          ctx.beginPath(); ctx.arc(cx, cy, cr, 0, Math.PI * 2); ctx.fill();
         }
       }
       ctx.globalAlpha = 1;
@@ -2560,7 +2560,7 @@ export default function FishingGame() {
         bg.addColorStop(0.5, `rgba(120,180,240,${bAlpha * 0.4})`);
         bg.addColorStop(1, "rgba(100,160,220,0)");
         ctx.fillStyle = bg;
-        ctx.fillRect(bx - br * 2, by - br * 2, br * 4, br * 4);
+        ctx.beginPath(); ctx.arc(bx, by, br * 2, 0, Math.PI * 2); ctx.fill();
       }
 
       // --- FLOATING PLANKTON & DEBRIS (soft glowing particles) ---
@@ -2581,7 +2581,7 @@ export default function FishingGame() {
           pg.addColorStop(0, `rgba(${pColor[0]},${pColor[1]},${pColor[2]},${pAlpha})`);
           pg.addColorStop(1, `rgba(${pColor[0]},${pColor[1]},${pColor[2]},0)`);
           ctx.fillStyle = pg;
-          ctx.fillRect(px - pSize * 2.5, py - pSize * 2.5, pSize * 5, pSize * 5);
+          ctx.beginPath(); ctx.arc(px, py, pSize * 2.5, 0, Math.PI * 2); ctx.fill();
         }
       }
 
@@ -2602,7 +2602,7 @@ export default function FishingGame() {
         dfg.addColorStop(0, `rgba(5,10,22,${dfA})`);
         dfg.addColorStop(1, "rgba(5,10,22,0)");
         ctx.fillStyle = dfg;
-        ctx.fillRect(dfX - dfR, dfY - dfR, dfR * 2, dfR * 2);
+        ctx.beginPath(); ctx.arc(dfX, dfY, dfR, 0, Math.PI * 2); ctx.fill();
       }
 
       // Pier using Pier_Tiles.png tileset
