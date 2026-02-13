@@ -356,6 +356,7 @@ export default function FishingGame() {
     bgShips: [] as { x: number; y: number; size: number; speed: number; type: number }[],
     shootingStars: [] as { x: number; y: number; vx: number; vy: number; life: number; trail: number[] }[],
     auroraPhase: 0,
+    lastDayNight: "day" as "day" | "night",
     catchPopY: 0,
     mouseX: 0,
     mouseY: 0,
@@ -441,6 +442,24 @@ export default function FishingGame() {
     netDepth: 0,
     netActive: false,
     netTimer: 0,
+    catchPhase: 0 as number,
+    catchPhaseTimer: 0,
+    catchFishWorldX: 0,
+    catchFishWorldY: 0,
+    catchFishTargetY: 0,
+    catchFishRotation: 0,
+    catchSplashTimer: 0,
+    slotSpinPhase: 0 as number,
+    slotSpinTimer: 0,
+    slotSpinValue: 0,
+    slotSpinSpeed: 0,
+    slotWeightRevealed: false,
+    slotLengthRevealed: false,
+    slotStarsRevealed: false,
+    slotFinalWeight: 0,
+    slotFinalLength: 0,
+    slotFinalStars: 0,
+    catchFishFlipTimer: 0,
   });
 
   const imagesRef = useRef<Map<string, HTMLImageElement>>(new Map());
@@ -639,7 +658,7 @@ export default function FishingGame() {
     s.stars = Array.from({ length: s.starCount }, () => ({
       x: Math.random(), y: Math.random() * 0.4, size: 1 + Math.random() * 2, twinkle: Math.random() * Math.PI * 2,
     }));
-    s.weatherTimer = 600 + Math.random() * 1200;
+    s.weatherTimer = 3600 + Math.random() * 7200;
     s.bgBirds = Array.from({ length: 4 }, () => ({
       x: Math.random() * 1600, y: 30 + Math.random() * 60, frame: 0, speed: 0.3 + Math.random() * 0.5, wingPhase: Math.random() * Math.PI * 2,
     }));
@@ -947,6 +966,20 @@ export default function FishingGame() {
       ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
     };
 
+    const drawStar = (ctx2: CanvasRenderingContext2D, cx: number, cy: number, outerR: number, innerR: number, points: number) => {
+      ctx2.beginPath();
+      for (let i = 0; i < points * 2; i++) {
+        const angle = (i * Math.PI) / points - Math.PI / 2;
+        const r2 = i % 2 === 0 ? outerR : innerR;
+        const sx = cx + Math.cos(angle) * r2;
+        const sy = cy + Math.sin(angle) * r2;
+        if (i === 0) ctx2.moveTo(sx, sy);
+        else ctx2.lineTo(sx, sy);
+      }
+      ctx2.closePath();
+      ctx2.fill();
+    };
+
     const drawRoundRect = (x: number, y: number, w: number, h: number, r: number) => {
       ctx.beginPath();
       ctx.moveTo(x + r, y);
@@ -978,6 +1011,12 @@ export default function FishingGame() {
 
       s.time += dt;
       s.waterOffset += 0.12 * dt;
+
+      const dayAngle = (s.time * 0.0000582) % (Math.PI * 2);
+      const rawDayPhase = dayAngle / (Math.PI * 2);
+      const dayPhaseFull = rawDayPhase < 0.733 ? 
+        0.5 + 0.5 * Math.sin(rawDayPhase / 0.733 * Math.PI) : 
+        0.5 - 0.5 * Math.sin((rawDayPhase - 0.733) / 0.267 * Math.PI);
 
       s.billboardTimer += dt;
       if (s.billboardTimer > 300) {
@@ -1238,16 +1277,19 @@ export default function FishingGame() {
         const prev = s.weather;
         s.weather = weathers[Math.floor(Math.random() * weathers.length)];
         if (s.weather !== prev) s.weatherTransition = 0;
-        s.weatherTimer = 1200 + Math.random() * 2400;
+        s.weatherTimer = 3600 + Math.random() * 7200;
       }
-      if (s.celestialEvent === "none" && Math.random() < 0.0003 * dt) {
-        const dayP = Math.sin(s.time * 0.002) * 0.5 + 0.5;
-        const nightEvents = ["green_moon", "blood_moon"] as ("none" | "red_sun" | "green_moon" | "tentacle_sun" | "blood_moon")[];
-        const dayEvents = ["red_sun", "tentacle_sun"] as ("none" | "red_sun" | "green_moon" | "tentacle_sun" | "blood_moon")[];
-        const events = dayP > 0.5 ? dayEvents : nightEvents;
-        s.celestialEvent = events[Math.floor(Math.random() * events.length)] ?? "none";
-        s.celestialTimer = 800 + Math.random() * 600;
-        s.celestialFade = 0;
+      const currentDayNight = dayPhaseFull > 0.5 ? "day" : "night";
+      if (currentDayNight !== s.lastDayNight) {
+        s.lastDayNight = currentDayNight;
+        if (s.celestialEvent === "none" && Math.random() < (1/30)) {
+          const nightEvents = ["green_moon", "blood_moon"] as ("none" | "red_sun" | "green_moon" | "tentacle_sun" | "blood_moon")[];
+          const dayEvents = ["red_sun", "tentacle_sun"] as ("none" | "red_sun" | "green_moon" | "tentacle_sun" | "blood_moon")[];
+          const events = currentDayNight === "day" ? dayEvents : nightEvents;
+          s.celestialEvent = events[Math.floor(Math.random() * events.length)] ?? "none";
+          s.celestialTimer = 800 + Math.random() * 600;
+          s.celestialFade = 0;
+        }
       }
       s.weatherTransition = Math.min(1, s.weatherTransition + 0.002 * dt);
       if (s.celestialEvent !== "none") {
@@ -1285,7 +1327,7 @@ export default function FishingGame() {
       }
 
       // Sky gradient - day/night cycle
-      const dayPhase = Math.sin(s.time * 0.002) * 0.5 + 0.5;
+      const dayPhase = dayPhaseFull;
       let skyR = Math.floor(30 + dayPhase * 105);
       let skyG = Math.floor(30 + dayPhase * 176);
       let skyB = Math.floor(62 + dayPhase * 173);
@@ -1484,17 +1526,21 @@ export default function FishingGame() {
       // === CLOUDS (weather-responsive) ===
       const cloudCount = s.weather === "clear" ? 4 : s.weather === "cloudy" ? 8 : s.weather === "fog" ? 10 : isStormy ? 12 : 6;
       const cloudAlphaBase = s.weather === "clear" ? 0.2 : s.weather === "cloudy" ? 0.5 : s.weather === "fog" ? 0.6 : 0.7;
-      const cloudDrift = s.windSpeed * 0.5;
-      ctx.globalAlpha = (cloudAlphaBase + dayPhase * 0.1) * s.weatherTransition + (0.25 + dayPhase * 0.15) * (1 - s.weatherTransition);
+      const cloudDrift = s.windSpeed * 0.1;
+      const cloudBaseAlpha = (cloudAlphaBase + dayPhase * 0.1) * s.weatherTransition + (0.25 + dayPhase * 0.15) * (1 - s.weatherTransition);
       for (let i = 0; i < cloudCount; i++) {
-        const cx = ((s.time * (0.12 + cloudDrift) + i * (W / cloudCount) * 1.3) % (W + 350)) - 175;
+        const cx = ((s.time * (0.02 + cloudDrift) + i * (W / cloudCount) * 1.3) % (W + 350)) - 175;
         const cy = 35 + (i % 5) * 28 + Math.sin(s.time * 0.006 + i * 1.7) * 5;
         const cScale = 0.8 + (i % 3) * 0.2;
         ctx.fillStyle = isStormy ? `rgb(${70 + dayPhase * 30},${75 + dayPhase * 30},${85 + dayPhase * 30})` :
           dayPhase > 0.5 ? "#ffffff" : "#8899aa";
+        ctx.globalAlpha = cloudBaseAlpha;
         ctx.beginPath(); ctx.ellipse(cx, cy, (50 + i * 6) * cScale, (14 + i * 2) * cScale, 0, 0, Math.PI * 2); ctx.fill();
         ctx.beginPath(); ctx.ellipse(cx + 35 * cScale, cy - 4 * cScale, (35 + i * 4) * cScale, (10 + i) * cScale, 0, 0, Math.PI * 2); ctx.fill();
         ctx.beginPath(); ctx.ellipse(cx - 20 * cScale, cy + 2 * cScale, (30 + i * 3) * cScale, (10 + i * 0.5) * cScale, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.globalAlpha = cloudBaseAlpha * 0.3;
+        ctx.beginPath(); ctx.ellipse(cx, cy, (55 + i * 7) * cScale, (18 + i * 3) * cScale, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(cx + 40 * cScale, cy - 2 * cScale, (40 + i * 5) * cScale, (14 + i * 2) * cScale, 0, 0, Math.PI * 2); ctx.fill();
       }
       ctx.globalAlpha = 1;
 
@@ -1641,6 +1687,39 @@ export default function FishingGame() {
       ctx.fillStyle = waterGrad;
       ctx.fillRect(worldLeft, waterY, worldRight - worldLeft, H - waterY);
 
+      if (s.weather !== "clear") {
+        const murkyAlpha = s.weatherTransition * (
+          s.weather === "storm" ? 0.35 : 
+          s.weather === "rain" ? 0.2 : 
+          s.weather === "fog" ? 0.25 : 
+          s.weather === "cloudy" ? 0.08 : 0
+        );
+        if (murkyAlpha > 0) {
+          const murkyGrad = ctx.createLinearGradient(0, waterY, 0, H);
+          murkyGrad.addColorStop(0, `rgba(80,100,60,${murkyAlpha})`);
+          murkyGrad.addColorStop(0.3, `rgba(70,85,50,${murkyAlpha * 0.8})`);
+          murkyGrad.addColorStop(0.7, `rgba(55,70,40,${murkyAlpha * 0.6})`);
+          murkyGrad.addColorStop(1, `rgba(40,50,30,${murkyAlpha * 0.4})`);
+          ctx.fillStyle = murkyGrad;
+          ctx.fillRect(worldLeft, waterY, worldRight - worldLeft, H - waterY);
+          
+          ctx.globalAlpha = murkyAlpha * 0.4;
+          const murkyViewL = -s.cameraX;
+          for (let sw = 0; sw < 12; sw++) {
+            const swX = murkyViewL + ((sw * 97 + s.time * 0.3) % (W + 60)) - 30;
+            const swY = waterY + 15 + sw * 18 + Math.sin(s.time * 0.015 + sw * 2.3) * 8;
+            const swR = 15 + Math.sin(s.time * 0.01 + sw) * 5;
+            ctx.strokeStyle = `rgba(90,110,70,0.3)`;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(swX, swY, swR, s.time * 0.02 + sw, s.time * 0.02 + sw + Math.PI * 1.5);
+            ctx.stroke();
+          }
+          ctx.globalAlpha = 1;
+          ctx.lineWidth = 1;
+        }
+      }
+
       // Surface highlight band - soft glow at water line
       const surfGrad = ctx.createLinearGradient(0, waterY - 2, 0, waterY + 18);
       surfGrad.addColorStop(0, "rgba(136,204,238,0.0)");
@@ -1704,7 +1783,7 @@ export default function FishingGame() {
       // Light rays in water - softer, slower sway
       ctx.globalAlpha = 0.02 + dayPhase * 0.012;
       for (let i = 0; i < 5; i++) {
-        const rx = viewL + W * 0.12 + i * W * 0.18 + Math.sin(s.time * 0.002 + i * 1.8) * 25;
+        const rx = viewL + W * 0.12 + i * W * 0.18 + Math.sin(s.time * 0.0000582 + i * 1.8) * 25;
         ctx.fillStyle = dayPhase > 0.5 ? "#ffffcc" : "#aaccff";
         ctx.beginPath();
         ctx.moveTo(rx - 5, waterY);
@@ -2004,7 +2083,9 @@ export default function FishingGame() {
 
         const fishDepth = (fish.y - waterY) / (H - waterY);
         const depthAlpha = 0.9 - fishDepth * 0.3;
-        ctx.globalAlpha = depthAlpha;
+        const weatherVisibility = s.weather === "storm" ? 0.4 : s.weather === "rain" ? 0.6 : s.weather === "fog" ? 0.5 : s.weather === "cloudy" ? 0.85 : 1.0;
+        const finalAlpha = depthAlpha * (weatherVisibility * s.weatherTransition + 1 * (1 - s.weatherTransition));
+        ctx.globalAlpha = finalAlpha;
 
         const creatureScale = SCALE * 0.65 * fish.sizeMultiplier;
         drawSprite(
@@ -2015,16 +2096,32 @@ export default function FishingGame() {
           fish.type.tint || null
         );
         if (fish.type.rarity === "ultra_rare") {
-          ctx.globalAlpha = 0.15 + Math.sin(s.time * 0.08 + fish.x * 0.01) * 0.1;
-          ctx.shadowColor = fish.type.tint || "#ff2d55";
-          ctx.shadowBlur = 20;
-          drawSprite(
-            `/assets/creatures/${fish.type.creatureFolder}/Walk.png`,
-            fish.frame, fish.type.walkFrames,
-            fish.x, fish.y, creatureScale,
-            fish.direction < 0
-          );
+          const glowPulse = 0.3 + Math.sin(s.time * 0.06 + fish.x * 0.01) * 0.15;
+          const tintColor = fish.type.tint || "#ff2d55";
+          ctx.globalAlpha = glowPulse;
+          ctx.shadowColor = tintColor;
+          ctx.shadowBlur = 25 + Math.sin(s.time * 0.04) * 8;
+          
+          const glowX = fish.x + (FRAME_H * creatureScale * 0.5);
+          const glowY = fish.y + (FRAME_H * creatureScale * 0.3);
+          ctx.fillStyle = tintColor;
+          ctx.beginPath();
+          ctx.ellipse(glowX, glowY, creatureScale * 20, creatureScale * 12, 0, 0, Math.PI * 2);
+          ctx.fill();
           ctx.shadowBlur = 0;
+          
+          for (let sp = 0; sp < 4; sp++) {
+            const angle = s.time * 0.04 + sp * Math.PI * 0.5 + fish.x * 0.01;
+            const orbitR = creatureScale * 18 + Math.sin(s.time * 0.08 + sp) * 4;
+            const spX = glowX + Math.cos(angle) * orbitR;
+            const spY = glowY + Math.sin(angle) * orbitR * 0.6;
+            ctx.globalAlpha = 0.5 + Math.sin(s.time * 0.1 + sp * 1.5) * 0.3;
+            ctx.fillStyle = "#ffffff";
+            ctx.beginPath();
+            ctx.arc(spX, spY, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.globalAlpha = 1;
         }
         ctx.globalAlpha = 1;
       }
@@ -2403,6 +2500,44 @@ export default function FishingGame() {
       }
       ctx.globalAlpha = 1;
 
+      // World-space catch fish rendering during cinematic phases
+      if (s.gameState === "caught") {
+        const catchAsset = s.currentCatch?.catchAsset || s.currentJunk?.asset;
+        if (catchAsset) {
+          const catchImg = getImg(catchAsset);
+          if (catchImg && catchImg.complete) {
+            const cs = 3 + Math.min(3, s.hookedFishSize);
+            const imgW = catchImg.width * cs;
+            const imgH = catchImg.height * cs;
+            
+            ctx.save();
+            ctx.translate(s.catchFishWorldX, s.catchFishWorldY);
+            ctx.rotate(s.catchFishRotation);
+            
+            if (s.catchPhase === 0) {
+              const flopScale = 1 + Math.sin(s.catchFishFlipTimer * 0.5) * 0.1;
+              ctx.scale(flopScale, 1 / flopScale);
+            }
+            
+            if (s.currentCatch?.tint) {
+              ctx.globalAlpha = 0.9;
+            }
+            ctx.drawImage(catchImg, -imgW / 2, -imgH / 2, imgW, imgH);
+            
+            if (s.currentCatch?.rarity === "ultra_rare" && s.currentCatch?.tint) {
+              ctx.globalAlpha = 0.3 + Math.sin(s.time * 0.08) * 0.15;
+              ctx.shadowColor = s.currentCatch.tint;
+              ctx.shadowBlur = 25;
+              ctx.drawImage(catchImg, -imgW / 2, -imgH / 2, imgW, imgH);
+              ctx.shadowBlur = 0;
+            }
+            
+            ctx.globalAlpha = 1;
+            ctx.restore();
+          }
+        }
+      }
+
       // End camera transform - everything after this is screen-space UI
       ctx.restore();
 
@@ -2584,7 +2719,14 @@ export default function FishingGame() {
 
         if (s.reelGauge >= 1.0) {
           s.gameState = "caught";
-          s.showCatchTimer = 200;
+          s.catchPhase = 0;
+          s.catchPhaseTimer = 120;
+          s.catchFishWorldX = s.hookedFishX;
+          s.catchFishWorldY = s.hookedFishY;
+          s.catchFishRotation = 0;
+          s.catchSplashTimer = 0;
+          s.catchFishFlipTimer = 0;
+          s.showCatchTimer = 0;
           s.catchPopY = 0;
           s.combo++;
           if (s.combo > s.bestCombo) s.bestCombo = s.combo;
@@ -2654,6 +2796,20 @@ export default function FishingGame() {
             s.ownedChum[catchableChumIdx]++;
           }
 
+          const fishWtSlot = Math.round(s.hookedFishSize * (s.currentCatch?.points || 5) * 0.3 * 10) / 10;
+          const fishLengthSlot = Math.round(s.hookedFishSize * (s.currentCatch?.catchW || 20) * 0.8 * 10) / 10;
+          const rarityStars = s.currentCatch?.rarity === "ultra_rare" ? 5 : s.currentCatch?.rarity === "legendary" ? 4 : s.currentCatch?.rarity === "rare" ? 3 : s.currentCatch?.rarity === "uncommon" ? 2 : 1;
+          s.slotFinalWeight = fishWtSlot;
+          s.slotFinalLength = fishLengthSlot;
+          s.slotFinalStars = rarityStars;
+          s.slotSpinPhase = 0;
+          s.slotSpinTimer = 0;
+          s.slotSpinSpeed = 0;
+          s.slotSpinValue = 0;
+          s.slotWeightRevealed = false;
+          s.slotLengthRevealed = false;
+          s.slotStarsRevealed = false;
+
           addParticles(s.hookedFishX, waterY, 25, "#f1c40f", 5, "sparkle");
           addParticles(s.hookedFishX, waterY, 15, "#ffffff", 3, "splash");
           addRipple(s.hookedFishX, waterY, 50);
@@ -2719,7 +2875,7 @@ export default function FishingGame() {
         }
       }
 
-      if (s.gameState === "caught" || s.gameState === "missed") {
+      if (s.gameState === "missed") {
         s.showCatchTimer -= dt;
         if (s.showCatchTimer <= 0) {
           s.gameState = "idle";
@@ -2730,89 +2886,228 @@ export default function FishingGame() {
         }
       }
 
-      // Caught display on canvas
-      if (s.gameState === "caught" && s.showCatchTimer > 0) {
-        s.catchPopY = Math.min(s.catchPopY + 2 * dt, 1);
-        const eased = 1 - Math.pow(1 - Math.min(1, s.catchPopY), 3);
-        const alpha = Math.min(1, s.showCatchTimer / 30);
-        ctx.globalAlpha = alpha * eased;
-
-        const boxW = Math.min(340, W * 0.8);
-        const boxH = 200;
-        const boxX = W / 2 - boxW / 2;
-        const boxY = H / 2 - boxH / 2 - 60 + (1 - eased) * 50;
-
-        ctx.fillStyle = "rgba(8,15,25,0.85)";
-        drawRoundRect(boxX, boxY, boxW, boxH, 16);
-        ctx.fill();
-        ctx.strokeStyle = s.currentCatch?.rarity === "ultra_rare" ? "#ff2d55" :
-                          s.currentCatch?.rarity === "legendary" ? "#f1c40f" :
-                          s.currentCatch?.rarity === "rare" ? "#9b59b6" :
-                          s.currentCatch?.rarity === "uncommon" ? "#2ecc71" : "#3498db";
-        ctx.lineWidth = 2;
-        drawRoundRect(boxX, boxY, boxW, boxH, 16);
-        ctx.stroke();
-
-        ctx.fillStyle = "#f1c40f";
-        ctx.font = "bold 22px 'Press Start 2P', monospace";
-        ctx.textAlign = "center";
-        ctx.fillText("CAUGHT!", W / 2, boxY + 38);
-
-        const catchName = s.currentCatch?.name || s.currentJunk?.name || "";
-        const rarityColor = s.currentCatch ?
-          (s.currentCatch.rarity === "ultra_rare" ? "#ff2d55" :
-           s.currentCatch.rarity === "legendary" ? "#f1c40f" :
-           s.currentCatch.rarity === "rare" ? "#9b59b6" :
-           s.currentCatch.rarity === "uncommon" ? "#2ecc71" : "#ecf0f1") : "#ecf0f1";
-
-        ctx.fillStyle = rarityColor;
-        ctx.font = "bold 14px 'Press Start 2P', monospace";
-        ctx.fillText(catchName, W / 2, boxY + 68);
-
-        if (s.currentCatch) {
-          ctx.fillStyle = "rgba(255,255,255,0.3)";
-          ctx.font = "9px 'Press Start 2P', monospace";
-          const sizeLabel = s.hookedFishSize < 1 ? "Tiny" : s.hookedFishSize < 1.5 ? "Small" : s.hookedFishSize < 2.5 ? "Medium" : s.hookedFishSize < 4 ? "Large" : "Massive";
-          const rarityDisplayLabel = s.currentCatch.rarity === "ultra_rare" ? "ULTRA RARE" : s.currentCatch.rarity.toUpperCase();
-          ctx.fillText(`${rarityDisplayLabel} - ${sizeLabel} (${s.hookedFishSize.toFixed(1)}x)`, W / 2, boxY + 88);
-        }
-
-        const catchAsset = s.currentCatch?.catchAsset || s.currentJunk?.asset;
-        if (catchAsset) {
-          const catchImg = getImg(catchAsset);
-          if (catchImg && catchImg.complete) {
-            const cs = 3 + Math.min(3, s.hookedFishSize);
-            ctx.drawImage(catchImg, W / 2 - catchImg.width * cs / 2, boxY + 98, catchImg.width * cs, catchImg.height * cs);
+      if (s.gameState === "caught") {
+        s.catchPhaseTimer -= dt;
+        
+        if (s.catchPhase === 0) {
+          s.catchFishWorldY -= 0.3 * dt;
+          s.catchFishRotation = Math.sin(s.time * 0.3) * 0.4;
+          s.catchFishFlipTimer += dt;
+          s.catchSplashTimer -= dt;
+          if (s.catchSplashTimer <= 0) {
+            addParticles(s.catchFishWorldX, s.catchFishWorldY, 3, "#5dade2", 3, "splash");
+            addRipple(s.catchFishWorldX, s.catchFishWorldY + 5, 20);
+            s.catchSplashTimer = 8 + Math.random() * 6;
+          }
+          if (s.catchPhaseTimer <= 0) {
+            s.catchPhase = 1;
+            s.catchPhaseTimer = 120;
+            const charX = s.inBoat ? s.boatX + 50 : s.playerX;
+            const charY = pierY - FRAME_H * SCALE - 20;
+            s.catchFishTargetY = charY;
+          }
+        } else if (s.catchPhase === 1) {
+          const charX = s.inBoat ? s.boatX + 50 : s.playerX;
+          s.catchFishWorldX += (charX - s.catchFishWorldX) * 0.03 * dt;
+          s.catchFishWorldY += (s.catchFishTargetY - s.catchFishWorldY) * 0.04 * dt;
+          s.catchFishRotation *= 0.95;
+          if (Math.random() < 0.15 * dt) {
+            addParticles(s.catchFishWorldX + (Math.random()-0.5)*20, s.catchFishWorldY, 1, "#f1c40f", 1, "sparkle");
+          }
+          if (s.catchPhaseTimer <= 0) {
+            s.catchPhase = 2;
+            s.catchPhaseTimer = 300;
+            s.slotSpinPhase = 0;
+            s.slotSpinTimer = 60;
+            s.slotSpinSpeed = 15;
+            s.slotSpinValue = Math.random() * 100;
+          }
+        } else if (s.catchPhase === 2) {
+          const charX = s.inBoat ? s.boatX + 50 : s.playerX;
+          s.catchFishWorldX += (charX - s.catchFishWorldX) * 0.05 * dt;
+          s.catchFishWorldY = s.catchFishTargetY + Math.sin(s.time * 0.05) * 3;
+          s.catchFishRotation = 0;
+          
+          s.slotSpinTimer -= dt;
+          s.slotSpinSpeed *= 0.97;
+          s.slotSpinValue += s.slotSpinSpeed * dt;
+          
+          if (s.slotSpinSpeed < 0.5 || s.slotSpinTimer <= 0) {
+            if (s.slotSpinPhase === 0 && !s.slotWeightRevealed) {
+              s.slotWeightRevealed = true;
+              s.slotSpinPhase = 1;
+              s.slotSpinTimer = 60;
+              s.slotSpinSpeed = 12;
+              s.slotSpinValue = Math.random() * 50;
+              addParticles(W / 2 - s.cameraX, H / 2 - 30, 8, "#f1c40f", 3, "sparkle");
+            } else if (s.slotSpinPhase === 1 && !s.slotLengthRevealed) {
+              s.slotLengthRevealed = true;
+              s.slotSpinPhase = 2;
+              s.slotSpinTimer = 80;
+              s.slotSpinSpeed = 10;
+              s.slotSpinValue = 0;
+            } else if (s.slotSpinPhase === 2 && !s.slotStarsRevealed) {
+              s.slotStarsRevealed = true;
+              s.catchPhaseTimer = 120;
+            }
+          }
+          
+          if (s.slotWeightRevealed && s.slotLengthRevealed && s.slotStarsRevealed) {
+            if (s.catchPhaseTimer <= 0) {
+              s.gameState = "idle";
+              s.currentCatch = null;
+              s.currentJunk = null;
+              if (s.inBoat) { s.boatStanding = false; s.boatRowing = false; }
+              syncUI();
+            }
           }
         }
+      }
 
-        const fishWt = Math.round(s.hookedFishSize * (s.currentCatch?.points || 5) * 0.3 * 10) / 10;
-        if (s.currentCatch) {
+      // Caught display - screen space UI
+      if (s.gameState === "caught") {
+        if (s.catchPhase === 2) {
+          const slotBoxW = Math.min(360, W * 0.85);
+          const slotBoxH = 180;
+          const slotBoxX = W / 2 - slotBoxW / 2;
+          const slotBoxY = H / 2 + 20;
+          
+          ctx.fillStyle = "rgba(8,15,25,0.9)";
+          drawRoundRect(slotBoxX, slotBoxY, slotBoxW, slotBoxH, 12);
+          ctx.fill();
+          
+          const rarCol = s.currentCatch?.rarity === "ultra_rare" ? "#ff6b35" :
+                         s.currentCatch?.rarity === "legendary" ? "#a855f7" :
+                         s.currentCatch?.rarity === "rare" ? "#3b82f6" :
+                         s.currentCatch?.rarity === "uncommon" ? "#22c55e" : "#f59e0b";
+          ctx.strokeStyle = rarCol;
+          ctx.lineWidth = 2;
+          drawRoundRect(slotBoxX, slotBoxY, slotBoxW, slotBoxH, 12);
+          ctx.stroke();
+          
+          ctx.textAlign = "center";
+          ctx.fillStyle = rarCol;
+          ctx.font = "bold 14px 'Press Start 2P', monospace";
+          ctx.fillText(s.currentCatch?.name || s.currentJunk?.name || "", W / 2, slotBoxY + 25);
+          
+          const row1Y = slotBoxY + 55;
+          ctx.font = "9px 'Press Start 2P', monospace";
           ctx.fillStyle = "#78909c";
-          ctx.font = "8px 'Press Start 2P', monospace";
-          ctx.fillText(`${fishWt} lbs`, W / 2, boxY + boxH - 45);
-        }
-
-        const pts = (s.currentCatch?.points || s.currentJunk?.points || 0) * s.hookedFishSize;
-        const comboMult = 1 + (s.combo - 1) * 0.15;
-        ctx.fillStyle = "#f1c40f";
-        ctx.font = "bold 12px 'Press Start 2P', monospace";
-        ctx.fillText(`+${Math.floor(pts * comboMult)} pts`, W / 2, boxY + boxH - 25);
-        ctx.fillStyle = "#2ecc71";
-        ctx.font = "10px 'Press Start 2P', monospace";
-        const sellTxt = `+ ${s.lastSellPrice}`;
-        const sellTxtW = ctx.measureText(sellTxt).width;
-        const gbuxCatch = getImg("/assets/icons/gbux.png");
-        const gbuxSzC = 10;
-        if (gbuxCatch) ctx.drawImage(gbuxCatch, W / 2 - sellTxtW / 2 - gbuxSzC - 2, boxY + boxH - 18, gbuxSzC, gbuxSzC);
-        ctx.fillText(sellTxt, W / 2, boxY + boxH - 10);
-        if (s.combo > 1) {
-          ctx.fillStyle = "#e74c3c";
+          ctx.fillText("WEIGHT", W / 2 - 80, row1Y);
+          if (s.slotWeightRevealed) {
+            ctx.fillStyle = "#ecf0f1";
+            ctx.font = "bold 16px 'Press Start 2P', monospace";
+            ctx.fillText(`${s.slotFinalWeight} lbs`, W / 2 + 40, row1Y);
+          } else if (s.slotSpinPhase === 0) {
+            ctx.fillStyle = "#f1c40f";
+            ctx.font = "bold 16px 'Press Start 2P', monospace";
+            const spinDisplay = (Math.abs(s.slotSpinValue) % 200).toFixed(1);
+            ctx.fillText(`${spinDisplay} lbs`, W / 2 + 40, row1Y);
+          } else {
+            ctx.fillStyle = "#3a3a3a";
+            ctx.font = "bold 16px 'Press Start 2P', monospace";
+            ctx.fillText("---", W / 2 + 40, row1Y);
+          }
+          
+          const row2Y = slotBoxY + 95;
+          ctx.font = "9px 'Press Start 2P', monospace";
+          ctx.fillStyle = "#78909c";
+          ctx.fillText("LENGTH", W / 2 - 80, row2Y);
+          if (s.slotLengthRevealed) {
+            ctx.fillStyle = "#ecf0f1";
+            ctx.font = "bold 16px 'Press Start 2P', monospace";
+            ctx.fillText(`${s.slotFinalLength} in`, W / 2 + 40, row2Y);
+            const lineW = Math.min(slotBoxW - 40, s.slotFinalLength * 2);
+            ctx.strokeStyle = "#f1c40f";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(W / 2 - lineW / 2, row2Y + 12);
+            ctx.lineTo(W / 2 + lineW / 2, row2Y + 12);
+            ctx.stroke();
+            ctx.fillStyle = "#f1c40f";
+            ctx.beginPath(); ctx.arc(W / 2 - lineW / 2, row2Y + 12, 4, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(W / 2 + lineW / 2, row2Y + 12, 4, 0, Math.PI * 2); ctx.fill();
+            ctx.lineWidth = 1;
+          } else if (s.slotSpinPhase === 1) {
+            ctx.fillStyle = "#f1c40f";
+            ctx.font = "bold 16px 'Press Start 2P', monospace";
+            const spinDisplay = (Math.abs(s.slotSpinValue) % 150).toFixed(1);
+            ctx.fillText(`${spinDisplay} in`, W / 2 + 40, row2Y);
+          } else {
+            ctx.fillStyle = "#3a3a3a";
+            ctx.font = "bold 16px 'Press Start 2P', monospace";
+            ctx.fillText("---", W / 2 + 40, row2Y);
+          }
+          
+          const row3Y = slotBoxY + 135;
+          ctx.font = "9px 'Press Start 2P', monospace";
+          ctx.fillStyle = "#78909c";
+          ctx.fillText("RARITY", W / 2 - 80, row3Y);
+          
+          const starColors = ["#f59e0b", "#22c55e", "#3b82f6", "#a855f7", "#ff6b35"];
+          
+          if (s.slotStarsRevealed) {
+            const finalStars = s.slotFinalStars;
+            const starSize = 12;
+            const totalStarW = finalStars * (starSize + 6);
+            const startX = W / 2 - totalStarW / 2 + 20;
+            for (let si = 0; si < finalStars; si++) {
+              const sx = startX + si * (starSize + 6);
+              ctx.fillStyle = starColors[finalStars - 1];
+              drawStar(ctx, sx, row3Y - 3, starSize / 2, starSize / 4, 5);
+            }
+          } else if (s.slotSpinPhase === 2) {
+            const spinIdx = Math.floor(Math.abs(s.slotSpinValue)) % 5;
+            const spinStars = spinIdx + 1;
+            const starSize = 12;
+            const totalStarW = spinStars * (starSize + 6);
+            const startX = W / 2 - totalStarW / 2 + 20;
+            for (let si = 0; si < spinStars; si++) {
+              const sx = startX + si * (starSize + 6);
+              ctx.fillStyle = starColors[spinIdx];
+              drawStar(ctx, sx, row3Y - 3, starSize / 2, starSize / 4, 5);
+            }
+          } else {
+            ctx.fillStyle = "#3a3a3a";
+            ctx.font = "bold 16px 'Press Start 2P', monospace";
+            ctx.fillText("---", W / 2 + 40, row3Y);
+          }
+          
+          ctx.fillStyle = "#2ecc71";
           ctx.font = "10px 'Press Start 2P', monospace";
-          ctx.fillText(`x${s.combo} COMBO BONUS!`, W / 2, boxY + boxH + 5);
+          const sellTxt = `+ ${s.lastSellPrice}`;
+          const sellTxtW = ctx.measureText(sellTxt).width;
+          const gbuxCatch = getImg("/assets/icons/gbux.png");
+          const gbuxSzC = 10;
+          if (gbuxCatch) ctx.drawImage(gbuxCatch, W / 2 - sellTxtW / 2 - gbuxSzC - 2, slotBoxY + slotBoxH - 18, gbuxSzC, gbuxSzC);
+          ctx.fillText(sellTxt, W / 2, slotBoxY + slotBoxH - 10);
+          
+          if (s.combo > 1) {
+            ctx.fillStyle = "#e74c3c";
+            ctx.font = "10px 'Press Start 2P', monospace";
+            ctx.fillText(`x${s.combo} COMBO!`, W / 2, slotBoxY + slotBoxH + 8);
+          }
+          
+          ctx.textAlign = "left";
         }
-
-        ctx.globalAlpha = 1;
+        
+        if (s.catchPhase === 0 || s.catchPhase === 1) {
+          ctx.textAlign = "center";
+          ctx.fillStyle = "#f1c40f";
+          ctx.font = "bold 22px 'Press Start 2P', monospace";
+          ctx.fillText("CAUGHT!", W / 2, 60);
+          
+          const catchName = s.currentCatch?.name || s.currentJunk?.name || "";
+          const rarityColor2 = s.currentCatch ?
+            (s.currentCatch.rarity === "ultra_rare" ? "#ff6b35" :
+             s.currentCatch.rarity === "legendary" ? "#a855f7" :
+             s.currentCatch.rarity === "rare" ? "#3b82f6" :
+             s.currentCatch.rarity === "uncommon" ? "#22c55e" : "#ecf0f1") : "#ecf0f1";
+          ctx.fillStyle = rarityColor2;
+          ctx.font = "bold 12px 'Press Start 2P', monospace";
+          ctx.fillText(catchName, W / 2, 85);
+          ctx.textAlign = "left";
+        }
       }
 
       // Flash
@@ -3045,6 +3340,21 @@ export default function FishingGame() {
     }
 
     if (s.gameState === "caught" || s.gameState === "missed") {
+      if (s.gameState === "caught") {
+        if (s.catchPhase < 2) {
+          s.catchPhaseTimer = 0;
+        } else if (s.slotWeightRevealed && s.slotLengthRevealed && s.slotStarsRevealed) {
+          s.gameState = "idle";
+          s.currentCatch = null;
+          s.currentJunk = null;
+          if (s.inBoat) { s.boatStanding = false; s.boatRowing = false; }
+          syncUI();
+        } else {
+          s.slotSpinTimer = 0;
+          s.slotSpinSpeed = 0;
+        }
+        return;
+      }
       s.showCatchTimer = 0;
       s.gameState = "idle";
       s.currentCatch = null;

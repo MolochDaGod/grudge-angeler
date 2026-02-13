@@ -97,9 +97,11 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 
 ## Rarity System
 - 5 tiers: common, uncommon, rare, legendary, ultra_rare
-- Colors: common=#94a3b8, uncommon=#22c55e, rare=#a855f7, legendary=#f59e0b, ultra_rare=#ff2d55
+- Colors: common=#f59e0b(yellow), uncommon=#22c55e(green), rare=#3b82f6(blue), legendary=#a855f7(purple), ultra_rare=#ff6b35(orange)
+- Star ratings: 1 star yellow (common), 2 stars green (uncommon), 3 stars blue (rare), 4 stars purple (legendary), 5 stars orange (ultra_rare)
 - Sell price multipliers: common=1x, uncommon=1.8x, rare=3x, legendary=5x, ultra_rare=10x
 - Reeling difficulty multipliers: common=1x, uncommon=1.15x, rare=1.4x, legendary=1.8x, ultra_rare=2.2x
+- Ultra-rare fish display: elliptical glow aura + orbiting sparkle particles (no rectangles)
 
 ## Gbux & Market System
 - Currency is "gbux" (displayed with gbux icon from /assets/icons/gbux.png)
@@ -188,11 +190,16 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 - Rod leveling (every 5 catches)
 - Fish collection log with detailed stats (biggest size, total weight, rarity badges)
 - Animated skybox with dynamic weather system (clear, cloudy, rain, storm, fog)
-- Special celestial events: Red Sun (rare boost), Green Moon (legendary boost), Tentacle Sun (ultra-rare boost), Blood Moon (legendary+ultra boost)
+- 30-minute day/night cycle: 22 minutes day, 8 minutes night with asymmetric phase
+- Special celestial events (1/30 chance per day/night transition): Red Sun, Green Moon, Tentacle Sun, Blood Moon
 - Aurora borealis during green/blood moon events
+- Slow-drifting layered clouds with soft edges, realistic motion
+- Murky water during adverse weather: green-brown tint, swirl patterns, reduced fish visibility
+- Weather stability: 1-2 minutes per weather pattern
 - Far background parallax: layered mountains, distant ships, flying birds, shooting stars
 - Rain particles with wind-affected angle, lightning flashes during storms, fog overlays
 - Water ripples, particles, and screen shake effects
+- Catch cutscene: 2s struggle/splash, 2s float-to-head, then slot-machine weight/length/stars reveal
 - Character walking on pier (A/D keys)
 - Swimming mechanics (Space to dive, WASD underwater, Space near dock to climb out)
 - Boat boarding cutscene and boat fishing (E to enter/exit)
