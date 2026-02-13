@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState, useCallback } from "react";
-import beachCrabSheetUrl from "@assets/fish_sprite_sheet_16_1770947489402.png";
-import bgmUrl from "@assets/Untitled_1770957824050.mp3";
+const beachCrabSheetUrl = "/assets/beach_crabs.png";
+const BGM_URL = "/assets/bgm.mp3";
 
 const SCALE = 4;
 const FRAME_H = 48;
@@ -998,7 +998,7 @@ export default function FishingGame() {
     window.addEventListener("resize", resize);
 
     if (!bgmRef.current) {
-      const audio = new Audio(bgmUrl);
+      const audio = new Audio(BGM_URL);
       audio.loop = true;
       audio.volume = 0.3;
       bgmRef.current = audio;
@@ -1020,10 +1020,16 @@ export default function FishingGame() {
           stateRef.current.gameState = "idle";
           stateRef.current.hookX = -100;
           stateRef.current.hookY = -100;
+          stateRef.current.ropeSegments = [];
+          stateRef.current.castLineActive = false;
+          stateRef.current.castLineLanded = false;
         } else if (gs === "waiting") {
           stateRef.current.gameState = "idle";
           stateRef.current.hookX = -100;
           stateRef.current.hookY = -100;
+          stateRef.current.ropeSegments = [];
+          stateRef.current.castLineActive = false;
+          stateRef.current.castLineLanded = false;
           stateRef.current.swimmingFish.forEach(f => { f.approachingHook = false; });
         }
       }
@@ -3195,7 +3201,7 @@ export default function FishingGame() {
           );
           ctx.stroke();
         };
-        if (s.castLineActive && s.ropeSegments.length > 0) {
+        if (s.ropeSegments.length > 0) {
           ctx.strokeStyle = "rgba(0,0,0,0.6)";
           ctx.lineWidth = 4;
           ctx.beginPath();
@@ -3213,11 +3219,6 @@ export default function FishingGame() {
           }
           ctx.stroke();
         } else {
-          ctx.strokeStyle = "rgba(0,0,0,0.6)";
-          ctx.lineWidth = 4;
-          drawLineCurve();
-          ctx.strokeStyle = "rgba(200,190,170,0.95)";
-          ctx.lineWidth = 2;
           drawLineCurve();
         }
 
@@ -3615,13 +3616,6 @@ export default function FishingGame() {
           const lastSeg = s.ropeSegments[s.ropeSegments.length - 1];
           lastSeg.x = s.hookX;
           lastSeg.y = waterY + s.bobberBob;
-          let totalMotion = 0;
-          for (let i = 1; i < s.ropeSegments.length - 1; i++) {
-            totalMotion += Math.abs(s.ropeSegments[i].x - s.ropeSegments[i].ox) + Math.abs(s.ropeSegments[i].y - s.ropeSegments[i].oy);
-          }
-          if (totalMotion < 0.5) {
-            s.castLineActive = false;
-          }
         }
       }
 
@@ -3947,6 +3941,9 @@ export default function FishingGame() {
           s.gameState = "idle";
           s.currentCatch = null;
           s.currentJunk = null;
+          s.ropeSegments = [];
+          s.castLineActive = false;
+          s.castLineLanded = false;
           if (s.inBoat) { s.boatStanding = false; s.boatRowing = false; }
           syncUI();
         }
@@ -4023,6 +4020,9 @@ export default function FishingGame() {
               s.gameState = "idle";
               s.currentCatch = null;
               s.currentJunk = null;
+              s.ropeSegments = [];
+              s.castLineActive = false;
+              s.castLineLanded = false;
               if (s.inBoat) { s.boatStanding = false; s.boatRowing = false; }
               syncUI();
             }
