@@ -9,22 +9,24 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
-      --bg-deep: #050c1e;
-      --bg-card: #0a1628;
-      --bg-card-hover: #0f1f38;
-      --border: rgba(79,195,247,0.15);
-      --border-accent: rgba(79,195,247,0.3);
-      --text-primary: #ecf0f1;
-      --text-secondary: #90a4ae;
-      --text-dim: #546e7a;
-      --common: #b0bec5;
-      --uncommon: #4fc3f7;
-      --rare: #5c6bc0;
-      --epic: #ab47bc;
-      --legendary: #ff9800;
-      --ultra-rare: #ff5252;
+      --bg-deep: #030a18;
+      --bg-card: #0b1a30;
+      --bg-card-hover: #0f2440;
+      --border: rgba(79,195,247,0.12);
+      --border-accent: rgba(79,195,247,0.35);
+      --text-primary: #e8edf2;
+      --text-secondary: #8899a8;
+      --text-dim: #4a6070;
+      --common: #8ea8b8;
+      --uncommon: #3dc9a0;
+      --rare: #6e7fd8;
+      --epic: #b04ec8;
+      --legendary: #f0a020;
+      --ultra-rare: #ff4060;
       --accent: #4fc3f7;
+      --gold: #ffd54f;
     }
+
     html, body {
       background: var(--bg-deep);
       color: var(--text-primary);
@@ -35,6 +37,91 @@
       cursor: grab;
     }
     body.dragging { cursor: grabbing; }
+
+    #ocean-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 30% 20%, rgba(10,60,120,0.5) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 80%, rgba(5,30,80,0.4) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 100%, rgba(0,20,60,0.6) 0%, transparent 40%),
+        linear-gradient(180deg, #040c1e 0%, #061830 30%, #0a2540 60%, #071e38 100%);
+    }
+
+    .bg-coral {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 220px;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.08;
+      background: url('/assets/underwater_bg.png') repeat-x bottom;
+      background-size: auto 220px;
+      filter: hue-rotate(15deg) saturate(0.5);
+    }
+
+    @keyframes ray1 {
+      0%, 100% { opacity: 0.03; transform: rotate(18deg) scaleY(1); }
+      50% { opacity: 0.07; transform: rotate(20deg) scaleY(1.15); }
+    }
+    @keyframes ray2 {
+      0%, 100% { opacity: 0.025; transform: rotate(-12deg) scaleY(1.1); }
+      50% { opacity: 0.06; transform: rotate(-10deg) scaleY(0.9); }
+    }
+    @keyframes ray3 {
+      0%, 100% { opacity: 0.02; transform: rotate(35deg) scaleY(1); }
+      50% { opacity: 0.05; transform: rotate(37deg) scaleY(1.2); }
+    }
+
+    .god-ray {
+      position: fixed;
+      top: -100px;
+      width: 200px;
+      height: 120%;
+      z-index: 0;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(79,195,247,0.15) 0%, rgba(79,195,247,0.02) 60%, transparent 100%);
+    }
+    .god-ray:nth-child(1) { left: 10%; animation: ray1 8s ease-in-out infinite; }
+    .god-ray:nth-child(2) { left: 45%; width: 160px; animation: ray2 11s ease-in-out infinite; }
+    .god-ray:nth-child(3) { left: 75%; width: 120px; animation: ray3 9s ease-in-out infinite; }
+
+    @keyframes bubble-rise {
+      0% { transform: translateY(0) translateX(0); opacity: 0.5; }
+      50% { opacity: 0.7; }
+      100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+    }
+    .bubble {
+      position: fixed;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(120,200,255,0.4), rgba(60,150,220,0.1));
+      border: 1px solid rgba(120,200,255,0.2);
+      z-index: 0;
+      pointer-events: none;
+      animation: bubble-rise linear infinite;
+    }
+
+    @keyframes particle-drift {
+      0%, 100% { transform: translate(0, 0); opacity: 0.3; }
+      25% { transform: translate(15px, -10px); opacity: 0.6; }
+      50% { transform: translate(-10px, -20px); opacity: 0.4; }
+      75% { transform: translate(5px, 10px); opacity: 0.5; }
+    }
+    .sea-particle {
+      position: fixed;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      background: rgba(79,195,247,0.4);
+      z-index: 0;
+      pointer-events: none;
+      animation: particle-drift 6s ease-in-out infinite;
+    }
 
     #zoom-controls {
       position: fixed;
@@ -47,11 +134,11 @@
       align-items: center;
     }
     #zoom-controls button {
-      width: 36px;
-      height: 36px;
-      background: rgba(10,22,40,0.92);
+      width: 40px;
+      height: 40px;
+      background: rgba(8,20,40,0.95);
       border: 1px solid var(--border-accent);
-      border-radius: 6px;
+      border-radius: 8px;
       color: var(--accent);
       font-family: 'Press Start 2P', monospace;
       font-size: 14px;
@@ -59,8 +146,10 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      backdrop-filter: blur(10px);
+      transition: background 0.2s;
     }
-    #zoom-controls button:hover { background: rgba(20,40,70,0.95); }
+    #zoom-controls button:hover { background: rgba(15,40,70,0.95); }
     #zoom-level {
       color: var(--text-secondary);
       font-size: 7px;
@@ -72,120 +161,182 @@
       top: 12px;
       left: 12px;
       z-index: 100;
-      background: rgba(10,22,40,0.92);
+      background: rgba(8,20,40,0.95);
       border: 1px solid var(--border-accent);
       border-radius: 8px;
-      padding: 8px 14px;
+      padding: 10px 16px;
       color: var(--accent);
       font-family: 'Press Start 2P', monospace;
       font-size: 8px;
       text-decoration: none;
       cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    #back-link:hover { background: rgba(20,40,70,0.95); }
+    #back-link:hover { background: rgba(15,40,70,0.95); color: #fff; }
 
     #minimap {
       position: fixed;
       bottom: 12px;
       right: 12px;
       z-index: 100;
-      width: 180px;
-      height: 120px;
-      background: rgba(10,22,40,0.9);
+      width: 200px;
+      height: 130px;
+      background: rgba(8,20,40,0.9);
       border: 1px solid var(--border-accent);
-      border-radius: 6px;
+      border-radius: 8px;
       overflow: hidden;
+      backdrop-filter: blur(8px);
     }
     #minimap-viewport {
       position: absolute;
-      border: 1px solid var(--accent);
-      background: rgba(79,195,247,0.1);
+      border: 1.5px solid var(--accent);
+      background: rgba(79,195,247,0.08);
       pointer-events: none;
+      border-radius: 2px;
     }
 
     #board-container {
       position: absolute;
       transform-origin: 0 0;
       will-change: transform;
+      z-index: 1;
     }
 
     #board {
-      padding: 40px;
+      padding: 50px;
       display: flex;
       flex-direction: column;
       gap: 50px;
-      width: 3600px;
+      width: 3800px;
     }
 
-    .board-title {
+    .logo-area {
       text-align: center;
-      font-size: 18px;
-      color: var(--accent);
-      text-shadow: 0 0 20px rgba(79,195,247,0.5);
-      letter-spacing: 3px;
-      padding: 20px 0;
+      padding: 30px 0;
+    }
+    .logo-area img {
+      max-width: 320px;
+      image-rendering: pixelated;
+      filter: drop-shadow(0 0 30px rgba(79,195,247,0.3));
+      margin-bottom: 12px;
+    }
+    .board-title {
+      font-size: 22px;
+      letter-spacing: 4px;
+      background: linear-gradient(135deg, var(--accent), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 20px rgba(79,195,247,0.3));
+      margin-bottom: 4px;
     }
     .board-subtitle {
-      text-align: center;
-      font-size: 8px;
-      color: var(--text-secondary);
-      margin-top: 4px;
-    }
-
-    .section {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 24px;
-    }
-    .section-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 20px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border);
-    }
-    .section-title {
-      font-size: 12px;
-      letter-spacing: 2px;
-    }
-    .section-count {
       font-size: 7px;
       color: var(--text-dim);
-      margin-left: auto;
+      letter-spacing: 2px;
+      margin-top: 8px;
     }
-    .section-dot {
+
+    .legend-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 16px;
+      justify-content: center;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 7px;
+      color: var(--text-secondary);
+      background: rgba(255,255,255,0.03);
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .legend-dot {
       width: 10px;
       height: 10px;
       border-radius: 50%;
       flex-shrink: 0;
     }
 
+    .section {
+      background: rgba(10,25,50,0.7);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      backdrop-filter: blur(4px);
+      position: relative;
+      overflow: hidden;
+    }
+    .section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(79,195,247,0.2), transparent);
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 22px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .section-title {
+      font-size: 13px;
+      letter-spacing: 2px;
+    }
+    .section-count {
+      font-size: 7px;
+      color: var(--text-dim);
+      margin-left: auto;
+      background: rgba(255,255,255,0.04);
+      padding: 4px 10px;
+      border-radius: 10px;
+    }
+    .section-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      box-shadow: 0 0 8px currentColor;
+    }
+
     .fish-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 14px;
     }
     .fish-card {
-      background: var(--bg-deep);
+      background: rgba(5,15,35,0.8);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 14px;
+      border-radius: 10px;
+      padding: 16px;
       display: flex;
       gap: 14px;
       align-items: flex-start;
-      transition: border-color 0.2s;
+      transition: border-color 0.3s, box-shadow 0.3s;
       position: relative;
     }
     .fish-card:hover {
       border-color: var(--border-accent);
+      box-shadow: 0 0 20px rgba(79,195,247,0.08);
     }
     .fish-img-wrap {
-      width: 64px;
-      height: 64px;
-      background: rgba(255,255,255,0.04);
-      border-radius: 6px;
+      width: 68px;
+      height: 68px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -193,143 +344,157 @@
       overflow: hidden;
       position: relative;
       cursor: pointer;
-      border: 1px dashed rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.06);
     }
+    .fish-img-wrap:hover { border-color: var(--accent); }
     .fish-img-wrap:hover::after {
       content: 'EDIT';
       position: absolute;
       inset: 0;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,0.75);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 7px;
       color: var(--accent);
       font-family: 'Press Start 2P', monospace;
+      border-radius: 9px;
     }
     .fish-img-wrap img {
-      max-width: 56px;
-      max-height: 56px;
+      max-width: 60px;
+      max-height: 60px;
       image-rendering: pixelated;
     }
+
+    .fish-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .fish-placeholder svg {
+      width: 36px;
+      height: 36px;
+      opacity: 0.35;
+    }
+    .fish-placeholder .ph-label {
+      font-size: 5px;
+      color: var(--text-dim);
+      margin-top: 3px;
+      opacity: 0.6;
+    }
+
     .fish-info {
       flex: 1;
       min-width: 0;
     }
     .fish-name {
       font-size: 9px;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
       word-break: break-word;
     }
     .fish-desc {
       font-size: 6px;
       color: var(--text-secondary);
-      line-height: 12px;
-      margin-bottom: 6px;
+      line-height: 13px;
+      margin-bottom: 7px;
     }
     .fish-stats {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
+      gap: 5px;
     }
     .fish-stat {
       font-size: 6px;
-      padding: 2px 6px;
-      border-radius: 3px;
-      background: rgba(255,255,255,0.05);
+      padding: 3px 7px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.04);
       color: var(--text-dim);
       white-space: nowrap;
     }
     .fish-stat b { color: var(--text-secondary); }
     .rarity-badge {
       font-size: 6px;
-      padding: 2px 6px;
-      border-radius: 3px;
+      padding: 3px 8px;
+      border-radius: 4px;
       color: #fff;
       display: inline-block;
-      margin-bottom: 4px;
+      margin-bottom: 5px;
+      letter-spacing: 1px;
     }
     .tint-indicator {
       font-size: 5px;
       color: var(--text-dim);
-      margin-top: 3px;
+      margin-top: 4px;
+      font-style: italic;
     }
-
-    .stars { letter-spacing: 1px; font-size: 7px; }
+    .stars { letter-spacing: 2px; font-size: 7px; }
 
     .equip-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 12px;
     }
     .equip-card {
-      background: var(--bg-deep);
+      background: rgba(5,15,35,0.8);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px;
+      border-radius: 10px;
+      padding: 14px;
       display: flex;
       gap: 12px;
       align-items: center;
+      transition: border-color 0.3s;
     }
     .equip-card:hover { border-color: var(--border-accent); }
     .equip-icon {
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
       background: rgba(255,255,255,0.04);
-      border-radius: 6px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
     }
     .equip-icon img {
-      max-width: 32px;
-      max-height: 32px;
+      max-width: 34px;
+      max-height: 34px;
       image-rendering: pixelated;
     }
-    .equip-name { font-size: 8px; margin-bottom: 3px; }
-    .equip-desc { font-size: 6px; color: var(--text-secondary); line-height: 11px; }
+    .equip-name { font-size: 8px; margin-bottom: 4px; }
+    .equip-desc { font-size: 6px; color: var(--text-secondary); line-height: 12px; }
     .equip-price { font-size: 7px; color: #2ecc71; margin-top: 3px; }
-    .equip-stats { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+    .equip-stats { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
 
     .world-map {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 8px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
     }
     .zone-card {
-      background: var(--bg-deep);
+      background: rgba(5,15,35,0.8);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 14px;
-      min-width: 200px;
-      flex-shrink: 0;
+      border-radius: 10px;
+      padding: 16px;
+      transition: border-color 0.3s;
+      position: relative;
+      overflow: hidden;
     }
     .zone-card:hover { border-color: var(--border-accent); }
-    .zone-name { font-size: 9px; margin-bottom: 6px; }
-    .zone-desc { font-size: 6px; color: var(--text-secondary); line-height: 12px; }
-    .zone-fish { font-size: 6px; color: var(--text-dim); margin-top: 6px; }
-
-    .legend-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 10px;
+    .zone-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      border-radius: 10px 10px 0 0;
     }
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 7px;
-      color: var(--text-secondary);
-    }
-    .legend-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
+    .zone-name { font-size: 9px; margin-bottom: 6px; margin-top: 4px; }
+    .zone-desc { font-size: 6px; color: var(--text-secondary); line-height: 13px; }
+    .zone-fish { font-size: 6px; color: var(--text-dim); margin-top: 8px; }
+    .zone-depth { font-size: 6px; color: var(--accent); margin-bottom: 6px; opacity: 0.7; }
 
     .two-col {
       display: grid;
@@ -338,10 +503,40 @@
     }
 
     input[type="file"] { display: none; }
+
+    .ultra-section {
+      border-color: rgba(255,64,96,0.25) !important;
+      background: linear-gradient(135deg, rgba(10,25,50,0.7), rgba(30,10,40,0.7)) !important;
+    }
+    .ultra-section::before {
+      background: linear-gradient(90deg, transparent, rgba(255,64,96,0.3), transparent) !important;
+    }
+    .ultra-section .fish-card {
+      border-color: rgba(255,64,96,0.15);
+    }
+    .ultra-section .fish-card:hover {
+      border-color: rgba(255,64,96,0.4);
+      box-shadow: 0 0 25px rgba(255,64,96,0.1);
+    }
+
+    @keyframes glow-pulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.7; }
+    }
   </style>
 </head>
 <body>
-  <a id="back-link" href="/">BACK TO GAME</a>
+  <div id="ocean-bg">
+    <div class="god-ray"></div>
+    <div class="god-ray"></div>
+    <div class="god-ray"></div>
+  </div>
+  <div class="bg-coral"></div>
+
+  <a id="back-link" href="/">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M8 1L3 6L8 11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    BACK TO GAME
+  </a>
 
   <div id="zoom-controls">
     <button id="zoom-in" title="Zoom In">+</button>
@@ -359,125 +554,113 @@
   <div id="board-container">
     <div id="board">
 
-      <div style="text-align:center;padding:30px 0;">
+      <div class="logo-area">
+        <img src="/assets/logo.png" alt="Grudge Angeler" onerror="this.style.display='none'">
         <div class="board-title">GRUDGE ANGELER</div>
-        <div class="board-subtitle">COMPLETE GAME BOARD - ALL SPECIES, EQUIPMENT & WORLD DATA</div>
-        <div class="legend-row" style="justify-content:center;margin-top:16px;">
-          <div class="legend-item"><div class="legend-dot" style="background:var(--common)"></div>COMMON</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--uncommon)"></div>UNCOMMON</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--rare)"></div>RARE</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--epic)"></div>EPIC</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--legendary)"></div>LEGENDARY</div>
-          <div class="legend-item"><div class="legend-dot" style="background:var(--ultra-rare)"></div>ULTRA RARE</div>
+        <div class="board-subtitle">COMPLETE GAME BOARD &mdash; ALL SPECIES, EQUIPMENT & WORLD DATA</div>
+        <div class="legend-row">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--common);box-shadow:0 0 6px var(--common)"></div>COMMON</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--uncommon);box-shadow:0 0 6px var(--uncommon)"></div>UNCOMMON</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--rare);box-shadow:0 0 6px var(--rare)"></div>RARE</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--epic);box-shadow:0 0 6px var(--epic)"></div>EPIC</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--legendary);box-shadow:0 0 6px var(--legendary)"></div>LEGENDARY</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--ultra-rare);box-shadow:0 0 6px var(--ultra-rare)"></div>ULTRA RARE</div>
         </div>
       </div>
 
-      <!-- WORLD ZONES -->
       <div class="section">
         <div class="section-header">
-          <div class="section-dot" style="background:var(--accent)"></div>
+          <div class="section-dot" style="background:var(--accent);color:var(--accent)"></div>
           <div class="section-title" style="color:var(--accent)">WORLD ZONES & DEPTH MAP</div>
           <div class="section-count">8 SCENES</div>
         </div>
         <div class="world-map" id="world-zones"></div>
       </div>
 
-      <!-- COMMON FISH -->
       <div class="section">
         <div class="section-header">
-          <div class="section-dot" style="background:var(--common)"></div>
+          <div class="section-dot" style="background:var(--common);color:var(--common)"></div>
           <div class="section-title" style="color:var(--common)">COMMON FISH</div>
           <div class="section-count" id="common-count"></div>
         </div>
         <div class="fish-grid" id="common-fish"></div>
       </div>
 
-      <!-- UNCOMMON FISH -->
       <div class="section">
         <div class="section-header">
-          <div class="section-dot" style="background:var(--uncommon)"></div>
+          <div class="section-dot" style="background:var(--uncommon);color:var(--uncommon)"></div>
           <div class="section-title" style="color:var(--uncommon)">UNCOMMON FISH</div>
           <div class="section-count" id="uncommon-count"></div>
         </div>
         <div class="fish-grid" id="uncommon-fish"></div>
       </div>
 
-      <!-- RARE FISH (25) -->
       <div class="section">
         <div class="section-header">
-          <div class="section-dot" style="background:var(--rare)"></div>
+          <div class="section-dot" style="background:var(--rare);color:var(--rare)"></div>
           <div class="section-title" style="color:var(--rare)">RARE FISH</div>
           <div class="section-count" id="rare-count"></div>
         </div>
         <div class="fish-grid" id="rare-fish"></div>
       </div>
 
-      <!-- EPIC FISH (10) -->
       <div class="section">
         <div class="section-header">
-          <div class="section-dot" style="background:var(--epic)"></div>
+          <div class="section-dot" style="background:var(--epic);color:var(--epic)"></div>
           <div class="section-title" style="color:var(--epic)">EPIC FISH</div>
           <div class="section-count" id="epic-count"></div>
         </div>
         <div class="fish-grid" id="epic-fish"></div>
       </div>
 
-      <!-- LEGENDARY FISH -->
       <div class="section">
         <div class="section-header">
-          <div class="section-dot" style="background:var(--legendary)"></div>
+          <div class="section-dot" style="background:var(--legendary);color:var(--legendary)"></div>
           <div class="section-title" style="color:var(--legendary)">LEGENDARY FISH</div>
           <div class="section-count" id="legendary-count"></div>
         </div>
         <div class="fish-grid" id="legendary-fish"></div>
       </div>
 
-      <!-- THE LEGENDARY 9 (ULTRA RARE) -->
-      <div class="section" style="border-color:rgba(255,82,82,0.3);background:linear-gradient(135deg, #0a1628, #150a1e);">
-        <div class="section-header" style="border-bottom-color:rgba(255,82,82,0.2);">
-          <div class="section-dot" style="background:var(--ultra-rare);box-shadow:0 0 8px rgba(255,82,82,0.5);"></div>
-          <div class="section-title" style="color:var(--ultra-rare);text-shadow:0 0 10px rgba(255,82,82,0.4);">THE LEGENDARY 9 - ULTRA RARE</div>
+      <div class="section ultra-section">
+        <div class="section-header" style="border-bottom-color:rgba(255,64,96,0.15);">
+          <div class="section-dot" style="background:var(--ultra-rare);color:var(--ultra-rare);box-shadow:0 0 12px rgba(255,64,96,0.6);"></div>
+          <div class="section-title" style="color:var(--ultra-rare);text-shadow:0 0 12px rgba(255,64,96,0.3);">THE LEGENDARY 9 &mdash; ULTRA RARE</div>
           <div class="section-count" id="ultra-count"></div>
         </div>
         <div class="fish-grid" id="ultra-fish"></div>
       </div>
 
-      <!-- BEACH CRABS -->
       <div class="section">
         <div class="section-header">
-          <div class="section-dot" style="background:#e57373"></div>
+          <div class="section-dot" style="background:#e57373;color:#e57373"></div>
           <div class="section-title" style="color:#e57373">BEACH CRABS</div>
           <div class="section-count" id="crab-count"></div>
         </div>
         <div class="fish-grid" id="crab-fish"></div>
       </div>
 
-      <!-- PREDATORS -->
       <div class="section">
         <div class="section-header">
-          <div class="section-dot" style="background:#ef5350"></div>
+          <div class="section-dot" style="background:#ef5350;color:#ef5350"></div>
           <div class="section-title" style="color:#ef5350">OCEAN PREDATORS</div>
           <div class="section-count">3 SPECIES</div>
         </div>
         <div class="fish-grid" id="predator-fish"></div>
       </div>
 
-      <!-- EQUIPMENT -->
       <div class="two-col">
-        <!-- RODS -->
         <div class="section">
           <div class="section-header">
-            <div class="section-dot" style="background:#81c784"></div>
+            <div class="section-dot" style="background:#81c784;color:#81c784"></div>
             <div class="section-title" style="color:#81c784">FISHING RODS</div>
             <div class="section-count">5 RODS</div>
           </div>
           <div class="equip-grid" id="rods-grid"></div>
         </div>
-
-        <!-- LURES & BAITS -->
         <div class="section">
           <div class="section-header">
-            <div class="section-dot" style="background:#ffb74d"></div>
+            <div class="section-dot" style="background:#ffb74d;color:#ffb74d"></div>
             <div class="section-title" style="color:#ffb74d">LURES & BAITS</div>
             <div class="section-count" id="lure-count"></div>
           </div>
@@ -485,51 +668,76 @@
         </div>
       </div>
 
-      <!-- CHUM -->
       <div class="section">
         <div class="section-header">
-          <div class="section-dot" style="background:#ce93d8"></div>
+          <div class="section-dot" style="background:#ce93d8;color:#ce93d8"></div>
           <div class="section-title" style="color:#ce93d8">CHUM ITEMS</div>
           <div class="section-count" id="chum-count"></div>
         </div>
         <div class="equip-grid" id="chum-grid"></div>
       </div>
 
-      <!-- BETAXGRUDA EGGS -->
-      <div class="section">
+      <div class="section" style="border-color:rgba(168,85,247,0.2);">
         <div class="section-header">
-          <div class="section-dot" style="background:#a855f7"></div>
+          <div class="section-dot" style="background:#a855f7;color:#a855f7"></div>
           <div class="section-title" style="color:#a855f7">BETAXGRUDA EGGS</div>
           <div class="section-count">7 ITEMS</div>
         </div>
-        <div style="color:#78909c;font-size:8px;margin-bottom:12px;line-height:1.6;padding:0 4px;">
-          Special items purchasable only with "Head of Legends" - a reward earned by catching each Legendary 9 fish for the first time.
+        <div style="color:#78909c;font-size:8px;margin-bottom:14px;line-height:1.8;padding:0 4px;">
+          Special items purchasable only with "Head of Legends" &mdash; a reward earned by catching each Legendary 9 fish for the first time.
           The first 4 are Beta Fish character eggs, the last 3 are Warlord eggs.
         </div>
-        <div style="color:#ec4899;font-size:9px;margin-bottom:8px;letter-spacing:1px;">BETA FISH EGGS (1 HEAD EACH)</div>
+        <div style="color:#ec4899;font-size:9px;margin-bottom:10px;letter-spacing:1px;">BETA FISH EGGS (1 HEAD EACH)</div>
         <div class="equip-grid" id="beta-eggs-grid"></div>
-        <div style="color:#ef4444;font-size:9px;margin:12px 0 8px;letter-spacing:1px;">WARLORD EGGS (2 HEADS EACH)</div>
+        <div style="color:#ef4444;font-size:9px;margin:14px 0 10px;letter-spacing:1px;">WARLORD EGGS (2 HEADS EACH)</div>
         <div class="equip-grid" id="warlord-eggs-grid"></div>
       </div>
 
-      <!-- GAME MECHANICS -->
       <div class="section">
         <div class="section-header">
-          <div class="section-dot" style="background:var(--accent)"></div>
+          <div class="section-dot" style="background:var(--accent);color:var(--accent)"></div>
           <div class="section-title" style="color:var(--accent)">GAME MECHANICS & CONTROLS</div>
         </div>
         <div class="equip-grid" id="mechanics-grid"></div>
       </div>
 
       <div style="text-align:center;padding:30px 0;">
-        <div style="font-size:7px;color:var(--text-dim);">GRUDGE ANGELER GAME BOARD v1.0</div>
+        <div style="font-size:7px;color:var(--text-dim);">GRUDGE ANGELER GAME BOARD v2.0</div>
         <div style="font-size:6px;color:var(--text-dim);margin-top:6px;">Click any fish image to upload a custom sprite</div>
       </div>
     </div>
   </div>
 
 <script>
-const FISH_SPECIES = [
+(function() {
+  var bubbleCount = 15;
+  var bgEl = document.getElementById('ocean-bg');
+  for (var i = 0; i < bubbleCount; i++) {
+    var b = document.createElement('div');
+    b.className = 'bubble';
+    var size = 4 + Math.random() * 12;
+    b.style.width = size + 'px';
+    b.style.height = size + 'px';
+    b.style.left = (Math.random() * 100) + '%';
+    b.style.bottom = -(Math.random() * 20) + '%';
+    b.style.animationDuration = (10 + Math.random() * 20) + 's';
+    b.style.animationDelay = (Math.random() * 15) + 's';
+    bgEl.appendChild(b);
+  }
+  for (var j = 0; j < 20; j++) {
+    var p = document.createElement('div');
+    p.className = 'sea-particle';
+    p.style.left = (Math.random() * 100) + '%';
+    p.style.top = (Math.random() * 100) + '%';
+    p.style.animationDelay = (Math.random() * 6) + 's';
+    p.style.animationDuration = (4 + Math.random() * 6) + 's';
+    bgEl.appendChild(p);
+  }
+})();
+
+var FISH_SILHOUETTE = '<svg viewBox="0 0 48 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M4 16c0-4 3-8 8-10 3-1 7-1 12 0 4 1 8 3 11 5l5 5-5 5c-3 2-7 4-11 5-5 1-9 1-12 0C7 24 4 20 4 16z"/><path d="M2 12l-1 4 1 4 2-4-2-4z" opacity="0.6"/><circle cx="32" cy="14" r="2" fill="rgba(0,0,0,0.3)"/></svg>';
+
+var FISH_SPECIES = [
   { name: "Minnow", img: "/assets/catch/1.png", points: 10, rarity: "common", weight: 40, minDepth: 0.15, speed: 1.5, description: "A tiny silver fish, common in shallow waters.", zone: "Shallow" },
   { name: "Perch", img: "/assets/catch/2.png", points: 25, rarity: "common", weight: 30, minDepth: 0.25, speed: 1.2, description: "A striped freshwater fish with sharp fins.", zone: "Shallow" },
   { name: "Eel", img: "/assets/catch/7.png", points: 40, rarity: "common", weight: 20, minDepth: 0.3, speed: 1.3, description: "A slippery serpentine fish.", zone: "Shallow-Mid" },
@@ -539,7 +747,7 @@ const FISH_SPECIES = [
   { name: "Whale", img: "/assets/catch/6.png", points: 300, rarity: "legendary", weight: 1, minDepth: 0.65, speed: 0.5, description: "The king of the deep. Incredibly rare!", zone: "Deep Ocean" },
 ];
 
-const RARE_FISH = [
+var RARE_FISH = [
   { name: "Swordfish", img: "/assets/catch/5.png", points: 150, rarity: "rare", weight: 4, minDepth: 0.55, speed: 1.8, description: "A powerful ocean predator with a sharp bill.", zone: "Deep" },
   { name: "Barracuda", img: "", points: 160, rarity: "rare", weight: 3.5, minDepth: 0.5, speed: 2.0, description: "A torpedo-shaped predator with razor teeth.", zone: "Mid-Deep" },
   { name: "Marlin", img: "", points: 180, rarity: "rare", weight: 3, minDepth: 0.6, speed: 2.2, description: "A majestic billfish known for spectacular leaps.", zone: "Deep" },
@@ -567,7 +775,7 @@ const RARE_FISH = [
   { name: "Sturgeon", img: "", points: 185, rarity: "rare", weight: 2.5, minDepth: 0.6, speed: 0.9, description: "An ancient armored fish, living fossil.", zone: "Deep" },
 ];
 
-const EPIC_FISH = [
+var EPIC_FISH = [
   { name: "Giant Squid", img: "", points: 350, rarity: "epic", weight: 1.5, minDepth: 0.7, speed: 1.3, description: "A massive deep-sea cephalopod with enormous eyes.", zone: "Abyss" },
   { name: "Oarfish", img: "", points: 400, rarity: "epic", weight: 1, minDepth: 0.75, speed: 0.5, description: "The serpent king of the deep. Up to 30 feet long.", zone: "Abyss" },
   { name: "Coelacanth", img: "", points: 450, rarity: "epic", weight: 0.8, minDepth: 0.7, speed: 0.6, description: "A living fossil from the age of dinosaurs.", zone: "Deep Ocean" },
@@ -580,7 +788,7 @@ const EPIC_FISH = [
   { name: "Vampire Squid", img: "", points: 390, rarity: "epic", weight: 1.2, minDepth: 0.75, speed: 0.7, description: "Cloaked in darkness, from the oxygen minimum zone.", zone: "Abyss" },
 ];
 
-const ULTRA_RARE_FISH = [
+var ULTRA_RARE_FISH = [
   { name: "Phantom Minnow", img: "/assets/catch/1.png", points: 500, rarity: "ultra_rare", weight: 0.3, minDepth: 0.55, speed: 2.2, description: "A ghostly minnow wreathed in spectral flame. Blinks in and out of reality.", tint: "rgba(0,255,200,0.35)", zone: "Deep", stars: 5 },
   { name: "Volcanic Perch", img: "/assets/catch/2.png", points: 600, rarity: "ultra_rare", weight: 0.25, minDepth: 0.6, speed: 1.6, description: "A perch superheated by deep-sea vents. Its scales glow molten orange.", tint: "rgba(255,80,0,0.4)", zone: "Deep Ocean", stars: 5 },
   { name: "Abyssal Bass", img: "/assets/catch/3.png", points: 750, rarity: "ultra_rare", weight: 0.2, minDepth: 0.65, speed: 1.4, description: "A colossal bass from the deepest trenches. Radiates dark energy.", tint: "rgba(120,0,255,0.35)", zone: "Abyss", stars: 5 },
@@ -592,7 +800,7 @@ const ULTRA_RARE_FISH = [
   { name: "Shadow Leviathan", img: "/assets/catch/6.png", points: 1500, rarity: "ultra_rare", weight: 0.08, minDepth: 0.8, speed: 0.6, description: "A titanic shadow beast from beyond the abyss. Feared by all ocean life.", tint: "rgba(180,0,50,0.35)", zone: "Abyss", stars: 5 },
 ];
 
-const BEACH_CRABS = [
+var BEACH_CRABS = [
   { name: "Red Crab", img: "/assets/beach_crabs.png", points: 8, rarity: "common", weight: 50, description: "A small red crab that scuttles along the beach.", zone: "Beach" },
   { name: "Blue Crab", img: "/assets/beach_crabs.png", points: 10, rarity: "common", weight: 40, description: "A bright blue crab found near tidal pools.", zone: "Beach" },
   { name: "Green Crab", img: "/assets/beach_crabs.png", points: 8, rarity: "common", weight: 45, description: "A mossy green crab hiding in the seaweed.", zone: "Beach" },
@@ -603,13 +811,13 @@ const BEACH_CRABS = [
   { name: "Dark Crab", img: "/assets/beach_crabs.png", points: 20, rarity: "uncommon", weight: 18, description: "A dark-shelled crab with powerful pincers.", zone: "Beach" },
 ];
 
-const PREDATORS = [
+var PREDATORS = [
   { name: "Shark", img: "/assets/predators/1/Idle.png", points: 400, rarity: "rare", weight: 3, speed: 2.2, description: "A fearsome shark prowling the deep waters.", zone: "Deep", scareRadius: 200 },
   { name: "Kraken", img: "/assets/predators/2/Idle.png", points: 800, rarity: "legendary", weight: 1, speed: 1.5, description: "A massive squid from the abyss, feared by all.", zone: "Abyss", scareRadius: 280 },
   { name: "Sea Devil", img: "/assets/predators/3/Idle.png", points: 600, rarity: "rare", weight: 2, speed: 1.8, description: "A monstrous crab creature from the deep trenches.", zone: "Deep", scareRadius: 240 },
 ];
 
-const RODS = [
+var RODS = [
   { name: "Bamboo Rod", price: 0, catchZoneBonus: 0, reelSpeedMult: 1.0, lineStrength: 1.0, description: "A simple bamboo rod. Gets the job done.", icon: "/assets/icons/Icons_07.png" },
   { name: "Fiberglass Rod", price: 150, catchZoneBonus: 0.015, reelSpeedMult: 1.1, lineStrength: 1.15, description: "Lighter and more responsive.", icon: "/assets/icons/Icons_07.png" },
   { name: "Carbon Rod", price: 400, catchZoneBonus: 0.025, reelSpeedMult: 1.2, lineStrength: 1.3, description: "High-tech carbon fiber build.", icon: "/assets/icons/Icons_07.png" },
@@ -617,7 +825,7 @@ const RODS = [
   { name: "Legendary Rod", price: 1500, catchZoneBonus: 0.05, reelSpeedMult: 1.5, lineStrength: 1.8, description: "Forged from the anchor of a ghost ship.", icon: "/assets/icons/Icons_07.png" },
 ];
 
-const LURES = [
+var LURES = [
   { name: "Basic Worm", price: 0, description: "A plain earthworm. The classic bait.", icon: "/assets/lures/worm.png", rarityBoost: 1.0, type: "live", targets: "-" },
   { name: "Nightcrawler", price: 40, description: "A fat, juicy nightcrawler.", icon: "/assets/lures/nightcrawler.png", rarityBoost: 1.0, type: "live", targets: "Catfish, Bass" },
   { name: "Leech", price: 90, description: "A slimy leech for bottom dwellers.", icon: "/assets/lures/leech.png", rarityBoost: 1.2, type: "live", targets: "Catfish, Eel" },
@@ -636,7 +844,7 @@ const LURES = [
   { name: "Prismatic Lure", price: 750, description: "Rainbow-shifting. Boosts everything.", icon: "/assets/lures/prismatic_lure.png", rarityBoost: 1.8, type: "lure", targets: "All" },
 ];
 
-const CHUM_ITEMS = [
+var CHUM_ITEMS = [
   { name: "Fish Scraps", price: 15, description: "Basic chum. Slight attract.", icon: "/assets/icons/Icons_01.png", rarityBoost: 1.0, duration: 300 },
   { name: "Bread Crumbs", price: 20, description: "Attracts small fish.", icon: "/assets/icons/Icons_02.png", rarityBoost: 1.0, duration: 350 },
   { name: "Corn Mash", price: 25, description: "Attracts bottom feeders.", icon: "/assets/icons/Icons_03.png", rarityBoost: 1.05, duration: 400 },
@@ -659,7 +867,7 @@ const CHUM_ITEMS = [
   { name: "Abyssal Ooze", price: 300, description: "The ultimate chum.", icon: "/assets/icons/Icons_01.png", rarityBoost: 2.5, duration: 600 },
 ];
 
-const WORLD_ZONES = [
+var WORLD_ZONES = [
   { name: "Beach", depth: "Surface", desc: "Sandy shores with crabs and tidal pools.", fish: "Beach Crabs, Minnow", color: "#e6d5a0" },
   { name: "Shallow Waters", depth: "0-15%", desc: "Calm waters near the pier. Easy fishing.", fish: "Minnow, Perch, Eel", color: "#81d4fa" },
   { name: "Pier / Dock", depth: "15-35%", desc: "The main fishing spot. Moderate variety.", fish: "Perch, Bass, Catfish, Salmon", color: "#4fc3f7" },
@@ -670,7 +878,7 @@ const WORLD_ZONES = [
   { name: "Open Sea", depth: "Boat Only", desc: "Accessible only by boat. Vast open waters.", fish: "All species, higher sizes", color: "#1565c0" },
 ];
 
-const MECHANICS = [
+var MECHANICS = [
   { title: "CASTING", desc: "Hold LMB to aim, release to cast. Longer hold = more power. Cast into deeper water for rarer fish." },
   { title: "REELING", desc: "Keep the marker in the catch zone. Click to reel in. Force Bar (SPACE) speeds reel. Resilience (S) lets line out." },
   { title: "FORCE BAR", desc: "Hold SPACEBAR during reeling for active reel power. Drains over time, regenerates when not held." },
@@ -689,7 +897,7 @@ const MECHANICS = [
   { title: "COMBOS", desc: "Catch fish quickly in succession for combo multiplier. Higher combos = more points and gbux." },
 ];
 
-const rarityColors = {
+var rarityColors = {
   common: "var(--common)",
   uncommon: "var(--uncommon)",
   rare: "var(--rare)",
@@ -698,7 +906,7 @@ const rarityColors = {
   ultra_rare: "var(--ultra-rare)",
 };
 
-const rarityStars = {
+var rarityStars = {
   common: "&#9733;",
   uncommon: "&#9733;&#9733;",
   rare: "&#9733;&#9733;&#9733;",
@@ -707,255 +915,245 @@ const rarityStars = {
   ultra_rare: "&#9733;&#9733;&#9733;&#9733;&#9733;",
 };
 
-let editingCard = null;
+var editingCard = null;
 
 function createFishCard(fish, index, category) {
-  const savedImg = localStorage.getItem(`gb_img_${category}_${index}`);
-  const imgSrc = savedImg || fish.img || "";
-  const color = rarityColors[fish.rarity] || "var(--common)";
-  const stars = rarityStars[fish.rarity] || "";
-  const depthPct = fish.minDepth ? Math.round(fish.minDepth * 100) + "%" : "-";
+  var savedImg = localStorage.getItem('gb_img_' + category + '_' + index);
+  var imgSrc = savedImg || fish.img || "";
+  var color = rarityColors[fish.rarity] || "var(--common)";
+  var stars = rarityStars[fish.rarity] || "";
+  var depthPct = fish.minDepth ? Math.round(fish.minDepth * 100) + "%" : "-";
 
-  let statsHTML = "";
-  statsHTML += `<span class="fish-stat"><b>PTS:</b> ${fish.points}</span>`;
-  if (fish.weight !== undefined) statsHTML += `<span class="fish-stat"><b>WT:</b> ${fish.weight}%</span>`;
-  if (fish.speed !== undefined) statsHTML += `<span class="fish-stat"><b>SPD:</b> ${fish.speed}</span>`;
-  if (fish.minDepth !== undefined) statsHTML += `<span class="fish-stat"><b>DEP:</b> ${depthPct}</span>`;
-  if (fish.zone) statsHTML += `<span class="fish-stat"><b>ZONE:</b> ${fish.zone}</span>`;
-  if (fish.scareRadius) statsHTML += `<span class="fish-stat"><b>SCARE:</b> ${fish.scareRadius}px</span>`;
-
-  let tintHTML = "";
-  if (fish.tint) {
-    tintHTML = `<div class="tint-indicator">AURA: ${fish.tint}</div>`;
+  var imgContent = '';
+  if (imgSrc) {
+    imgContent = '<img src="' + imgSrc + '" alt="' + fish.name + '" onerror="this.parentNode.innerHTML=FISH_SILHOUETTE+\'<span class=ph-label>CLICK TO ADD</span>\'">';
+  } else {
+    imgContent = '<div class="fish-placeholder" style="color:' + color + '">' + FISH_SILHOUETTE + '<span class="ph-label">CLICK TO ADD</span></div>';
   }
 
-  const card = document.createElement("div");
-  card.className = "fish-card";
-  card.innerHTML = `
-    <div class="fish-img-wrap" data-category="${category}" data-index="${index}">
-      ${imgSrc ? `<img src="${imgSrc}" alt="${fish.name}" onerror="this.style.display='none'">` : `<span style="font-size:6px;color:var(--text-dim);">NO IMG</span>`}
-    </div>
-    <div class="fish-info">
-      <div class="rarity-badge" style="background:${color}">${fish.rarity.replace("_"," ").toUpperCase()}</div>
-      <div class="fish-name" style="color:${color}">${fish.name}</div>
-      <div class="stars" style="color:${color}">${stars}</div>
-      <div class="fish-desc">${fish.description}</div>
-      <div class="fish-stats">${statsHTML}</div>
-      ${tintHTML}
-    </div>
-  `;
+  var statsHTML = '';
+  statsHTML += '<span class="fish-stat"><b>PTS:</b> ' + fish.points + '</span>';
+  if (fish.weight !== undefined) statsHTML += '<span class="fish-stat"><b>WT:</b> ' + fish.weight + '%</span>';
+  if (fish.speed !== undefined) statsHTML += '<span class="fish-stat"><b>SPD:</b> ' + fish.speed + '</span>';
+  if (fish.minDepth !== undefined) statsHTML += '<span class="fish-stat"><b>DEP:</b> ' + depthPct + '</span>';
+  if (fish.zone) statsHTML += '<span class="fish-stat"><b>ZONE:</b> ' + fish.zone + '</span>';
+  if (fish.scareRadius) statsHTML += '<span class="fish-stat"><b>SCARE:</b> ' + fish.scareRadius + 'px</span>';
 
-  card.querySelector(".fish-img-wrap").addEventListener("click", function() {
-    editingCard = { category, index, element: this };
-    document.getElementById("img-upload").click();
+  var tintHTML = '';
+  if (fish.tint) {
+    tintHTML = '<div class="tint-indicator">AURA: ' + fish.tint + '</div>';
+  }
+
+  var card = document.createElement('div');
+  card.className = 'fish-card';
+  card.innerHTML = '<div class="fish-img-wrap" data-category="' + category + '" data-index="' + index + '">' + imgContent + '</div>' +
+    '<div class="fish-info">' +
+    '<div class="rarity-badge" style="background:' + color + '">' + fish.rarity.replace("_"," ").toUpperCase() + '</div>' +
+    '<div class="fish-name" style="color:' + color + '">' + fish.name + '</div>' +
+    '<div class="stars" style="color:' + color + '">' + stars + '</div>' +
+    '<div class="fish-desc">' + fish.description + '</div>' +
+    '<div class="fish-stats">' + statsHTML + '</div>' +
+    tintHTML +
+    '</div>';
+
+  card.querySelector('.fish-img-wrap').addEventListener('click', function() {
+    editingCard = { category: category, index: index, element: this };
+    document.getElementById('img-upload').click();
   });
 
   return card;
 }
 
 function createEquipCard(item) {
-  let statsHTML = "";
-  if (item.price !== undefined) statsHTML += `<span class="fish-stat" style="color:#2ecc71"><b>${item.price === 0 ? "FREE" : item.price + "g"}</b></span>`;
-  if (item.catchZoneBonus !== undefined) statsHTML += `<span class="fish-stat"><b>ZONE+</b> ${item.catchZoneBonus}</span>`;
-  if (item.reelSpeedMult !== undefined) statsHTML += `<span class="fish-stat"><b>REEL:</b> ${item.reelSpeedMult}x</span>`;
-  if (item.lineStrength !== undefined) statsHTML += `<span class="fish-stat"><b>STR:</b> ${item.lineStrength}x</span>`;
-  if (item.rarityBoost !== undefined && item.rarityBoost !== 1.0) statsHTML += `<span class="fish-stat"><b>RAR:</b> ${item.rarityBoost}x</span>`;
-  if (item.type) statsHTML += `<span class="fish-stat"><b>TYPE:</b> ${item.type.toUpperCase()}</span>`;
-  if (item.targets) statsHTML += `<span class="fish-stat"><b>TARG:</b> ${item.targets}</span>`;
-  if (item.duration) statsHTML += `<span class="fish-stat"><b>DUR:</b> ${Math.round(item.duration/60)}min</span>`;
+  var statsHTML = '';
+  if (item.price !== undefined) statsHTML += '<span class="fish-stat" style="color:#2ecc71"><b>' + (item.price === 0 ? "FREE" : item.price + "g") + '</b></span>';
+  if (item.catchZoneBonus !== undefined) statsHTML += '<span class="fish-stat"><b>ZONE+</b> ' + item.catchZoneBonus + '</span>';
+  if (item.reelSpeedMult !== undefined) statsHTML += '<span class="fish-stat"><b>REEL:</b> ' + item.reelSpeedMult + 'x</span>';
+  if (item.lineStrength !== undefined) statsHTML += '<span class="fish-stat"><b>STR:</b> ' + item.lineStrength + 'x</span>';
+  if (item.rarityBoost !== undefined && item.rarityBoost !== 1.0) statsHTML += '<span class="fish-stat"><b>RAR:</b> ' + item.rarityBoost + 'x</span>';
+  if (item.type) statsHTML += '<span class="fish-stat"><b>TYPE:</b> ' + item.type.toUpperCase() + '</span>';
+  if (item.targets) statsHTML += '<span class="fish-stat"><b>TARG:</b> ' + item.targets + '</span>';
+  if (item.duration) statsHTML += '<span class="fish-stat"><b>DUR:</b> ' + Math.round(item.duration/60) + 'min</span>';
 
-  return `
-    <div class="equip-card">
-      <div class="equip-icon"><img src="${item.icon}" alt="${item.name}" onerror="this.style.display='none'"></div>
-      <div style="flex:1;">
-        <div class="equip-name" style="color:var(--text-primary)">${item.name}</div>
-        <div class="equip-desc">${item.description}</div>
-        <div class="equip-stats">${statsHTML}</div>
-      </div>
-    </div>
-  `;
+  return '<div class="equip-card">' +
+    '<div class="equip-icon"><img src="' + item.icon + '" alt="' + item.name + '" onerror="this.style.display=\'none\'"></div>' +
+    '<div style="flex:1;">' +
+    '<div class="equip-name" style="color:var(--text-primary)">' + item.name + '</div>' +
+    '<div class="equip-desc">' + item.description + '</div>' +
+    '<div class="equip-stats">' + statsHTML + '</div>' +
+    '</div></div>';
 }
 
 function populateBoard() {
-  const commonFish = FISH_SPECIES.filter(f => f.rarity === "common");
-  const uncommonFish = FISH_SPECIES.filter(f => f.rarity === "uncommon");
+  var commonFish = FISH_SPECIES.filter(function(f) { return f.rarity === "common"; });
+  var uncommonFish = FISH_SPECIES.filter(function(f) { return f.rarity === "uncommon"; });
 
   document.getElementById("common-count").textContent = commonFish.length + " SPECIES";
   document.getElementById("uncommon-count").textContent = uncommonFish.length + " SPECIES";
   document.getElementById("rare-count").textContent = RARE_FISH.length + " SPECIES";
   document.getElementById("epic-count").textContent = EPIC_FISH.length + " SPECIES";
-  document.getElementById("legendary-count").textContent = FISH_SPECIES.filter(f => f.rarity === "legendary").length + " SPECIES";
+  document.getElementById("legendary-count").textContent = FISH_SPECIES.filter(function(f) { return f.rarity === "legendary"; }).length + " SPECIES";
   document.getElementById("ultra-count").textContent = ULTRA_RARE_FISH.length + " SPECIES";
   document.getElementById("crab-count").textContent = BEACH_CRABS.length + " SPECIES";
   document.getElementById("lure-count").textContent = LURES.length + " ITEMS";
   document.getElementById("chum-count").textContent = CHUM_ITEMS.length + " ITEMS";
 
-  const commonGrid = document.getElementById("common-fish");
-  commonFish.forEach((f, i) => commonGrid.appendChild(createFishCard(f, i, "common")));
+  var commonGrid = document.getElementById("common-fish");
+  commonFish.forEach(function(f, i) { commonGrid.appendChild(createFishCard(f, i, "common")); });
 
-  const uncommonGrid = document.getElementById("uncommon-fish");
-  uncommonFish.forEach((f, i) => uncommonGrid.appendChild(createFishCard(f, i, "uncommon")));
+  var uncommonGrid = document.getElementById("uncommon-fish");
+  uncommonFish.forEach(function(f, i) { uncommonGrid.appendChild(createFishCard(f, i, "uncommon")); });
 
-  const rareGrid = document.getElementById("rare-fish");
-  RARE_FISH.forEach((f, i) => rareGrid.appendChild(createFishCard(f, i, "rare")));
+  var rareGrid = document.getElementById("rare-fish");
+  RARE_FISH.forEach(function(f, i) { rareGrid.appendChild(createFishCard(f, i, "rare")); });
 
-  const epicGrid = document.getElementById("epic-fish");
-  EPIC_FISH.forEach((f, i) => epicGrid.appendChild(createFishCard(f, i, "epic")));
+  var epicGrid = document.getElementById("epic-fish");
+  EPIC_FISH.forEach(function(f, i) { epicGrid.appendChild(createFishCard(f, i, "epic")); });
 
-  const legendaryGrid = document.getElementById("legendary-fish");
-  FISH_SPECIES.filter(f => f.rarity === "legendary").forEach((f, i) => legendaryGrid.appendChild(createFishCard(f, i, "legendary")));
+  var legendaryGrid = document.getElementById("legendary-fish");
+  FISH_SPECIES.filter(function(f) { return f.rarity === "legendary"; }).forEach(function(f, i) { legendaryGrid.appendChild(createFishCard(f, i, "legendary")); });
 
-  const ultraGrid = document.getElementById("ultra-fish");
-  ULTRA_RARE_FISH.forEach((f, i) => ultraGrid.appendChild(createFishCard(f, i, "ultra")));
+  var ultraGrid = document.getElementById("ultra-fish");
+  ULTRA_RARE_FISH.forEach(function(f, i) { ultraGrid.appendChild(createFishCard(f, i, "ultra")); });
 
-  const crabGrid = document.getElementById("crab-fish");
-  BEACH_CRABS.forEach((f, i) => crabGrid.appendChild(createFishCard(f, i, "crab")));
+  var crabGrid = document.getElementById("crab-fish");
+  BEACH_CRABS.forEach(function(f, i) { crabGrid.appendChild(createFishCard(f, i, "crab")); });
 
-  const predatorGrid = document.getElementById("predator-fish");
-  PREDATORS.forEach((f, i) => predatorGrid.appendChild(createFishCard(f, i, "predator")));
+  var predatorGrid = document.getElementById("predator-fish");
+  PREDATORS.forEach(function(f, i) { predatorGrid.appendChild(createFishCard(f, i, "predator")); });
 
-  const rodsGrid = document.getElementById("rods-grid");
-  RODS.forEach(r => rodsGrid.innerHTML += createEquipCard(r));
+  var rodsGrid = document.getElementById("rods-grid");
+  RODS.forEach(function(r) { rodsGrid.innerHTML += createEquipCard(r); });
 
-  const luresGrid = document.getElementById("lures-grid");
-  LURES.forEach(l => luresGrid.innerHTML += createEquipCard(l));
+  var luresGrid = document.getElementById("lures-grid");
+  LURES.forEach(function(l) { luresGrid.innerHTML += createEquipCard(l); });
 
-  const chumGrid = document.getElementById("chum-grid");
-  CHUM_ITEMS.forEach(c => chumGrid.innerHTML += createEquipCard(c));
+  var chumGrid = document.getElementById("chum-grid");
+  CHUM_ITEMS.forEach(function(c) { chumGrid.innerHTML += createEquipCard(c); });
 
-  const BETA_EGGS = [
+  var BETA_EGGS = [
     { name: "Crimson BetaXGruda Egg", icon: "/assets/eggs/egg_red.png", description: "Contains a crimson beta fish character. Hatches with fire affinity. Cost: 1 Head of Legends" },
     { name: "Emerald BetaXGruda Egg", icon: "/assets/eggs/egg_green.png", description: "Contains an emerald beta fish character. Hatches with nature affinity. Cost: 1 Head of Legends" },
     { name: "Sapphire BetaXGruda Egg", icon: "/assets/eggs/egg_blue.png", description: "Contains a sapphire beta fish character. Hatches with water affinity. Cost: 1 Head of Legends" },
     { name: "Ivory BetaXGruda Egg", icon: "/assets/eggs/egg_white.png", description: "Contains an ivory beta fish character. Hatches with spirit affinity. Cost: 1 Head of Legends" },
   ];
-  const WARLORD_EGGS = [
+  var WARLORD_EGGS = [
     { name: "Warlord Egg: Dusk Tyrant", icon: "/assets/eggs/warlord_purple.png", description: "Contains the Dusk Tyrant warlord. Commands shadow armies. Cost: 2 Heads of Legends" },
     { name: "Warlord Egg: Iron Sovereign", icon: "/assets/eggs/warlord_silver.png", description: "Contains the Iron Sovereign warlord. Unbreakable defense. Cost: 2 Heads of Legends" },
     { name: "Warlord Egg: Venom King", icon: "/assets/eggs/warlord_green.png", description: "Contains the Venom King warlord. Poisons all who oppose. Cost: 2 Heads of Legends" },
   ];
 
   function createEggCard(egg) {
-    return `<div class="equip-card" style="border-color:rgba(168,85,247,0.3);">
-      <div style="width:48px;height:48px;border-radius:8px;overflow:hidden;background:rgba(0,0,0,0.4);flex-shrink:0;">
-        <img src="${egg.icon}" alt="${egg.name}" style="width:48px;height:48px;object-fit:cover;">
-      </div>
-      <div style="flex:1;">
-        <div class="equip-name" style="color:#a855f7">${egg.name}</div>
-        <div class="equip-desc">${egg.description}</div>
-      </div>
-    </div>`;
+    return '<div class="equip-card" style="border-color:rgba(168,85,247,0.25);">' +
+      '<div style="width:48px;height:48px;border-radius:8px;overflow:hidden;background:rgba(0,0,0,0.4);flex-shrink:0;">' +
+      '<img src="' + egg.icon + '" alt="' + egg.name + '" style="width:48px;height:48px;object-fit:cover;">' +
+      '</div>' +
+      '<div style="flex:1;">' +
+      '<div class="equip-name" style="color:#a855f7">' + egg.name + '</div>' +
+      '<div class="equip-desc">' + egg.description + '</div>' +
+      '</div></div>';
   }
 
-  const betaGrid = document.getElementById("beta-eggs-grid");
-  BETA_EGGS.forEach(e => betaGrid.innerHTML += createEggCard(e));
+  var betaGrid = document.getElementById("beta-eggs-grid");
+  BETA_EGGS.forEach(function(e) { betaGrid.innerHTML += createEggCard(e); });
 
-  const warlordGrid = document.getElementById("warlord-eggs-grid");
-  WARLORD_EGGS.forEach(e => warlordGrid.innerHTML += createEggCard(e));
+  var warlordGrid = document.getElementById("warlord-eggs-grid");
+  WARLORD_EGGS.forEach(function(e) { warlordGrid.innerHTML += createEggCard(e); });
 
-  const zonesDiv = document.getElementById("world-zones");
-  WORLD_ZONES.forEach(z => {
-    zonesDiv.innerHTML += `
-      <div class="zone-card">
-        <div style="width:100%;height:6px;background:${z.color};border-radius:3px;margin-bottom:8px;"></div>
-        <div class="zone-name" style="color:${z.color === "#0a1929" ? "#90a4ae" : z.color}">${z.name}</div>
-        <div style="font-size:6px;color:var(--text-dim);margin-bottom:4px;">${z.depth}</div>
-        <div class="zone-desc">${z.desc}</div>
-        <div class="zone-fish">FISH: ${z.fish}</div>
-      </div>
-    `;
+  var zonesDiv = document.getElementById("world-zones");
+  WORLD_ZONES.forEach(function(z) {
+    var textColor = z.color === "#0a1929" ? "#90a4ae" : z.color;
+    zonesDiv.innerHTML += '<div class="zone-card" style="border-color:' + z.color + '20;">' +
+      '<div style="position:absolute;top:0;left:0;right:0;height:4px;background:' + z.color + ';border-radius:10px 10px 0 0;"></div>' +
+      '<div class="zone-name" style="color:' + textColor + '">' + z.name + '</div>' +
+      '<div class="zone-depth">' + z.depth + '</div>' +
+      '<div class="zone-desc">' + z.desc + '</div>' +
+      '<div class="zone-fish">FISH: ' + z.fish + '</div>' +
+      '</div>';
   });
 
-  const mechGrid = document.getElementById("mechanics-grid");
-  MECHANICS.forEach(m => {
-    mechGrid.innerHTML += `
-      <div class="equip-card">
-        <div style="flex:1;">
-          <div class="equip-name" style="color:var(--accent)">${m.title}</div>
-          <div class="equip-desc">${m.desc}</div>
-        </div>
-      </div>
-    `;
+  var mechGrid = document.getElementById("mechanics-grid");
+  MECHANICS.forEach(function(m) {
+    mechGrid.innerHTML += '<div class="equip-card">' +
+      '<div style="flex:1;">' +
+      '<div class="equip-name" style="color:var(--accent)">' + m.title + '</div>' +
+      '<div class="equip-desc">' + m.desc + '</div>' +
+      '</div></div>';
   });
 }
 
 document.getElementById("img-upload").addEventListener("change", function(e) {
   if (!editingCard || !e.target.files[0]) return;
-  const reader = new FileReader();
+  var reader = new FileReader();
   reader.onload = function(ev) {
-    const dataUrl = ev.target.result;
-    localStorage.setItem(`gb_img_${editingCard.category}_${editingCard.index}`, dataUrl);
-    const wrap = editingCard.element;
-    let img = wrap.querySelector("img");
+    var dataUrl = ev.target.result;
+    localStorage.setItem('gb_img_' + editingCard.category + '_' + editingCard.index, dataUrl);
+    var wrap = editingCard.element;
+    var img = wrap.querySelector('img');
     if (!img) {
-      wrap.innerHTML = "";
-      img = document.createElement("img");
+      wrap.innerHTML = '';
+      img = document.createElement('img');
       wrap.appendChild(img);
     }
     img.src = dataUrl;
-    img.style.display = "";
+    img.style.display = '';
     editingCard = null;
   };
   reader.readAsDataURL(e.target.files[0]);
-  e.target.value = "";
+  e.target.value = '';
 });
 
-let scale = 1;
-let panX = 0;
-let panY = 0;
-let isDragging = false;
-let dragStartX = 0;
-let dragStartY = 0;
-let startPanX = 0;
-let startPanY = 0;
+var scale = 1;
+var panX = 0;
+var panY = 0;
+var isDragging = false;
+var dragStartX = 0;
+var dragStartY = 0;
+var startPanX = 0;
+var startPanY = 0;
 
-const container = document.getElementById("board-container");
+var container = document.getElementById("board-container");
 
 function applyTransform() {
-  container.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+  container.style.transform = 'translate(' + panX + 'px, ' + panY + 'px) scale(' + scale + ')';
   document.getElementById("zoom-level").textContent = Math.round(scale * 100) + "%";
   updateMinimap();
 }
 
 function updateMinimap() {
-  const board = document.getElementById("board");
-  const bw = board.offsetWidth;
-  const bh = board.offsetHeight;
-  const mm = document.getElementById("minimap");
-  const mmW = mm.offsetWidth;
-  const mmH = mm.offsetHeight;
-  const vp = document.getElementById("minimap-viewport");
+  var board = document.getElementById("board");
+  var bw = board.offsetWidth;
+  var bh = board.offsetHeight;
+  var mm = document.getElementById("minimap");
+  var mmW = mm.offsetWidth;
+  var mmH = mm.offsetHeight;
+  var vp = document.getElementById("minimap-viewport");
 
-  const scaleX = mmW / (bw * scale + window.innerWidth);
-  const scaleY = mmH / (bh * scale + window.innerHeight);
-  const s = Math.min(scaleX, scaleY);
+  var scaleX = mmW / (bw * scale + window.innerWidth);
+  var scaleY = mmH / (bh * scale + window.innerHeight);
+  var s = Math.min(scaleX, scaleY);
 
-  const vpW = window.innerWidth * s;
-  const vpH = window.innerHeight * s;
-  const vpX = (-panX) * s;
-  const vpY = (-panY) * s;
+  var vpW = window.innerWidth * s;
+  var vpH = window.innerHeight * s;
+  var vpX = (-panX) * s;
+  var vpY = (-panY) * s;
 
-  vp.style.left = Math.max(0, vpX) + "px";
-  vp.style.top = Math.max(0, vpY) + "px";
-  vp.style.width = vpW + "px";
-  vp.style.height = vpH + "px";
+  vp.style.left = Math.max(0, vpX) + 'px';
+  vp.style.top = Math.max(0, vpY) + 'px';
+  vp.style.width = vpW + 'px';
+  vp.style.height = vpH + 'px';
 }
 
 window.addEventListener("wheel", function(e) {
   e.preventDefault();
-  const rect = document.body.getBoundingClientRect();
-  const mx = e.clientX;
-  const my = e.clientY;
-
-  const worldX = (mx - panX) / scale;
-  const worldY = (my - panY) / scale;
-
-  const delta = e.deltaY > 0 ? -0.1 : 0.1;
+  var mx = e.clientX;
+  var my = e.clientY;
+  var worldX = (mx - panX) / scale;
+  var worldY = (my - panY) / scale;
+  var delta = e.deltaY > 0 ? -0.1 : 0.1;
   scale = Math.max(0.15, Math.min(3, scale + delta));
-
   panX = mx - worldX * scale;
   panY = my - worldY * scale;
-
   applyTransform();
 }, { passive: false });
 
@@ -982,10 +1180,10 @@ document.addEventListener("mouseup", function() {
 });
 
 document.getElementById("zoom-in").addEventListener("click", function() {
-  const cx = window.innerWidth / 2;
-  const cy = window.innerHeight / 2;
-  const worldX = (cx - panX) / scale;
-  const worldY = (cy - panY) / scale;
+  var cx = window.innerWidth / 2;
+  var cy = window.innerHeight / 2;
+  var worldX = (cx - panX) / scale;
+  var worldY = (cy - panY) / scale;
   scale = Math.min(3, scale + 0.15);
   panX = cx - worldX * scale;
   panY = cy - worldY * scale;
@@ -993,10 +1191,10 @@ document.getElementById("zoom-in").addEventListener("click", function() {
 });
 
 document.getElementById("zoom-out").addEventListener("click", function() {
-  const cx = window.innerWidth / 2;
-  const cy = window.innerHeight / 2;
-  const worldX = (cx - panX) / scale;
-  const worldY = (cy - panY) / scale;
+  var cx = window.innerWidth / 2;
+  var cy = window.innerHeight / 2;
+  var worldX = (cx - panX) / scale;
+  var worldY = (cy - panY) / scale;
   scale = Math.max(0.15, scale - 0.15);
   panX = cx - worldX * scale;
   panY = cy - worldY * scale;
