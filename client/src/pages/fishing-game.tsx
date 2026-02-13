@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState, useCallback } from "react";
 import beachCrabSheetUrl from "@assets/fish_sprite_sheet_16_1770947489402.png";
+import bgmUrl from "@assets/Untitled_1770957824050.mp3";
 
 const SCALE = 4;
 const FRAME_H = 48;
@@ -365,6 +366,7 @@ interface Ripple {
 export default function FishingGame() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gameLoopRef = useRef<number>(0);
+  const bgmRef = useRef<HTMLAudioElement | null>(null);
   const stateRef = useRef({
     gameState: "intro" as GameState,
     score: 0,
@@ -995,6 +997,13 @@ export default function FishingGame() {
     resize();
     window.addEventListener("resize", resize);
 
+    if (!bgmRef.current) {
+      const audio = new Audio(bgmUrl);
+      audio.loop = true;
+      audio.volume = 0.3;
+      bgmRef.current = audio;
+    }
+
     const onDocMouseMove = (e: MouseEvent) => {
       const st = stateRef.current;
       st.mouseX = e.clientX;
@@ -1229,6 +1238,16 @@ export default function FishingGame() {
       const rawDt = Math.min((timestamp - lastTime) / 16.67, 3);
       const dt = s.gamePaused ? 0 : rawDt;
       lastTime = timestamp;
+
+      const inGameMode = s.gameState !== "intro" && s.gameState !== "title" && s.gameState !== "charSelect";
+      if (bgmRef.current) {
+        if (inGameMode && bgmRef.current.paused) {
+          bgmRef.current.play().catch(() => {});
+        } else if (!inGameMode && !bgmRef.current.paused) {
+          bgmRef.current.pause();
+          bgmRef.current.currentTime = 0;
+        }
+      }
 
       const W = canvas.width;
       const H = canvas.height;
@@ -4330,6 +4349,10 @@ export default function FishingGame() {
       document.removeEventListener("touchend", onDocTouchEnd);
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("keyup", onKeyUp);
+      if (bgmRef.current) {
+        bgmRef.current.pause();
+        bgmRef.current = null;
+      }
     };
   }, [loadImage, spawnFish, addParticles, addRipple, syncUI, generateBounties, getSellPrice]);
 
