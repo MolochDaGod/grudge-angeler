@@ -49,7 +49,17 @@ The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a f
 - **NPC System:** 5 interactive NPCs on the pier/dock area with three roles: shopkeeper (sells chum/lures at unique prices), requester (asks for specific fish types with quantity goals), and mission_giver (challenges to catch fish of specific weight). NPCs use 48x48 sprite sheets with idle animations. Interaction via E key when within 60px proximity. Full UI overlay with Talk/Shop/Request/Mission tabs. Progress tracked automatically on fish catch. Sprites in `/assets/npcs/[1-12]/`.
 - **Core Features:** Random fish sizes, combo system, rod leveling, fish collection log, dynamic day/night cycle (30-minute), weather system, far background parallax, water effects (ripples, particles, screen shake), catch cutscenes, character movement (walking, swimming), and an interactive `gameboard.html` reference board.
 
+- **Leaderboard System:** Live leaderboard backed by PostgreSQL with three categories: Biggest Single Catch (by weight), Most Catches in 20-Minute Session, and Legendary/Ultra-Rare Catches. Scores auto-submit on each fish catch via REST API. Accessible in-game via LEADERBOARD button (bottom-left). Tabs switch between categories. Shows top 20 entries with gold/silver/bronze medal styling.
+- **PWA Support:** Web App Manifest (`manifest.json`) and Service Worker (`sw.js`) enable "Install App" / "Add to Home Screen" functionality. DOWNLOAD button in-game triggers install prompt on supported browsers.
+
+## Database
+- **PostgreSQL (Neon-backed):** Stores leaderboard entries. Schema defined in `shared/schema.ts` using Drizzle ORM.
+- **Tables:** `users` (unused placeholder), `leaderboard_entries` (id, player_name, category, fish_name, fish_rarity, value, score, created_at).
+- **API Routes:** `GET /api/leaderboard/:category` (fetch top entries), `POST /api/leaderboard` (submit new entry).
+
 ## External Dependencies
 - **React:** Frontend JavaScript library for building user interfaces.
 - **Express:** Minimal Node.js web application framework used for serving static assets.
 - **HTML5 Canvas:** Core technology for 2D graphics rendering.
+- **Drizzle ORM:** TypeScript ORM for PostgreSQL database management.
+- **pg:** PostgreSQL client for Node.js.

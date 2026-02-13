@@ -522,6 +522,12 @@ interface Ripple {
 }
 
 export default function FishingGame() {
+  useEffect(() => {
+    const handler = (e: Event) => { e.preventDefault(); (window as any).__pwaInstallPrompt = e; };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gameLoopRef = useRef<number>(0);
   const bgmRef = useRef<HTMLAudioElement | null>(null);
@@ -632,6 +638,10 @@ export default function FishingGame() {
     biggestCatchName: "",
     biggestCatchSize: 0,
     biggestCatchWeight: 0,
+    sessionStartTime: Date.now(),
+    sessionCatches: 0,
+    showLeaderboard: false,
+    leaderboardTab: "biggest" as "biggest" | "session" | "legendary",
     lastSellPrice: 0,
     lastFishWeight: 0,
     playerLevel: 1,
@@ -829,6 +839,11 @@ export default function FishingGame() {
     ownedEggs: Array.from({ length: BETAXGRUDA_EGGS.length }, () => false) as boolean[],
     headOfLegendsNotif: "" as string,
     headOfLegendsNotifTimer: 0,
+    showLeaderboard: false,
+    leaderboardTab: "biggest" as "biggest" | "session" | "legendary",
+    leaderboardData: [] as any[],
+    leaderboardLoading: false,
+    showInstallPrompt: false,
     underwaterPlants: [] as UnderwaterPlant[],
     plantsInitialized: false,
   });
@@ -1188,6 +1203,11 @@ export default function FishingGame() {
       ownedEggs: [...s.ownedEggs],
       headOfLegendsNotif: s.headOfLegendsNotif,
       headOfLegendsNotifTimer: s.headOfLegendsNotifTimer,
+      showLeaderboard: s.showLeaderboard,
+      leaderboardTab: s.leaderboardTab,
+      leaderboardData: s.leaderboardData || [],
+      leaderboardLoading: s.leaderboardLoading || false,
+      showInstallPrompt: s.showInstallPrompt || false,
       underwaterPlants: s.underwaterPlants,
       plantsInitialized: s.plantsInitialized,
     });
@@ -4138,6 +4158,55 @@ export default function FishingGame() {
             s.biggestCatchWeight = fishWeight;
           }
 
+          s.sessionCatches++;
+
+          if (s.playerName && s.currentCatch) {
+            const submitData = {
+              playerName: s.playerName,
+              fishName: name,
+              fishRarity: s.currentCatch.rarity,
+              value: fishWeight,
+              score: s.score,
+              category: "biggest_catch",
+            };
+            fetch("/api/leaderboard", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(submitData),
+            }).catch(() => {});
+
+            const sessionMinutes = (Date.now() - s.sessionStartTime) / 60000;
+            if (sessionMinutes <= 20) {
+              fetch("/api/leaderboard", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  playerName: s.playerName,
+                  fishName: null,
+                  fishRarity: null,
+                  value: s.sessionCatches,
+                  score: s.score,
+                  category: "session_catches",
+                }),
+              }).catch(() => {});
+            }
+
+            if (s.currentCatch.rarity === "legendary" || s.currentCatch.rarity === "ultra_rare") {
+              fetch("/api/leaderboard", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  playerName: s.playerName,
+                  fishName: name,
+                  fishRarity: s.currentCatch.rarity,
+                  value: fishWeight,
+                  score: s.score,
+                  category: "legendary_catches",
+                }),
+              }).catch(() => {});
+            }
+          }
+
           const bountyIdx = s.bounties.findIndex(b => b.fishName === name && sizeBonus >= b.minSize);
           if (bountyIdx >= 0) {
             const bountyTacticsBonus = 1 + s.attributes.Tactics * 0.01;
@@ -6776,6 +6845,162 @@ export default function FishingGame() {
           borderRadius: 6, padding: "4px 16px", fontSize: 8, color: "#f1c40f",
         }}>
           GAME PAUSED - TRACE MODE
+        </div>
+      )}
+
+      {/* Leaderboard Toggle Button */}
+      {uiState.gameState !== "title" && uiState.gameState !== "charSelect" && uiState.gameState !== "intro" && (
+        <div
+          data-testid="button-leaderboard"
+          onClick={() => {
+            const s = stateRef.current;
+            s.showLeaderboard = !s.showLeaderboard;
+            if (s.showLeaderboard) {
+              setUiState(prev => ({ ...prev, showLeaderboard: true, leaderboardLoading: true }));
+              fetch(`/api/leaderboard/${s.leaderboardTab === "biggest" ? "biggest_catch" : s.leaderboardTab === "session" ? "session_catches" : "legendary_catches"}?limit=20`)
+                .then(r => r.json())
+                .then(data => setUiState(prev => ({ ...prev, leaderboardData: data, leaderboardLoading: false })))
+                .catch(() => setUiState(prev => ({ ...prev, leaderboardLoading: false })));
+            } else {
+              syncUI();
+            }
+          }}
+          style={{
+            position: "absolute", bottom: 14, left: 14, zIndex: 55,
+            background: "rgba(8,15,25,0.9)", border: "1px solid rgba(79,195,247,0.4)",
+            borderRadius: 8, padding: "8px 14px", cursor: "pointer",
+            color: "#4fc3f7", fontSize: 9, fontFamily: "'Press Start 2P', monospace",
+            display: "flex", alignItems: "center", gap: 8, pointerEvents: "auto",
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 15l-3-3h6l-3 3z"/><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M7 21h10"/><path d="M12 17v4"/></svg>
+          LEADERBOARD
+        </div>
+      )}
+
+      {/* Install App Button */}
+      {uiState.gameState !== "title" && uiState.gameState !== "charSelect" && uiState.gameState !== "intro" && (
+        <div
+          data-testid="button-install-app"
+          onClick={() => {
+            if ((window as any).__pwaInstallPrompt) {
+              (window as any).__pwaInstallPrompt.prompt();
+              (window as any).__pwaInstallPrompt.userChoice.then(() => {
+                (window as any).__pwaInstallPrompt = null;
+              });
+            } else {
+              alert("To install: use your browser menu and select 'Install App' or 'Add to Home Screen'");
+            }
+          }}
+          style={{
+            position: "absolute", bottom: 14, left: 170, zIndex: 55,
+            background: "rgba(8,15,25,0.9)", border: "1px solid rgba(46,204,113,0.4)",
+            borderRadius: 8, padding: "8px 14px", cursor: "pointer",
+            color: "#2ecc71", fontSize: 9, fontFamily: "'Press Start 2P', monospace",
+            display: "flex", alignItems: "center", gap: 8, pointerEvents: "auto",
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          DOWNLOAD
+        </div>
+      )}
+
+      {/* Leaderboard Overlay */}
+      {uiState.showLeaderboard && (
+        <div style={{
+          position: "absolute", inset: 0, zIndex: 60,
+          background: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center",
+          fontFamily: "'Press Start 2P', monospace", pointerEvents: "auto",
+        }} data-testid="leaderboard-overlay">
+          <div style={{
+            background: "linear-gradient(135deg, rgba(10,25,50,0.98), rgba(5,15,35,0.98))",
+            border: "2px solid rgba(79,195,247,0.3)", borderRadius: 16, padding: 28,
+            width: "min(600px, 90vw)", maxHeight: "80vh", display: "flex", flexDirection: "column",
+            boxShadow: "0 0 60px rgba(79,195,247,0.1)",
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+              <div style={{ color: "#4fc3f7", fontSize: 14, letterSpacing: 2 }}>LEADERBOARD</div>
+              <div
+                data-testid="button-close-leaderboard"
+                onClick={() => { stateRef.current.showLeaderboard = false; syncUI(); }}
+                style={{ color: "#78909c", fontSize: 16, cursor: "pointer", padding: "4px 8px" }}
+              >X</div>
+            </div>
+
+            <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+              {(["biggest", "session", "legendary"] as const).map(tab => (
+                <div
+                  key={tab}
+                  data-testid={`tab-leaderboard-${tab}`}
+                  onClick={() => {
+                    stateRef.current.leaderboardTab = tab;
+                    const cat = tab === "biggest" ? "biggest_catch" : tab === "session" ? "session_catches" : "legendary_catches";
+                    setUiState(prev => ({ ...prev, leaderboardTab: tab, leaderboardLoading: true }));
+                    fetch(`/api/leaderboard/${cat}?limit=20`)
+                      .then(r => r.json())
+                      .then(data => setUiState(prev => ({ ...prev, leaderboardData: data, leaderboardLoading: false })))
+                      .catch(() => setUiState(prev => ({ ...prev, leaderboardLoading: false })));
+                  }}
+                  style={{
+                    flex: 1, textAlign: "center", padding: "8px 4px", cursor: "pointer",
+                    fontSize: 7, letterSpacing: 1, borderRadius: 6,
+                    background: uiState.leaderboardTab === tab ? "rgba(79,195,247,0.2)" : "rgba(255,255,255,0.03)",
+                    border: `1px solid ${uiState.leaderboardTab === tab ? "rgba(79,195,247,0.5)" : "rgba(255,255,255,0.08)"}`,
+                    color: uiState.leaderboardTab === tab ? "#4fc3f7" : "#78909c",
+                  }}
+                >
+                  {tab === "biggest" ? "BIGGEST CATCH" : tab === "session" ? "20 MIN SESSION" : "LEGENDARY"}
+                </div>
+              ))}
+            </div>
+
+            <div style={{ flex: 1, overflowY: "auto", minHeight: 200 }}>
+              {uiState.leaderboardLoading ? (
+                <div style={{ textAlign: "center", color: "#4fc3f7", fontSize: 8, padding: 40 }}>LOADING...</div>
+              ) : uiState.leaderboardData.length === 0 ? (
+                <div style={{ textAlign: "center", color: "#546e7a", fontSize: 8, padding: 40 }}>NO ENTRIES YET - BE THE FIRST!</div>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <div style={{ display: "flex", padding: "6px 10px", color: "#546e7a", fontSize: 6, borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                    <div style={{ width: 30 }}>#</div>
+                    <div style={{ flex: 1 }}>PLAYER</div>
+                    {uiState.leaderboardTab !== "session" && <div style={{ width: 100 }}>FISH</div>}
+                    <div style={{ width: 70, textAlign: "right" }}>{uiState.leaderboardTab === "session" ? "CATCHES" : "WEIGHT"}</div>
+                    <div style={{ width: 70, textAlign: "right" }}>SCORE</div>
+                  </div>
+                  {uiState.leaderboardData.map((entry: any, i: number) => {
+                    const isTop3 = i < 3;
+                    const medalColors = ["#ffd54f", "#b0bec5", "#cd7f32"];
+                    return (
+                      <div key={entry.id || i} style={{
+                        display: "flex", alignItems: "center", padding: "8px 10px", borderRadius: 6,
+                        background: isTop3 ? `rgba(${i === 0 ? "241,196,15" : i === 1 ? "176,190,197" : "205,127,50"},0.08)` : "rgba(255,255,255,0.02)",
+                        border: `1px solid ${isTop3 ? `rgba(${i === 0 ? "241,196,15" : i === 1 ? "176,190,197" : "205,127,50"},0.2)` : "rgba(255,255,255,0.03)"}`,
+                      }}>
+                        <div style={{ width: 30, color: isTop3 ? medalColors[i] : "#546e7a", fontSize: isTop3 ? 10 : 7, fontWeight: "bold" }}>
+                          {i + 1}
+                        </div>
+                        <div style={{ flex: 1, color: isTop3 ? "#e0e0e0" : "#90a4ae", fontSize: 7 }}>
+                          {entry.playerName}
+                        </div>
+                        {uiState.leaderboardTab !== "session" && (
+                          <div style={{ width: 100, fontSize: 6, color: entry.fishRarity === "ultra_rare" ? "#ff4060" : entry.fishRarity === "legendary" ? "#f0a020" : "#78909c" }}>
+                            {entry.fishName || "-"}
+                          </div>
+                        )}
+                        <div style={{ width: 70, textAlign: "right", color: "#4fc3f7", fontSize: 8 }}>
+                          {uiState.leaderboardTab === "session" ? Math.round(entry.value) : entry.value?.toFixed(1)}
+                        </div>
+                        <div style={{ width: 70, textAlign: "right", color: "#f1c40f", fontSize: 7 }}>
+                          {entry.score}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
