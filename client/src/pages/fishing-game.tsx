@@ -516,10 +516,12 @@ export default function FishingGame() {
 
   const spawnFish = useCallback((canvasW: number, waterStartY: number, canvasH: number, spawnWorldX?: number) => {
     const s = stateRef.current;
-    const pierWorldX = canvasW * 0.45 - 80;
+    const shopCenterX = canvasW * 0.85 + (192 * 2.2) / 2;
     const centerX = spawnWorldX ?? (-s.cameraX + canvasW / 2);
-    const distFromShore = Math.max(0, pierWorldX - centerX);
-    const distRatio = Math.min(1, distFromShore / (canvasW * 3));
+    const distLeft = Math.max(0, shopCenterX - centerX);
+    const distRight = Math.max(0, centerX - shopCenterX);
+    const distRatio = Math.min(1, distLeft / (canvasW * 4));
+    const rightRatio = Math.min(1, distRight / (canvasW * 4));
 
     const lure = LURES[s.equippedLure];
     const wisdomBoost = 1 + s.attributes.Wisdom * 0.01 * (1 + s.attributes.Tactics * 0.005);
@@ -531,12 +533,20 @@ export default function FishingGame() {
     const celestialUltra = ce === "tentacle_sun" ? 1 + ceFade * 3.5 : ce === "blood_moon" ? 1 + ceFade * 2 : 1;
     const adjustedWeights = FISH_TYPES.map(ft => {
       let w = ft.weight;
-      const rarityBoost = distRatio;
-      if (ft.rarity === "ultra_rare") w *= (1 + rarityBoost * 25) * lure.rarityBoost * wisdomBoost * celestialUltra * chumRarityBoost;
-      else if (ft.rarity === "legendary") w *= (1 + rarityBoost * 15) * lure.rarityBoost * wisdomBoost * celestialLegendary * chumRarityBoost;
-      else if (ft.rarity === "rare") w *= (1 + rarityBoost * 8) * lure.rarityBoost * wisdomBoost * celestialRare * chumRarityBoost;
-      else if (ft.rarity === "uncommon") w *= (1 + rarityBoost * 3) * (1 + (wisdomBoost - 1) * 0.5);
-      else w *= Math.max(0.3, 1 - rarityBoost * 0.5);
+      if (rightRatio > 0.1) {
+        if (ft.rarity === "ultra_rare") w *= Math.max(0.01, 1 - rightRatio * 3);
+        else if (ft.rarity === "legendary") w *= Math.max(0.05, 1 - rightRatio * 2.5);
+        else if (ft.rarity === "rare") w *= Math.max(0.1, 1 - rightRatio * 2);
+        else if (ft.rarity === "uncommon") w *= 1 + rightRatio * 0.5;
+        else w *= 1 + rightRatio * 2;
+      } else {
+        const rarityBoost = distRatio;
+        if (ft.rarity === "ultra_rare") w *= (1 + rarityBoost * 25) * lure.rarityBoost * wisdomBoost * celestialUltra * chumRarityBoost;
+        else if (ft.rarity === "legendary") w *= (1 + rarityBoost * 15) * lure.rarityBoost * wisdomBoost * celestialLegendary * chumRarityBoost;
+        else if (ft.rarity === "rare") w *= (1 + rarityBoost * 8) * lure.rarityBoost * wisdomBoost * celestialRare * chumRarityBoost;
+        else if (ft.rarity === "uncommon") w *= (1 + rarityBoost * 3) * (1 + (wisdomBoost - 1) * 0.5);
+        else w *= Math.max(0.3, 1 - rarityBoost * 0.5);
+      }
       if (lure.targetFish.includes(ft.name)) w *= lure.targetBonus;
       return { ft, w };
     });
@@ -558,7 +568,8 @@ export default function FishingGame() {
     const x = direction > 0 ? viewLeft - 80 : viewRight + 80;
     const baseSizeMult = 0.5 + Math.random() * Math.random() * 4.5;
     const ultraScale = fishType.baseScale || 1;
-    const sizeMultiplier = (baseSizeMult * (1 + distRatio * 0.8) + lure.sizeBoost) * ultraScale;
+    const rightSizeReduction = rightRatio > 0.1 ? Math.max(0.3, 1 - rightRatio * 0.7) : 1;
+    const sizeMultiplier = (baseSizeMult * (1 + distRatio * 0.8) + lure.sizeBoost) * ultraScale * rightSizeReduction;
     s.swimmingFish.push({
       x, y, baseY: y, type: fishType, direction, frame: 0, frameTimer: 0,
       speed: fishType.speed * (0.7 + Math.random() * 0.6),
@@ -990,10 +1001,10 @@ export default function FishingGame() {
           s.facingLeft = false;
           moving = true;
         }
-        s.playerX = Math.max(pierLeftBound, Math.min(W - 40, s.playerX));
+        s.playerX = Math.max(pierLeftBound, Math.min(W * 4.8, s.playerX));
 
-        const hutX = W - 80;
-        s.nearHut = !s.inBoat && s.playerX > hutX - 60 && s.gameState === "idle";
+        const hutCheckX = W * 0.85 + (192 * 2.2) / 2;
+        s.nearHut = !s.inBoat && Math.abs(s.playerX - hutCheckX) < 80 && s.gameState === "idle";
 
         if (s.gameState === "casting") {
           s.aimX = Math.max(10, Math.min(W - 10, s.mouseX - s.cameraX));
@@ -1025,7 +1036,7 @@ export default function FishingGame() {
         if (s.keysDown.has("d")) {
           s.playerX += REEL_WALK_SPEED * dt;
         }
-        s.playerX = Math.max(pierLeftBound, Math.min(W - 40, s.playerX));
+        s.playerX = Math.max(pierLeftBound, Math.min(W * 4.8, s.playerX));
       }
 
       if (s.gameState === "swimming") {
@@ -1048,16 +1059,16 @@ export default function FishingGame() {
           if (s.keysDown.has("w")) { s.swimY -= SWIM_SPEED * 0.7 * dt; }
           if (s.keysDown.has("s")) { s.swimY += SWIM_SPEED * 0.7 * dt; }
 
-          s.swimX = Math.max(10, Math.min(W - 10, s.swimX));
+          s.swimX = Math.max(-(W * 3), Math.min(W * 5, s.swimX));
           s.swimY = Math.max(waterY + 5, Math.min(H - 30, s.swimY));
 
-          const dockNearX = s.swimX > pierLeftBound - 40 && s.swimX < W;
+          const dockNearX = s.swimX > pierLeftBound - 40 && s.swimX < W * 4.8;
           const dockNearY = s.swimY < waterY + 60;
           if (s.keysDown.has(" ") && dockNearX && dockNearY) {
             s.keysDown.delete(" ");
             s.gameState = "idle";
             s.isSwimming = false;
-            s.playerX = Math.max(pierLeftBound, Math.min(W - 40, s.swimX));
+            s.playerX = Math.max(pierLeftBound, Math.min(W * 4.8, s.swimX));
             addParticles(s.swimX, waterY, 15, "#5dade2", 3, "splash");
             addRipple(s.swimX, waterY);
             syncUI();
@@ -1197,11 +1208,18 @@ export default function FishingGame() {
 
       ctx.imageSmoothingEnabled = false;
 
+      const calcWorldRight = W * 5 + 200;
+      const calcWorldLeft = -(W * 3) - 200;
       let targetCameraX = 0;
       if (s.inBoat || s.gameState === "boarding") {
         const boatCenterX = s.boatX + (74 * boatScale) / 2;
-        targetCameraX = Math.max(0, W / 2 - boatCenterX);
+        targetCameraX = W / 2 - boatCenterX;
+      } else if (s.isSwimming) {
+        targetCameraX = W / 2 - s.swimX;
+      } else {
+        targetCameraX = W / 2 - s.playerX;
       }
+      targetCameraX = Math.max(-(calcWorldRight - W), Math.min(-calcWorldLeft, targetCameraX));
       s.cameraX += (targetCameraX - s.cameraX) * Math.min(1, 0.04 * dt);
       if (Math.abs(s.cameraX - targetCameraX) < 0.5) s.cameraX = targetCameraX;
 
@@ -1613,7 +1631,7 @@ export default function FishingGame() {
 
       // Water - extends across entire world width
       const worldLeft = -(W * 3) - 200;
-      const worldRight = W + 200;
+      const worldRight = W * 5 + 200;
       const waterGrad = ctx.createLinearGradient(0, waterY, 0, H);
       const wDeep = dayPhase > 0.5 ? 0 : 20;
       waterGrad.addColorStop(0, `rgb(${41 - wDeep},${128 - wDeep * 2},${185 - wDeep})`);
@@ -1714,7 +1732,7 @@ export default function FishingGame() {
       const pierTiles = getImg("/assets/objects/Pier_Tiles.png");
       const pierScale = 2.5;
       const pierStartX = defaultFishermanX - 80;
-      const pierRight = W + 20;
+      const pierRight = W * 2.8;
       const pierThickness = 20 * pierScale;
 
       if (pierTiles && pierTiles.complete) {
@@ -1748,13 +1766,13 @@ export default function FishingGame() {
       const hutScale = 2.2;
       const hutW = 192 * hutScale;
       const hutH = 122 * hutScale;
-      const hutX = W - hutW - 20;
+      const hutX = W * 0.85;
       const hutY = pierY - hutH + 50 * hutScale;
       drawImage("/assets/objects/Fishing_hut.png", hutX, hutY, hutScale);
 
       // Billboard near hut
       if (s.gameState !== "title" && s.gameState !== "charSelect") {
-        const bbX = W - 160;
+        const bbX = hutX + hutW + 10;
         const bbY = waterY - 95;
         const bbW = 70;
         const bbH = 50;
@@ -1836,8 +1854,62 @@ export default function FishingGame() {
       // Grass near the hut and pier edges
       drawImage("/assets/objects/Grass1.png", hutX - 15, objY - 33 * 1.8 + 5, 1.8);
       drawImage("/assets/objects/Grass3.png", hutX + 30, objY - 24 * 1.5 + 3, 1.5);
-      drawImage("/assets/objects/Grass2.png", W - 50, objY - 25 * 1.6 + 3, 1.6);
-      drawImage("/assets/objects/Grass4.png", W - 25, objY - 23 * 1.4 + 2, 1.4);
+      drawImage("/assets/objects/Grass2.png", hutX + hutW - 20, objY - 25 * 1.6 + 3, 1.6);
+      drawImage("/assets/objects/Grass4.png", hutX + hutW + 5, objY - 23 * 1.4 + 2, 1.4);
+
+      // Docks area objects (right side scenes)
+      const dockObjY = pierY - 2;
+      drawImage("/assets/objects/Stay.png", W * 1.6, dockObjY - 15 * 2, 2);
+      drawImage("/assets/objects/Fishbarrel1.png", W * 1.8, dockObjY - 11 * 1.8, 1.8);
+      drawImage("/assets/objects/Grass1.png", W * 2.0, dockObjY - 33 * 1.2, 1.2);
+      drawImage("/assets/objects/Fish-rod.png", W * 2.2, dockObjY - 26 * 1.6, 1.6);
+      drawImage("/assets/objects/Fishbarrel2.png", W * 2.5, dockObjY - 15 * 1.5, 1.5);
+      drawImage("/assets/objects/Stay.png", W * 2.8, dockObjY - 15 * 1.8, 1.8);
+      drawImage("/assets/objects/Grass3.png", W * 3.1, dockObjY - 24 * 1.0, 1.0);
+
+      // Beach area (right side)
+      const beachStart = W * 3.0;
+      const beachEnd = W * 5 + 200;
+      const sandGrad = ctx.createLinearGradient(0, pierY - 5, 0, H);
+      sandGrad.addColorStop(0, "#d4a76a");
+      sandGrad.addColorStop(0.3, "#c49a5e");
+      sandGrad.addColorStop(0.7, "#b8905a");
+      sandGrad.addColorStop(1, "#a07840");
+      ctx.fillStyle = sandGrad;
+      ctx.beginPath();
+      ctx.moveTo(beachStart, pierY + 10);
+      for (let bx = beachStart; bx <= beachEnd; bx += 5) {
+        const progress = (bx - beachStart) / (beachEnd - beachStart);
+        const beachY = pierY + 10 + progress * 30;
+        ctx.lineTo(bx, beachY);
+      }
+      ctx.lineTo(beachEnd, H);
+      ctx.lineTo(beachStart, H);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.globalAlpha = 0.4;
+      ctx.strokeStyle = "#fff8e7";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let bx = beachStart; bx <= beachEnd; bx += 3) {
+        const progress = (bx - beachStart) / (beachEnd - beachStart);
+        const shoreY = pierY + 10 + progress * 30 + Math.sin(s.time * 0.03 + bx * 0.02) * 3;
+        if (bx === beachStart) ctx.moveTo(bx, shoreY);
+        else ctx.lineTo(bx, shoreY);
+      }
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+
+      for (let ri = 0; ri < 8; ri++) {
+        const rx = beachStart + 100 + ri * 180 + Math.sin(ri * 2.7) * 40;
+        const progress = (rx - beachStart) / (beachEnd - beachStart);
+        const ry = pierY + 15 + progress * 28;
+        ctx.fillStyle = ri % 2 === 0 ? "#8a7c6b" : "#9e9080";
+        ctx.beginPath();
+        ctx.ellipse(rx, ry, 4 + ri % 3, 3, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       // Ripples
       for (let i = s.ripples.length - 1; i >= 0; i--) {
@@ -1971,7 +2043,7 @@ export default function FishingGame() {
       let fishermanFrameCount = 4;
       let rodTipKey = "idle";
       let isWalking = false;
-      let fishingFlip = (s.gameState === "idle" || s.gameState === "casting" || s.gameState === "waiting" || s.gameState === "bite" || s.gameState === "reeling" || s.gameState === "caught" || s.gameState === "missed" || s.gameState === "boarding");
+      let fishingFlip = s.facingLeft;
       const charCenterX = fishermanX + (SPRITE_FRAME_W * SCALE) / 2;
       if (s.gameState === "casting") {
         fishingFlip = s.aimX < charCenterX;
@@ -2297,7 +2369,7 @@ export default function FishingGame() {
 
       // Show dock climb indicator when swimming near dock
       if (s.gameState === "swimming" && s.jumpVY === 0) {
-        const nearDockX = s.swimX > pierStartX - 40 && s.swimX < W;
+        const nearDockX = s.swimX > pierStartX - 40 && s.swimX < W * 4.8;
         const nearDockY = s.swimY < waterY + 60;
         if (nearDockX && nearDockY) {
           const indicatorAlpha = 0.4 + Math.sin(s.time * 0.08) * 0.2;
@@ -2305,7 +2377,7 @@ export default function FishingGame() {
           ctx.fillStyle = "#2ecc71";
           ctx.font = "bold 10px 'Press Start 2P', monospace";
           ctx.textAlign = "center";
-          ctx.fillText("SPACE", defaultFishermanX, pierY - 8);
+          ctx.fillText("SPACE", s.swimX, pierY - 8);
           ctx.globalAlpha = 1;
         }
       }
@@ -2458,9 +2530,9 @@ export default function FishingGame() {
         const alignment = Math.max(0, 1 - alignDist / maxAlignDist);
         const alignmentBonus = 0.6 + alignment * 0.4;
 
-        const pierWorldX = W * 0.45 - 80;
-        const distFromDock = Math.max(0, pierWorldX - s.playerX);
-        const maxDist = W * 3;
+        const shopWorldX = W * 0.85 + (192 * 2.2) / 2;
+        const distFromDock = Math.abs(s.playerX - shopWorldX);
+        const maxDist = W * 4;
         const distRatio = Math.min(1, distFromDock / maxDist);
         const distanceMult = 0.5 + distRatio * 0.5;
         const fishSpeed = (0.004 + s.rodLevel * 0.0005) * difficultyMult * (1.0 / alignmentBonus) * distanceMult / (1 + a.Dexterity * 0.007 * tacticsGlobal);

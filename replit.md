@@ -54,7 +54,8 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 
 ## Sprite Orientation Convention
 - All fisherman sprites default to facing RIGHT in sprite sheets
-- Fishing states (idle, casting, waiting, bite, reeling, caught, missed) flip sprites with `flipX=true` so character faces LEFT toward water
+- Character faces last walking direction during idle (uses `s.facingLeft`)
+- During casting: faces toward aim position; during waiting/reeling: faces toward hook position
 - Walking/swimming sprites use `s.facingLeft` to face direction of movement
 - Rod tip coords are mirrored when flipped: `(SPRITE_FRAME_W - 1 - tipLocal[0]) * SCALE`
 - Reeling minigame (Palworld-style): horizontal bar with fish icon, catch zone moves LEFT on click (2x speed), drifts RIGHT when released; circular progress gauge fills/depletes based on alignment
@@ -154,17 +155,29 @@ A pixel art fishing game built with HTML5 Canvas and React. Players cast their f
 - Press E near pier to exit boat (returns to pier walking)
 - Boat movement speed: 2.0 normal, 1.5 during reeling
 
+## World Layout (8 Scenes)
+- Scene 1-3: Deep ocean (left, boat area) `-(W*3)` to `0` - biggest, rarest fish
+- Scene 4: Pier start area `0` to `W*0.6` - standard fishing
+- Scene 5: Fishing shop (CENTER) `W*0.6` to `W*1.4` - hut at `W*0.85`
+- Scene 6: Small docks `W*1.4` to `W*2.5` - smaller fish, easier catches
+- Scene 7: Shallow water pier `W*2.5` to `W*3.5` - small, common fish
+- Scene 8: Beach `W*3.0` to `W*5` - smallest, easiest fish with sandy shore
+- Fish get smaller and easier the further RIGHT from the shop
+- Fish get bigger and rarer the further LEFT into the deep ocean
+
 ## Camera System
-- cameraX state tracks horizontal camera offset (positive = scrolled left into ocean)
-- Camera follows boat: `targetCameraX = max(0, W/2 - boatCenterX)` with smooth interpolation
+- cameraX state tracks horizontal camera offset
+- Camera follows player/boat/swimmer bidirectionally: `targetCameraX = W/2 - position`
+- Clamped to world bounds: `-(calcWorldRight - W)` to `-calcWorldLeft`
 - `ctx.translate(s.cameraX, 0)` applied to all world-space rendering (water, pier, boat, fish, particles)
 - Screen-space UI (catch display, flash, title) rendered after `ctx.restore()` of camera transform
+- Sun/moon rendered in screen-space (before translate) so visible in all scenes
 - Visible area in world coords: `viewL = -cameraX`, `viewR = -cameraX + W`
 - Mouse input converted to world coords for aiming: `mouseX - cameraX`
 - Mountains have 20% parallax (slower scrolling)
 - Water effects (shimmer, waves, caustics, rays, bubbles) render relative to visible area
 - Fish culling uses camera-relative bounds with 300px margin
-- Distance-based fish spawning: rarer fish spawn more frequently further from shore
+- Bidirectional fish spawning: rarer fish LEFT of shop, smaller/easier fish RIGHT of shop
 
 ## Features
 - 17 fish species across 5 rarity tiers (common, uncommon, rare, legendary, ultra_rare)
