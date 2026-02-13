@@ -1813,42 +1813,116 @@ export default function FishingGame() {
       // Water - extends across entire world width
       const worldLeft = -(W * 3) - 200;
       const worldRight = W * 5 + 200;
-      const waterGrad = ctx.createLinearGradient(0, waterY, 0, H);
+      const viewL = -s.cameraX;
+      const viewR = -s.cameraX + W;
+      const waterH = H - waterY;
+
+      // --- ORGANIC WATER SURFACE EDGE (wavy top, no hard line) ---
       const wDeep = dayPhase > 0.5 ? 0 : 20;
-      waterGrad.addColorStop(0, `rgb(${41 - wDeep},${128 - wDeep * 2},${185 - wDeep})`);
-      waterGrad.addColorStop(0.3, `rgb(${26 - wDeep},${111 - wDeep * 2},${160 - wDeep})`);
-      waterGrad.addColorStop(0.6, `rgb(${20 - wDeep},${85 - wDeep * 2},${128 - wDeep})`);
+      const waterGrad = ctx.createLinearGradient(0, waterY - 8, 0, H);
+      waterGrad.addColorStop(0, `rgba(${41 - wDeep},${128 - wDeep * 2},${185 - wDeep},0)`);
+      waterGrad.addColorStop(0.02, `rgba(${41 - wDeep},${128 - wDeep * 2},${185 - wDeep},0.45)`);
+      waterGrad.addColorStop(0.06, `rgba(${36 - wDeep},${120 - wDeep * 2},${175 - wDeep},0.85)`);
+      waterGrad.addColorStop(0.12, `rgb(${30 - wDeep},${115 - wDeep * 2},${168 - wDeep})`);
+      waterGrad.addColorStop(0.4, `rgb(${26 - wDeep},${111 - wDeep * 2},${160 - wDeep})`);
+      waterGrad.addColorStop(0.7, `rgb(${20 - wDeep},${85 - wDeep * 2},${128 - wDeep})`);
       waterGrad.addColorStop(1, `rgb(${13 - wDeep},${59 - wDeep},${94 - wDeep})`);
       ctx.fillStyle = waterGrad;
-      ctx.fillRect(worldLeft, waterY, worldRight - worldLeft, H - waterY);
 
-      // Depth zone overlays - darker water for deeper areas
+      ctx.beginPath();
+      ctx.moveTo(worldLeft, waterY - 8);
+      for (let x = worldLeft; x <= worldRight; x += 4) {
+        const wv = Math.sin((x + s.waterOffset * 2) * 0.02) * 3
+                 + Math.sin((x + s.waterOffset * 1.5) * 0.035 + 1.2) * 2
+                 + Math.sin((x + s.waterOffset * 3) * 0.008 + 0.5) * 4;
+        ctx.lineTo(x, waterY + wv - 6);
+      }
+      ctx.lineTo(worldRight, H);
+      ctx.lineTo(worldLeft, H);
+      ctx.closePath();
+      ctx.fill();
+
+      // --- CLOUDY MURK LAYER 1: large slow-drifting turbidity blobs ---
+      for (let m = 0; m < 18; m++) {
+        const seed = m * 137.5 + 42;
+        const mx = viewL + ((seed + s.time * 0.06 * (0.5 + (m % 3) * 0.3)) % (W + 200)) - 100;
+        const my = waterY + 25 + (m * 53) % Math.max(1, waterH * 0.8);
+        const mDepth = (my - waterY) / waterH;
+        const mr = 30 + Math.sin(s.time * 0.005 + m * 1.9) * 12 + m * 3;
+        const mAlpha = (0.04 + mDepth * 0.03) * (0.7 + Math.sin(s.time * 0.007 + m * 2.1) * 0.3);
+        const cg = ctx.createRadialGradient(mx, my, 0, mx, my, mr);
+        const murkR = Math.floor(20 + mDepth * 15);
+        const murkG = Math.floor(60 + mDepth * 20 - wDeep);
+        const murkB = Math.floor(90 + mDepth * 30 - wDeep);
+        cg.addColorStop(0, `rgba(${murkR},${murkG},${murkB},${mAlpha})`);
+        cg.addColorStop(0.5, `rgba(${murkR},${murkG},${murkB},${mAlpha * 0.4})`);
+        cg.addColorStop(1, `rgba(${murkR},${murkG},${murkB},0)`);
+        ctx.fillStyle = cg;
+        ctx.fillRect(mx - mr, my - mr, mr * 2, mr * 2);
+      }
+
+      // --- CLOUDY MURK LAYER 2: sediment haze bands ---
+      for (let band = 0; band < 5; band++) {
+        const bandY = waterY + waterH * (0.15 + band * 0.18);
+        const bandH = 40 + band * 15;
+        const bandAlpha = 0.04 + band * 0.012;
+        const bandOff = Math.sin(s.time * 0.004 + band * 1.7) * 15;
+        const hazeGrad = ctx.createLinearGradient(0, bandY - bandH / 2 + bandOff, 0, bandY + bandH / 2 + bandOff);
+        hazeGrad.addColorStop(0, `rgba(30,70,90,0)`);
+        hazeGrad.addColorStop(0.3, `rgba(25,65,85,${bandAlpha})`);
+        hazeGrad.addColorStop(0.5, `rgba(20,55,75,${bandAlpha * 1.2})`);
+        hazeGrad.addColorStop(0.7, `rgba(25,65,85,${bandAlpha})`);
+        hazeGrad.addColorStop(1, `rgba(30,70,90,0)`);
+        ctx.fillStyle = hazeGrad;
+        ctx.fillRect(viewL, bandY - bandH / 2 + bandOff, W, bandH);
+      }
+
+      // --- DEPTH ZONE OVERLAYS with soft cloudy edges ---
       const shopX = W * 0.85;
-      // Zone 2: left of shop, deeper blue
       const zone2Left = -(W * 1);
       const zone2Right = 0;
-      ctx.fillStyle = `rgba(5,15,40,${0.15 + (1 - dayPhase) * 0.1})`;
-      ctx.fillRect(zone2Left, waterY, zone2Right - zone2Left, H - waterY);
-
-      // Zone 3: far left, deepest - very dark
       const zone3Left = -(W * 3) - 200;
       const zone3Right = -(W * 1);
-      ctx.fillStyle = `rgba(3,8,25,${0.3 + (1 - dayPhase) * 0.15})`;
-      ctx.fillRect(zone3Left, waterY, zone3Right - zone3Left, H - waterY);
 
-      // Depth transition gradients (smooth blend between zones)
-      const zoneTransGrad1 = ctx.createLinearGradient(zone2Right - 100, 0, zone2Right + 100, 0);
-      zoneTransGrad1.addColorStop(0, `rgba(5,15,40,${0.12})`);
-      zoneTransGrad1.addColorStop(1, "rgba(5,15,40,0)");
-      ctx.fillStyle = zoneTransGrad1;
-      ctx.fillRect(zone2Right - 100, waterY, 200, H - waterY);
+      const z2Grad = ctx.createLinearGradient(zone2Right - 200, 0, zone2Right + 80, 0);
+      z2Grad.addColorStop(0, `rgba(5,15,40,${0.15 + (1 - dayPhase) * 0.1})`);
+      z2Grad.addColorStop(0.85, `rgba(5,15,40,${0.06})`);
+      z2Grad.addColorStop(1, "rgba(5,15,40,0)");
+      ctx.fillStyle = z2Grad;
+      ctx.fillRect(zone2Left, waterY, zone2Right - zone2Left + 80, waterH);
 
-      const zoneTransGrad2 = ctx.createLinearGradient(zone3Right - 100, 0, zone3Right + 100, 0);
-      zoneTransGrad2.addColorStop(0, `rgba(3,8,25,${0.25})`);
-      zoneTransGrad2.addColorStop(1, `rgba(5,15,40,${0.12})`);
-      ctx.fillStyle = zoneTransGrad2;
-      ctx.fillRect(zone3Right - 100, waterY, 200, H - waterY);
+      const z3Grad = ctx.createLinearGradient(zone3Right - 200, 0, zone3Right + 120, 0);
+      z3Grad.addColorStop(0, `rgba(3,8,25,${0.3 + (1 - dayPhase) * 0.15})`);
+      z3Grad.addColorStop(0.8, `rgba(5,12,30,${0.1})`);
+      z3Grad.addColorStop(1, "rgba(5,15,40,0)");
+      ctx.fillStyle = z3Grad;
+      ctx.fillRect(zone3Left, waterY, zone3Right - zone3Left + 120, waterH);
 
+      // Zone transition murk clouds
+      for (let zt = 0; zt < 8; zt++) {
+        const ztX = zone2Right + Math.sin(s.time * 0.003 + zt * 2.5) * 60 - 30;
+        const ztY = waterY + 20 + (zt * 41) % Math.max(1, waterH * 0.85);
+        const ztR = 40 + Math.sin(s.time * 0.006 + zt) * 15;
+        const ztA = 0.06 + Math.sin(s.time * 0.008 + zt * 1.3) * 0.02;
+        const ztg = ctx.createRadialGradient(ztX, ztY, 0, ztX, ztY, ztR);
+        ztg.addColorStop(0, `rgba(8,20,45,${ztA})`);
+        ztg.addColorStop(1, "rgba(8,20,45,0)");
+        ctx.fillStyle = ztg;
+        ctx.fillRect(ztX - ztR, ztY - ztR, ztR * 2, ztR * 2);
+      }
+      for (let zt = 0; zt < 6; zt++) {
+        const ztX = zone3Right + Math.sin(s.time * 0.004 + zt * 3.1) * 80 - 40;
+        const ztY = waterY + 15 + (zt * 59) % Math.max(1, waterH * 0.9);
+        const ztR = 50 + Math.sin(s.time * 0.005 + zt * 0.9) * 20;
+        const ztA = 0.08 + Math.sin(s.time * 0.007 + zt * 1.6) * 0.03;
+        const ztg = ctx.createRadialGradient(ztX, ztY, 0, ztX, ztY, ztR);
+        ztg.addColorStop(0, `rgba(4,10,28,${ztA})`);
+        ztg.addColorStop(1, "rgba(4,10,28,0)");
+        ctx.fillStyle = ztg;
+        ctx.fillRect(ztX - ztR, ztY - ztR, ztR * 2, ztR * 2);
+      }
+
+      // --- WEATHER MURK (cloudy sediment swirls) ---
       if (s.weather !== "clear") {
         const murkyAlpha = s.weatherTransition * (
           s.weather === "storm" ? 0.35 : 
@@ -1857,24 +1931,27 @@ export default function FishingGame() {
           s.weather === "cloudy" ? 0.08 : 0
         );
         if (murkyAlpha > 0) {
-          const murkyGrad = ctx.createLinearGradient(0, waterY, 0, H);
-          murkyGrad.addColorStop(0, `rgba(80,100,60,${murkyAlpha})`);
-          murkyGrad.addColorStop(0.3, `rgba(70,85,50,${murkyAlpha * 0.8})`);
-          murkyGrad.addColorStop(0.7, `rgba(55,70,40,${murkyAlpha * 0.6})`);
-          murkyGrad.addColorStop(1, `rgba(40,50,30,${murkyAlpha * 0.4})`);
-          ctx.fillStyle = murkyGrad;
-          ctx.fillRect(worldLeft, waterY, worldRight - worldLeft, H - waterY);
-          
-          ctx.globalAlpha = murkyAlpha * 0.4;
-          const murkyViewL = -s.cameraX;
-          for (let sw = 0; sw < 12; sw++) {
-            const swX = murkyViewL + ((sw * 97 + s.time * 0.3) % (W + 60)) - 30;
-            const swY = waterY + 15 + sw * 18 + Math.sin(s.time * 0.015 + sw * 2.3) * 8;
-            const swR = 15 + Math.sin(s.time * 0.01 + sw) * 5;
-            ctx.strokeStyle = `rgba(90,110,70,0.3)`;
-            ctx.lineWidth = 2;
+          for (let mc = 0; mc < 20; mc++) {
+            const mcX = viewL + ((mc * 89 + s.time * 0.15) % (W + 120)) - 60;
+            const mcY = waterY + 10 + (mc * 37) % Math.max(1, waterH * 0.85);
+            const mcR = 25 + Math.sin(s.time * 0.008 + mc * 1.7) * 12 + mc * 2;
+            const mcA = murkyAlpha * (0.3 + Math.sin(s.time * 0.01 + mc * 2.3) * 0.15);
+            const mcg = ctx.createRadialGradient(mcX, mcY, 0, mcX, mcY, mcR);
+            mcg.addColorStop(0, `rgba(75,95,55,${mcA})`);
+            mcg.addColorStop(0.4, `rgba(65,80,45,${mcA * 0.5})`);
+            mcg.addColorStop(1, "rgba(55,70,35,0)");
+            ctx.fillStyle = mcg;
+            ctx.fillRect(mcX - mcR, mcY - mcR, mcR * 2, mcR * 2);
+          }
+          ctx.globalAlpha = murkyAlpha * 0.2;
+          for (let sw = 0; sw < 8; sw++) {
+            const swX = viewL + ((sw * 117 + s.time * 0.2) % (W + 80)) - 40;
+            const swY = waterY + 20 + sw * 22 + Math.sin(s.time * 0.012 + sw * 2.3) * 10;
+            const swR = 20 + Math.sin(s.time * 0.01 + sw) * 8;
+            ctx.strokeStyle = `rgba(90,110,70,0.25)`;
+            ctx.lineWidth = 2.5;
             ctx.beginPath();
-            ctx.arc(swX, swY, swR, s.time * 0.02 + sw, s.time * 0.02 + sw + Math.PI * 1.5);
+            ctx.arc(swX, swY, swR, s.time * 0.015 + sw, s.time * 0.015 + sw + Math.PI * 1.3);
             ctx.stroke();
           }
           ctx.globalAlpha = 1;
@@ -1882,59 +1959,79 @@ export default function FishingGame() {
         }
       }
 
-      // Surface highlight band - soft glow at water line
-      const surfGrad = ctx.createLinearGradient(0, waterY - 2, 0, waterY + 18);
-      surfGrad.addColorStop(0, "rgba(136,204,238,0.0)");
-      surfGrad.addColorStop(0.3, "rgba(136,204,238,0.12)");
-      surfGrad.addColorStop(1, "rgba(136,204,238,0.0)");
-      ctx.fillStyle = surfGrad;
-      ctx.fillRect(worldLeft, waterY - 2, worldRight - worldLeft, 20);
+      // --- SURFACE FOAM (organic irregular shapes instead of hard line) ---
+      for (let i = 0; i < 40; i++) {
+        const fx = viewL + ((i * 57.3 + s.waterOffset * 2.5) % (W + 60)) - 30;
+        const fWave = Math.sin((fx + s.waterOffset * 2) * 0.02) * 3
+                    + Math.sin((fx + s.waterOffset * 1.5) * 0.035 + 1.2) * 2;
+        const fy = waterY + fWave - 4 + Math.sin(s.time * 0.025 + i * 1.7) * 2;
+        const fr = 3 + Math.sin(i * 2.3 + s.time * 0.01) * 2;
+        const fAlpha = 0.06 + Math.sin(s.time * 0.02 + i * 1.1) * 0.03;
+        const fg = ctx.createRadialGradient(fx, fy, 0, fx, fy, fr);
+        fg.addColorStop(0, `rgba(180,220,240,${fAlpha})`);
+        fg.addColorStop(0.6, `rgba(150,200,230,${fAlpha * 0.4})`);
+        fg.addColorStop(1, "rgba(136,204,238,0)");
+        ctx.fillStyle = fg;
+        ctx.fillRect(fx - fr, fy - fr, fr * 2, fr * 2);
+      }
 
-      // Visible area in world coords (since we're inside ctx.translate(cameraX))
-      const viewL = -s.cameraX;
-      const viewR = -s.cameraX + W;
+      // --- SUBSURFACE LIGHT SCATTER (soft glow just below surface) ---
+      const scatterGrad = ctx.createLinearGradient(0, waterY - 4, 0, waterY + 35);
+      scatterGrad.addColorStop(0, "rgba(100,180,220,0)");
+      scatterGrad.addColorStop(0.2, `rgba(100,180,220,${0.06 + dayPhase * 0.04})`);
+      scatterGrad.addColorStop(0.5, `rgba(80,150,200,${0.04 + dayPhase * 0.02})`);
+      scatterGrad.addColorStop(1, "rgba(60,120,170,0)");
+      ctx.fillStyle = scatterGrad;
+      ctx.fillRect(worldLeft, waterY - 4, worldRight - worldLeft, 39);
 
-      // Surface shimmer - small horizontal highlight dashes that drift
-      for (let i = 0; i < 30; i++) {
+      // Surface shimmer - organic dappled highlights
+      for (let i = 0; i < 25; i++) {
         const sx = viewL + ((i * 73.7 + s.waterOffset * 3) % (W + 40)) - 20;
-        const sy = waterY + 2 + Math.sin(s.time * 0.02 + i * 2.1) * 3;
-        const sw = 6 + Math.sin(i * 1.3) * 4;
-        const shimmerAlpha = 0.06 + Math.sin(s.time * 0.03 + i * 0.9) * 0.04;
-        ctx.globalAlpha = Math.max(0, shimmerAlpha);
-        ctx.fillStyle = "#c8e6f8";
-        ctx.fillRect(sx, sy, sw, 1);
+        const sWave = Math.sin((sx + s.waterOffset * 2) * 0.02) * 3;
+        const sy = waterY + sWave - 3 + Math.sin(s.time * 0.02 + i * 2.1) * 2;
+        const sr = 4 + Math.sin(i * 1.3 + s.time * 0.015) * 2;
+        const shimmerAlpha = 0.04 + Math.sin(s.time * 0.03 + i * 0.9) * 0.025;
+        const sg = ctx.createRadialGradient(sx, sy, 0, sx, sy, sr);
+        sg.addColorStop(0, `rgba(200,230,245,${shimmerAlpha})`);
+        sg.addColorStop(1, "rgba(200,230,245,0)");
+        ctx.fillStyle = sg;
+        ctx.fillRect(sx - sr, sy - sr, sr * 2, sr * 2);
       }
-      ctx.globalAlpha = 1;
 
-      // Gentle wave lines - fewer, softer, slower
-      for (let row = 0; row < 6; row++) {
-        const wy = waterY + row * 35 + 12;
-        const depth = row / 6;
-        const waveAlpha = 0.06 * (1 - depth * 0.6);
-        ctx.globalAlpha = Math.max(0, waveAlpha);
-        ctx.strokeStyle = `rgba(${100 + row * 8},${180 - row * 10},${220 - row * 8},1)`;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        for (let x = viewL; x < viewR; x += 2) {
-          const wave = Math.sin((x + s.waterOffset * 2.5 + row * 50) * 0.015) * (3 - depth * 1.5) +
-                       Math.sin((x + s.waterOffset * 1.8 + row * 30) * 0.028) * (2 - depth);
-          if (x === viewL) ctx.moveTo(x, wy + wave);
-          else ctx.lineTo(x, wy + wave);
+      // --- INTERNAL WAVE TEXTURE (cloudy undulating bands, not hard lines) ---
+      for (let row = 0; row < 7; row++) {
+        const wy = waterY + row * 30 + 15;
+        const depth = row / 7;
+        const waveAlpha = 0.035 * (1 - depth * 0.5);
+
+        for (let wx = viewL; wx < viewR; wx += 18) {
+          const wave = Math.sin((wx + s.waterOffset * 2.5 + row * 50) * 0.015) * (4 - depth * 2)
+                     + Math.sin((wx + s.waterOffset * 1.8 + row * 30) * 0.028) * (2.5 - depth);
+          const cloudR = 8 + Math.sin(wx * 0.05 + row + s.time * 0.01) * 3;
+          const ca = waveAlpha * (0.6 + Math.sin(wx * 0.03 + s.time * 0.008 + row * 1.2) * 0.4);
+          const wcg = ctx.createRadialGradient(wx, wy + wave, 0, wx, wy + wave, cloudR);
+          const wR = 80 + row * 10;
+          const wG = 160 - row * 12;
+          const wB = 210 - row * 8;
+          wcg.addColorStop(0, `rgba(${wR},${wG},${wB},${ca})`);
+          wcg.addColorStop(1, `rgba(${wR},${wG},${wB},0)`);
+          ctx.fillStyle = wcg;
+          ctx.fillRect(wx - cloudR, wy + wave - cloudR, cloudR * 2, cloudR * 2);
         }
-        ctx.stroke();
       }
-      ctx.globalAlpha = 1;
 
-      // Soft caustic light patches - dappled light on water
-      for (let i = 0; i < 12; i++) {
+      // --- CAUSTIC LIGHT PATCHES (larger, softer, more organic) ---
+      for (let i = 0; i < 16; i++) {
         const cx = viewL + ((i * 127 + s.waterOffset * 1.2) % (W + 80)) - 40;
-        const cy = waterY + 20 + (i * 67) % Math.max(1, (H - waterY) * 0.7);
-        const cr = 15 + Math.sin(s.time * 0.015 + i * 2.3) * 8;
-        const ca = 0.02 + Math.sin(s.time * 0.012 + i * 1.7) * 0.015;
+        const cy = waterY + 25 + (i * 67) % Math.max(1, waterH * 0.7);
+        const cr = 18 + Math.sin(s.time * 0.012 + i * 2.3) * 10;
+        const cDepth = (cy - waterY) / waterH;
+        const ca = (0.025 - cDepth * 0.01) * (0.6 + Math.sin(s.time * 0.01 + i * 1.7) * 0.4);
         if (ca > 0) {
           ctx.globalAlpha = ca;
-          const cGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, cr);
-          cGrad.addColorStop(0, dayPhase > 0.5 ? "rgba(255,255,200,1)" : "rgba(150,200,255,1)");
+          const cGrad = ctx.createRadialGradient(cx, cy, cr * 0.15, cx, cy, cr);
+          cGrad.addColorStop(0, dayPhase > 0.5 ? "rgba(255,255,200,0.8)" : "rgba(140,190,255,0.6)");
+          cGrad.addColorStop(0.5, dayPhase > 0.5 ? "rgba(255,255,210,0.3)" : "rgba(120,170,240,0.2)");
           cGrad.addColorStop(1, "rgba(255,255,255,0)");
           ctx.fillStyle = cGrad;
           ctx.fillRect(cx - cr, cy - cr, cr * 2, cr * 2);
@@ -1942,84 +2039,95 @@ export default function FishingGame() {
       }
       ctx.globalAlpha = 1;
 
-      // Light rays in water - softer, slower sway
-      ctx.globalAlpha = 0.02 + dayPhase * 0.012;
-      for (let i = 0; i < 5; i++) {
-        const rx = viewL + W * 0.12 + i * W * 0.18 + Math.sin(s.time * 0.0000582 + i * 1.8) * 25;
-        ctx.fillStyle = dayPhase > 0.5 ? "#ffffcc" : "#aaccff";
-        ctx.beginPath();
-        ctx.moveTo(rx - 5, waterY);
-        ctx.lineTo(rx + 30, H);
-        ctx.lineTo(rx + 42, H);
-        ctx.lineTo(rx + 8, waterY);
-        ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-
-      // Underwater bubbles - fewer, gentler
-      ctx.globalAlpha = 0.12;
-      for (let i = 0; i < 12; i++) {
-        const bx = viewL + (i * 137 + s.time * 0.2) % W;
-        const by = waterY + 40 + ((i * 97 + s.time * 0.12) % Math.max(1, H - waterY - 50));
-        const br = 1 + Math.sin(s.time * 0.03 + i) * 0.5;
-        ctx.fillStyle = "#88ccff";
-        ctx.beginPath();
-        ctx.arc(bx, by, br, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-
-      // God rays - angled light shafts penetrating water
+      // --- GOD RAYS (tapered beams, soft edges) ---
       if (dayPhase > 0.3) {
-        const rayAlpha = (dayPhase - 0.3) * 0.12;
+        const rayAlpha = (dayPhase - 0.3) * 0.1;
         for (let r = 0; r < 6; r++) {
-          const rayX = viewL + ((r * 193 + s.time * 0.15) % (W + 200)) - 100;
-          const rayWidth = 20 + Math.sin(s.time * 0.008 + r * 1.7) * 8;
-          const rayAngle = 0.15 + Math.sin(s.time * 0.005 + r * 2) * 0.05;
-          const rayLength = (H - waterY) * (0.5 + Math.sin(s.time * 0.006 + r * 1.3) * 0.15);
-          
-          ctx.globalAlpha = rayAlpha * (0.6 + Math.sin(s.time * 0.01 + r * 0.8) * 0.4);
+          const rayX = viewL + ((r * 193 + s.time * 0.12) % (W + 200)) - 100;
+          const rayTopW = 8 + Math.sin(s.time * 0.008 + r * 1.7) * 4;
+          const rayBotW = 35 + Math.sin(s.time * 0.006 + r * 2.1) * 12;
+          const rayAngle = 0.12 + Math.sin(s.time * 0.004 + r * 2) * 0.04;
+          const rayLen = waterH * (0.5 + Math.sin(s.time * 0.005 + r * 1.3) * 0.15);
+          const rAlpha = rayAlpha * (0.5 + Math.sin(s.time * 0.008 + r * 0.8) * 0.35);
+
+          ctx.globalAlpha = rAlpha;
           ctx.save();
-          ctx.translate(rayX, waterY + 5);
+          ctx.translate(rayX, waterY + 8);
           ctx.rotate(rayAngle);
-          
-          const rayGrad = ctx.createLinearGradient(0, 0, 0, rayLength);
-          rayGrad.addColorStop(0, "rgba(180,220,255,0.15)");
-          rayGrad.addColorStop(0.3, "rgba(150,200,240,0.08)");
-          rayGrad.addColorStop(1, "rgba(100,160,220,0)");
-          ctx.fillStyle = rayGrad;
-          ctx.fillRect(-rayWidth / 2, 0, rayWidth, rayLength);
+
+          const rGrad = ctx.createLinearGradient(0, 0, 0, rayLen);
+          rGrad.addColorStop(0, "rgba(180,220,255,0.18)");
+          rGrad.addColorStop(0.2, "rgba(160,210,250,0.1)");
+          rGrad.addColorStop(0.6, "rgba(140,190,240,0.04)");
+          rGrad.addColorStop(1, "rgba(120,170,230,0)");
+          ctx.fillStyle = rGrad;
+          ctx.beginPath();
+          ctx.moveTo(-rayTopW / 2, 0);
+          ctx.lineTo(-rayBotW / 2, rayLen);
+          ctx.lineTo(rayBotW / 2, rayLen);
+          ctx.lineTo(rayTopW / 2, 0);
+          ctx.closePath();
+          ctx.fill();
           ctx.restore();
         }
         ctx.globalAlpha = 1;
       }
 
-      // Floating underwater particles - plankton, debris
-      for (let p = 0; p < 20; p++) {
-        const px = viewL + ((p * 83 + s.time * 0.2 + p * 17) % (W + 40)) - 20;
-        const py = waterY + 15 + ((p * 47 + s.time * 0.08) % Math.max(1, H - waterY - 20));
-        const pSize = 1 + (p % 3) * 0.5;
-        const pDepth = (py - waterY) / (H - waterY);
-        const pAlpha = 0.12 - pDepth * 0.06 + Math.sin(s.time * 0.02 + p * 1.4) * 0.04;
-        
+      // --- UNDERWATER BUBBLES (varied sizes, soft glow) ---
+      for (let i = 0; i < 15; i++) {
+        const bx = viewL + (i * 137 + s.time * 0.18) % W;
+        const by = waterY + 35 + ((i * 97 + s.time * 0.1) % Math.max(1, waterH - 45));
+        const br = 1.5 + Math.sin(s.time * 0.03 + i) * 0.8 + (i % 3) * 0.5;
+        const bAlpha = 0.08 + Math.sin(s.time * 0.025 + i * 1.5) * 0.04;
+        const bg = ctx.createRadialGradient(bx, by, 0, bx, by, br * 2);
+        bg.addColorStop(0, `rgba(140,200,255,${bAlpha})`);
+        bg.addColorStop(0.5, `rgba(120,180,240,${bAlpha * 0.4})`);
+        bg.addColorStop(1, "rgba(100,160,220,0)");
+        ctx.fillStyle = bg;
+        ctx.fillRect(bx - br * 2, by - br * 2, br * 4, br * 4);
+      }
+
+      // --- FLOATING PLANKTON & DEBRIS (soft glowing particles) ---
+      for (let p = 0; p < 22; p++) {
+        const px = viewL + ((p * 83 + s.time * 0.18 + p * 17) % (W + 40)) - 20;
+        const py = waterY + 18 + ((p * 47 + s.time * 0.07) % Math.max(1, waterH - 25));
+        const pSize = 1.5 + (p % 3) * 0.6;
+        const pDepth = (py - waterY) / waterH;
+        const pAlpha = (0.1 - pDepth * 0.05) * (0.6 + Math.sin(s.time * 0.02 + p * 1.4) * 0.4);
+
         const worldPX = px;
         const isDeep = worldPX < -(W * 1);
         const isMid = worldPX < 0;
-        
-        ctx.globalAlpha = Math.max(0, pAlpha);
-        ctx.fillStyle = isDeep ? "rgba(80,120,180,0.5)" : isMid ? "rgba(120,170,210,0.4)" : "rgba(160,200,230,0.35)";
-        ctx.beginPath();
-        ctx.arc(px, py, pSize, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.globalAlpha = 1;
 
-      // Depth fog at bottom - gets darker deeper
-      const depthFogGrad = ctx.createLinearGradient(0, H - 80, 0, H);
+        if (pAlpha > 0) {
+          const pColor = isDeep ? [70,110,170] : isMid ? [110,160,200] : [150,195,225];
+          const pg = ctx.createRadialGradient(px, py, 0, px, py, pSize * 2.5);
+          pg.addColorStop(0, `rgba(${pColor[0]},${pColor[1]},${pColor[2]},${pAlpha})`);
+          pg.addColorStop(1, `rgba(${pColor[0]},${pColor[1]},${pColor[2]},0)`);
+          ctx.fillStyle = pg;
+          ctx.fillRect(px - pSize * 2.5, py - pSize * 2.5, pSize * 5, pSize * 5);
+        }
+      }
+
+      // --- DEPTH FOG (thick cloudy bottom haze) ---
+      const depthFogGrad = ctx.createLinearGradient(0, H - 100, 0, H);
       depthFogGrad.addColorStop(0, "rgba(5,10,20,0)");
-      depthFogGrad.addColorStop(1, `rgba(3,6,15,${0.3 + (1 - dayPhase) * 0.2})`);
+      depthFogGrad.addColorStop(0.4, `rgba(4,8,18,${0.12 + (1 - dayPhase) * 0.08})`);
+      depthFogGrad.addColorStop(1, `rgba(3,6,15,${0.35 + (1 - dayPhase) * 0.2})`);
       ctx.fillStyle = depthFogGrad;
-      ctx.fillRect(viewL, H - 80, W, 80);
+      ctx.fillRect(viewL, H - 100, W, 100);
+
+      for (let df = 0; df < 10; df++) {
+        const dfX = viewL + ((df * 113 + s.time * 0.05) % (W + 100)) - 50;
+        const dfY = H - 60 + Math.sin(s.time * 0.003 + df * 2.7) * 20;
+        const dfR = 35 + Math.sin(s.time * 0.004 + df * 1.3) * 12;
+        const dfA = 0.08 + (1 - dayPhase) * 0.04;
+        const dfg = ctx.createRadialGradient(dfX, dfY, 0, dfX, dfY, dfR);
+        dfg.addColorStop(0, `rgba(5,10,22,${dfA})`);
+        dfg.addColorStop(1, "rgba(5,10,22,0)");
+        ctx.fillStyle = dfg;
+        ctx.fillRect(dfX - dfR, dfY - dfR, dfR * 2, dfR * 2);
+      }
 
       // Pier using Pier_Tiles.png tileset
       const pierTiles = getImg("/assets/objects/Pier_Tiles.png");
