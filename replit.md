@@ -12,7 +12,7 @@ The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a f
 **UI/UX and Design:**
 - **Pixel Art:** All game assets are pixel art, maintaining a consistent aesthetic.
 - **Character Selection:** HTML overlay for character variant selection (Classic, Ocean Blue, Crimson) and username input.
-- **Hotbar System:** A 4-slot hotbar (Rod, Lure/Bait, Chum, Net) provides quick access to equipment.
+- **Hotbar System:** A 5-slot hotbar (Rod, Lure/Bait, Chum, Net, Binoculars) provides quick access to equipment.
 - **Shop Interface:** Full-screen shop overlay for purchasing rods, baits, and lures.
 - **Billboard System:** Canvas-rendered sign near the fishing hut rotates through bounties, records, deals, and the game logo.
 - **Rarity Visuals:** Ultra-rare fish feature tinted sprites with glowing auras and orbiting sparkle particles.
@@ -36,7 +36,8 @@ The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a f
 - **Fish Behavior:** Detailed swimming patterns, approach mechanics for the hook, and complex reeling behavior for hooked fish.
 - **Boat System:** Player can use a boat for open ocean fishing, featuring boarding cutscenes, distinct movement, and fishing mechanics.
 - **World Layout (8 Scenes):** A horizontally scrolling world divided into distinct scenes ranging from shallow waters to deep ocean, influencing fish rarity and size.
-- **Camera System:** Dynamic camera following the player/boat, clamped to world bounds, with parallax scrolling for background elements. Mouse input is converted to world coordinates for aiming.
+- **Camera System:** Dynamic camera following the player/boat, clamped to world bounds, with parallax scrolling for background elements. Mouse input is converted to world coordinates for aiming. Binoculars mode (hotkey 5) decouples camera for free WASD panning with both X and Y axes, scope vignette overlay with crosshairs.
+- **Swimming Mechanics:** Jump arc into water with parabolic trajectory, horizontal displacement, and enhanced splash. Character sprite rotates based on vertical movement direction (tilt up/down while swimming). Angle lerps smoothly and resets on state transitions.
 - **Predator System:** Three types of predators (Shark, Kraken, Sea Devil) with AI behaviors (patrol, chase, attack, flee), affecting fish and potentially the player. Spawn probability scales by world position and depth.
 - **Ocean Depth Zones:** Three distinct depth zones (shallow, mid-depth, deep ocean) with visual transitions and varying fish populations.
 - **3D Visual Effects:** Includes god rays, underwater particles, depth fog, and caustic light patches to enhance visual immersion.

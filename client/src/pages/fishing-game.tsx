@@ -476,6 +476,16 @@ export default function FishingGame() {
     hookedFishDiveTimer: 0,
     hookLineMaxDist: 0,
     selectedHotbar: 1,
+    binoculars: false,
+    binoX: 0,
+    binoY: 0,
+    binoTargetX: 0,
+    binoTargetY: 0,
+    cameraY: 0,
+    swimAngle: 0,
+    swimAngleTarget: 0,
+    jumpArc: 0,
+    jumpPeakReached: false,
     showLurePopup: false,
     showChumPopup: false,
     ownedChum: Array.from({ length: 22 }, () => 0) as number[],
@@ -567,6 +577,15 @@ export default function FishingGame() {
     resilience: 2,
     resilienceMax: 2,
     selectedHotbar: 1,
+    binoculars: false,
+    binoX: 0,
+    binoY: 0,
+    binoTargetX: 0,
+    binoTargetY: 0,
+    swimAngle: 0,
+    swimAngleTarget: 0,
+    jumpArc: 0,
+    jumpPeakReached: false,
     showLurePopup: false,
     showChumPopup: false,
     ownedChum: Array.from({ length: 22 }, () => 0) as number[],
@@ -901,6 +920,7 @@ export default function FishingGame() {
       resilience: s.resilience,
       resilienceMax: s.resilienceMax,
       selectedHotbar: s.selectedHotbar,
+      binoculars: s.binoculars,
       showLurePopup: s.showLurePopup,
       showChumPopup: s.showChumPopup,
       ownedChum: [...s.ownedChum],
@@ -996,6 +1016,7 @@ export default function FishingGame() {
         stateRef.current.toolMode = "rod";
         stateRef.current.showLurePopup = false;
         stateRef.current.showChumPopup = false;
+        stateRef.current.binoculars = false;
         syncUI();
         return;
       }
@@ -1003,6 +1024,7 @@ export default function FishingGame() {
         stateRef.current.selectedHotbar = 2;
         stateRef.current.showLurePopup = !stateRef.current.showLurePopup;
         stateRef.current.showChumPopup = false;
+        stateRef.current.binoculars = false;
         syncUI();
         return;
       }
@@ -1010,6 +1032,7 @@ export default function FishingGame() {
         stateRef.current.selectedHotbar = 3;
         stateRef.current.showChumPopup = !stateRef.current.showChumPopup;
         stateRef.current.showLurePopup = false;
+        stateRef.current.binoculars = false;
         syncUI();
         return;
       }
@@ -1018,6 +1041,26 @@ export default function FishingGame() {
         stateRef.current.toolMode = "net";
         stateRef.current.showLurePopup = false;
         stateRef.current.showChumPopup = false;
+        stateRef.current.binoculars = false;
+        syncUI();
+        return;
+      }
+      if (key === "5") {
+        const st = stateRef.current;
+        if (!st.binoculars && !["idle", "swimming"].includes(st.gameState)) return;
+        st.binoculars = !st.binoculars;
+        st.selectedHotbar = st.binoculars ? 5 : 1;
+        st.showLurePopup = false;
+        st.showChumPopup = false;
+        if (st.binoculars) {
+          const canvas = canvasRef.current;
+          if (canvas) {
+            st.binoX = -st.cameraX + canvas.width / 2;
+            st.binoY = -st.cameraY + canvas.height / 2;
+            st.binoTargetX = st.binoX;
+            st.binoTargetY = st.binoY;
+          }
+        }
         syncUI();
         return;
       }
@@ -1163,7 +1206,7 @@ export default function FishingGame() {
       const SWIM_SPEED = 2.0;
       const pierLeftBound = defaultFishermanX - 80;
 
-      if ((s.gameState === "idle" || s.gameState === "casting") && !s.inBoat) {
+      if ((s.gameState === "idle" || s.gameState === "casting") && !s.inBoat && !s.binoculars) {
         let moving = false;
         if (s.keysDown.has("a")) {
           s.playerX -= WALK_SPEED * dt;
@@ -1190,10 +1233,14 @@ export default function FishingGame() {
           s.gameState = "swimming";
           s.isSwimming = true;
           s.swimX = s.playerX;
-          s.swimY = waterY;
+          s.swimY = pierY - FRAME_H * SCALE + 12;
           s.playerVY = 0;
-          s.jumpVY = -5;
+          s.jumpVY = -4.5;
+          s.jumpArc = 0;
+          s.jumpPeakReached = false;
           s.splashDone = false;
+          s.swimAngle = 0;
+          s.swimAngleTarget = 0;
           syncUI();
         }
         if (s.keysDown.has(" ") && s.inBoat && s.gameState === "idle") {
@@ -1215,15 +1262,24 @@ export default function FishingGame() {
 
       if (s.gameState === "swimming") {
         if (s.jumpVY !== 0) {
+          s.jumpArc += dt;
+          const horizDir = s.facingLeft ? -1 : 1;
+          s.swimX += horizDir * 2.2 * dt;
           s.swimY += s.jumpVY * dt;
-          s.jumpVY += 0.15 * dt;
+          s.jumpVY += 0.18 * dt;
+          if (s.jumpVY > 0 && !s.jumpPeakReached) {
+            s.jumpPeakReached = true;
+          }
           if (s.swimY >= waterY + 10) {
             s.swimY = waterY + 10;
             s.jumpVY = 0;
+            s.jumpArc = 0;
             if (!s.splashDone) {
-              addParticles(s.swimX, waterY, 20, "#5dade2", 4, "splash");
-              addRipple(s.swimX, waterY, 40);
-              s.screenShake = 3;
+              addParticles(s.swimX, waterY, 25, "#5dade2", 5, "splash");
+              addParticles(s.swimX - 15, waterY - 5, 8, "#88ccff", 3, "bubble");
+              addParticles(s.swimX + 15, waterY - 5, 8, "#88ccff", 3, "bubble");
+              addRipple(s.swimX, waterY, 50);
+              s.screenShake = 4;
               s.splashDone = true;
             }
           }
@@ -1242,6 +1298,10 @@ export default function FishingGame() {
             s.keysDown.delete(" ");
             s.gameState = "idle";
             s.isSwimming = false;
+            s.swimAngle = 0;
+            s.swimAngleTarget = 0;
+            s.jumpArc = 0;
+            s.jumpPeakReached = false;
             s.playerX = Math.max(pierLeftBound, Math.min(W * 4.8, s.swimX));
             addParticles(s.swimX, waterY, 15, "#5dade2", 3, "splash");
             addRipple(s.swimX, waterY);
@@ -1385,17 +1445,54 @@ export default function FishingGame() {
       const calcWorldRight = W * 5 + 200;
       const calcWorldLeft = -(W * 3) - 200;
       let targetCameraX = 0;
-      if (s.inBoat || s.gameState === "boarding") {
+
+      if (s.binoculars) {
+        const BINO_SPEED = 4;
+        if (s.keysDown.has("a")) s.binoTargetX -= BINO_SPEED * dt;
+        if (s.keysDown.has("d")) s.binoTargetX += BINO_SPEED * dt;
+        if (s.keysDown.has("w")) s.binoTargetY -= BINO_SPEED * dt;
+        if (s.keysDown.has("s")) s.binoTargetY += BINO_SPEED * dt;
+        s.binoTargetX = Math.max(calcWorldLeft, Math.min(calcWorldRight, s.binoTargetX));
+        s.binoTargetY = Math.max(-H * 0.5, Math.min(H * 1.5, s.binoTargetY));
+        s.binoX += (s.binoTargetX - s.binoX) * Math.min(1, 0.08 * dt);
+        s.binoY += (s.binoTargetY - s.binoY) * Math.min(1, 0.08 * dt);
+        targetCameraX = W / 2 - s.binoX;
+        const targetCameraY = H / 2 - s.binoY;
+        s.cameraY += (targetCameraY - s.cameraY) * Math.min(1, 0.08 * dt);
+      } else if (s.inBoat || s.gameState === "boarding") {
         const boatCenterX = s.boatX + (74 * boatScale) / 2;
         targetCameraX = W / 2 - boatCenterX;
+        s.cameraY += (0 - s.cameraY) * Math.min(1, 0.06 * dt);
       } else if (s.isSwimming) {
         targetCameraX = W / 2 - s.swimX;
+        s.cameraY += (0 - s.cameraY) * Math.min(1, 0.06 * dt);
       } else {
         targetCameraX = W / 2 - s.playerX;
+        s.cameraY += (0 - s.cameraY) * Math.min(1, 0.06 * dt);
       }
+      if (Math.abs(s.cameraY) < 0.5) s.cameraY = 0;
       targetCameraX = Math.max(-(calcWorldRight - W), Math.min(-calcWorldLeft, targetCameraX));
-      s.cameraX += (targetCameraX - s.cameraX) * Math.min(1, 0.04 * dt);
+      s.cameraX += (targetCameraX - s.cameraX) * Math.min(1, s.binoculars ? 0.08 * dt : 0.04 * dt);
       if (Math.abs(s.cameraX - targetCameraX) < 0.5) s.cameraX = targetCameraX;
+
+      // Swim angle: tilt character based on vertical movement
+      if (s.gameState === "swimming" && s.jumpVY === 0) {
+        const movingUp = s.keysDown.has("w");
+        const movingDown = s.keysDown.has("s");
+        const movingHoriz = s.keysDown.has("a") || s.keysDown.has("d");
+        if (movingUp && !movingDown) {
+          s.swimAngleTarget = movingHoriz ? -0.35 : -0.55;
+        } else if (movingDown && !movingUp) {
+          s.swimAngleTarget = movingHoriz ? 0.35 : 0.55;
+        } else {
+          s.swimAngleTarget = 0;
+        }
+      } else if (s.gameState === "swimming" && s.jumpVY !== 0) {
+        s.swimAngleTarget = Math.max(-1.2, Math.min(1.2, s.jumpVY * 0.15));
+      } else {
+        s.swimAngleTarget = 0;
+      }
+      s.swimAngle += (s.swimAngleTarget - s.swimAngle) * Math.min(1, 0.12 * dt);
 
       ctx.save();
       if (s.screenShake > 0) {
@@ -1808,7 +1905,7 @@ export default function FishingGame() {
 
       // Apply camera offset for all world-space rendering
       ctx.save();
-      ctx.translate(s.cameraX, 0);
+      ctx.translate(s.cameraX, s.cameraY);
 
       // Water - extends across entire world width
       const worldLeft = -(W * 3) - 200;
@@ -2827,7 +2924,22 @@ export default function FishingGame() {
         const swimmerDepth = (s.swimY - waterY) / (H - waterY);
         const swimAlpha = Math.max(0.3, 0.95 - swimmerDepth * 0.4);
         ctx.globalAlpha = swimAlpha;
-        drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, s.facingLeft);
+
+        const spriteW = SPRITE_FRAME_W * SCALE;
+        const spriteH = FRAME_H * SCALE;
+        const pivotX = fishermanX + spriteW / 2;
+        const pivotY = fishermanY + spriteH / 2;
+        const angle = s.facingLeft ? -s.swimAngle : s.swimAngle;
+        if (Math.abs(s.swimAngle) > 0.01) {
+          ctx.save();
+          ctx.translate(pivotX, pivotY);
+          ctx.rotate(angle);
+          ctx.translate(-pivotX, -pivotY);
+          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, s.facingLeft);
+          ctx.restore();
+        } else {
+          drawSprite(fishermanSprite, fishermanFrame, fishermanFrameCount, fishermanX, fishermanY, SCALE, s.facingLeft);
+        }
 
         if (isMoving && s.jumpVY === 0 && Math.random() < 0.06 * dt) {
           addParticles(s.swimX + (s.facingLeft ? -20 : 20), s.swimY, 2, "#88ccff", 1.5, "bubble");
@@ -3810,6 +3922,49 @@ export default function FishingGame() {
         }
       }
 
+      // Binoculars scope overlay
+      if (s.binoculars && s.gameState !== "intro" && s.gameState !== "title" && s.gameState !== "charSelect") {
+        ctx.save();
+        const vigR = Math.min(W, H) * 0.42;
+        const vigGrad = ctx.createRadialGradient(W / 2, H / 2, vigR * 0.7, W / 2, H / 2, vigR);
+        vigGrad.addColorStop(0, "rgba(0,0,0,0)");
+        vigGrad.addColorStop(0.6, "rgba(0,0,0,0.15)");
+        vigGrad.addColorStop(0.85, "rgba(0,0,0,0.6)");
+        vigGrad.addColorStop(1, "rgba(0,0,0,0.85)");
+        ctx.fillStyle = vigGrad;
+        ctx.fillRect(0, 0, W, H);
+
+        ctx.strokeStyle = "rgba(120,180,255,0.15)";
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(W / 2, 0);
+        ctx.lineTo(W / 2, H);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, H / 2);
+        ctx.lineTo(W, H / 2);
+        ctx.stroke();
+
+        ctx.strokeStyle = "rgba(120,180,255,0.08)";
+        ctx.lineWidth = 0.5;
+        for (let cr = 40; cr < vigR; cr += 60) {
+          ctx.beginPath();
+          ctx.arc(W / 2, H / 2, cr, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+
+        ctx.fillStyle = "rgba(120,180,255,0.7)";
+        ctx.font = "bold 5px 'Press Start 2P', monospace";
+        ctx.textAlign = "left";
+        const worldCenterX = Math.round(-s.cameraX + W / 2);
+        ctx.fillText(`X: ${worldCenterX}`, 8, H - 12);
+        ctx.fillText("BINOCULARS", 8, 12);
+        ctx.textAlign = "right";
+        ctx.fillText("[5] EXIT", W - 8, 12);
+        ctx.textAlign = "left";
+        ctx.restore();
+      }
+
       // Flash
       if (s.flashTimer > 0) {
         s.flashTimer -= dt;
@@ -3989,6 +4144,7 @@ export default function FishingGame() {
         syncUI();
         return;
       }
+      s.binoculars = false;
       s.gameState = "casting";
       s.castPower = 0;
       s.castDirection = 1;
@@ -4514,17 +4670,17 @@ export default function FishingGame() {
           {uiState.gameState === "idle" && !uiState.inBoat && (
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center px-4 py-2 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8, pointerEvents: "none" }} data-testid="idle-prompt">
               <span style={{ color: "#b0bec5", fontSize: 10, textShadow: "1px 1px 0 #000" }}>Click to {uiState.toolMode === "net" ? "cast net" : "cast"}  |  A/D to walk</span>
-              <span style={{ color: "#5dade2", fontSize: 8, textShadow: "1px 1px 0 #000" }}>SPACE to dive in  |  1-4 hotbar</span>
+              <span style={{ color: "#5dade2", fontSize: 8, textShadow: "1px 1px 0 #000" }}>SPACE to dive in  |  1-5 hotbar</span>
             </div>
           )}
           {uiState.gameState === "idle" && uiState.inBoat && (
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center px-4 py-2 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8, pointerEvents: "none" }} data-testid="boat-idle-prompt">
               <span style={{ color: "#b0bec5", fontSize: 10, textShadow: "1px 1px 0 #000" }}>Click to {uiState.toolMode === "net" ? "cast net" : "cast"}  |  A/D to row  |  SPACE to stand</span>
-              <span style={{ color: "#f1c40f", fontSize: 8, textShadow: "1px 1px 0 #000" }}>E near pier to exit boat  |  1-4 hotbar</span>
+              <span style={{ color: "#f1c40f", fontSize: 8, textShadow: "1px 1px 0 #000" }}>E near pier to exit boat  |  1-5 hotbar</span>
             </div>
           )}
 
-          {["idle","casting","waiting","bite","reeling","caught","missed"].includes(uiState.gameState) && (
+          {["idle","casting","waiting","bite","reeling","caught","missed","swimming"].includes(uiState.gameState) && (
             <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex items-end gap-1" style={{ zIndex: 30 }} data-testid="hotbar">
               <div onClick={(e) => { e.stopPropagation(); stateRef.current.selectedHotbar = 1; stateRef.current.toolMode = "rod"; stateRef.current.showLurePopup = false; stateRef.current.showChumPopup = false; syncUI(); }}
                 className="flex flex-col items-center cursor-pointer"
@@ -4596,12 +4752,44 @@ export default function FishingGame() {
                 </div>
               </div>
 
-              <div onClick={(e) => { e.stopPropagation(); stateRef.current.selectedHotbar = 4; stateRef.current.toolMode = "net"; stateRef.current.showLurePopup = false; stateRef.current.showChumPopup = false; syncUI(); }}
+              <div onClick={(e) => { e.stopPropagation(); stateRef.current.selectedHotbar = 4; stateRef.current.toolMode = "net"; stateRef.current.showLurePopup = false; stateRef.current.showChumPopup = false; stateRef.current.binoculars = false; syncUI(); }}
                 className="flex flex-col items-center cursor-pointer"
                 style={{ padding: "4px 6px", borderRadius: 6, background: uiState.selectedHotbar === 4 ? "rgba(168,85,247,0.25)" : "rgba(8,15,25,0.75)", border: uiState.selectedHotbar === 4 ? "1px solid rgba(168,85,247,0.5)" : "1px solid rgba(255,255,255,0.1)", transition: "all 0.15s" }}
                 data-testid="hotbar-slot-4">
                 <img src="/assets/icons/Icons_11.png" alt="" style={{ width: 24, height: 24, imageRendering: "pixelated" }} />
                 <span style={{ fontSize: 5, color: uiState.selectedHotbar === 4 ? "#a855f7" : "#607d8b" }}>4</span>
+              </div>
+
+              <div onClick={(e) => {
+                e.stopPropagation();
+                const st = stateRef.current;
+                if (!st.binoculars && !["idle", "swimming"].includes(st.gameState)) return;
+                st.binoculars = !st.binoculars;
+                st.selectedHotbar = st.binoculars ? 5 : 1;
+                st.showLurePopup = false;
+                st.showChumPopup = false;
+                if (st.binoculars) {
+                  const canvas = canvasRef.current;
+                  if (canvas) {
+                    st.binoX = -st.cameraX + canvas.width / 2;
+                    st.binoY = -st.cameraY + canvas.height / 2;
+                    st.binoTargetX = st.binoX;
+                    st.binoTargetY = st.binoY;
+                  }
+                }
+                syncUI();
+              }}
+                className="flex flex-col items-center cursor-pointer"
+                style={{ padding: "4px 6px", borderRadius: 6, background: uiState.binoculars ? "rgba(34,211,238,0.25)" : "rgba(8,15,25,0.75)", border: uiState.binoculars ? "1px solid rgba(34,211,238,0.5)" : "1px solid rgba(255,255,255,0.1)", transition: "all 0.15s" }}
+                data-testid="hotbar-slot-5">
+                <div style={{ width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style={{ imageRendering: "auto" }}>
+                    <circle cx="6" cy="10" r="5" stroke={uiState.binoculars ? "#22d3ee" : "#607d8b"} strokeWidth="1.5" fill="none" />
+                    <circle cx="14" cy="10" r="5" stroke={uiState.binoculars ? "#22d3ee" : "#607d8b"} strokeWidth="1.5" fill="none" />
+                    <line x1="11" y1="10" x2="9" y2="10" stroke={uiState.binoculars ? "#22d3ee" : "#607d8b"} strokeWidth="1.5" />
+                  </svg>
+                </div>
+                <span style={{ fontSize: 5, color: uiState.binoculars ? "#22d3ee" : "#607d8b" }}>5</span>
               </div>
             </div>
           )}
