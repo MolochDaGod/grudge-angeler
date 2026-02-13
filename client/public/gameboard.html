@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grudge Angeler - Game Board</title>
+  <meta name="description" content="Complete game board for Grudge Angeler showing all fish species, equipment, and game data with interactive zoom.">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg-deep: #050c1e;
+      --bg-card: #0a1628;
+      --bg-card-hover: #0f1f38;
+      --border: rgba(79,195,247,0.15);
+      --border-accent: rgba(79,195,247,0.3);
+      --text-primary: #ecf0f1;
+      --text-secondary: #90a4ae;
+      --text-dim: #546e7a;
+      --common: #b0bec5;
+      --uncommon: #4fc3f7;
+      --rare: #5c6bc0;
+      --epic: #ab47bc;
+      --legendary: #ff9800;
+      --ultra-rare: #ff5252;
+      --accent: #4fc3f7;
+    }
+    html, body {
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: 'Press Start 2P', monospace;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+    }
+    body.dragging { cursor: grabbing; }
+
+    #zoom-controls {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: center;
+    }
+    #zoom-controls button {
+      width: 36px;
+      height: 36px;
+      background: rgba(10,22,40,0.92);
+      border: 1px solid var(--border-accent);
+      border-radius: 6px;
+      color: var(--accent);
+      font-family: 'Press Start 2P', monospace;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #zoom-controls button:hover { background: rgba(20,40,70,0.95); }
+    #zoom-level {
+      color: var(--text-secondary);
+      font-size: 7px;
+      font-family: 'Press Start 2P', monospace;
+    }
+
+    #back-link {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 100;
+      background: rgba(10,22,40,0.92);
+      border: 1px solid var(--border-accent);
+      border-radius: 8px;
+      padding: 8px 14px;
+      color: var(--accent);
+      font-family: 'Press Start 2P', monospace;
+      font-size: 8px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    #back-link:hover { background: rgba(20,40,70,0.95); }
+
+    #minimap {
+      position: fixed;
+      bottom: 12px;
+      right: 12px;
+      z-index: 100;
+      width: 180px;
+      height: 120px;
+      background: rgba(10,22,40,0.9);
+      border: 1px solid var(--border-accent);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    #minimap-viewport {
+      position: absolute;
+      border: 1px solid var(--accent);
+      background: rgba(79,195,247,0.1);
+      pointer-events: none;
+    }
+
+    #board-container {
+      position: absolute;
+      transform-origin: 0 0;
+      will-change: transform;
+    }
+
+    #board {
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 50px;
+      width: 3600px;
+    }
+
+    .board-title {
+      text-align: center;
+      font-size: 18px;
+      color: var(--accent);
+      text-shadow: 0 0 20px rgba(79,195,247,0.5);
+      letter-spacing: 3px;
+      padding: 20px 0;
+    }
+    .board-subtitle {
+      text-align: center;
+      font-size: 8px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    .section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-title {
+      font-size: 12px;
+      letter-spacing: 2px;
+    }
+    .section-count {
+      font-size: 7px;
+      color: var(--text-dim);
+      margin-left: auto;
+    }
+    .section-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .fish-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .fish-card {
+      background: var(--bg-deep);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      transition: border-color 0.2s;
+      position: relative;
+    }
+    .fish-card:hover {
+      border-color: var(--border-accent);
+    }
+    .fish-img-wrap {
+      width: 64px;
+      height: 64px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      border: 1px dashed rgba(255,255,255,0.1);
+    }
+    .fish-img-wrap:hover::after {
+      content: 'EDIT';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 7px;
+      color: var(--accent);
+      font-family: 'Press Start 2P', monospace;
+    }
+    .fish-img-wrap img {
+      max-width: 56px;
+      max-height: 56px;
+      image-rendering: pixelated;
+    }
+    .fish-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .fish-name {
+      font-size: 9px;
+      margin-bottom: 4px;
+      word-break: break-word;
+    }
+    .fish-desc {
+      font-size: 6px;
+      color: var(--text-secondary);
+      line-height: 12px;
+      margin-bottom: 6px;
+    }
+    .fish-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .fish-stat {
+      font-size: 6px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.05);
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+    .fish-stat b { color: var(--text-secondary); }
+    .rarity-badge {
+      font-size: 6px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      color: #fff;
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+    .tint-indicator {
+      font-size: 5px;
+      color: var(--text-dim);
+      margin-top: 3px;
+    }
+
+    .stars { letter-spacing: 1px; font-size: 7px; }
+
+    .equip-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+    }
+    .equip-card {
+      background: var(--bg-deep);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .equip-card:hover { border-color: var(--border-accent); }
+    .equip-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .equip-icon img {
+      max-width: 32px;
+      max-height: 32px;
+      image-rendering: pixelated;
+    }
+    .equip-name { font-size: 8px; margin-bottom: 3px; }
+    .equip-desc { font-size: 6px; color: var(--text-secondary); line-height: 11px; }
+    .equip-price { font-size: 7px; color: #2ecc71; margin-top: 3px; }
+    .equip-stats { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+
+    .world-map {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+    .zone-card {
+      background: var(--bg-deep);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      min-width: 200px;
+      flex-shrink: 0;
+    }
+    .zone-card:hover { border-color: var(--border-accent); }
+    .zone-name { font-size: 9px; margin-bottom: 6px; }
+    .zone-desc { font-size: 6px; color: var(--text-secondary); line-height: 12px; }
+    .zone-fish { font-size: 6px; color: var(--text-dim); margin-top: 6px; }
+
+    .legend-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 7px;
+      color: var(--text-secondary);
+    }
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    input[type="file"] { display: none; }
+  </style>
+</head>
+<body>
+  <a id="back-link" href="/">BACK TO GAME</a>
+
+  <div id="zoom-controls">
+    <button id="zoom-in" title="Zoom In">+</button>
+    <span id="zoom-level">100%</span>
+    <button id="zoom-out" title="Zoom Out">-</button>
+    <button id="zoom-reset" title="Reset" style="font-size:8px;">R</button>
+  </div>
+
+  <div id="minimap">
+    <div id="minimap-viewport"></div>
+  </div>
+
+  <input type="file" id="img-upload" accept="image/*" />
+
+  <div id="board-container">
+    <div id="board">
+
+      <div style="text-align:center;padding:30px 0;">
+        <div class="board-title">GRUDGE ANGELER</div>
+        <div class="board-subtitle">COMPLETE GAME BOARD - ALL SPECIES, EQUIPMENT & WORLD DATA</div>
+        <div class="legend-row" style="justify-content:center;margin-top:16px;">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--common)"></div>COMMON</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--uncommon)"></div>UNCOMMON</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--rare)"></div>RARE</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--epic)"></div>EPIC</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--legendary)"></div>LEGENDARY</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--ultra-rare)"></div>ULTRA RARE</div>
+        </div>
+      </div>
+
+      <!-- WORLD ZONES -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-dot" style="background:var(--accent)"></div>
+          <div class="section-title" style="color:var(--accent)">WORLD ZONES & DEPTH MAP</div>
+          <div class="section-count">8 SCENES</div>
+        </div>
+        <div class="world-map" id="world-zones"></div>
+      </div>
+
+      <!-- COMMON FISH -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-dot" style="background:var(--common)"></div>
+          <div class="section-title" style="color:var(--common)">COMMON FISH</div>
+          <div class="section-count" id="common-count"></div>
+        </div>
+        <div class="fish-grid" id="common-fish"></div>
+      </div>
+
+      <!-- UNCOMMON FISH -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-dot" style="background:var(--uncommon)"></div>
+          <div class="section-title" style="color:var(--uncommon)">UNCOMMON FISH</div>
+          <div class="section-count" id="uncommon-count"></div>
+        </div>
+        <div class="fish-grid" id="uncommon-fish"></div>
+      </div>
+
+      <!-- RARE FISH (25) -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-dot" style="background:var(--rare)"></div>
+          <div class="section-title" style="color:var(--rare)">RARE FISH</div>
+          <div class="section-count" id="rare-count"></div>
+        </div>
+        <div class="fish-grid" id="rare-fish"></div>
+      </div>
+
+      <!-- EPIC FISH (10) -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-dot" style="background:var(--epic)"></div>
+          <div class="section-title" style="color:var(--epic)">EPIC FISH</div>
+          <div class="section-count" id="epic-count"></div>
+        </div>
+        <div class="fish-grid" id="epic-fish"></div>
+      </div>
+
+      <!-- LEGENDARY FISH -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-dot" style="background:var(--legendary)"></div>
+          <div class="section-title" style="color:var(--legendary)">LEGENDARY FISH</div>
+          <div class="section-count" id="legendary-count"></div>
+        </div>
+        <div class="fish-grid" id="legendary-fish"></div>
+      </div>
+
+      <!-- THE LEGENDARY 9 (ULTRA RARE) -->
+      <div class="section" style="border-color:rgba(255,82,82,0.3);background:linear-gradient(135deg, #0a1628, #150a1e);">
+        <div class="section-header" style="border-bottom-color:rgba(255,82,82,0.2);">
+          <div class="section-dot" style="background:var(--ultra-rare);box-shadow:0 0 8px rgba(255,82,82,0.5);"></div>
+          <div class="section-title" style="color:var(--ultra-rare);text-shadow:0 0 10px rgba(255,82,82,0.4);">THE LEGENDARY 9 - ULTRA RARE</div>
+          <div class="section-count" id="ultra-count"></div>
+        </div>
+        <div class="fish-grid" id="ultra-fish"></div>
+      </div>
+
+      <!-- BEACH CRABS -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-dot" style="background:#e57373"></div>
+          <div class="section-title" style="color:#e57373">BEACH CRABS</div>
+          <div class="section-count" id="crab-count"></div>
+        </div>
+        <div class="fish-grid" id="crab-fish"></div>
+      </div>
+
+      <!-- PREDATORS -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-dot" style="background:#ef5350"></div>
+          <div class="section-title" style="color:#ef5350">OCEAN PREDATORS</div>
+          <div class="section-count">3 SPECIES</div>
+        </div>
+        <div class="fish-grid" id="predator-fish"></div>
+      </div>
+
+      <!-- EQUIPMENT -->
+      <div class="two-col">
+        <!-- RODS -->
+        <div class="section">
+          <div class="section-header">
+            <div class="section-dot" style="background:#81c784"></div>
+            <div class="section-title" style="color:#81c784">FISHING RODS</div>
+            <div class="section-count">5 RODS</div>
+          </div>
+          <div class="equip-grid" id="rods-grid"></div>
+        </div>
+
+        <!-- LURES & BAITS -->
+        <div class="section">
+          <div class="section-header">
+            <div class="section-dot" style="background:#ffb74d"></div>
+            <div class="section-title" style="color:#ffb74d">LURES & BAITS</div>
+            <div class="section-count" id="lure-count"></div>
+          </div>
+          <div class="equip-grid" id="lures-grid"></div>
+        </div>
+      </div>
+
+      <!-- CHUM -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-dot" style="background:#ce93d8"></div>
+          <div class="section-title" style="color:#ce93d8">CHUM ITEMS</div>
+          <div class="section-count" id="chum-count"></div>
+        </div>
+        <div class="equip-grid" id="chum-grid"></div>
+      </div>
+
+      <!-- GAME MECHANICS -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-dot" style="background:var(--accent)"></div>
+          <div class="section-title" style="color:var(--accent)">GAME MECHANICS & CONTROLS</div>
+        </div>
+        <div class="equip-grid" id="mechanics-grid"></div>
+      </div>
+
+      <div style="text-align:center;padding:30px 0;">
+        <div style="font-size:7px;color:var(--text-dim);">GRUDGE ANGELER GAME BOARD v1.0</div>
+        <div style="font-size:6px;color:var(--text-dim);margin-top:6px;">Click any fish image to upload a custom sprite</div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const FISH_SPECIES = [
+  { name: "Minnow", img: "/assets/catch/1.png", points: 10, rarity: "common", weight: 40, minDepth: 0.15, speed: 1.5, description: "A tiny silver fish, common in shallow waters.", zone: "Shallow" },
+  { name: "Perch", img: "/assets/catch/2.png", points: 25, rarity: "common", weight: 30, minDepth: 0.25, speed: 1.2, description: "A striped freshwater fish with sharp fins.", zone: "Shallow" },
+  { name: "Eel", img: "/assets/catch/7.png", points: 40, rarity: "common", weight: 20, minDepth: 0.3, speed: 1.3, description: "A slippery serpentine fish.", zone: "Shallow-Mid" },
+  { name: "Bass", img: "/assets/catch/3.png", points: 50, rarity: "uncommon", weight: 15, minDepth: 0.35, speed: 1.0, description: "A strong fighter popular with anglers.", zone: "Mid" },
+  { name: "Catfish", img: "/assets/catch/4.png", points: 75, rarity: "uncommon", weight: 8, minDepth: 0.45, speed: 0.8, description: "A bottom-dweller with long whiskers.", zone: "Mid" },
+  { name: "Salmon", img: "/assets/catch/8.png", points: 60, rarity: "uncommon", weight: 12, minDepth: 0.35, speed: 1.1, description: "A prized pink-fleshed fish.", zone: "Mid" },
+  { name: "Whale", img: "/assets/catch/6.png", points: 300, rarity: "legendary", weight: 1, minDepth: 0.65, speed: 0.5, description: "The king of the deep. Incredibly rare!", zone: "Deep Ocean" },
+];
+
+const RARE_FISH = [
+  { name: "Swordfish", img: "/assets/catch/5.png", points: 150, rarity: "rare", weight: 4, minDepth: 0.55, speed: 1.8, description: "A powerful ocean predator with a sharp bill.", zone: "Deep" },
+  { name: "Barracuda", img: "", points: 160, rarity: "rare", weight: 3.5, minDepth: 0.5, speed: 2.0, description: "A torpedo-shaped predator with razor teeth.", zone: "Mid-Deep" },
+  { name: "Marlin", img: "", points: 180, rarity: "rare", weight: 3, minDepth: 0.6, speed: 2.2, description: "A majestic billfish known for spectacular leaps.", zone: "Deep" },
+  { name: "Mahi-Mahi", img: "", points: 140, rarity: "rare", weight: 4, minDepth: 0.45, speed: 1.6, description: "A brilliant blue-gold dolphinfish.", zone: "Mid" },
+  { name: "Tuna", img: "", points: 170, rarity: "rare", weight: 3.5, minDepth: 0.5, speed: 1.9, description: "A powerful pelagic hunter built for speed.", zone: "Mid-Deep" },
+  { name: "Stingray", img: "", points: 130, rarity: "rare", weight: 5, minDepth: 0.4, speed: 1.0, description: "A graceful flat-bodied bottom glider.", zone: "Mid" },
+  { name: "Pufferfish", img: "", points: 120, rarity: "rare", weight: 6, minDepth: 0.35, speed: 0.7, description: "Inflates into a spiky ball when threatened.", zone: "Shallow-Mid" },
+  { name: "Moray Eel", img: "", points: 145, rarity: "rare", weight: 4, minDepth: 0.5, speed: 1.1, description: "A fearsome eel hiding in coral crevices.", zone: "Mid-Deep" },
+  { name: "Lionfish", img: "", points: 155, rarity: "rare", weight: 5, minDepth: 0.45, speed: 0.9, description: "Venomous spines and striking striped beauty.", zone: "Mid" },
+  { name: "Triggerfish", img: "", points: 110, rarity: "rare", weight: 5.5, minDepth: 0.4, speed: 1.2, description: "Aggressive reef dweller with powerful jaws.", zone: "Mid" },
+  { name: "Grouper", img: "", points: 135, rarity: "rare", weight: 4.5, minDepth: 0.5, speed: 0.8, description: "A massive ambush predator of reef systems.", zone: "Mid-Deep" },
+  { name: "Snapper", img: "", points: 115, rarity: "rare", weight: 5, minDepth: 0.4, speed: 1.3, description: "A popular gamefish with bright red scales.", zone: "Mid" },
+  { name: "Flounder", img: "", points: 100, rarity: "rare", weight: 6, minDepth: 0.35, speed: 0.6, description: "A flat camouflaged bottom-hugger.", zone: "Shallow-Mid" },
+  { name: "Halibut", img: "", points: 165, rarity: "rare", weight: 3, minDepth: 0.55, speed: 0.7, description: "The largest flatfish in the ocean.", zone: "Deep" },
+  { name: "Wahoo", img: "", points: 175, rarity: "rare", weight: 3, minDepth: 0.55, speed: 2.3, description: "One of the fastest fish in the sea.", zone: "Deep" },
+  { name: "Tarpon", img: "", points: 190, rarity: "rare", weight: 2.5, minDepth: 0.5, speed: 1.7, description: "The Silver King. An acrobatic legend.", zone: "Mid-Deep" },
+  { name: "Sailfish", img: "", points: 200, rarity: "rare", weight: 2, minDepth: 0.6, speed: 2.5, description: "Fastest fish alive with an iconic dorsal sail.", zone: "Deep" },
+  { name: "Cobia", img: "", points: 125, rarity: "rare", weight: 4.5, minDepth: 0.45, speed: 1.4, description: "A powerful swimmer that follows sharks.", zone: "Mid" },
+  { name: "Amberjack", img: "", points: 140, rarity: "rare", weight: 4, minDepth: 0.5, speed: 1.5, description: "A deep-reef brawler. Never gives up.", zone: "Mid-Deep" },
+  { name: "Permit", img: "", points: 155, rarity: "rare", weight: 3.5, minDepth: 0.4, speed: 1.3, description: "The holy grail of flats fishing.", zone: "Shallow-Mid" },
+  { name: "Bonefish", img: "", points: 105, rarity: "rare", weight: 6, minDepth: 0.3, speed: 1.8, description: "The gray ghost of shallow flats.", zone: "Shallow" },
+  { name: "Dorado", img: "", points: 170, rarity: "rare", weight: 3, minDepth: 0.55, speed: 1.9, description: "A dazzling golden pelagic fighter.", zone: "Deep" },
+  { name: "Yellowtail", img: "", points: 130, rarity: "rare", weight: 5, minDepth: 0.45, speed: 1.4, description: "A powerful reef predator with a yellow tail.", zone: "Mid" },
+  { name: "King Mackerel", img: "", points: 145, rarity: "rare", weight: 4, minDepth: 0.5, speed: 2.0, description: "A toothy speedster of warm waters.", zone: "Mid-Deep" },
+  { name: "Sturgeon", img: "", points: 185, rarity: "rare", weight: 2.5, minDepth: 0.6, speed: 0.9, description: "An ancient armored fish, living fossil.", zone: "Deep" },
+];
+
+const EPIC_FISH = [
+  { name: "Giant Squid", img: "", points: 350, rarity: "epic", weight: 1.5, minDepth: 0.7, speed: 1.3, description: "A massive deep-sea cephalopod with enormous eyes.", zone: "Abyss" },
+  { name: "Oarfish", img: "", points: 400, rarity: "epic", weight: 1, minDepth: 0.75, speed: 0.5, description: "The serpent king of the deep. Up to 30 feet long.", zone: "Abyss" },
+  { name: "Coelacanth", img: "", points: 450, rarity: "epic", weight: 0.8, minDepth: 0.7, speed: 0.6, description: "A living fossil from the age of dinosaurs.", zone: "Deep Ocean" },
+  { name: "Megamouth Shark", img: "", points: 500, rarity: "epic", weight: 0.7, minDepth: 0.75, speed: 0.8, description: "An extremely rare deep-water filter feeder.", zone: "Deep Ocean" },
+  { name: "Goblin Shark", img: "", points: 380, rarity: "epic", weight: 1.2, minDepth: 0.7, speed: 1.0, description: "A prehistoric horror with a protruding jaw.", zone: "Abyss" },
+  { name: "Sunfish", img: "", points: 320, rarity: "epic", weight: 1.5, minDepth: 0.6, speed: 0.4, description: "The heaviest bony fish. A gentle ocean giant.", zone: "Deep" },
+  { name: "Nautilus", img: "", points: 370, rarity: "epic", weight: 1.3, minDepth: 0.65, speed: 0.5, description: "A living shell from prehistoric oceans.", zone: "Deep" },
+  { name: "Electric Eel", img: "", points: 340, rarity: "epic", weight: 1.5, minDepth: 0.55, speed: 1.2, description: "Generates 860 volts. Handle with extreme care.", zone: "Mid-Deep" },
+  { name: "Dragonfish", img: "", points: 420, rarity: "epic", weight: 1, minDepth: 0.7, speed: 1.1, description: "A bioluminescent horror of the midnight zone.", zone: "Abyss" },
+  { name: "Vampire Squid", img: "", points: 390, rarity: "epic", weight: 1.2, minDepth: 0.75, speed: 0.7, description: "Cloaked in darkness, from the oxygen minimum zone.", zone: "Abyss" },
+];
+
+const ULTRA_RARE_FISH = [
+  { name: "Phantom Minnow", img: "/assets/catch/1.png", points: 500, rarity: "ultra_rare", weight: 0.3, minDepth: 0.55, speed: 2.2, description: "A ghostly minnow wreathed in spectral flame. Blinks in and out of reality.", tint: "rgba(0,255,200,0.35)", zone: "Deep", stars: 5 },
+  { name: "Volcanic Perch", img: "/assets/catch/2.png", points: 600, rarity: "ultra_rare", weight: 0.25, minDepth: 0.6, speed: 1.6, description: "A perch superheated by deep-sea vents. Its scales glow molten orange.", tint: "rgba(255,80,0,0.4)", zone: "Deep Ocean", stars: 5 },
+  { name: "Abyssal Bass", img: "/assets/catch/3.png", points: 750, rarity: "ultra_rare", weight: 0.2, minDepth: 0.65, speed: 1.4, description: "A colossal bass from the deepest trenches. Radiates dark energy.", tint: "rgba(120,0,255,0.35)", zone: "Abyss", stars: 5 },
+  { name: "Frost Catfish", img: "/assets/catch/4.png", points: 800, rarity: "ultra_rare", weight: 0.18, minDepth: 0.6, speed: 0.9, description: "An ancient catfish encased in living ice. Freezes the water around it.", tint: "rgba(100,200,255,0.4)", zone: "Deep Ocean", stars: 5 },
+  { name: "Storm Swordfish", img: "/assets/catch/5.png", points: 1000, rarity: "ultra_rare", weight: 0.12, minDepth: 0.7, speed: 2.5, description: "A swordfish that rides lightning bolts. Crackles with electric fury.", tint: "rgba(255,255,0,0.35)", zone: "Deep Ocean", stars: 5 },
+  { name: "Celestial Whale", img: "/assets/catch/6.png", points: 2000, rarity: "ultra_rare", weight: 0.05, minDepth: 0.75, speed: 0.4, description: "A cosmic whale that swallowed a dying star. The rarest creature in existence.", tint: "rgba(255,180,255,0.3)", zone: "Abyss", stars: 5 },
+  { name: "Neon Eel", img: "/assets/catch/7.png", points: 650, rarity: "ultra_rare", weight: 0.22, minDepth: 0.55, speed: 1.9, description: "A bioluminescent eel pulsing with neon colors. Mesmerizing.", tint: "rgba(0,255,100,0.4)", zone: "Deep", stars: 5 },
+  { name: "Golden Salmon", img: "/assets/catch/8.png", points: 700, rarity: "ultra_rare", weight: 0.2, minDepth: 0.6, speed: 1.5, description: "A legendary salmon with solid gold scales. Worth a fortune.", tint: "rgba(255,200,0,0.45)", zone: "Deep Ocean", stars: 5 },
+  { name: "Shadow Leviathan", img: "/assets/catch/6.png", points: 1500, rarity: "ultra_rare", weight: 0.08, minDepth: 0.8, speed: 0.6, description: "A titanic shadow beast from beyond the abyss. Feared by all ocean life.", tint: "rgba(180,0,50,0.35)", zone: "Abyss", stars: 5 },
+];
+
+const BEACH_CRABS = [
+  { name: "Red Crab", img: "/assets/beach_crabs.png", points: 8, rarity: "common", weight: 50, description: "A small red crab that scuttles along the beach.", zone: "Beach" },
+  { name: "Blue Crab", img: "/assets/beach_crabs.png", points: 10, rarity: "common", weight: 40, description: "A bright blue crab found near tidal pools.", zone: "Beach" },
+  { name: "Green Crab", img: "/assets/beach_crabs.png", points: 8, rarity: "common", weight: 45, description: "A mossy green crab hiding in the seaweed.", zone: "Beach" },
+  { name: "Purple Crab", img: "/assets/beach_crabs.png", points: 15, rarity: "uncommon", weight: 20, description: "An uncommon purple crab with iridescent shell.", zone: "Beach" },
+  { name: "Gold Crab", img: "/assets/beach_crabs.png", points: 25, rarity: "uncommon", weight: 15, description: "A rare golden crab. Prized for its shimmering shell.", zone: "Beach" },
+  { name: "Cyan Crab", img: "/assets/beach_crabs.png", points: 8, rarity: "common", weight: 45, description: "A pale cyan crab commonly found on sandy shores.", zone: "Beach" },
+  { name: "Pink Crab", img: "/assets/beach_crabs.png", points: 12, rarity: "common", weight: 35, description: "A cute pink crab that loves warm shallow waters.", zone: "Beach" },
+  { name: "Dark Crab", img: "/assets/beach_crabs.png", points: 20, rarity: "uncommon", weight: 18, description: "A dark-shelled crab with powerful pincers.", zone: "Beach" },
+];
+
+const PREDATORS = [
+  { name: "Shark", img: "/assets/predators/1/Idle.png", points: 400, rarity: "rare", weight: 3, speed: 2.2, description: "A fearsome shark prowling the deep waters.", zone: "Deep", scareRadius: 200 },
+  { name: "Kraken", img: "/assets/predators/2/Idle.png", points: 800, rarity: "legendary", weight: 1, speed: 1.5, description: "A massive squid from the abyss, feared by all.", zone: "Abyss", scareRadius: 280 },
+  { name: "Sea Devil", img: "/assets/predators/3/Idle.png", points: 600, rarity: "rare", weight: 2, speed: 1.8, description: "A monstrous crab creature from the deep trenches.", zone: "Deep", scareRadius: 240 },
+];
+
+const RODS = [
+  { name: "Bamboo Rod", price: 0, catchZoneBonus: 0, reelSpeedMult: 1.0, lineStrength: 1.0, description: "A simple bamboo rod. Gets the job done.", icon: "/assets/icons/Icons_07.png" },
+  { name: "Fiberglass Rod", price: 150, catchZoneBonus: 0.015, reelSpeedMult: 1.1, lineStrength: 1.15, description: "Lighter and more responsive.", icon: "/assets/icons/Icons_07.png" },
+  { name: "Carbon Rod", price: 400, catchZoneBonus: 0.025, reelSpeedMult: 1.2, lineStrength: 1.3, description: "High-tech carbon fiber build.", icon: "/assets/icons/Icons_07.png" },
+  { name: "Titanium Rod", price: 800, catchZoneBonus: 0.035, reelSpeedMult: 1.35, lineStrength: 1.5, description: "Ultra-strong titanium alloy.", icon: "/assets/icons/Icons_07.png" },
+  { name: "Legendary Rod", price: 1500, catchZoneBonus: 0.05, reelSpeedMult: 1.5, lineStrength: 1.8, description: "Forged from the anchor of a ghost ship.", icon: "/assets/icons/Icons_07.png" },
+];
+
+const LURES = [
+  { name: "Basic Worm", price: 0, description: "A plain earthworm. The classic bait.", icon: "/assets/lures/worm.png", rarityBoost: 1.0, type: "live", targets: "-" },
+  { name: "Nightcrawler", price: 40, description: "A fat, juicy nightcrawler.", icon: "/assets/lures/nightcrawler.png", rarityBoost: 1.0, type: "live", targets: "Catfish, Bass" },
+  { name: "Leech", price: 90, description: "A slimy leech for bottom dwellers.", icon: "/assets/lures/leech.png", rarityBoost: 1.2, type: "live", targets: "Catfish, Eel" },
+  { name: "Maggots", price: 60, description: "Wriggling maggots. Quick nibbles.", icon: "/assets/lures/maggots.png", rarityBoost: 1.0, type: "live", targets: "Minnow, Perch" },
+  { name: "Minnow Bait", price: 150, description: "Live minnow attracts predators.", icon: "/assets/lures/minnow_bait.png", rarityBoost: 1.5, type: "live", targets: "Bass, Salmon, Swordfish" },
+  { name: "Beginner Lure", price: 50, description: "Basic crankbait for beginners.", icon: "/assets/lures/beginner_lure.png", rarityBoost: 1.0, type: "lure", targets: "-" },
+  { name: "Crankbait", price: 120, description: "Rattling diving lure.", icon: "/assets/lures/crankbait.png", rarityBoost: 1.1, type: "lure", targets: "Perch, Bass" },
+  { name: "Silver Spoon", price: 100, description: "Hammered metal spoon that flashes.", icon: "/assets/lures/spoon.png", rarityBoost: 1.0, type: "lure", targets: "Salmon, Minnow" },
+  { name: "Grub Worm", price: 80, description: "Soft plastic grub. Works on everything.", icon: "/assets/lures/grub_worm.png", rarityBoost: 1.1, type: "lure", targets: "-" },
+  { name: "Spinnerbait", price: 200, description: "Flash and vibration underwater.", icon: "/assets/lures/spinnerbait.png", rarityBoost: 1.3, type: "lure", targets: "Bass, Perch" },
+  { name: "Deep Diver", price: 180, description: "Dives deep for bottom dwellers.", icon: "/assets/lures/deep_diver.png", rarityBoost: 1.2, type: "lure", targets: "Catfish, Eel" },
+  { name: "Golden Fly", price: 250, description: "Iridescent golden fly. Rare boost.", icon: "/assets/lures/golden_fly.png", rarityBoost: 2.0, type: "lure", targets: "Swordfish" },
+  { name: "Glow Jig", price: 350, description: "Bioluminescent. Bigger fish.", icon: "/assets/lures/glow_jig.png", rarityBoost: 1.3, type: "lure", targets: "-" },
+  { name: "Storm Shad", price: 300, description: "Mimics injured baitfish.", icon: "/assets/lures/storm_shad.png", rarityBoost: 1.0, type: "lure", targets: "Bass, Salmon" },
+  { name: "Kraken Bait", price: 500, description: "Mysterious bait from the depths.", icon: "/assets/lures/kraken_bait.png", rarityBoost: 3.0, type: "lure", targets: "Whale" },
+  { name: "Prismatic Lure", price: 750, description: "Rainbow-shifting. Boosts everything.", icon: "/assets/lures/prismatic_lure.png", rarityBoost: 1.8, type: "lure", targets: "All" },
+];
+
+const CHUM_ITEMS = [
+  { name: "Fish Scraps", price: 15, description: "Basic chum. Slight attract.", icon: "/assets/icons/Icons_01.png", rarityBoost: 1.0, duration: 300 },
+  { name: "Bread Crumbs", price: 20, description: "Attracts small fish.", icon: "/assets/icons/Icons_02.png", rarityBoost: 1.0, duration: 350 },
+  { name: "Corn Mash", price: 25, description: "Attracts bottom feeders.", icon: "/assets/icons/Icons_03.png", rarityBoost: 1.05, duration: 400 },
+  { name: "Blood Meal", price: 40, description: "Attracts predators.", icon: "/assets/icons/Icons_04.png", rarityBoost: 1.15, duration: 350 },
+  { name: "Shrimp Paste", price: 50, description: "Good all-around chum.", icon: "/assets/icons/Icons_05.png", rarityBoost: 1.1, duration: 400 },
+  { name: "Squid Ink", price: 60, description: "Attracts deep fish.", icon: "/assets/icons/Icons_06.png", rarityBoost: 1.2, duration: 350 },
+  { name: "Fish Oil Slick", price: 75, description: "Wide area attract.", icon: "/assets/icons/Icons_08.png", rarityBoost: 1.1, duration: 500 },
+  { name: "Sardine Chunks", price: 45, description: "Fast bite speed.", icon: "/assets/icons/Icons_09.png", rarityBoost: 1.0, duration: 300 },
+  { name: "Crab Guts", price: 55, description: "Attracts rare fish.", icon: "/assets/icons/Icons_10.png", rarityBoost: 1.3, duration: 350 },
+  { name: "Mussel Mix", price: 35, description: "Steady attract.", icon: "/assets/icons/Icons_11.png", rarityBoost: 1.05, duration: 450 },
+  { name: "Fermented Brine", price: 80, description: "Strong rarity boost.", icon: "/assets/icons/Icons_12.png", rarityBoost: 1.5, duration: 400 },
+  { name: "Whale Blubber", price: 100, description: "Attracts legendary fish.", icon: "/assets/icons/Icons_13.png", rarityBoost: 1.7, duration: 350 },
+  { name: "Phosphor Dust", price: 120, description: "Ultra rare boost.", icon: "/assets/icons/Icons_14.png", rarityBoost: 2.0, duration: 300 },
+  { name: "Coral Powder", price: 90, description: "Attracts reef fish.", icon: "/assets/icons/Icons_15.png", rarityBoost: 1.3, duration: 400 },
+  { name: "Deep Sea Extract", price: 150, description: "Deep water mega boost.", icon: "/assets/icons/Icons_16.png", rarityBoost: 1.8, duration: 350 },
+  { name: "Thunder Chum", price: 130, description: "Attracts storm fish.", icon: "/assets/icons/Icons_17.png", rarityBoost: 1.6, duration: 300 },
+  { name: "Moonlight Essence", price: 200, description: "Celestial boost.", icon: "/assets/icons/Icons_18.png", rarityBoost: 2.0, duration: 400 },
+  { name: "Kraken Bile", price: 180, description: "Massive rarity increase.", icon: "/assets/icons/Icons_19.png", rarityBoost: 2.5, duration: 300 },
+  { name: "Golden Flakes", price: 250, description: "Boosts everything.", icon: "/assets/icons/Icons_20.png", rarityBoost: 2.0, duration: 500 },
+  { name: "Abyssal Ooze", price: 300, description: "The ultimate chum.", icon: "/assets/icons/Icons_01.png", rarityBoost: 2.5, duration: 600 },
+];
+
+const WORLD_ZONES = [
+  { name: "Beach", depth: "Surface", desc: "Sandy shores with crabs and tidal pools.", fish: "Beach Crabs, Minnow", color: "#e6d5a0" },
+  { name: "Shallow Waters", depth: "0-15%", desc: "Calm waters near the pier. Easy fishing.", fish: "Minnow, Perch, Eel", color: "#81d4fa" },
+  { name: "Pier / Dock", depth: "15-35%", desc: "The main fishing spot. Moderate variety.", fish: "Perch, Bass, Catfish, Salmon", color: "#4fc3f7" },
+  { name: "Mid Waters", depth: "35-55%", desc: "Open water with stronger fish.", fish: "Bass, Catfish, Salmon, Swordfish", color: "#29b6f6" },
+  { name: "Deep Waters", depth: "55-70%", desc: "Dangerous depths. Rare fish appear.", fish: "Swordfish, Whale, Ultra Rares", color: "#0288d1" },
+  { name: "Deep Ocean", depth: "70-80%", desc: "Near-total darkness. Legendary territory.", fish: "Ultra Rares, Whale, Predators", color: "#01579b" },
+  { name: "Abyss", depth: "80%+", desc: "The deepest void. Only the bravest fish here.", fish: "Shadow Leviathan, Celestial Whale", color: "#0a1929" },
+  { name: "Open Sea", depth: "Boat Only", desc: "Accessible only by boat. Vast open waters.", fish: "All species, higher sizes", color: "#1565c0" },
+];
+
+const MECHANICS = [
+  { title: "CASTING", desc: "Hold LMB to aim, release to cast. Longer hold = more power. Cast into deeper water for rarer fish." },
+  { title: "REELING", desc: "Keep the marker in the catch zone. Click to reel in. Force Bar (SPACE) speeds reel. Resilience (S) lets line out." },
+  { title: "FORCE BAR", desc: "Hold SPACEBAR during reeling for active reel power. Drains over time, regenerates when not held." },
+  { title: "RESILIENCE", desc: "Hold S key to let line out, reducing tension. Prevents line breaks on big fish." },
+  { title: "CHUM", desc: "Select chum in hotbar (slot 3), throw with LMB. Boosts bite rate, rarity, and fish attraction for a duration." },
+  { title: "NET TOOL", desc: "Switch to net (slot 4). Cast to auto-catch small fish. Has cooldown. Can catch chum items." },
+  { title: "BINOCULARS", desc: "Select binoculars (slot 5). Free camera pan with WASD. Scope overlay with crosshairs." },
+  { title: "BOAT", desc: "Press E near boat to board. Use A/D to sail. Access deep ocean fishing spots." },
+  { title: "SWIMMING", desc: "Jump into water to swim. WASD movement, SPACE to surface near dock. Sprite rotates with direction." },
+  { title: "SHOP", desc: "Press E near fishing hut. Buy rods, lures, and chum. Sell fish for gbux currency." },
+  { title: "BOUNTIES", desc: "Random challenges to catch specific fish with size requirements. Reward gbux on completion." },
+  { title: "DAY/NIGHT", desc: "30-minute cycle. Different fish at night. Weather changes affect spawns and visibility." },
+  { title: "ATTRIBUTES", desc: "Level up to earn attribute points. 8 stats: Strength, Intellect, Vitality, Dexterity, Endurance, Wisdom, Agility, Tactics." },
+  { title: "WEATHER", desc: "Clear, Cloudy, Rain, Storm, Fog. Each affects fish behavior, bite speed, and visibility." },
+  { title: "CELESTIAL EVENTS", desc: "Rare events: Red Sun, Green Moon, Tentacle Sun, Blood Moon. Massive rarity boosts during events." },
+  { title: "COMBOS", desc: "Catch fish quickly in succession for combo multiplier. Higher combos = more points and gbux." },
+];
+
+const rarityColors = {
+  common: "var(--common)",
+  uncommon: "var(--uncommon)",
+  rare: "var(--rare)",
+  epic: "var(--epic)",
+  legendary: "var(--legendary)",
+  ultra_rare: "var(--ultra-rare)",
+};
+
+const rarityStars = {
+  common: "&#9733;",
+  uncommon: "&#9733;&#9733;",
+  rare: "&#9733;&#9733;&#9733;",
+  epic: "&#9733;&#9733;&#9733;&#9733;",
+  legendary: "&#9733;&#9733;&#9733;&#9733;",
+  ultra_rare: "&#9733;&#9733;&#9733;&#9733;&#9733;",
+};
+
+let editingCard = null;
+
+function createFishCard(fish, index, category) {
+  const savedImg = localStorage.getItem(`gb_img_${category}_${index}`);
+  const imgSrc = savedImg || fish.img || "";
+  const color = rarityColors[fish.rarity] || "var(--common)";
+  const stars = rarityStars[fish.rarity] || "";
+  const depthPct = fish.minDepth ? Math.round(fish.minDepth * 100) + "%" : "-";
+
+  let statsHTML = "";
+  statsHTML += `<span class="fish-stat"><b>PTS:</b> ${fish.points}</span>`;
+  if (fish.weight !== undefined) statsHTML += `<span class="fish-stat"><b>WT:</b> ${fish.weight}%</span>`;
+  if (fish.speed !== undefined) statsHTML += `<span class="fish-stat"><b>SPD:</b> ${fish.speed}</span>`;
+  if (fish.minDepth !== undefined) statsHTML += `<span class="fish-stat"><b>DEP:</b> ${depthPct}</span>`;
+  if (fish.zone) statsHTML += `<span class="fish-stat"><b>ZONE:</b> ${fish.zone}</span>`;
+  if (fish.scareRadius) statsHTML += `<span class="fish-stat"><b>SCARE:</b> ${fish.scareRadius}px</span>`;
+
+  let tintHTML = "";
+  if (fish.tint) {
+    tintHTML = `<div class="tint-indicator">AURA: ${fish.tint}</div>`;
+  }
+
+  const card = document.createElement("div");
+  card.className = "fish-card";
+  card.innerHTML = `
+    <div class="fish-img-wrap" data-category="${category}" data-index="${index}">
+      ${imgSrc ? `<img src="${imgSrc}" alt="${fish.name}" onerror="this.style.display='none'">` : `<span style="font-size:6px;color:var(--text-dim);">NO IMG</span>`}
+    </div>
+    <div class="fish-info">
+      <div class="rarity-badge" style="background:${color}">${fish.rarity.replace("_"," ").toUpperCase()}</div>
+      <div class="fish-name" style="color:${color}">${fish.name}</div>
+      <div class="stars" style="color:${color}">${stars}</div>
+      <div class="fish-desc">${fish.description}</div>
+      <div class="fish-stats">${statsHTML}</div>
+      ${tintHTML}
+    </div>
+  `;
+
+  card.querySelector(".fish-img-wrap").addEventListener("click", function() {
+    editingCard = { category, index, element: this };
+    document.getElementById("img-upload").click();
+  });
+
+  return card;
+}
+
+function createEquipCard(item) {
+  let statsHTML = "";
+  if (item.price !== undefined) statsHTML += `<span class="fish-stat" style="color:#2ecc71"><b>${item.price === 0 ? "FREE" : item.price + "g"}</b></span>`;
+  if (item.catchZoneBonus !== undefined) statsHTML += `<span class="fish-stat"><b>ZONE+</b> ${item.catchZoneBonus}</span>`;
+  if (item.reelSpeedMult !== undefined) statsHTML += `<span class="fish-stat"><b>REEL:</b> ${item.reelSpeedMult}x</span>`;
+  if (item.lineStrength !== undefined) statsHTML += `<span class="fish-stat"><b>STR:</b> ${item.lineStrength}x</span>`;
+  if (item.rarityBoost !== undefined && item.rarityBoost !== 1.0) statsHTML += `<span class="fish-stat"><b>RAR:</b> ${item.rarityBoost}x</span>`;
+  if (item.type) statsHTML += `<span class="fish-stat"><b>TYPE:</b> ${item.type.toUpperCase()}</span>`;
+  if (item.targets) statsHTML += `<span class="fish-stat"><b>TARG:</b> ${item.targets}</span>`;
+  if (item.duration) statsHTML += `<span class="fish-stat"><b>DUR:</b> ${Math.round(item.duration/60)}min</span>`;
+
+  return `
+    <div class="equip-card">
+      <div class="equip-icon"><img src="${item.icon}" alt="${item.name}" onerror="this.style.display='none'"></div>
+      <div style="flex:1;">
+        <div class="equip-name" style="color:var(--text-primary)">${item.name}</div>
+        <div class="equip-desc">${item.description}</div>
+        <div class="equip-stats">${statsHTML}</div>
+      </div>
+    </div>
+  `;
+}
+
+function populateBoard() {
+  const commonFish = FISH_SPECIES.filter(f => f.rarity === "common");
+  const uncommonFish = FISH_SPECIES.filter(f => f.rarity === "uncommon");
+
+  document.getElementById("common-count").textContent = commonFish.length + " SPECIES";
+  document.getElementById("uncommon-count").textContent = uncommonFish.length + " SPECIES";
+  document.getElementById("rare-count").textContent = RARE_FISH.length + " SPECIES";
+  document.getElementById("epic-count").textContent = EPIC_FISH.length + " SPECIES";
+  document.getElementById("legendary-count").textContent = FISH_SPECIES.filter(f => f.rarity === "legendary").length + " SPECIES";
+  document.getElementById("ultra-count").textContent = ULTRA_RARE_FISH.length + " SPECIES";
+  document.getElementById("crab-count").textContent = BEACH_CRABS.length + " SPECIES";
+  document.getElementById("lure-count").textContent = LURES.length + " ITEMS";
+  document.getElementById("chum-count").textContent = CHUM_ITEMS.length + " ITEMS";
+
+  const commonGrid = document.getElementById("common-fish");
+  commonFish.forEach((f, i) => commonGrid.appendChild(createFishCard(f, i, "common")));
+
+  const uncommonGrid = document.getElementById("uncommon-fish");
+  uncommonFish.forEach((f, i) => uncommonGrid.appendChild(createFishCard(f, i, "uncommon")));
+
+  const rareGrid = document.getElementById("rare-fish");
+  RARE_FISH.forEach((f, i) => rareGrid.appendChild(createFishCard(f, i, "rare")));
+
+  const epicGrid = document.getElementById("epic-fish");
+  EPIC_FISH.forEach((f, i) => epicGrid.appendChild(createFishCard(f, i, "epic")));
+
+  const legendaryGrid = document.getElementById("legendary-fish");
+  FISH_SPECIES.filter(f => f.rarity === "legendary").forEach((f, i) => legendaryGrid.appendChild(createFishCard(f, i, "legendary")));
+
+  const ultraGrid = document.getElementById("ultra-fish");
+  ULTRA_RARE_FISH.forEach((f, i) => ultraGrid.appendChild(createFishCard(f, i, "ultra")));
+
+  const crabGrid = document.getElementById("crab-fish");
+  BEACH_CRABS.forEach((f, i) => crabGrid.appendChild(createFishCard(f, i, "crab")));
+
+  const predatorGrid = document.getElementById("predator-fish");
+  PREDATORS.forEach((f, i) => predatorGrid.appendChild(createFishCard(f, i, "predator")));
+
+  const rodsGrid = document.getElementById("rods-grid");
+  RODS.forEach(r => rodsGrid.innerHTML += createEquipCard(r));
+
+  const luresGrid = document.getElementById("lures-grid");
+  LURES.forEach(l => luresGrid.innerHTML += createEquipCard(l));
+
+  const chumGrid = document.getElementById("chum-grid");
+  CHUM_ITEMS.forEach(c => chumGrid.innerHTML += createEquipCard(c));
+
+  const zonesDiv = document.getElementById("world-zones");
+  WORLD_ZONES.forEach(z => {
+    zonesDiv.innerHTML += `
+      <div class="zone-card">
+        <div style="width:100%;height:6px;background:${z.color};border-radius:3px;margin-bottom:8px;"></div>
+        <div class="zone-name" style="color:${z.color === "#0a1929" ? "#90a4ae" : z.color}">${z.name}</div>
+        <div style="font-size:6px;color:var(--text-dim);margin-bottom:4px;">${z.depth}</div>
+        <div class="zone-desc">${z.desc}</div>
+        <div class="zone-fish">FISH: ${z.fish}</div>
+      </div>
+    `;
+  });
+
+  const mechGrid = document.getElementById("mechanics-grid");
+  MECHANICS.forEach(m => {
+    mechGrid.innerHTML += `
+      <div class="equip-card">
+        <div style="flex:1;">
+          <div class="equip-name" style="color:var(--accent)">${m.title}</div>
+          <div class="equip-desc">${m.desc}</div>
+        </div>
+      </div>
+    `;
+  });
+}
+
+document.getElementById("img-upload").addEventListener("change", function(e) {
+  if (!editingCard || !e.target.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const dataUrl = ev.target.result;
+    localStorage.setItem(`gb_img_${editingCard.category}_${editingCard.index}`, dataUrl);
+    const wrap = editingCard.element;
+    let img = wrap.querySelector("img");
+    if (!img) {
+      wrap.innerHTML = "";
+      img = document.createElement("img");
+      wrap.appendChild(img);
+    }
+    img.src = dataUrl;
+    img.style.display = "";
+    editingCard = null;
+  };
+  reader.readAsDataURL(e.target.files[0]);
+  e.target.value = "";
+});
+
+let scale = 1;
+let panX = 0;
+let panY = 0;
+let isDragging = false;
+let dragStartX = 0;
+let dragStartY = 0;
+let startPanX = 0;
+let startPanY = 0;
+
+const container = document.getElementById("board-container");
+
+function applyTransform() {
+  container.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+  document.getElementById("zoom-level").textContent = Math.round(scale * 100) + "%";
+  updateMinimap();
+}
+
+function updateMinimap() {
+  const board = document.getElementById("board");
+  const bw = board.offsetWidth;
+  const bh = board.offsetHeight;
+  const mm = document.getElementById("minimap");
+  const mmW = mm.offsetWidth;
+  const mmH = mm.offsetHeight;
+  const vp = document.getElementById("minimap-viewport");
+
+  const scaleX = mmW / (bw * scale + window.innerWidth);
+  const scaleY = mmH / (bh * scale + window.innerHeight);
+  const s = Math.min(scaleX, scaleY);
+
+  const vpW = window.innerWidth * s;
+  const vpH = window.innerHeight * s;
+  const vpX = (-panX) * s;
+  const vpY = (-panY) * s;
+
+  vp.style.left = Math.max(0, vpX) + "px";
+  vp.style.top = Math.max(0, vpY) + "px";
+  vp.style.width = vpW + "px";
+  vp.style.height = vpH + "px";
+}
+
+window.addEventListener("wheel", function(e) {
+  e.preventDefault();
+  const rect = document.body.getBoundingClientRect();
+  const mx = e.clientX;
+  const my = e.clientY;
+
+  const worldX = (mx - panX) / scale;
+  const worldY = (my - panY) / scale;
+
+  const delta = e.deltaY > 0 ? -0.1 : 0.1;
+  scale = Math.max(0.15, Math.min(3, scale + delta));
+
+  panX = mx - worldX * scale;
+  panY = my - worldY * scale;
+
+  applyTransform();
+}, { passive: false });
+
+document.addEventListener("mousedown", function(e) {
+  if (e.target.closest("#zoom-controls") || e.target.closest("#back-link") || e.target.closest(".fish-img-wrap")) return;
+  isDragging = true;
+  dragStartX = e.clientX;
+  dragStartY = e.clientY;
+  startPanX = panX;
+  startPanY = panY;
+  document.body.classList.add("dragging");
+});
+
+document.addEventListener("mousemove", function(e) {
+  if (!isDragging) return;
+  panX = startPanX + (e.clientX - dragStartX);
+  panY = startPanY + (e.clientY - dragStartY);
+  applyTransform();
+});
+
+document.addEventListener("mouseup", function() {
+  isDragging = false;
+  document.body.classList.remove("dragging");
+});
+
+document.getElementById("zoom-in").addEventListener("click", function() {
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight / 2;
+  const worldX = (cx - panX) / scale;
+  const worldY = (cy - panY) / scale;
+  scale = Math.min(3, scale + 0.15);
+  panX = cx - worldX * scale;
+  panY = cy - worldY * scale;
+  applyTransform();
+});
+
+document.getElementById("zoom-out").addEventListener("click", function() {
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight / 2;
+  const worldX = (cx - panX) / scale;
+  const worldY = (cy - panY) / scale;
+  scale = Math.max(0.15, scale - 0.15);
+  panX = cx - worldX * scale;
+  panY = cy - worldY * scale;
+  applyTransform();
+});
+
+document.getElementById("zoom-reset").addEventListener("click", function() {
+  scale = 1;
+  panX = 0;
+  panY = 0;
+  applyTransform();
+});
+
+document.addEventListener("touchstart", function(e) {
+  if (e.touches.length === 1) {
+    isDragging = true;
+    dragStartX = e.touches[0].clientX;
+    dragStartY = e.touches[0].clientY;
+    startPanX = panX;
+    startPanY = panY;
+  }
+}, { passive: false });
+
+document.addEventListener("touchmove", function(e) {
+  if (!isDragging || e.touches.length !== 1) return;
+  e.preventDefault();
+  panX = startPanX + (e.touches[0].clientX - dragStartX);
+  panY = startPanY + (e.touches[0].clientY - dragStartY);
+  applyTransform();
+}, { passive: false });
+
+document.addEventListener("touchend", function() {
+  isDragging = false;
+});
+
+populateBoard();
+applyTransform();
+</script>
+</body>
+</html>
