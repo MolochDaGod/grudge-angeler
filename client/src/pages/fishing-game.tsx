@@ -144,6 +144,12 @@ const CHUM_ITEMS: ChumItem[] = [
   { name: "Glowing Plankton", price: 0, description: "Caught glowing plankton. Attracts rare fish.", icon: "/assets/icons/Icons_14.png", effect: "Rare glow attract", duration: 200, rarityBoost: 1.8, biteSpeedBoost: 1.1, fishAttract: 1.5, cooldown: 100, catchable: true, type: "special" },
 ];
 
+const PREDATOR_TYPES = [
+  { name: "Shark", folder: "1", idleFrames: 4, walkFrames: 6, attackFrames: 6, hurtFrames: 2, deathFrames: 6, specialFrames: 6, catchAsset: "/assets/predators/1/Idle.png", catchW: 96, catchH: 96, points: 400, rarity: "rare" as const, weight: 3, speed: 2.2, size: 1.8, scareRadius: 200, description: "A fearsome shark prowling the deep waters.", tint: null as string | null },
+  { name: "Kraken", folder: "2", idleFrames: 6, walkFrames: 6, attackFrames: 6, hurtFrames: 2, deathFrames: 6, specialFrames: 6, catchAsset: "/assets/predators/2/Idle.png", catchW: 96, catchH: 96, points: 800, rarity: "legendary" as const, weight: 1, speed: 1.5, size: 2.2, scareRadius: 280, description: "A massive squid from the abyss, feared by all.", tint: null as string | null },
+  { name: "Sea Devil", folder: "3", idleFrames: 4, walkFrames: 6, attackFrames: 6, hurtFrames: 2, deathFrames: 6, specialFrames: 6, catchAsset: "/assets/predators/3/Idle.png", catchW: 96, catchH: 96, points: 600, rarity: "rare" as const, weight: 2, speed: 1.8, size: 2.0, scareRadius: 240, description: "A monstrous crab creature from the deep trenches.", tint: null as string | null },
+];
+
 interface MarketEntry {
   recentSold: number;
   lastSoldTime: number;
@@ -269,6 +275,28 @@ interface SwimmingFish {
   approachingHook: boolean;
   dirChangeTimer: number;
   sizeMultiplier: number;
+}
+
+interface Predator {
+  x: number;
+  y: number;
+  type: typeof PREDATOR_TYPES[0];
+  direction: number;
+  frame: number;
+  frameTimer: number;
+  speed: number;
+  wobblePhase: number;
+  wobbleAmp: number;
+  baseY: number;
+  sizeMultiplier: number;
+  state: "patrol" | "chase" | "attack" | "flee" | "hurt" | "death";
+  stateTimer: number;
+  targetFish: SwimmingFish | null;
+  attackCooldown: number;
+  health: number;
+  opacity: number;
+  stealTimer: number;
+  deathTimer: number;
 }
 
 interface CaughtEntry {
@@ -460,6 +488,11 @@ export default function FishingGame() {
     slotFinalLength: 0,
     slotFinalStars: 0,
     catchFishFlipTimer: 0,
+    predators: [] as Predator[],
+    predatorSpawnTimer: 0,
+    predatorAlert: "" as string,
+    predatorAlertTimer: 0,
+    boatDamageShake: 0,
   });
 
   const imagesRef = useRef<Map<string, HTMLImageElement>>(new Map());
@@ -600,6 +633,53 @@ export default function FishingGame() {
     });
   }, []);
 
+  const spawnPredator = useCallback((canvasW: number, waterStartY: number, canvasH: number) => {
+    const s = stateRef.current;
+    const shopCenterX = canvasW * 0.85 + (192 * 2.2) / 2;
+    const centerX = -s.cameraX + canvasW / 2;
+    const distLeft = Math.max(0, shopCenterX - centerX);
+    const distRight = Math.max(0, centerX - shopCenterX);
+    const leftRatio = Math.min(1, distLeft / (canvasW * 4));
+    const rightRatio = Math.min(1, distRight / (canvasW * 4));
+    
+    const spawnChance = rightRatio > 0.1 ? 0.01 : 0.01 + leftRatio * 0.24;
+    if (Math.random() > spawnChance) return;
+    
+    const predType = leftRatio > 0.5 ? 
+      PREDATOR_TYPES[Math.floor(Math.random() * 3)] :
+      leftRatio > 0.2 ? 
+        PREDATOR_TYPES[Math.random() < 0.7 ? 0 : Math.random() < 0.5 ? 2 : 1] :
+        PREDATOR_TYPES[0];
+    
+    const waterRange = canvasH - waterStartY;
+    const minY = waterStartY + waterRange * 0.4;
+    const maxY = canvasH - 40;
+    const y = minY + Math.random() * (maxY - minY);
+    const direction = Math.random() > 0.5 ? 1 : -1;
+    const viewLeft = -s.cameraX - 200;
+    const viewRight = -s.cameraX + canvasW + 200;
+    const x = direction > 0 ? viewLeft - 150 : viewRight + 150;
+    const sizeMultiplier = (0.8 + Math.random() * 0.6) * predType.size;
+    
+    const isMurky = s.weather === "storm" || s.weather === "rain" || s.weather === "fog";
+    
+    s.predators.push({
+      x, y, baseY: y, type: predType, direction, frame: 0, frameTimer: 0,
+      speed: predType.speed * (0.8 + Math.random() * 0.4),
+      wobblePhase: Math.random() * Math.PI * 2,
+      wobbleAmp: 3 + Math.random() * 5,
+      sizeMultiplier,
+      state: "patrol",
+      stateTimer: 120 + Math.random() * 180,
+      targetFish: null,
+      attackCooldown: 0,
+      health: 3,
+      opacity: isMurky ? 0.15 : 1.0,
+      stealTimer: 0,
+      deathTimer: 0,
+    });
+  }, []);
+
   const addParticles = useCallback((x: number, y: number, count: number, color: string, spread = 3, type: Particle["type"] = "splash") => {
     const s = stateRef.current;
     for (let i = 0; i < count; i++) {
@@ -699,6 +779,13 @@ export default function FishingGame() {
         `/assets/creatures/${n}/Walk.png`,
       ]),
       ...Array.from({length: 17}, (_, i) => `/assets/icons/Icons_${String(i+1).padStart(2,'0')}.png`),
+      ...["1","2","3"].flatMap(n => [
+        `/assets/predators/${n}/Idle.png`,
+        `/assets/predators/${n}/Walk.png`,
+        `/assets/predators/${n}/Attack1.png`,
+        `/assets/predators/${n}/Hurt.png`,
+        `/assets/predators/${n}/Death.png`,
+      ]),
       "/assets/logo.png",
       "/assets/icons/gbux.png",
       "/assets/icons/faction_fabled.png",
@@ -1687,6 +1774,33 @@ export default function FishingGame() {
       ctx.fillStyle = waterGrad;
       ctx.fillRect(worldLeft, waterY, worldRight - worldLeft, H - waterY);
 
+      // Depth zone overlays - darker water for deeper areas
+      const shopX = W * 0.85;
+      // Zone 2: left of shop, deeper blue
+      const zone2Left = -(W * 1);
+      const zone2Right = 0;
+      ctx.fillStyle = `rgba(5,15,40,${0.15 + (1 - dayPhase) * 0.1})`;
+      ctx.fillRect(zone2Left, waterY, zone2Right - zone2Left, H - waterY);
+
+      // Zone 3: far left, deepest - very dark
+      const zone3Left = -(W * 3) - 200;
+      const zone3Right = -(W * 1);
+      ctx.fillStyle = `rgba(3,8,25,${0.3 + (1 - dayPhase) * 0.15})`;
+      ctx.fillRect(zone3Left, waterY, zone3Right - zone3Left, H - waterY);
+
+      // Depth transition gradients (smooth blend between zones)
+      const zoneTransGrad1 = ctx.createLinearGradient(zone2Right - 100, 0, zone2Right + 100, 0);
+      zoneTransGrad1.addColorStop(0, `rgba(5,15,40,${0.12})`);
+      zoneTransGrad1.addColorStop(1, "rgba(5,15,40,0)");
+      ctx.fillStyle = zoneTransGrad1;
+      ctx.fillRect(zone2Right - 100, waterY, 200, H - waterY);
+
+      const zoneTransGrad2 = ctx.createLinearGradient(zone3Right - 100, 0, zone3Right + 100, 0);
+      zoneTransGrad2.addColorStop(0, `rgba(3,8,25,${0.25})`);
+      zoneTransGrad2.addColorStop(1, `rgba(5,15,40,${0.12})`);
+      ctx.fillStyle = zoneTransGrad2;
+      ctx.fillRect(zone3Right - 100, waterY, 200, H - waterY);
+
       if (s.weather !== "clear") {
         const murkyAlpha = s.weatherTransition * (
           s.weather === "storm" ? 0.35 : 
@@ -1806,6 +1920,58 @@ export default function FishingGame() {
         ctx.fill();
       }
       ctx.globalAlpha = 1;
+
+      // God rays - angled light shafts penetrating water
+      if (dayPhase > 0.3) {
+        const rayAlpha = (dayPhase - 0.3) * 0.12;
+        for (let r = 0; r < 6; r++) {
+          const rayX = viewL + ((r * 193 + s.time * 0.15) % (W + 200)) - 100;
+          const rayWidth = 20 + Math.sin(s.time * 0.008 + r * 1.7) * 8;
+          const rayAngle = 0.15 + Math.sin(s.time * 0.005 + r * 2) * 0.05;
+          const rayLength = (H - waterY) * (0.5 + Math.sin(s.time * 0.006 + r * 1.3) * 0.15);
+          
+          ctx.globalAlpha = rayAlpha * (0.6 + Math.sin(s.time * 0.01 + r * 0.8) * 0.4);
+          ctx.save();
+          ctx.translate(rayX, waterY + 5);
+          ctx.rotate(rayAngle);
+          
+          const rayGrad = ctx.createLinearGradient(0, 0, 0, rayLength);
+          rayGrad.addColorStop(0, "rgba(180,220,255,0.15)");
+          rayGrad.addColorStop(0.3, "rgba(150,200,240,0.08)");
+          rayGrad.addColorStop(1, "rgba(100,160,220,0)");
+          ctx.fillStyle = rayGrad;
+          ctx.fillRect(-rayWidth / 2, 0, rayWidth, rayLength);
+          ctx.restore();
+        }
+        ctx.globalAlpha = 1;
+      }
+
+      // Floating underwater particles - plankton, debris
+      for (let p = 0; p < 20; p++) {
+        const px = viewL + ((p * 83 + s.time * 0.2 + p * 17) % (W + 40)) - 20;
+        const py = waterY + 15 + ((p * 47 + s.time * 0.08) % Math.max(1, H - waterY - 20));
+        const pSize = 1 + (p % 3) * 0.5;
+        const pDepth = (py - waterY) / (H - waterY);
+        const pAlpha = 0.12 - pDepth * 0.06 + Math.sin(s.time * 0.02 + p * 1.4) * 0.04;
+        
+        const worldPX = px;
+        const isDeep = worldPX < -(W * 1);
+        const isMid = worldPX < 0;
+        
+        ctx.globalAlpha = Math.max(0, pAlpha);
+        ctx.fillStyle = isDeep ? "rgba(80,120,180,0.5)" : isMid ? "rgba(120,170,210,0.4)" : "rgba(160,200,230,0.35)";
+        ctx.beginPath();
+        ctx.arc(px, py, pSize, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+
+      // Depth fog at bottom - gets darker deeper
+      const depthFogGrad = ctx.createLinearGradient(0, H - 80, 0, H);
+      depthFogGrad.addColorStop(0, "rgba(5,10,20,0)");
+      depthFogGrad.addColorStop(1, `rgba(3,6,15,${0.3 + (1 - dayPhase) * 0.2})`);
+      ctx.fillStyle = depthFogGrad;
+      ctx.fillRect(viewL, H - 80, W, 80);
 
       // Pier using Pier_Tiles.png tileset
       const pierTiles = getImg("/assets/objects/Pier_Tiles.png");
@@ -2015,6 +2181,19 @@ export default function FishingGame() {
         }
       }
 
+      // Predator spawning
+      s.predatorSpawnTimer -= dt;
+      if (s.predatorSpawnTimer <= 0 && s.predators.length < 3) {
+        spawnPredator(W, waterY, H);
+        s.predatorSpawnTimer = 300 + Math.random() * 600;
+      }
+
+      // Predator alert timer
+      if (s.predatorAlertTimer > 0) s.predatorAlertTimer -= dt;
+
+      // Predator boat damage shake
+      if (s.boatDamageShake > 0) s.boatDamageShake -= 0.1 * dt;
+
       for (let i = s.swimmingFish.length - 1; i >= 0; i--) {
         const fish = s.swimmingFish[i];
 
@@ -2124,6 +2303,308 @@ export default function FishingGame() {
           ctx.globalAlpha = 1;
         }
         ctx.globalAlpha = 1;
+      }
+
+      // Predator update and rendering
+      for (let pi = s.predators.length - 1; pi >= 0; pi--) {
+        const pred = s.predators[pi];
+        
+        // State timer
+        pred.stateTimer -= dt;
+        pred.attackCooldown = Math.max(0, pred.attackCooldown - dt);
+        
+        // Death state
+        if (pred.state === "death") {
+          pred.deathTimer += dt;
+          pred.frameTimer += dt;
+          if (pred.frameTimer > 6) {
+            pred.frameTimer = 0;
+            pred.frame = Math.min(pred.frame + 1, pred.type.deathFrames - 1);
+          }
+          pred.opacity -= 0.005 * dt;
+          pred.y += 0.3 * dt;
+          if (pred.opacity <= 0 || pred.deathTimer > 180) {
+            s.predators.splice(pi, 1);
+            continue;
+          }
+        } else if (pred.state === "hurt") {
+          pred.frameTimer += dt;
+          if (pred.frameTimer > 6) {
+            pred.frameTimer = 0;
+            pred.frame = (pred.frame + 1) % pred.type.hurtFrames;
+          }
+          if (pred.stateTimer <= 0) {
+            if (pred.health <= 0) {
+              pred.state = "death";
+              pred.frame = 0;
+              pred.frameTimer = 0;
+              pred.deathTimer = 0;
+            } else {
+              pred.state = "flee";
+              pred.stateTimer = 120 + Math.random() * 60;
+              pred.direction = pred.x > (-s.cameraX + W / 2) ? 1 : -1;
+              pred.speed = pred.type.speed * 2;
+            }
+          }
+        } else if (pred.state === "flee") {
+          pred.x += pred.direction * pred.speed * 1.5 * dt;
+          pred.frameTimer += dt;
+          if (pred.frameTimer > 5) {
+            pred.frameTimer = 0;
+            pred.frame = (pred.frame + 1) % pred.type.walkFrames;
+          }
+          if (pred.stateTimer <= 0) {
+            pred.state = "patrol";
+            pred.stateTimer = 120 + Math.random() * 180;
+            pred.speed = pred.type.speed * (0.8 + Math.random() * 0.4);
+          }
+        } else if (pred.state === "attack") {
+          pred.frameTimer += dt;
+          if (pred.frameTimer > 5) {
+            pred.frameTimer = 0;
+            pred.frame = (pred.frame + 1) % pred.type.attackFrames;
+          }
+          if (pred.stateTimer <= 0) {
+            pred.state = "patrol";
+            pred.stateTimer = 120 + Math.random() * 180;
+            pred.attackCooldown = 300;
+          }
+        } else if (pred.state === "chase") {
+          if (s.gameState === "reeling" || s.gameState === "waiting" || s.gameState === "bite") {
+            const targetX = s.hookX;
+            const targetY = s.hookY;
+            const dx = targetX - pred.x;
+            const dy = targetY - pred.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            pred.direction = dx > 0 ? 1 : -1;
+            if (dist > 30) {
+              pred.x += (dx / dist) * pred.speed * 1.8 * dt;
+              pred.y += (dy / dist) * pred.speed * 1.2 * dt;
+            } else if (pred.attackCooldown <= 0) {
+              pred.state = "attack";
+              pred.stateTimer = 40;
+              pred.frame = 0;
+              pred.frameTimer = 0;
+              pred.attackCooldown = 300;
+              
+              if (s.gameState === "reeling" || s.gameState === "bite") {
+                s.predatorAlert = `${pred.type.name} stole your catch!`;
+                s.predatorAlertTimer = 180;
+                s.gameState = "idle";
+                s.currentCatch = null;
+                s.currentJunk = null;
+                s.combo = 0;
+                s.screenShake = 8;
+                addParticles(pred.x, pred.y, 15, "#ff4444", 3, "splash");
+              }
+            }
+          } else {
+            pred.state = "patrol";
+            pred.stateTimer = 120 + Math.random() * 180;
+          }
+          pred.frameTimer += dt;
+          if (pred.frameTimer > 4) {
+            pred.frameTimer = 0;
+            pred.frame = (pred.frame + 1) % pred.type.walkFrames;
+          }
+        } else {
+          // Patrol
+          pred.wobblePhase += 0.03 * dt;
+          pred.y = pred.baseY + Math.sin(pred.wobblePhase) * pred.wobbleAmp;
+          pred.x += pred.direction * pred.speed * 0.7 * dt;
+          
+          pred.frameTimer += dt;
+          if (pred.frameTimer > 6) {
+            pred.frameTimer = 0;
+            pred.frame = (pred.frame + 1) % pred.type.walkFrames;
+          }
+          
+          if (pred.stateTimer <= 0) {
+            if (Math.random() < 0.3) pred.direction *= -1;
+            pred.stateTimer = 120 + Math.random() * 180;
+          }
+          
+          // Check if should chase hooked fish
+          if (pred.attackCooldown <= 0 && (s.gameState === "reeling" || s.gameState === "waiting" || s.gameState === "bite")) {
+            const dx = s.hookX - pred.x;
+            const dy = s.hookY - pred.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 350) {
+              pred.state = "chase";
+              pred.stateTimer = 300;
+            }
+          }
+          
+          // Scare nearby fish
+          for (const fish of s.swimmingFish) {
+            const dx = fish.x - pred.x;
+            const dy = fish.y - pred.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < pred.type.scareRadius) {
+              fish.direction = dx > 0 ? 1 : -1;
+              fish.speed = fish.type.speed * 2.5;
+              fish.dirChangeTimer = 60;
+              fish.approachingHook = false;
+            }
+          }
+          
+          // Predator might bite the hook itself if no fish on line
+          if (pred.attackCooldown <= 0 && s.gameState === "waiting") {
+            const dx = s.hookX - pred.x;
+            const dy = s.hookY - pred.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 80 && Math.random() < 0.005 * dt) {
+              s.gameState = "bite";
+              const vitBonus = 1 + s.attributes.Vitality * 0.01 * (1 + s.attributes.Tactics * 0.005);
+              s.biteTimer = (120 + Math.random() * 80) * vitBonus;
+              s.exclamationTimer = 0;
+              s.currentCatch = { 
+                name: pred.type.name, catchAsset: pred.type.catchAsset, catchW: pred.type.catchW, catchH: pred.type.catchH, 
+                creatureFolder: pred.type.folder, idleFrames: pred.type.idleFrames, walkFrames: pred.type.walkFrames, 
+                points: pred.type.points, rarity: pred.type.rarity, weight: pred.type.weight, 
+                minDepth: 0.5, speed: pred.type.speed, description: pred.type.description, 
+                tint: pred.type.tint, baseScale: pred.type.size 
+              } as FishType;
+              s.hookedFishX = pred.x;
+              s.hookedFishY = pred.y;
+              s.hookedFishDir = pred.direction;
+              s.hookedFishFrame = 0;
+              s.hookedFishFrameTimer = 0;
+              s.hookedFishVX = (Math.random() > 0.5 ? 1 : -1) * pred.speed;
+              s.hookedFishSize = pred.sizeMultiplier;
+              s.currentJunk = null;
+              addParticles(s.hookX, waterY, 10, "#ff4444", 2.5, "splash");
+              addRipple(s.hookX, waterY);
+              s.screenShake = 6;
+              s.predators.splice(pi, 1);
+              continue;
+            }
+          }
+          
+          // Stealth attack on boat in murky weather
+          const isMurky = s.weather === "storm" || s.weather === "rain" || s.weather === "fog";
+          if (isMurky && s.inBoat && pred.attackCooldown <= 0) {
+            const boatDist = Math.abs(pred.x - s.boatX) + Math.abs(pred.y - waterY);
+            if (boatDist < 120 && Math.random() < 0.002 * dt) {
+              pred.state = "attack";
+              pred.stateTimer = 50;
+              pred.frame = 0;
+              pred.frameTimer = 0;
+              pred.attackCooldown = 600;
+              s.boatDamageShake = 15;
+              s.screenShake = 12;
+              s.predatorAlert = `${pred.type.name} attacks your boat!`;
+              s.predatorAlertTimer = 180;
+              addParticles(s.boatX, waterY, 20, "#5dade2", 4, "splash");
+              addRipple(s.boatX, waterY);
+            }
+          }
+          
+          // Stealth push at dock in murky weather
+          if (isMurky && !s.inBoat && !s.isSwimming && pred.attackCooldown <= 0) {
+            const playerDist = Math.abs(pred.x - s.playerX) + Math.abs(pred.y - waterY);
+            if (playerDist < 100 && Math.random() < 0.001 * dt) {
+              pred.state = "attack";
+              pred.stateTimer = 40;
+              pred.frame = 0;
+              pred.frameTimer = 0;
+              pred.attackCooldown = 600;
+              s.screenShake = 10;
+              s.predatorAlert = `${pred.type.name} lurches from the depths!`;
+              s.predatorAlertTimer = 180;
+              addParticles(s.playerX, waterY, 15, "#5dade2", 3, "splash");
+              addRipple(s.playerX, waterY);
+            }
+          }
+        }
+        
+        // Murky visibility
+        const isMurkyNow = s.weather === "storm" || s.weather === "rain" || s.weather === "fog";
+        if (isMurkyNow) {
+          pred.opacity = Math.max(0.08, pred.opacity - 0.003 * dt);
+        } else {
+          pred.opacity = Math.min(1.0, pred.opacity + 0.01 * dt);
+        }
+        
+        // Cull offscreen predators
+        const predCullLeft = -s.cameraX - 500;
+        const predCullRight = -s.cameraX + W + 500;
+        if ((pred.direction > 0 && pred.x > predCullRight + 200) || (pred.direction < 0 && pred.x < predCullLeft - 200)) {
+          if (pred.state === "patrol" || pred.state === "flee") {
+            s.predators.splice(pi, 1);
+            continue;
+          }
+        }
+        
+        // Render predator
+        const predDepth = (pred.y - waterY) / (H - waterY);
+        const predDepthAlpha = 0.9 - predDepth * 0.3;
+        const predWeatherVis = isMurkyNow ? (s.weather === "storm" ? 0.3 : s.weather === "fog" ? 0.4 : 0.5) : 1.0;
+        ctx.globalAlpha = predDepthAlpha * pred.opacity * predWeatherVis;
+        
+        const predScale = SCALE * 0.8 * pred.sizeMultiplier;
+        const PRED_FRAME = 96;
+        let predSpriteSheet = `/assets/predators/${pred.type.folder}/Walk.png`;
+        let predFrameCount = pred.type.walkFrames;
+        
+        if (pred.state === "attack") {
+          predSpriteSheet = `/assets/predators/${pred.type.folder}/Attack1.png`;
+          predFrameCount = pred.type.attackFrames;
+        } else if (pred.state === "hurt") {
+          predSpriteSheet = `/assets/predators/${pred.type.folder}/Hurt.png`;
+          predFrameCount = pred.type.hurtFrames;
+        } else if (pred.state === "death") {
+          predSpriteSheet = `/assets/predators/${pred.type.folder}/Death.png`;
+          predFrameCount = pred.type.deathFrames;
+        } else if (pred.state === "patrol") {
+          predSpriteSheet = `/assets/predators/${pred.type.folder}/Walk.png`;
+          predFrameCount = pred.type.walkFrames;
+        }
+        
+        // Draw predator sprite (96x96 frames)
+        const predImg = imagesRef.current.get(predSpriteSheet);
+        if (predImg) {
+          ctx.save();
+          const drawX = pred.direction < 0 ? pred.x + PRED_FRAME * predScale : pred.x;
+          ctx.translate(drawX, pred.y);
+          if (pred.direction < 0) ctx.scale(-1, 1);
+          ctx.drawImage(
+            predImg,
+            pred.frame * PRED_FRAME, 0, PRED_FRAME, PRED_FRAME,
+            0, 0, PRED_FRAME * predScale, PRED_FRAME * predScale
+          );
+          ctx.restore();
+        }
+        
+        // Danger glow for predators
+        if (pred.state !== "death" && pred.state !== "hurt") {
+          const glowPulse = 0.15 + Math.sin(s.time * 0.05 + pred.x * 0.01) * 0.08;
+          ctx.globalAlpha = glowPulse * pred.opacity;
+          ctx.fillStyle = pred.type.name === "Shark" ? "#ff4444" : pred.type.name === "Kraken" ? "#6644ff" : "#ff6633";
+          ctx.beginPath();
+          const gx = pred.x + PRED_FRAME * predScale * 0.5;
+          const gy = pred.y + PRED_FRAME * predScale * 0.4;
+          ctx.ellipse(gx, gy, predScale * 30, predScale * 18, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        
+        ctx.globalAlpha = 1;
+      }
+
+      // Predator alert text
+      if (s.predatorAlertTimer > 0) {
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        const alertAlpha = Math.min(1, s.predatorAlertTimer / 30);
+        ctx.globalAlpha = alertAlpha;
+        ctx.font = "bold 14px monospace";
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#ff4444";
+        ctx.strokeStyle = "#000";
+        ctx.lineWidth = 3;
+        ctx.strokeText(s.predatorAlert, W / 2, 60);
+        ctx.fillText(s.predatorAlert, W / 2, 60);
+        ctx.restore();
       }
 
       // Fisherman sprite with per-frame rod tip tracking (coordinates in un-flipped sprite space, facing right)

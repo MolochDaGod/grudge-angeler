@@ -1,207 +1,48 @@
 # Grudge Angeler - Fishing Game
 
 ## Overview
-A pixel art fishing game built with HTML5 Canvas and React. Players cast their fishing line, catch various fish species, and build their collection. Features animated pixel art sprites, day/night cycle, particle effects, and a reeling minigame.
+Grudge Angeler is a pixel art fishing game developed with HTML5 Canvas and React. Players engage in a rich fishing experience, casting lines, catching diverse fish species, and expanding their collection. The game features animated pixel art, a dynamic day/night cycle, sophisticated particle effects, and an engaging reeling minigame. The project aims to deliver a compelling and visually appealing fishing simulation, leveraging modern web technologies to create an immersive experience for players.
 
-## Architecture
-- **Frontend**: React + HTML5 Canvas rendering, fullscreen game
-- **Backend**: Express (minimal, serves static assets only)
-- **No database needed** - game state is in-memory, client-side only
-- **Info Page**: Static HTML at `/info.html` - game advertisement/guide with all fish, equipment, and how-to
+## User Preferences
+I want to prioritize iterative development. I prefer detailed explanations for complex features. Ask before making major changes to the core game loop or architectural decisions. Do not make changes to files in the `client/public/assets/` folder.
 
-## Key Files
-- `client/src/pages/fishing-game.tsx` - Main game component with all game logic
-- `client/src/App.tsx` - App router
-- `client/public/assets/` - All pixel art sprite sheets
-- `client/public/info.html` - Game info/advertisement page
+## System Architecture
+The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a fullscreen, immersive experience. The backend is a minimal Express server primarily for serving static assets, as game state is managed client-side in-memory.
 
-## Game Flow
-1. **Title Screen** - Animated sea creatures + "CLICK TO ENTER"
-2. **Character Select** - HTML overlay: pick character variant + enter username
-3. **Idle** - Click to begin casting, A/D to walk on pier, Space to dive, E near hut to open shop
-4. **Casting** - Mouse-aim crosshair system: move mouse to aim where bobber lands, click to cast
-5. **Waiting** - Bobber in water, fish swim nearby; lure effects modify bite timing and fish attraction
-6. **Bite** - Fish grabs line! Click to start reeling
-7. **Reeling** - Palworld-style minigame; rod stats affect catch zone width, reel speed, and line strength
-8. **Caught** - Celebration popup with fish image, weight, rarity, sell price, and bounty completion
-9. **Store** - Full-screen shop overlay with Rod (5 types) and Bait & Lures (16 types: 5 live bait + 11 artificial lures) tabs, buy/equip system
+**UI/UX and Design:**
+- **Pixel Art:** All game assets are pixel art, maintaining a consistent aesthetic.
+- **Character Selection:** HTML overlay for character variant selection (Classic, Ocean Blue, Crimson) and username input.
+- **Hotbar System:** A 4-slot hotbar (Rod, Lure/Bait, Chum, Net) provides quick access to equipment.
+- **Shop Interface:** Full-screen shop overlay for purchasing rods, baits, and lures.
+- **Billboard System:** Canvas-rendered sign near the fishing hut rotates through bounties, records, deals, and the game logo.
+- **Rarity Visuals:** Ultra-rare fish feature tinted sprites with glowing auras and orbiting sparkle particles.
+- **UI Icons:** Consistent 32x32 pixel icons for all UI elements.
+- **Weather Effects:** Dynamic weather (clear, cloudy, rain, storm, fog) with visual elements like rain particles, lightning, and murky water effects.
+- **Celestial Events:** Rare celestial events (Red Sun, Green Moon, Tentacle Sun, Blood Moon) with unique visual phenomena like aurora borealis.
 
-## Hotbar System
-- 4-slot hotbar at bottom center, visible during gameplay states
-- Slot 1: Rod (shows equipped rod, click or press 1 to select)
-- Slot 2: Lure/Bait selector (click or press 2 to open popup, pick from owned lures)
-- Slot 3: Chum selector (click or press 3 to open popup, pick from owned chum to throw)
-- Slot 4: Net tool (click or press 4 to switch to net fishing mode)
-- Popups show owned items with equip/use actions
+**Technical Implementations & Features:**
+- **Game Flow:** Structured progression from title screen, character select, idle, casting, waiting, bite, reeling, to caught, and shop interactions.
+- **Reeling Minigame:** A Palworld-style minigame with a horizontal bar, moving catch zone, and mechanics affected by rod stats. Includes Force Bar (spacebar active reel) and Resilience Bar (S-key for line letting).
+- **Net Tool:** An alternative fishing method with specific casting mechanics, auto-catching, cooldowns, and a chance to catch chum items.
+- **Sprite Orientation:** Standardized sprite conventions for character facing, movement, and mirroring.
+- **Character System:** Three selectable character variants, each with unique recolored sprite sets.
+- **Fish Species:** 17 distinct fish species across 5 rarity tiers (common, uncommon, rare, legendary, ultra_rare), including 9 ultra-rare variants with unique visual traits and spawn mechanics.
+- **Equipment System:** Diverse range of 5 rods, 5 live baits, 11 artificial lures, and 22 chum items, each affecting gameplay mechanics.
+- **Chum System:** Throwable items that boost fish spawns, rarity, and bite speed, activated via the hotbar.
+- **Rarity System:** 5 tiers (common to ultra_rare) with distinct colors, star ratings, sell price multipliers, and reeling difficulty multipliers.
+- **Gbux & Market System:** In-game currency "gbux" earned from selling fish, with a dynamic market influenced by demand.
+- **Bounty System:** Randomly generated bounties targeting specific fish species with size requirements, rewarding gbux upon completion.
+- **Attribute Physics System:** An 8-attribute 2D physics-inspired model (Tactics, Strength, Agility, Dexterity, Endurance, Vitality, Wisdom, Intellect) influencing various gameplay elements like fish escape velocity, catch zone movement, and rarity spawns.
+- **Fish Behavior:** Detailed swimming patterns, approach mechanics for the hook, and complex reeling behavior for hooked fish.
+- **Boat System:** Player can use a boat for open ocean fishing, featuring boarding cutscenes, distinct movement, and fishing mechanics.
+- **World Layout (8 Scenes):** A horizontally scrolling world divided into distinct scenes ranging from shallow waters to deep ocean, influencing fish rarity and size.
+- **Camera System:** Dynamic camera following the player/boat, clamped to world bounds, with parallax scrolling for background elements. Mouse input is converted to world coordinates for aiming.
+- **Predator System:** Three types of predators (Shark, Kraken, Sea Devil) with AI behaviors (patrol, chase, attack, flee), affecting fish and potentially the player. Spawn probability scales by world position and depth.
+- **Ocean Depth Zones:** Three distinct depth zones (shallow, mid-depth, deep ocean) with visual transitions and varying fish populations.
+- **3D Visual Effects:** Includes god rays, underwater particles, depth fog, and caustic light patches to enhance visual immersion.
+- **Core Features:** Random fish sizes, combo system, rod leveling, fish collection log, dynamic day/night cycle (30-minute), weather system, far background parallax, water effects (ripples, particles, screen shake), catch cutscenes, character movement (walking, swimming), and an informational `info.html` page.
 
-## Net Tool
-- Alternative fishing method selected via hotbar slot 4
-- Same casting mechanics as rod but renders net area at cast position
-- Net width = 60 + Strength*3 + Dexterity*2, depth = 40 + Endurance*2
-- Auto-catches fish in net area after 2 seconds
-- Only catches common/uncommon fish at 50% sell price
-- 600-frame cooldown between uses
-- 10% chance to catch catchable chum items per net cast
-
-## Asset Structure
-- `assets/fisherman/` - Classic character sprite sheets (48x48 frames)
-- `assets/fisherman2/` - Ocean Blue character sprite sheets
-- `assets/fisherman3/` - Crimson character sprite sheets
-- `assets/creatures/1-6/` - Sea creature animations (Idle, Walk, Attack, etc.)
-- `assets/catch/` - Caught fish/item sprites
-- `assets/objects/` - Scene objects (pier, boat, hut, barrels)
-- `assets/icons/` - UI icons (32x32)
-
-## Sprite Orientation Convention
-- All fisherman sprites default to facing RIGHT in sprite sheets
-- Character faces last walking direction during idle (uses `s.facingLeft`)
-- During casting: faces toward aim position; during waiting/reeling: faces toward hook position
-- Walking/swimming sprites use `s.facingLeft` to face direction of movement
-- Rod tip coords are mirrored when flipped: `(SPRITE_FRAME_W - 1 - tipLocal[0]) * SCALE`
-- Reeling minigame (Palworld-style): horizontal bar with fish icon, catch zone moves LEFT on click (2x speed), drifts RIGHT when released; circular progress gauge fills/depletes based on alignment
-- Force Bar: spacebar active reel (2x gauge gain, pulls fish closer) drains force bar, regenerates based on Vitality stat
-- Resilience Bar: S-key lets out line snapping fish toward catch zone, consumes discrete charges (2-8 based on Endurance), 30-tick cooldown
-- Enhanced fish movement: 4 behavior patterns (lateral bursts 40%, deep dives 25%, surface dashes 20%, quick reversals 15%) with vertical velocity and drag
-- Line distance capped at initial hook distance to prevent fish from extending too far
-
-## Character System
-- 3 selectable variants: Classic (no tint), Ocean Blue, Crimson
-- Each has a full set of 12 recolored sprite PNGs in their own folder
-- Selected on character selection screen (HTML overlay) before game start
-
-## Fish Species (17 total)
-- **Common (3)**: Minnow, Perch, Eel
-- **Uncommon (3)**: Bass, Catfish, Salmon
-- **Rare (1)**: Swordfish
-- **Legendary (1)**: Whale
-- **Ultra Rare (9)**: Phantom Minnow, Volcanic Perch, Abyssal Bass, Frost Catfish, Storm Swordfish, Celestial Whale, Neon Eel, Golden Salmon, Shadow Leviathan
-- Ultra-rare fish use tinted sprites (canvas globalCompositeOperation "source-atop") with glowing auras
-- Ultra-rare fish have baseScale multiplier for larger default sizes
-- Ultra-rare fish have extremely low spawn weights, boosted by distance from shore and lure rarityBoost
-
-## Equipment System
-- **Rods** (5): Bamboo, Fiberglass, Carbon, Titanium, Legendary - affect catch zone, reel speed, line strength
-- **Live Bait** (5): Basic Worm, Nightcrawler, Leech, Maggots, Minnow Bait - organic baits with unique fish attraction
-- **Lures** (11): Beginner Lure, Crankbait, Silver Spoon, Grub Worm, Spinnerbait, Deep Diver, Golden Fly, Glow Jig, Storm Shad, Kraken Bait, Prismatic - artificial lures affecting rarity boost, size boost, bite speed, and targeted fish attraction
-- **Chum** (22 total: 20 shop + 2 catchable): Throwable items that boost fish spawns, rarity, and bite speed for a duration
-- Each bait/lure has a `type` field ("live" or "lure") for shop categorization
-- Equipment purchased with gbux from fishing hut shop (E key near hut)
-
-## Chum System
-- 20 purchasable chum items (Fish Scraps to Abyssal Ooze, 15-300 gbux) + 2 catchable items (Live Shrimp Cluster, Glowing Plankton)
-- Each chum has: duration (ticks), rarityBoost, biteSpeedBoost, fishAttract
-- Activated through hotbar slot 3 popup selector
-- Active chum applies rarity weight multiplier to fish spawning and bite speed multiplier to waiting timer
-- Catchable chum has 5% drop chance on fish catch
-- Chum tab added to fishing hut store
-
-## Rarity System
-- 5 tiers: common, uncommon, rare, legendary, ultra_rare
-- Colors: common=#f59e0b(yellow), uncommon=#22c55e(green), rare=#3b82f6(blue), legendary=#a855f7(purple), ultra_rare=#ff6b35(orange)
-- Star ratings: 1 star yellow (common), 2 stars green (uncommon), 3 stars blue (rare), 4 stars purple (legendary), 5 stars orange (ultra_rare)
-- Sell price multipliers: common=1x, uncommon=1.8x, rare=3x, legendary=5x, ultra_rare=10x
-- Reeling difficulty multipliers: common=1x, uncommon=1.15x, rare=1.4x, legendary=1.8x, ultra_rare=2.2x
-- Ultra-rare fish display: elliptical glow aura + orbiting sparkle particles (no rectangles)
-
-## Gbux & Market System
-- Currency is "gbux" (displayed with gbux icon from /assets/icons/gbux.png)
-- Fish sell for gbux based on rarity * weight * size * demand multiplier
-- Market dynamics: prices drop when same fish sold repeatedly (0.12 per sale), recover over time (1 per 600 ticks)
-- Minimum demand multiplier: 0.3
-- Gbux used to purchase rods and lures at the fishing hut shop
-
-## Bounty System
-- 3 random bounties generated at game start
-- Each bounty targets a fish species with minimum size requirement
-- Bounty rewards added to gbux on fulfillment
-- New bounties generated when all are completed
-
-## Billboard System
-- Canvas-rendered sign near the fishing hut
-- 4-slide rotation: Bounties, Records, Deals, Logo
-- Auto-cycles every 300 ticks
-
-## Attribute Physics System (2D Force Model)
-- All 8 attributes are wired into gameplay via a 2D physics-inspired force model
-- **Tactics** acts as a global amplifier: `tacticsGlobal = 1 + Tactics * 0.005` — multiplies all other stat bonuses
-- **Strength**: Increases drag force on hooked fish (decelerates escape velocity), widens catch zone, boosts gauge gain rate, increases fish lift when in zone
-- **Agility**: Faster catch zone movement speed (reel progress per tick)
-- **Dexterity**: Reduces idle drift of catch zone, reduces fish direction-change frequency, slows fish bar movement speed
-- **Endurance**: Reduces gauge drain when fish escapes zone, reduces fish sink speed when out of zone (lineStrength amplifier)
-- **Vitality**: Extends bite window timer, reduces wait time between fish approaches
-- **Wisdom**: Increases spawn weight for rare/legendary/ultra-rare fish during spawn selection
-- **Intellect**: Increases sell price (intBonus multiplier), increases XP gain per catch
-- Physics model: Fish has mass (based on difficulty * size), player applies drag force (Strength-based); net force = dragForce - fishEscapeForce; positive net force decelerates fish velocity each tick
-- Fish burst velocity on direction change is divided by strMod (stronger = weaker bursts)
-
-## Fish Behavior
-- SwimmingFish have wobblePhase/wobbleAmp for vertical bobbing, dirChangeTimer for random direction changes
-- Fish approach hook when selected (approachingHook flag), swim toward hook position
-- Hooked fish (during bite/reeling) stored as hookedFishX/Y/Dir/Frame/VX state fields
-- Line renders from rod tip to fish mouth position using bezier curve
-- Alignment: horizontal distance between player and hooked fish affects difficulty (alignmentBonus 0.6-1.0)
-
-## Boat System
-- Press E near boat (left end of pier) to trigger boat prompt
-- Clicking "Yes" starts boarding cutscene: fisherman walks to boat edge, hops onto boat
-- Boarding has 3 phases: walk (phase 0), jump (phase 1), land (phase 2)
-- GameState "boarding" handles cutscene, transitions to "idle" with inBoat=true
-- When inBoat: A/D moves boat with rowing animation (Fisherman_row.png), fisherman rides on deck
-- Spacebar toggles standing/sitting position in boat; standing required for casting
-- Bottom 20% of fisherman sprite clipped when in boat (legs hidden by boat hull)
-- Boat naturally drifts toward nearest fish within 400px range (gentle physics pull)
-- Fishing mechanics work identically from boat (cast, wait, reel, catch)
-- Casting auto-stands fisherman up; returning to idle after catch goes back to sitting
-- boatX tracks boat horizontal position; fisherman position derived from boatX + offset
-- Fisherman bobs with boat using boatBobVal
-- Press E near pier to exit boat (returns to pier walking)
-- Boat movement speed: 2.0 normal, 1.5 during reeling
-
-## World Layout (8 Scenes)
-- Scene 1-3: Deep ocean (left, boat area) `-(W*3)` to `0` - biggest, rarest fish
-- Scene 4: Pier start area `0` to `W*0.6` - standard fishing
-- Scene 5: Fishing shop (CENTER) `W*0.6` to `W*1.4` - hut at `W*0.85`
-- Scene 6: Small docks `W*1.4` to `W*2.5` - smaller fish, easier catches
-- Scene 7: Shallow water pier `W*2.5` to `W*3.5` - small, common fish
-- Scene 8: Beach `W*3.0` to `W*5` - smallest, easiest fish with sandy shore
-- Fish get smaller and easier the further RIGHT from the shop
-- Fish get bigger and rarer the further LEFT into the deep ocean
-
-## Camera System
-- cameraX state tracks horizontal camera offset
-- Camera follows player/boat/swimmer bidirectionally: `targetCameraX = W/2 - position`
-- Clamped to world bounds: `-(calcWorldRight - W)` to `-calcWorldLeft`
-- `ctx.translate(s.cameraX, 0)` applied to all world-space rendering (water, pier, boat, fish, particles)
-- Screen-space UI (catch display, flash, title) rendered after `ctx.restore()` of camera transform
-- Sun/moon rendered in screen-space (before translate) so visible in all scenes
-- Visible area in world coords: `viewL = -cameraX`, `viewR = -cameraX + W`
-- Mouse input converted to world coords for aiming: `mouseX - cameraX`
-- Mountains have 20% parallax (slower scrolling)
-- Water effects (shimmer, waves, caustics, rays, bubbles) render relative to visible area
-- Fish culling uses camera-relative bounds with 300px margin
-- Bidirectional fish spawning: rarer fish LEFT of shop, smaller/easier fish RIGHT of shop
-
-## Features
-- 17 fish species across 5 rarity tiers (common, uncommon, rare, legendary, ultra_rare)
-- 9 ultra-rare tinted/glowing variants with massive sizes
-- 3 junk items including treasure chest
-- Random fish sizes (0.5x-5x) affecting score, weight, difficulty
-- Combo system for consecutive catches
-- Rod leveling (every 5 catches)
-- Fish collection log with detailed stats (biggest size, total weight, rarity badges)
-- Animated skybox with dynamic weather system (clear, cloudy, rain, storm, fog)
-- 30-minute day/night cycle: 22 minutes day, 8 minutes night with asymmetric phase
-- Special celestial events (1/30 chance per day/night transition): Red Sun, Green Moon, Tentacle Sun, Blood Moon
-- Aurora borealis during green/blood moon events
-- Slow-drifting layered clouds with soft edges, realistic motion
-- Murky water during adverse weather: green-brown tint, swirl patterns, reduced fish visibility
-- Weather stability: 1-2 minutes per weather pattern
-- Far background parallax: layered mountains, distant ships, flying birds, shooting stars
-- Rain particles with wind-affected angle, lightning flashes during storms, fog overlays
-- Water ripples, particles, and screen shake effects
-- Catch cutscene: 2s struggle/splash, 2s float-to-head, then slot-machine weight/length/stars reveal
-- Character walking on pier (A/D keys)
-- Swimming mechanics (Space to dive, WASD underwater, Space near dock to climb out)
-- Boat boarding cutscene and boat fishing (E to enter/exit)
-- Camera scrolling system following boat into open ocean (up to 3 screens left)
-- Info/advertisement page at /info.html
+## External Dependencies
+- **React:** Frontend JavaScript library for building user interfaces.
+- **Express:** Minimal Node.js web application framework used for serving static assets.
+- **HTML5 Canvas:** Core technology for 2D graphics rendering.
