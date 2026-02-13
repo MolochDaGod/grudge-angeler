@@ -198,29 +198,29 @@ interface CatchHistoryEntry {
 
 const FISHING_ATTR_DEFS: Record<keyof FishingAttributes, { description: string; color: string; gains: Record<string, { label: string; perPoint: number; unit: string }> }> = {
   Strength: {
-    description: "Raw reeling power. Increases reel speed and line tension resistance.",
+    description: "Raw reeling power. Increases reel speed, catch zone, and Force Pool.",
     color: "#ef4444",
     gains: {
       reelPower: { label: "Reel Power", perPoint: 1.5, unit: "%" },
-      lineStrength: { label: "Line Strength", perPoint: 0.8, unit: "%" },
+      forcePool: { label: "Force Pool", perPoint: 1, unit: "" },
       catchZone: { label: "Catch Zone", perPoint: 0.3, unit: "%" },
     }
   },
   Intellect: {
-    description: "Fishing knowledge. Reveals fish info and improves sell prices.",
+    description: "Fishing knowledge. Improves sell prices and reduces Force cost.",
     color: "#8b5cf6",
     gains: {
       sellBonus: { label: "Sell Price Bonus", perPoint: 1.2, unit: "%" },
-      fishReveal: { label: "Fish Info", perPoint: 0.5, unit: "%" },
+      forceCostReduce: { label: "Force Cost", perPoint: 2, unit: "% off" },
       xpBonus: { label: "XP Gain", perPoint: 0.8, unit: "%" },
     }
   },
   Vitality: {
-    description: "Stamina and persistence. Longer bite windows and patience.",
+    description: "Stamina and persistence. Longer bite windows and faster Force regen.",
     color: "#22c55e",
     gains: {
       biteWindow: { label: "Bite Window", perPoint: 1.0, unit: "%" },
-      patience: { label: "Wait Reduction", perPoint: 0.6, unit: "%" },
+      forceRegen: { label: "Force Regen", perPoint: 0.1, unit: "/s" },
       comboKeep: { label: "Combo Sustain", perPoint: 0.4, unit: "%" },
     }
   },
@@ -243,20 +243,20 @@ const FISHING_ATTR_DEFS: Record<keyof FishingAttributes, { description: string; 
     }
   },
   Wisdom: {
-    description: "Deep ocean knowledge. Better rare fish attraction and lure efficiency.",
+    description: "Deep ocean knowledge. Better rare fish attraction and lowers Force cost multiplier.",
     color: "#06b6d4",
     gains: {
       rarityBoost: { label: "Rarity Boost", perPoint: 1.0, unit: "%" },
-      lureEfficiency: { label: "Lure Efficiency", perPoint: 0.6, unit: "%" },
+      forceMult: { label: "Force Mult", perPoint: -0.1, unit: "" },
       weatherRead: { label: "Spawn Insight", perPoint: 0.4, unit: "%" },
     }
   },
   Agility: {
-    description: "Speed and reflexes. Faster reeling and quicker reactions.",
+    description: "Speed and reflexes. Faster reeling, quicker reactions, and Force Pool.",
     color: "#a3e635",
     gains: {
       reelSpeed: { label: "Reel Speed", perPoint: 0.8, unit: "%" },
-      reactionTime: { label: "Reaction Time", perPoint: 1.0, unit: "%" },
+      forcePool: { label: "Force Pool", perPoint: 1, unit: "" },
       moveSpeed: { label: "Move Speed", perPoint: 0.5, unit: "%" },
     }
   },
@@ -466,8 +466,8 @@ export default function FishingGame() {
     attributePoints: 3,
     attributes: { Strength: 1, Intellect: 1, Vitality: 1, Dexterity: 1, Endurance: 1, Wisdom: 1, Agility: 1, Tactics: 1 } as FishingAttributes,
     catchHistory: [] as CatchHistoryEntry[],
-    forceBar: 1.0,
-    forceBarMax: 1.0,
+    forceBar: 11,
+    forceBarMax: 11,
     resilience: 2,
     resilienceMax: 2,
     activeReelHeld: false,
@@ -562,7 +562,8 @@ export default function FishingGame() {
     attributePoints: 3,
     attributes: { Strength: 1, Intellect: 1, Vitality: 1, Dexterity: 1, Endurance: 1, Wisdom: 1, Agility: 1, Tactics: 1 } as FishingAttributes,
     catchHistory: [] as CatchHistoryEntry[],
-    forceBar: 1.0,
+    forceBar: 11,
+    forceBarMax: 11,
     resilience: 2,
     resilienceMax: 2,
     selectedHotbar: 1,
@@ -896,6 +897,7 @@ export default function FishingGame() {
       attributes: { ...s.attributes },
       catchHistory: [...s.catchHistory],
       forceBar: s.forceBar,
+      forceBarMax: s.forceBarMax,
       resilience: s.resilience,
       resilienceMax: s.resilienceMax,
       selectedHotbar: s.selectedHotbar,
@@ -3263,8 +3265,12 @@ export default function FishingGame() {
         let gaugeGainRate = 0.003 * alignmentBonus * rod.reelSpeedMult * strMod;
         if (fishInZone) {
           if (s.activeReelHeld && s.forceBar > 0) {
-            const forceDrain = 0.008 * difficultyMult / (1 + a.Agility * 0.01 * tacticsGlobal);
-            s.forceBar = Math.max(0, s.forceBar - forceDrain * dt);
+            const wisdomReduction = Math.max(0.5, 5 - a.Wisdom * 0.1);
+            const baseForceCost = s.playerLevel * wisdomReduction;
+            const intReduction = 1 - Math.min(0.9, a.Intellect * 0.02);
+            const forceCostPerSec = baseForceCost * intReduction;
+            const dtSec2 = dt / 60;
+            s.forceBar = Math.max(0, s.forceBar - forceCostPerSec * dtSec2);
             gaugeGainRate *= 2.0;
             const pullForce = 0.5 * strMod;
             s.hookedFishX += (s.playerX - s.hookedFishX) * 0.002 * pullForce * dt;
@@ -3281,8 +3287,9 @@ export default function FishingGame() {
           s.hookedFishY += sinkForce * dt;
         }
         if (!s.activeReelHeld || !fishInZone) {
-          const regenRate = 0.003 * (1 + a.Vitality * 0.01 * tacticsGlobal);
-          s.forceBar = Math.min(s.forceBarMax, s.forceBar + regenRate * dt);
+          const forceRegenPerSec = 0.1 + 0.1 * a.Vitality;
+          const dtSec3 = dt / 60;
+          s.forceBar = Math.min(s.forceBarMax, s.forceBar + forceRegenPerSec * dtSec3);
         }
 
         if (s.reelGauge >= 1.0) {
@@ -3913,7 +3920,8 @@ export default function FishingGame() {
       s.isRightMouseDown = false;
       s.resilience = Math.min(8, 2 + Math.floor(s.attributes.Endurance / 5));
       s.resilienceMax = s.resilience;
-      s.forceBar = 1.0;
+      s.forceBarMax = 10 + Math.max(s.attributes.Strength, s.attributes.Agility);
+      s.forceBar = s.forceBarMax;
       s.hookedFishVY = 0;
       s.hookLineMaxDist = Math.sqrt((s.hookedFishX - s.playerX) ** 2 + (s.hookedFishY - (canvas ? canvas.height * 0.42 : 300)) ** 2);
       syncUI();
@@ -4285,7 +4293,7 @@ export default function FishingGame() {
             const gaugePercent = uiState.reelGauge * 100;
             const fishInZone = uiState.reelTarget >= (uiState.reelProgress - catchZoneHalf) &&
                                uiState.reelTarget <= (uiState.reelProgress + catchZoneHalf);
-            const forceBarPercent = uiState.forceBar * 100;
+            const forceBarPercent = uiState.forceBarMax > 0 ? (uiState.forceBar / uiState.forceBarMax) * 100 : 0;
             const resilience = uiState.resilience;
             const resilienceMax = uiState.resilienceMax;
             return (
@@ -4293,7 +4301,7 @@ export default function FishingGame() {
                 <div style={{ width: barW, height: 10, background: "rgba(8,15,25,0.85)", borderRadius: 5, border: "1px solid rgba(59,130,246,0.3)", overflow: "hidden", marginBottom: 4 }} data-testid="force-bar">
                   <div style={{ width: `${forceBarPercent}%`, height: "100%", background: forceBarPercent > 30 ? "linear-gradient(90deg, #3b82f6, #60a5fa)" : "linear-gradient(90deg, #ef4444, #f87171)", borderRadius: 5, transition: "width 0.1s" }} />
                 </div>
-                <span style={{ color: "#60a5fa", fontSize: 6 }}>FORCE [SPACE]</span>
+                <span style={{ color: "#60a5fa", fontSize: 6 }}>FORCE {Math.floor(uiState.forceBar)}/{Math.floor(uiState.forceBarMax)} [SPACE]</span>
                 <div className="flex items-center gap-1" style={{ marginBottom: 4 }} data-testid="resilience-bar">
                   <span style={{ color: "#f59e0b", fontSize: 6, marginRight: 4 }}>RES [S]</span>
                   {Array.from({length: resilienceMax}, (_, i) => (
@@ -4924,8 +4932,17 @@ export default function FishingGame() {
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6 }}>
                       {(() => {
                         const tG = 1 + uiState.attributes.Tactics * 0.005;
+                        const forcePool = 10 + Math.max(uiState.attributes.Strength, uiState.attributes.Agility);
+                        const wisdomReduce = Math.max(0.5, 5 - uiState.attributes.Wisdom * 0.1);
+                        const forceCostBase = uiState.playerLevel * wisdomReduce;
+                        const intReduce = 1 - Math.min(0.9, uiState.attributes.Intellect * 0.02);
+                        const forceCost = forceCostBase * intReduce;
+                        const forceRegen = 0.1 + 0.1 * uiState.attributes.Vitality;
                         return [
                           { label: "Drag Force", value: `+${(uiState.attributes.Strength * 1.5 * tG).toFixed(0)}%`, color: "#ef4444" },
+                          { label: "Force Pool", value: `${forcePool}`, color: "#3b82f6" },
+                          { label: "Force Cost/s", value: `${forceCost.toFixed(1)}`, color: "#f87171" },
+                          { label: "Force Regen/s", value: `${forceRegen.toFixed(1)}`, color: "#60a5fa" },
                           { label: "Sell Bonus", value: `+${(uiState.attributes.Intellect * 1.2 * tG).toFixed(0)}%`, color: "#8b5cf6" },
                           { label: "Bite Window", value: `+${(uiState.attributes.Vitality * 1.0 * tG).toFixed(0)}%`, color: "#22c55e" },
                           { label: "Hook Control", value: `+${(uiState.attributes.Dexterity * 1.0 * tG).toFixed(0)}%`, color: "#f59e0b" },
