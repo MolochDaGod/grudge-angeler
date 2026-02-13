@@ -59,6 +59,16 @@ const FISH_TYPES: FishType[] = [
   { name: "Shadow Leviathan", catchAsset: "/assets/catch/6.png", catchW: 108, catchH: 22, creatureFolder: "6", idleFrames: 6, walkFrames: 6, points: 1500, rarity: "ultra_rare", weight: 0.08, minDepth: 0.8, speed: 0.6, description: "A titanic shadow beast from beyond the abyss. Feared by all ocean life.", tint: "rgba(180,0,50,0.35)", baseScale: 1.8 },
 ];
 
+const BETAXGRUDA_EGGS = [
+  { name: "Crimson BetaXGruda Egg", img: "/assets/eggs/egg_red.png", type: "beta", description: "Contains a crimson beta fish character. Hatches with fire affinity.", cost: 1 },
+  { name: "Emerald BetaXGruda Egg", img: "/assets/eggs/egg_green.png", type: "beta", description: "Contains an emerald beta fish character. Hatches with nature affinity.", cost: 1 },
+  { name: "Sapphire BetaXGruda Egg", img: "/assets/eggs/egg_blue.png", type: "beta", description: "Contains a sapphire beta fish character. Hatches with water affinity.", cost: 1 },
+  { name: "Ivory BetaXGruda Egg", img: "/assets/eggs/egg_white.png", type: "beta", description: "Contains an ivory beta fish character. Hatches with spirit affinity.", cost: 1 },
+  { name: "Warlord Egg: Dusk Tyrant", img: "/assets/eggs/warlord_purple.png", type: "warlord", description: "Contains the Dusk Tyrant warlord. Commands shadow armies.", cost: 2 },
+  { name: "Warlord Egg: Iron Sovereign", img: "/assets/eggs/warlord_silver.png", type: "warlord", description: "Contains the Iron Sovereign warlord. Unbreakable defense.", cost: 2 },
+  { name: "Warlord Egg: Venom King", img: "/assets/eggs/warlord_green.png", type: "warlord", description: "Contains the Venom King warlord. Poisons all who oppose.", cost: 2 },
+];
+
 const CRAB_SHEET = beachCrabSheetUrl;
 const CRAB_FRAME = 16;
 const CRAB_COLS = 16;
@@ -560,7 +570,7 @@ export default function FishingGame() {
     marketPrices: new Map<string, MarketEntry>(),
     nearHut: false,
     showStorePrompt: false,
-    storeTab: "rod" as "rod" | "lure" | "chum",
+    storeTab: "rod" as "rod" | "lure" | "chum" | "eggs",
     billboardSlide: 0,
     billboardTimer: 0,
     bounties: [] as Bounty[],
@@ -669,6 +679,11 @@ export default function FishingGame() {
     activeNpc: -1,
     npcDialogueIndex: 0,
     npcTab: "talk" as "talk" | "shop" | "request" | "mission",
+    headOfLegends: 0,
+    ownedEggs: Array.from({ length: BETAXGRUDA_EGGS.length }, () => false) as boolean[],
+    legendsCaught: new Set<string>(),
+    headOfLegendsNotif: "" as string,
+    headOfLegendsNotifTimer: 0,
   });
 
   const imagesRef = useRef<Map<string, HTMLImageElement>>(new Map());
@@ -703,7 +718,7 @@ export default function FishingGame() {
     money: 50,
     nearHut: false,
     showStorePrompt: false,
-    storeTab: "rod" as "rod" | "lure" | "chum",
+    storeTab: "rod" as "rod" | "lure" | "chum" | "eggs",
     billboardSlide: 0,
     bounties: [] as Bounty[],
     biggestCatchName: "",
@@ -753,6 +768,10 @@ export default function FishingGame() {
       request: def.request ? { ...def.request } : undefined,
       mission: def.mission ? { ...def.mission } : undefined,
     })),
+    headOfLegends: 0,
+    ownedEggs: Array.from({ length: BETAXGRUDA_EGGS.length }, () => false) as boolean[],
+    headOfLegendsNotif: "" as string,
+    headOfLegendsNotifTimer: 0,
   });
 
   const loadImage = useCallback((src: string): Promise<HTMLImageElement> => {
@@ -1106,6 +1125,10 @@ export default function FishingGame() {
       npcDialogueIndex: s.npcDialogueIndex,
       npcTab: s.npcTab,
       npcs: s.npcs.map(n => ({ ...n, request: n.request ? { ...n.request } : undefined, mission: n.mission ? { ...n.mission } : undefined })),
+      headOfLegends: s.headOfLegends,
+      ownedEggs: [...s.ownedEggs],
+      headOfLegendsNotif: s.headOfLegendsNotif,
+      headOfLegendsNotifTimer: s.headOfLegendsNotifTimer,
     });
   }, []);
 
@@ -2686,6 +2709,7 @@ export default function FishingGame() {
 
       // Predator alert timer
       if (s.predatorAlertTimer > 0) s.predatorAlertTimer -= dt;
+      if (s.headOfLegendsNotifTimer > 0) s.headOfLegendsNotifTimer -= dt;
 
       // Predator boat damage shake
       if (s.boatDamageShake > 0) s.boatDamageShake -= 0.1 * dt;
@@ -3119,6 +3143,26 @@ export default function FishingGame() {
         ctx.lineWidth = 3;
         ctx.strokeText(s.predatorAlert, W / 2, 60);
         ctx.fillText(s.predatorAlert, W / 2, 60);
+        ctx.restore();
+      }
+
+      if (s.headOfLegendsNotifTimer > 0) {
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        const notifAlpha = Math.min(1, s.headOfLegendsNotifTimer / 40);
+        const notifY = 90 - Math.max(0, (300 - s.headOfLegendsNotifTimer) * 0.15);
+        ctx.globalAlpha = notifAlpha;
+        ctx.font = "bold 12px monospace";
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#a855f7";
+        ctx.strokeStyle = "#000";
+        ctx.lineWidth = 3;
+        ctx.strokeText("HEAD OF LEGENDS EARNED!", W / 2, notifY);
+        ctx.fillText("HEAD OF LEGENDS EARNED!", W / 2, notifY);
+        ctx.font = "10px monospace";
+        ctx.fillStyle = "#fbbf24";
+        ctx.strokeText("First catch: " + s.headOfLegendsNotif, W / 2, notifY + 18);
+        ctx.fillText("First catch: " + s.headOfLegendsNotif, W / 2, notifY + 18);
         ctx.restore();
       }
 
@@ -3936,6 +3980,13 @@ export default function FishingGame() {
             mEntry.lastSoldTime = s.time;
           } else {
             s.marketPrices.set(mName, { recentSold: 1, lastSoldTime: s.time });
+          }
+
+          if (s.currentCatch?.rarity === "ultra_rare" && !s.legendsCaught.has(name)) {
+            s.legendsCaught.add(name);
+            s.headOfLegends++;
+            s.headOfLegendsNotif = name;
+            s.headOfLegendsNotifTimer = 300;
           }
 
           if (sizeBonus > s.biggestCatchSize) {
@@ -5321,6 +5372,7 @@ export default function FishingGame() {
                   <div className="flex items-center gap-3">
                     <img src="/assets/icons/gbux.png" alt="gbux" style={{ width: 12, height: 12 }} />
                     <span style={{ color: "#2ecc71", fontSize: 10 }}>{uiState.money}</span>
+                    <span style={{ color: "#a855f7", fontSize: 8, background: "rgba(168,85,247,0.15)", padding: "2px 5px", borderRadius: 4 }} data-testid="text-head-of-legends">{uiState.headOfLegends} HEAD</span>
                     <button
                       className="cursor-pointer px-2 py-1"
                       style={{ background: "rgba(255,255,255,0.08)", borderRadius: 4, border: "1px solid rgba(255,255,255,0.15)", fontFamily: "'Press Start 2P', monospace", color: "#78909c", fontSize: 10 }}
@@ -5356,6 +5408,14 @@ export default function FishingGame() {
                     data-testid="button-tab-chum"
                   >
                     CHUM
+                  </button>
+                  <button
+                    className="flex-1 px-3 py-2 cursor-pointer"
+                    style={{ background: uiState.storeTab === "eggs" ? "rgba(168,85,247,0.15)" : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.storeTab === "eggs" ? "#a855f7" : "#607d8b", fontSize: 9, borderBottom: uiState.storeTab === "eggs" ? "2px solid #a855f7" : "2px solid transparent" }}
+                    onClick={(e) => { e.stopPropagation(); stateRef.current.storeTab = "eggs"; syncUI(); }}
+                    data-testid="button-tab-eggs"
+                  >
+                    EGGS
                   </button>
                 </div>
                 {/* Items List */}
@@ -5524,6 +5584,106 @@ export default function FishingGame() {
                       </div>
                     );
                   })}
+                  {uiState.storeTab === "eggs" && (
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center justify-between px-1 py-1.5" style={{ background: "rgba(168,85,247,0.08)", borderRadius: 6, border: "1px solid rgba(168,85,247,0.2)" }}>
+                        <div className="flex items-center gap-2">
+                          <span style={{ color: "#a855f7", fontSize: 8 }}>HEAD OF LEGENDS</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <span style={{ color: "#fbbf24", fontSize: 10 }}>{uiState.headOfLegends}</span>
+                        </div>
+                      </div>
+                      <span style={{ color: "#78909c", fontSize: 6, lineHeight: "1.6", padding: "0 2px" }}>
+                        Earn Head of Legends by catching each Legendary 9 fish for the first time. Spend them on rare BetaXGruda Eggs.
+                      </span>
+                      <div className="flex items-center gap-2 px-1 pt-1">
+                        <span style={{ color: "#ec4899", fontSize: 8, fontFamily: "'Press Start 2P', monospace", letterSpacing: 1 }}>BETA FISH EGGS</span>
+                        <div style={{ flex: 1, height: 1, background: "rgba(236,72,153,0.3)" }} />
+                      </div>
+                      {BETAXGRUDA_EGGS.filter(e => e.type === "beta").map((egg, i) => {
+                        const eggIdx = BETAXGRUDA_EGGS.indexOf(egg);
+                        const owned = uiState.ownedEggs[eggIdx];
+                        const canAfford = uiState.headOfLegends >= egg.cost;
+                        return (
+                          <div key={egg.name} className="flex items-start gap-2.5 p-2.5" style={{ background: owned ? "rgba(168,85,247,0.12)" : "rgba(255,255,255,0.03)", borderRadius: 8, border: owned ? "1px solid rgba(168,85,247,0.4)" : "1px solid rgba(255,255,255,0.06)" }}>
+                            <div className="flex items-center justify-center" style={{ width: 52, height: 52, background: "rgba(0,0,0,0.4)", borderRadius: 8, overflow: "hidden" }}>
+                              <img src={egg.img} alt="" style={{ width: 48, height: 48, objectFit: "cover", borderRadius: 6 }} />
+                            </div>
+                            <div className="flex-1 min-w-0 flex flex-col gap-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span style={{ color: owned ? "#a855f7" : "#e0e0e0", fontSize: 8 }}>{egg.name}</span>
+                                {owned && <span style={{ color: "#a855f7", fontSize: 6, background: "rgba(168,85,247,0.2)", padding: "1px 4px", borderRadius: 3 }}>OWNED</span>}
+                              </div>
+                              <span style={{ color: "#78909c", fontSize: 7, lineHeight: "1.5" }}>{egg.description}</span>
+                            </div>
+                            <div className="flex flex-col items-end gap-1">
+                              {!owned ? (
+                                <button
+                                  className="cursor-pointer px-3 py-1.5"
+                                  style={{ background: canAfford ? "rgba(168,85,247,0.25)" : "rgba(255,255,255,0.05)", borderRadius: 6, border: canAfford ? "1px solid rgba(168,85,247,0.5)" : "1px solid rgba(255,255,255,0.1)", fontFamily: "'Press Start 2P', monospace", color: canAfford ? "#a855f7" : "#455a64", fontSize: 7, opacity: canAfford ? 1 : 0.5 }}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (!canAfford) return;
+                                    const st = stateRef.current;
+                                    st.headOfLegends -= egg.cost;
+                                    st.ownedEggs[eggIdx] = true;
+                                    syncUI();
+                                  }}
+                                  data-testid={`button-buy-egg-${eggIdx}`}
+                                >
+                                  {egg.cost} HEAD
+                                </button>
+                              ) : null}
+                            </div>
+                          </div>
+                        );
+                      })}
+                      <div className="flex items-center gap-2 px-1 pt-2">
+                        <span style={{ color: "#ef4444", fontSize: 8, fontFamily: "'Press Start 2P', monospace", letterSpacing: 1 }}>WARLORD EGGS</span>
+                        <div style={{ flex: 1, height: 1, background: "rgba(239,68,68,0.3)" }} />
+                      </div>
+                      {BETAXGRUDA_EGGS.filter(e => e.type === "warlord").map((egg) => {
+                        const eggIdx = BETAXGRUDA_EGGS.indexOf(egg);
+                        const owned = uiState.ownedEggs[eggIdx];
+                        const canAfford = uiState.headOfLegends >= egg.cost;
+                        return (
+                          <div key={egg.name} className="flex items-start gap-2.5 p-2.5" style={{ background: owned ? "rgba(239,68,68,0.12)" : "rgba(255,255,255,0.03)", borderRadius: 8, border: owned ? "1px solid rgba(239,68,68,0.4)" : "1px solid rgba(255,255,255,0.06)" }}>
+                            <div className="flex items-center justify-center" style={{ width: 52, height: 52, background: "rgba(0,0,0,0.4)", borderRadius: 8, overflow: "hidden" }}>
+                              <img src={egg.img} alt="" style={{ width: 48, height: 48, objectFit: "cover", borderRadius: 6 }} />
+                            </div>
+                            <div className="flex-1 min-w-0 flex flex-col gap-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span style={{ color: owned ? "#ef4444" : "#e0e0e0", fontSize: 8 }}>{egg.name}</span>
+                                {owned && <span style={{ color: "#ef4444", fontSize: 6, background: "rgba(239,68,68,0.2)", padding: "1px 4px", borderRadius: 3 }}>OWNED</span>}
+                              </div>
+                              <span style={{ color: "#78909c", fontSize: 7, lineHeight: "1.5" }}>{egg.description}</span>
+                              <span style={{ color: "#f59e0b", fontSize: 6 }}>Requires 2 Heads of Legends</span>
+                            </div>
+                            <div className="flex flex-col items-end gap-1">
+                              {!owned ? (
+                                <button
+                                  className="cursor-pointer px-3 py-1.5"
+                                  style={{ background: canAfford ? "rgba(239,68,68,0.25)" : "rgba(255,255,255,0.05)", borderRadius: 6, border: canAfford ? "1px solid rgba(239,68,68,0.5)" : "1px solid rgba(255,255,255,0.1)", fontFamily: "'Press Start 2P', monospace", color: canAfford ? "#ef4444" : "#455a64", fontSize: 7, opacity: canAfford ? 1 : 0.5 }}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (!canAfford) return;
+                                    const st = stateRef.current;
+                                    st.headOfLegends -= egg.cost;
+                                    st.ownedEggs[eggIdx] = true;
+                                    syncUI();
+                                  }}
+                                  data-testid={`button-buy-egg-${eggIdx}`}
+                                >
+                                  {egg.cost} HEADS
+                                </button>
+                              ) : null}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
                 {/* Current Equipment Summary */}
                 <div className="flex items-center justify-between px-3 py-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.02)" }}>

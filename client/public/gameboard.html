@@ -495,6 +495,23 @@
         <div class="equip-grid" id="chum-grid"></div>
       </div>
 
+      <!-- BETAXGRUDA EGGS -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-dot" style="background:#a855f7"></div>
+          <div class="section-title" style="color:#a855f7">BETAXGRUDA EGGS</div>
+          <div class="section-count">7 ITEMS</div>
+        </div>
+        <div style="color:#78909c;font-size:8px;margin-bottom:12px;line-height:1.6;padding:0 4px;">
+          Special items purchasable only with "Head of Legends" - a reward earned by catching each Legendary 9 fish for the first time.
+          The first 4 are Beta Fish character eggs, the last 3 are Warlord eggs.
+        </div>
+        <div style="color:#ec4899;font-size:9px;margin-bottom:8px;letter-spacing:1px;">BETA FISH EGGS (1 HEAD EACH)</div>
+        <div class="equip-grid" id="beta-eggs-grid"></div>
+        <div style="color:#ef4444;font-size:9px;margin:12px 0 8px;letter-spacing:1px;">WARLORD EGGS (2 HEADS EACH)</div>
+        <div class="equip-grid" id="warlord-eggs-grid"></div>
+      </div>
+
       <!-- GAME MECHANICS -->
       <div class="section">
         <div class="section-header">
@@ -805,6 +822,36 @@ function populateBoard() {
 
   const chumGrid = document.getElementById("chum-grid");
   CHUM_ITEMS.forEach(c => chumGrid.innerHTML += createEquipCard(c));
+
+  const BETA_EGGS = [
+    { name: "Crimson BetaXGruda Egg", icon: "/assets/eggs/egg_red.png", description: "Contains a crimson beta fish character. Hatches with fire affinity. Cost: 1 Head of Legends" },
+    { name: "Emerald BetaXGruda Egg", icon: "/assets/eggs/egg_green.png", description: "Contains an emerald beta fish character. Hatches with nature affinity. Cost: 1 Head of Legends" },
+    { name: "Sapphire BetaXGruda Egg", icon: "/assets/eggs/egg_blue.png", description: "Contains a sapphire beta fish character. Hatches with water affinity. Cost: 1 Head of Legends" },
+    { name: "Ivory BetaXGruda Egg", icon: "/assets/eggs/egg_white.png", description: "Contains an ivory beta fish character. Hatches with spirit affinity. Cost: 1 Head of Legends" },
+  ];
+  const WARLORD_EGGS = [
+    { name: "Warlord Egg: Dusk Tyrant", icon: "/assets/eggs/warlord_purple.png", description: "Contains the Dusk Tyrant warlord. Commands shadow armies. Cost: 2 Heads of Legends" },
+    { name: "Warlord Egg: Iron Sovereign", icon: "/assets/eggs/warlord_silver.png", description: "Contains the Iron Sovereign warlord. Unbreakable defense. Cost: 2 Heads of Legends" },
+    { name: "Warlord Egg: Venom King", icon: "/assets/eggs/warlord_green.png", description: "Contains the Venom King warlord. Poisons all who oppose. Cost: 2 Heads of Legends" },
+  ];
+
+  function createEggCard(egg) {
+    return `<div class="equip-card" style="border-color:rgba(168,85,247,0.3);">
+      <div style="width:48px;height:48px;border-radius:8px;overflow:hidden;background:rgba(0,0,0,0.4);flex-shrink:0;">
+        <img src="${egg.icon}" alt="${egg.name}" style="width:48px;height:48px;object-fit:cover;">
+      </div>
+      <div style="flex:1;">
+        <div class="equip-name" style="color:#a855f7">${egg.name}</div>
+        <div class="equip-desc">${egg.description}</div>
+      </div>
+    </div>`;
+  }
+
+  const betaGrid = document.getElementById("beta-eggs-grid");
+  BETA_EGGS.forEach(e => betaGrid.innerHTML += createEggCard(e));
+
+  const warlordGrid = document.getElementById("warlord-eggs-grid");
+  WARLORD_EGGS.forEach(e => warlordGrid.innerHTML += createEggCard(e));
 
   const zonesDiv = document.getElementById("world-zones");
   WORLD_ZONES.forEach(z => {
