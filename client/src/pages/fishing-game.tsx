@@ -184,6 +184,99 @@ const PREDATOR_TYPES = [
   { name: "Sea Devil", folder: "3", idleFrames: 4, walkFrames: 6, attackFrames: 6, hurtFrames: 2, deathFrames: 6, specialFrames: 6, catchAsset: "/assets/predators/3/Idle.png", catchW: 96, catchH: 96, points: 600, rarity: "rare" as const, weight: 2, speed: 1.8, size: 2.0, scareRadius: 240, description: "A monstrous crab creature from the deep trenches.", tint: null as string | null },
 ];
 
+interface NpcShopItem {
+  name: string;
+  type: "chum" | "lure" | "rod";
+  index: number;
+  price: number;
+  description: string;
+  icon: string;
+}
+
+interface NpcMission {
+  description: string;
+  fishName: string;
+  minSize: number;
+  count: number;
+  caught: number;
+  reward: number;
+  completed: boolean;
+}
+
+interface NpcRequest {
+  description: string;
+  fishName: string;
+  count: number;
+  fulfilled: number;
+  reward: number;
+  completed: boolean;
+}
+
+interface NpcDef {
+  id: number;
+  name: string;
+  spriteFolder: string;
+  idleFrames: number;
+  walkFrames: number;
+  worldX: number;
+  role: "shopkeeper" | "requester" | "mission_giver";
+  greeting: string;
+  shopItems?: NpcShopItem[];
+  request?: NpcRequest;
+  mission?: NpcMission;
+  dialogueLines: string[];
+}
+
+const NPC_DEFS: NpcDef[] = [
+  {
+    id: 1, name: "Old Pete", spriteFolder: "1", idleFrames: 6, walkFrames: 6,
+    worldX: 0.52, role: "shopkeeper",
+    greeting: "Welcome! I've got supplies for any angler.",
+    shopItems: [
+      { name: "Fish Scraps", type: "chum", index: 0, price: 12, description: "Basic chum. Cheap!", icon: "/assets/icons/Icons_01.png" },
+      { name: "Bread Crumbs", type: "chum", index: 1, price: 18, description: "Attracts small fish.", icon: "/assets/icons/Icons_02.png" },
+      { name: "Sardine Chunks", type: "chum", index: 7, price: 40, description: "Fast bites!", icon: "/assets/icons/Icons_09.png" },
+      { name: "Nightcrawler", type: "lure", index: 1, price: 35, description: "Juicy wriggling bait.", icon: "/assets/lures/nightcrawler.png" },
+    ],
+    dialogueLines: ["The pier's been busy lately.", "Watch out for storms - fish bite different.", "Need chum? I got the good stuff."],
+  },
+  {
+    id: 2, name: "Marina", spriteFolder: "3", idleFrames: 4, walkFrames: 6,
+    worldX: 0.60, role: "requester",
+    greeting: "Hey there! I need help with something...",
+    request: { description: "Bring me 2 Perch for my stew.", fishName: "Perch", count: 2, fulfilled: 0, reward: 80, completed: false },
+    dialogueLines: ["My grandmother's stew recipe needs fresh fish.", "The Perch around here are the tastiest.", "I'll pay well for your trouble!"],
+  },
+  {
+    id: 3, name: "Captain Rex", spriteFolder: "6", idleFrames: 4, walkFrames: 6,
+    worldX: 0.48, role: "mission_giver",
+    greeting: "Ahoy! Got a challenge for a brave angler.",
+    mission: { description: "Catch a Bass weighing at least 5 lbs.", fishName: "Bass", minSize: 5, count: 1, caught: 0, reward: 200, completed: false },
+    dialogueLines: ["I've sailed these waters for decades.", "Only the best anglers take my missions.", "Prove your worth and you'll be rewarded."],
+  },
+  {
+    id: 4, name: "Nelly", spriteFolder: "4", idleFrames: 4, walkFrames: 6,
+    worldX: 0.70, role: "shopkeeper",
+    greeting: "Looking for something special?",
+    shopItems: [
+      { name: "Blood Meal", type: "chum", index: 3, price: 35, description: "Attracts predators!", icon: "/assets/icons/Icons_04.png" },
+      { name: "Leech", type: "lure", index: 2, price: 80, description: "Bottom dwellers love it.", icon: "/assets/lures/leech.png" },
+      { name: "Crankbait", type: "lure", index: 6, price: 110, description: "Rattling diving lure.", icon: "/assets/lures/crankbait.png" },
+      { name: "Crab Guts", type: "chum", index: 8, price: 50, description: "Attracts rare fish!", icon: "/assets/icons/Icons_10.png" },
+    ],
+    dialogueLines: ["These lures are imported, you know.", "Best deals on the dock, guaranteed.", "Come back when you need more gear."],
+  },
+  {
+    id: 5, name: "Fisher Joe", spriteFolder: "2", idleFrames: 4, walkFrames: 6,
+    worldX: 0.55, role: "requester",
+    greeting: "Psst! I could use a hand...",
+    request: { description: "Bring me 3 Minnows for bait.", fishName: "Minnow", count: 3, fulfilled: 0, reward: 50, completed: false },
+    dialogueLines: ["I ran out of bait this morning.", "Minnows make the best live bait.", "Help me out and I'll make it worth your while."],
+  },
+];
+
+const NPC_FRAME_SIZE = 48;
+
 interface MarketEntry {
   recentSold: number;
   lastSoldTime: number;
@@ -293,7 +386,7 @@ interface Bounty {
   label: string;
 }
 
-type GameState = "intro" | "title" | "charSelect" | "idle" | "casting" | "waiting" | "bite" | "reeling" | "caught" | "missed" | "swimming" | "boarding" | "store";
+type GameState = "intro" | "title" | "charSelect" | "idle" | "casting" | "waiting" | "bite" | "reeling" | "caught" | "missed" | "swimming" | "boarding" | "store" | "npcChat";
 
 interface SwimmingFish {
   x: number;
@@ -566,6 +659,16 @@ export default function FishingGame() {
     castLineLanded: false,
     castVelX: 0,
     castVelY: 0,
+    npcs: NPC_DEFS.map(def => ({
+      ...def,
+      frame: 0,
+      frameTimer: 0,
+      facingLeft: def.worldX > 0.55,
+    })),
+    nearNpc: -1,
+    activeNpc: -1,
+    npcDialogueIndex: 0,
+    npcTab: "talk" as "talk" | "shop" | "request" | "mission",
   });
 
   const imagesRef = useRef<Map<string, HTMLImageElement>>(new Map());
@@ -641,6 +744,15 @@ export default function FishingGame() {
     gizmoEnabled: false,
     gamePaused: false,
     traceMode: false,
+    nearNpc: -1,
+    activeNpc: -1,
+    npcDialogueIndex: 0,
+    npcTab: "talk" as "talk" | "shop" | "request" | "mission",
+    npcs: NPC_DEFS.map(def => ({
+      ...def,
+      request: def.request ? { ...def.request } : undefined,
+      mission: def.mission ? { ...def.mission } : undefined,
+    })),
   });
 
   const loadImage = useCallback((src: string): Promise<HTMLImageElement> => {
@@ -981,6 +1093,11 @@ export default function FishingGame() {
       gizmoEnabled: s.gizmoEnabled,
       gamePaused: s.gamePaused,
       traceMode: s.traceMode,
+      nearNpc: s.nearNpc,
+      activeNpc: s.activeNpc,
+      npcDialogueIndex: s.npcDialogueIndex,
+      npcTab: s.npcTab,
+      npcs: s.npcs.map(n => ({ ...n, request: n.request ? { ...n.request } : undefined, mission: n.mission ? { ...n.mission } : undefined })),
     });
   }, []);
 
@@ -1138,6 +1255,11 @@ export default function FishingGame() {
         stateRef.current.gameState = "idle";
         syncUI();
       }
+      if (key === "escape" && stateRef.current.gameState === "npcChat") {
+        stateRef.current.gameState = "idle";
+        stateRef.current.activeNpc = -1;
+        syncUI();
+      }
       if (key === "e" && stateRef.current.gameState === "idle" && !stateRef.current.showBoatPrompt && !stateRef.current.showStorePrompt) {
         if (stateRef.current.inBoat) {
           const canvas = canvasRef.current;
@@ -1152,6 +1274,13 @@ export default function FishingGame() {
               syncUI();
             }
           }
+        } else if (stateRef.current.nearNpc >= 0) {
+          stateRef.current.activeNpc = stateRef.current.nearNpc;
+          stateRef.current.gameState = "npcChat";
+          stateRef.current.npcDialogueIndex = 0;
+          const npc = stateRef.current.npcs[stateRef.current.nearNpc];
+          stateRef.current.npcTab = npc.role === "shopkeeper" ? "shop" : npc.role === "requester" ? "request" : "mission";
+          syncUI();
         } else if (stateRef.current.nearBoat) {
           stateRef.current.showBoatPrompt = true;
           syncUI();
@@ -1313,6 +1442,22 @@ export default function FishingGame() {
 
         const hutCheckX = W * 0.85 + (192 * 2.2) / 2;
         s.nearHut = !s.inBoat && Math.abs(s.playerX - hutCheckX) < 80 && s.gameState === "idle";
+
+        if (!s.inBoat && s.gameState === "idle") {
+          let closestNpc = -1;
+          let closestDist = 60;
+          for (let ni = 0; ni < s.npcs.length; ni++) {
+            const npcWorldX = W * s.npcs[ni].worldX;
+            const dist = Math.abs(s.playerX - npcWorldX);
+            if (dist < closestDist) {
+              closestDist = dist;
+              closestNpc = ni;
+            }
+          }
+          s.nearNpc = closestNpc;
+        } else {
+          s.nearNpc = -1;
+        }
 
         if (s.gameState === "casting") {
           s.aimX = Math.max(10, Math.min(W - 10, s.mouseX - s.cameraX));
@@ -2460,6 +2605,61 @@ export default function FishingGame() {
           }
         }
       });
+
+      for (let ni = 0; ni < s.npcs.length; ni++) {
+        const npc = s.npcs[ni];
+        const npcWorldX = W * npc.worldX;
+        const npcScale = 2.5;
+        const npcDrawW = NPC_FRAME_SIZE * npcScale;
+        const npcDrawH = NPC_FRAME_SIZE * npcScale;
+        const npcDrawX = npcWorldX - npcDrawW / 2;
+        const npcDrawY = pierY - npcDrawH + 8;
+
+        const idleSrc = `/assets/npcs/${npc.spriteFolder}/Idle.png`;
+        const idleImg = getImg(idleSrc);
+        if (idleImg && idleImg.complete) {
+          const totalFrames = Math.round(idleImg.width / NPC_FRAME_SIZE);
+          npc.frameTimer = (npc.frameTimer || 0) + 1;
+          if (npc.frameTimer >= 12) {
+            npc.frameTimer = 0;
+            npc.frame = ((npc.frame || 0) + 1) % totalFrames;
+          }
+          const sx = (npc.frame || 0) * NPC_FRAME_SIZE;
+          ctx.save();
+          if (npc.facingLeft) {
+            ctx.translate(npcDrawX + npcDrawW, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(idleImg, sx, 0, NPC_FRAME_SIZE, NPC_FRAME_SIZE, 0, npcDrawY, npcDrawW, npcDrawH);
+          } else {
+            ctx.drawImage(idleImg, sx, 0, NPC_FRAME_SIZE, NPC_FRAME_SIZE, npcDrawX, npcDrawY, npcDrawW, npcDrawH);
+          }
+          ctx.restore();
+        }
+
+        ctx.save();
+        ctx.font = "bold 7px 'Press Start 2P', monospace";
+        ctx.textAlign = "center";
+        ctx.fillStyle = "rgba(0,0,0,0.6)";
+        ctx.fillText(npc.name, npcWorldX + 1, npcDrawY - 6 + 1);
+        const roleColors: Record<string, string> = { shopkeeper: "#2ecc71", requester: "#f39c12", mission_giver: "#e74c3c" };
+        ctx.fillStyle = roleColors[npc.role] || "#ffffff";
+        ctx.fillText(npc.name, npcWorldX, npcDrawY - 6);
+        ctx.restore();
+
+        if (s.nearNpc === ni && s.gameState === "idle") {
+          ctx.save();
+          ctx.font = "bold 8px 'Press Start 2P', monospace";
+          ctx.textAlign = "center";
+          ctx.fillStyle = "rgba(0,0,0,0.7)";
+          ctx.fillRect(npcWorldX - 50, npcDrawY - 26, 100, 16);
+          ctx.strokeStyle = roleColors[npc.role] || "#f1c40f";
+          ctx.lineWidth = 1;
+          ctx.strokeRect(npcWorldX - 50, npcDrawY - 26, 100, 16);
+          ctx.fillStyle = "#f1c40f";
+          ctx.fillText("Press E to talk", npcWorldX, npcDrawY - 15);
+          ctx.restore();
+        }
+      }
 
       // Docks area objects (right side scenes)
       const dockObjY = pierY - 2;
@@ -3816,6 +4016,23 @@ export default function FishingGame() {
             s.money += Math.floor(s.bounties[bountyIdx].reward * bountyTacticsBonus);
             s.bounties.splice(bountyIdx, 1);
             if (s.bounties.length === 0) generateBounties();
+          }
+
+          for (const npc of s.npcs) {
+            if (npc.request && !npc.request.completed && npc.request.fishName === name) {
+              npc.request.fulfilled = Math.min(npc.request.fulfilled + 1, npc.request.count);
+              if (npc.request.fulfilled >= npc.request.count) {
+                npc.request.completed = true;
+                s.money += npc.request.reward;
+              }
+            }
+            if (npc.mission && !npc.mission.completed && npc.mission.fishName === name && fishWeight >= npc.mission.minSize) {
+              npc.mission.caught = Math.min(npc.mission.caught + 1, npc.mission.count);
+              if (npc.mission.caught >= npc.mission.count) {
+                npc.mission.completed = true;
+                s.money += npc.mission.reward;
+              }
+            }
           }
 
           if (s.totalCaught % 5 === 0 && s.rodLevel < 5) s.rodLevel++;
@@ -5384,6 +5601,200 @@ export default function FishingGame() {
               </div>
             </div>
           )}
+
+          {/* NPC Chat Overlay */}
+          {uiState.gameState === "npcChat" && uiState.activeNpc >= 0 && uiState.activeNpc < uiState.npcs.length && (() => {
+            const npc = uiState.npcs[uiState.activeNpc];
+            const roleColors: Record<string, string> = { shopkeeper: "#2ecc71", requester: "#f39c12", mission_giver: "#e74c3c" };
+            const roleColor = roleColors[npc.role] || "#ffffff";
+            const roleLabels: Record<string, string> = { shopkeeper: "SHOP", requester: "REQUEST", mission_giver: "MISSION" };
+            return (
+              <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 80, background: "rgba(0,0,0,0.5)" }} data-testid="npc-overlay">
+                <div className="flex flex-col" style={{ background: "rgba(8,15,25,0.97)", borderRadius: 12, border: `1px solid ${roleColor}44`, width: Math.min(420, window.innerWidth * 0.9), maxHeight: "80vh", overflow: "hidden" }} data-testid="npc-panel">
+                  <div className="flex items-center justify-between p-3" style={{ borderBottom: `1px solid ${roleColor}33` }}>
+                    <div className="flex items-center gap-3">
+                      <div style={{ width: 40, height: 40, background: `${roleColor}22`, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+                        <img src={`/assets/npcs/${npc.spriteFolder}/Idle.png`} alt="" style={{ width: 40, height: 40, objectFit: "cover", objectPosition: "0 0", imageRendering: "pixelated" }} />
+                      </div>
+                      <div>
+                        <span style={{ color: roleColor, fontSize: 11, fontFamily: "'Press Start 2P', monospace" }}>{npc.name}</span>
+                        <div style={{ color: "#78909c", fontSize: 7, fontFamily: "'Press Start 2P', monospace", marginTop: 2 }}>{roleLabels[npc.role]}</div>
+                      </div>
+                    </div>
+                    <button
+                      className="cursor-pointer px-2 py-1"
+                      style={{ background: "rgba(255,255,255,0.08)", borderRadius: 4, border: "1px solid rgba(255,255,255,0.15)", fontFamily: "'Press Start 2P', monospace", color: "#78909c", fontSize: 10 }}
+                      onClick={(e) => { e.stopPropagation(); stateRef.current.gameState = "idle"; stateRef.current.activeNpc = -1; syncUI(); }}
+                      data-testid="button-close-npc"
+                    >
+                      X
+                    </button>
+                  </div>
+
+                  <div className="flex" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                    <button
+                      className="flex-1 px-3 py-2 cursor-pointer"
+                      style={{ background: uiState.npcTab === "talk" ? `${roleColor}22` : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.npcTab === "talk" ? roleColor : "#607d8b", fontSize: 8, borderBottom: uiState.npcTab === "talk" ? `2px solid ${roleColor}` : "2px solid transparent" }}
+                      onClick={(e) => { e.stopPropagation(); stateRef.current.npcTab = "talk"; syncUI(); }}
+                      data-testid="button-npc-talk"
+                    >
+                      TALK
+                    </button>
+                    {npc.role === "shopkeeper" && (
+                      <button
+                        className="flex-1 px-3 py-2 cursor-pointer"
+                        style={{ background: uiState.npcTab === "shop" ? `${roleColor}22` : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.npcTab === "shop" ? roleColor : "#607d8b", fontSize: 8, borderBottom: uiState.npcTab === "shop" ? `2px solid ${roleColor}` : "2px solid transparent" }}
+                        onClick={(e) => { e.stopPropagation(); stateRef.current.npcTab = "shop"; syncUI(); }}
+                        data-testid="button-npc-shop"
+                      >
+                        SHOP
+                      </button>
+                    )}
+                    {npc.role === "requester" && (
+                      <button
+                        className="flex-1 px-3 py-2 cursor-pointer"
+                        style={{ background: uiState.npcTab === "request" ? `${roleColor}22` : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.npcTab === "request" ? roleColor : "#607d8b", fontSize: 8, borderBottom: uiState.npcTab === "request" ? `2px solid ${roleColor}` : "2px solid transparent" }}
+                        onClick={(e) => { e.stopPropagation(); stateRef.current.npcTab = "request"; syncUI(); }}
+                        data-testid="button-npc-request"
+                      >
+                        REQUEST
+                      </button>
+                    )}
+                    {npc.role === "mission_giver" && (
+                      <button
+                        className="flex-1 px-3 py-2 cursor-pointer"
+                        style={{ background: uiState.npcTab === "mission" ? `${roleColor}22` : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.npcTab === "mission" ? roleColor : "#607d8b", fontSize: 8, borderBottom: uiState.npcTab === "mission" ? `2px solid ${roleColor}` : "2px solid transparent" }}
+                        onClick={(e) => { e.stopPropagation(); stateRef.current.npcTab = "mission"; syncUI(); }}
+                        data-testid="button-npc-mission"
+                      >
+                        MISSION
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="flex-1 overflow-y-auto p-3" style={{ maxHeight: "55vh" }}>
+                    {uiState.npcTab === "talk" && (
+                      <div className="flex flex-col gap-3">
+                        <div style={{ background: `${roleColor}11`, borderRadius: 8, padding: "10px 12px", border: `1px solid ${roleColor}22` }}>
+                          <span style={{ color: "#e0e0e0", fontSize: 9, fontFamily: "'Press Start 2P', monospace", lineHeight: "18px" }}>{npc.greeting}</span>
+                        </div>
+                        {npc.dialogueLines.map((line, di) => (
+                          <div key={di} style={{ background: "rgba(255,255,255,0.03)", borderRadius: 6, padding: "8px 10px" }}>
+                            <span style={{ color: "#b0bec5", fontSize: 8, fontFamily: "'Press Start 2P', monospace", lineHeight: "16px" }}>{line}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {uiState.npcTab === "shop" && npc.shopItems && (
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-2 mb-1">
+                          <img src="/assets/icons/gbux.png" alt="gbux" style={{ width: 12, height: 12 }} />
+                          <span style={{ color: "#2ecc71", fontSize: 9, fontFamily: "'Press Start 2P', monospace" }}>{uiState.money} gbux</span>
+                        </div>
+                        {npc.shopItems.map((item, si) => (
+                          <div key={si} className="flex items-center gap-3 p-2" style={{ background: "rgba(255,255,255,0.03)", borderRadius: 6, border: "1px solid rgba(255,255,255,0.06)" }}>
+                            <img src={item.icon} alt="" style={{ width: 28, height: 28, imageRendering: "pixelated" }} />
+                            <div className="flex-1">
+                              <div style={{ color: "#e0e0e0", fontSize: 8, fontFamily: "'Press Start 2P', monospace" }}>{item.name}</div>
+                              <div style={{ color: "#78909c", fontSize: 7, fontFamily: "'Press Start 2P', monospace", marginTop: 2 }}>{item.description}</div>
+                            </div>
+                            <button
+                              className="cursor-pointer px-3 py-1"
+                              style={{
+                                background: uiState.money >= item.price ? "rgba(46,204,113,0.2)" : "rgba(255,255,255,0.05)",
+                                borderRadius: 6,
+                                border: `1px solid ${uiState.money >= item.price ? "rgba(46,204,113,0.4)" : "rgba(255,255,255,0.1)"}`,
+                                fontFamily: "'Press Start 2P', monospace",
+                                color: uiState.money >= item.price ? "#2ecc71" : "#607d8b",
+                                fontSize: 8,
+                                opacity: uiState.money >= item.price ? 1 : 0.5,
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const s = stateRef.current;
+                                if (s.money < item.price) return;
+                                s.money -= item.price;
+                                if (item.type === "chum") {
+                                  s.ownedChum[item.index] = (s.ownedChum[item.index] || 0) + 1;
+                                } else if (item.type === "lure") {
+                                  s.ownedLures[item.index] = true;
+                                }
+                                syncUI();
+                              }}
+                              data-testid={`button-npc-buy-${si}`}
+                            >
+                              {item.price}g
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {uiState.npcTab === "request" && npc.request && (
+                      <div className="flex flex-col gap-3">
+                        <div style={{ background: "rgba(243,156,18,0.1)", borderRadius: 8, padding: "12px", border: "1px solid rgba(243,156,18,0.2)" }}>
+                          <div style={{ color: "#f39c12", fontSize: 9, fontFamily: "'Press Start 2P', monospace", marginBottom: 6 }}>REQUEST</div>
+                          <div style={{ color: "#e0e0e0", fontSize: 8, fontFamily: "'Press Start 2P', monospace", lineHeight: "16px" }}>{npc.request.description}</div>
+                        </div>
+                        <div className="flex items-center justify-between p-2" style={{ background: "rgba(255,255,255,0.03)", borderRadius: 6 }}>
+                          <div>
+                            <span style={{ color: "#b0bec5", fontSize: 8, fontFamily: "'Press Start 2P', monospace" }}>Progress: </span>
+                            <span style={{ color: npc.request.completed ? "#2ecc71" : "#f39c12", fontSize: 9, fontFamily: "'Press Start 2P', monospace" }}>
+                              {npc.request.fulfilled}/{npc.request.count}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <span style={{ color: "#78909c", fontSize: 7, fontFamily: "'Press Start 2P', monospace" }}>Reward:</span>
+                            <img src="/assets/icons/gbux.png" alt="gbux" style={{ width: 10, height: 10 }} />
+                            <span style={{ color: "#2ecc71", fontSize: 8, fontFamily: "'Press Start 2P', monospace" }}>{npc.request.reward}</span>
+                          </div>
+                        </div>
+                        <div style={{ width: "100%", height: 8, background: "rgba(255,255,255,0.1)", borderRadius: 4, overflow: "hidden" }}>
+                          <div style={{ width: `${(npc.request.fulfilled / npc.request.count) * 100}%`, height: "100%", background: npc.request.completed ? "#2ecc71" : "#f39c12", borderRadius: 4, transition: "width 0.3s" }} />
+                        </div>
+                        {npc.request.completed && (
+                          <div style={{ color: "#2ecc71", fontSize: 9, fontFamily: "'Press Start 2P', monospace", textAlign: "center", marginTop: 4 }}>
+                            COMPLETED! Reward collected!
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {uiState.npcTab === "mission" && npc.mission && (
+                      <div className="flex flex-col gap-3">
+                        <div style={{ background: "rgba(231,76,60,0.1)", borderRadius: 8, padding: "12px", border: "1px solid rgba(231,76,60,0.2)" }}>
+                          <div style={{ color: "#e74c3c", fontSize: 9, fontFamily: "'Press Start 2P', monospace", marginBottom: 6 }}>MISSION</div>
+                          <div style={{ color: "#e0e0e0", fontSize: 8, fontFamily: "'Press Start 2P', monospace", lineHeight: "16px" }}>{npc.mission.description}</div>
+                        </div>
+                        <div className="flex items-center justify-between p-2" style={{ background: "rgba(255,255,255,0.03)", borderRadius: 6 }}>
+                          <div>
+                            <span style={{ color: "#b0bec5", fontSize: 8, fontFamily: "'Press Start 2P', monospace" }}>Progress: </span>
+                            <span style={{ color: npc.mission.completed ? "#2ecc71" : "#e74c3c", fontSize: 9, fontFamily: "'Press Start 2P', monospace" }}>
+                              {npc.mission.caught}/{npc.mission.count}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <span style={{ color: "#78909c", fontSize: 7, fontFamily: "'Press Start 2P', monospace" }}>Reward:</span>
+                            <img src="/assets/icons/gbux.png" alt="gbux" style={{ width: 10, height: 10 }} />
+                            <span style={{ color: "#2ecc71", fontSize: 8, fontFamily: "'Press Start 2P', monospace" }}>{npc.mission.reward}</span>
+                          </div>
+                        </div>
+                        <div style={{ width: "100%", height: 8, background: "rgba(255,255,255,0.1)", borderRadius: 4, overflow: "hidden" }}>
+                          <div style={{ width: `${(npc.mission.caught / npc.mission.count) * 100}%`, height: "100%", background: npc.mission.completed ? "#2ecc71" : "#e74c3c", borderRadius: 4, transition: "width 0.3s" }} />
+                        </div>
+                        {npc.mission.completed && (
+                          <div style={{ color: "#2ecc71", fontSize: 9, fontFamily: "'Press Start 2P', monospace", textAlign: "center", marginTop: 4 }}>
+                            MISSION COMPLETE! Reward collected!
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Swimming Prompt */}
           {uiState.gameState === "swimming" && (
