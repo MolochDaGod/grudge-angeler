@@ -41,6 +41,8 @@ The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a f
 - **Predator System:** Three types of predators (Shark, Kraken, Sea Devil) with AI behaviors (patrol, chase, attack, flee), affecting fish and potentially the player. Spawn probability scales by world position and depth.
 - **Ocean Depth Zones:** Three distinct depth zones (shallow, mid-depth, deep ocean) with visual transitions and varying fish populations.
 - **3D Visual Effects:** Includes god rays, underwater particles, depth fog, and caustic light patches to enhance visual immersion.
+- **Underwater Plants:** 10 plant types cropped from a sprite sheet, placed across the ocean floor (80 plants, sizes 1x-30x). Plants sway with a wave effect using vertical slice rendering. 35% render in front of fish, 65% behind. Plants excluded from dock area and never rise above the waterline.
+- **Underwater Background:** Tiled coral reef background image with 18% opacity, hue-shifted and desaturated, providing ocean floor ambiance.
 - **Admin Debug Tools:** Toggle with backtick key. Three tabs: Asset Deck (categorized sprite previews with unused indicators), Gizmo (click-select and drag-move world objects with selection boxes/handles), Trace (pause game and inspect rod tip, hook, rope segment positions with visual markers and coordinate readouts).
 - **2D Rope Physics:** Verlet integration fishing line with 12 segments, 15px segment length, 3 constraint iterations, gravity 0.3, damping 0.98. Segment 0 pinned to rod tip, last segment follows hook. Cast-flight projectile arc with gravity and water collision detection.
 - **World Objects System:** Array-based world object rendering (barrels, grass, signs) replacing hardcoded positions, supporting gizmo manipulation.

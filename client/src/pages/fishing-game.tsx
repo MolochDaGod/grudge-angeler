@@ -8,6 +8,61 @@ const FRAME_H = 48;
 const ROPE_SEGMENTS = 12;
 const ROPE_SEG_LEN = 15;
 
+const PLANT_TYPES = [
+  { sx: 0, sy: 0, sw: 170, sh: 340 },
+  { sx: 170, sy: 0, sw: 170, sh: 340 },
+  { sx: 340, sy: 0, sw: 170, sh: 340 },
+  { sx: 510, sy: 0, sw: 170, sh: 340 },
+  { sx: 0, sy: 340, sw: 170, sh: 220 },
+  { sx: 170, sy: 340, sw: 170, sh: 220 },
+  { sx: 340, sy: 340, sw: 170, sh: 220 },
+  { sx: 510, sy: 340, sw: 170, sh: 220 },
+  { sx: 0, sy: 560, sw: 340, sh: 300 },
+  { sx: 340, sy: 560, sw: 340, sh: 300 },
+];
+
+interface UnderwaterPlant {
+  typeIdx: number;
+  worldX: number;
+  baseY: number;
+  scale: number;
+  phase: number;
+  swaySpeed: number;
+  swayAmp: number;
+  inFront: boolean;
+}
+
+function generateUnderwaterPlants(W: number, H: number, waterY: number, dockX: number): UnderwaterPlant[] {
+  const plants: UnderwaterPlant[] = [];
+  const worldLeft = -(W * 3) - 200;
+  const worldRight = W * 5 + 200;
+  const dockExcludeLeft = dockX - 100;
+  const dockExcludeRight = W * 2.8 + 50;
+  const fishermanHeight = 48 * 4;
+  const minPlantY = waterY + fishermanHeight;
+  const maxPlantY = H - 10;
+  const plantCount = 80;
+  for (let i = 0; i < plantCount; i++) {
+    const worldX = worldLeft + Math.random() * (worldRight - worldLeft);
+    if (worldX > dockExcludeLeft && worldX < dockExcludeRight) {
+      continue;
+    }
+    const scale = 1 + Math.random() * 29;
+    const baseY = minPlantY + Math.random() * (maxPlantY - minPlantY);
+    plants.push({
+      typeIdx: Math.floor(Math.random() * PLANT_TYPES.length),
+      worldX,
+      baseY,
+      scale: scale * 0.08,
+      phase: Math.random() * Math.PI * 2,
+      swaySpeed: 0.003 + Math.random() * 0.004,
+      swayAmp: 3 + Math.random() * 8,
+      inFront: Math.random() < 0.35,
+    });
+  }
+  return plants;
+}
+
 function initRopeSegments(startX: number, startY: number, targetX: number, targetY: number) {
   const segs = [];
   for (let i = 0; i < ROPE_SEGMENTS; i++) {
@@ -684,6 +739,8 @@ export default function FishingGame() {
     legendsCaught: new Set<string>(),
     headOfLegendsNotif: "" as string,
     headOfLegendsNotifTimer: 0,
+    underwaterPlants: [] as UnderwaterPlant[],
+    plantsInitialized: false,
   });
 
   const imagesRef = useRef<Map<string, HTMLImageElement>>(new Map());
@@ -772,6 +829,8 @@ export default function FishingGame() {
     ownedEggs: Array.from({ length: BETAXGRUDA_EGGS.length }, () => false) as boolean[],
     headOfLegendsNotif: "" as string,
     headOfLegendsNotifTimer: 0,
+    underwaterPlants: [] as UnderwaterPlant[],
+    plantsInitialized: false,
   });
 
   const loadImage = useCallback((src: string): Promise<HTMLImageElement> => {
@@ -1129,6 +1188,8 @@ export default function FishingGame() {
       ownedEggs: [...s.ownedEggs],
       headOfLegendsNotif: s.headOfLegendsNotif,
       headOfLegendsNotifTimer: s.headOfLegendsNotifTimer,
+      underwaterPlants: s.underwaterPlants,
+      plantsInitialized: s.plantsInitialized,
     });
   }, []);
 
@@ -1429,6 +1490,11 @@ export default function FishingGame() {
         s.worldObjects[6].x = initHutX + 30; s.worldObjects[6].y = initObjY - 24 * 1.5 + 3;
         s.worldObjects[7].x = initHutX + initHutW - 20; s.worldObjects[7].y = initObjY - 25 * 1.6 + 3;
         s.worldObjects[8].x = initHutX + initHutW + 5; s.worldObjects[8].y = initObjY - 23 * 1.4 + 2;
+      }
+
+      if (!s.plantsInitialized) {
+        s.underwaterPlants = generateUnderwaterPlants(W, H, waterY, defaultFishermanX);
+        s.plantsInitialized = true;
       }
 
       s.time += dt;
@@ -2184,6 +2250,53 @@ export default function FishingGame() {
       ctx.lineTo(worldLeft, H);
       ctx.closePath();
       ctx.fill();
+
+      // --- UNDERWATER BACKGROUND IMAGE ---
+      const uwBgImg = getImg("/assets/underwater_bg.png");
+      if (uwBgImg && uwBgImg.complete && uwBgImg.naturalWidth > 0) {
+        const bgTileW = uwBgImg.naturalWidth * 0.6;
+        const bgTileH = uwBgImg.naturalHeight * 0.6;
+        const bgStartX = Math.floor(viewL / bgTileW) * bgTileW;
+        ctx.globalAlpha = 0.18;
+        ctx.save();
+        ctx.filter = "hue-rotate(25deg) saturate(0.7)";
+        for (let bx = bgStartX; bx < viewR; bx += bgTileW) {
+          ctx.drawImage(uwBgImg, bx, waterY, bgTileW, waterH);
+        }
+        ctx.restore();
+        ctx.globalAlpha = 1;
+      }
+
+      // --- DRAW UNDERWATER PLANTS (behind fish layer) ---
+      const plantSheet = getImg("/assets/plants_sheet.png");
+      if (plantSheet && plantSheet.complete) {
+        for (const plant of s.underwaterPlants) {
+          if (plant.inFront) continue;
+          const px = plant.worldX;
+          if (px < viewL - 200 || px > viewR + 200) continue;
+          const pt = PLANT_TYPES[plant.typeIdx];
+          const drawW = pt.sw * plant.scale;
+          const drawH = pt.sh * plant.scale;
+          const sway = Math.sin(s.time * plant.swaySpeed + plant.phase) * plant.swayAmp * plant.scale;
+          const drawY = plant.baseY - drawH;
+          if (drawY < waterY) continue;
+          ctx.save();
+          ctx.globalAlpha = 0.85;
+          const sliceCount = Math.max(4, Math.min(16, Math.floor(drawH / 8)));
+          const sliceH = drawH / sliceCount;
+          const srcSliceH = pt.sh / sliceCount;
+          for (let sl = 0; sl < sliceCount; sl++) {
+            const t = sl / sliceCount;
+            const offsetX = sway * t * t;
+            ctx.drawImage(
+              plantSheet,
+              pt.sx, pt.sy + sl * srcSliceH, pt.sw, srcSliceH,
+              px - drawW / 2 + offsetX, drawY + sl * sliceH, drawW, sliceH + 1
+            );
+          }
+          ctx.restore();
+        }
+      }
 
       // --- CLOUDY MURK LAYER 1: large slow-drifting turbidity blobs ---
       for (let m = 0; m < 18; m++) {
@@ -3128,6 +3241,36 @@ export default function FishingGame() {
         }
         
         ctx.globalAlpha = 1;
+      }
+
+      // --- DRAW UNDERWATER PLANTS (in front of fish layer) ---
+      if (plantSheet && plantSheet.complete) {
+        for (const plant of s.underwaterPlants) {
+          if (!plant.inFront) continue;
+          const px = plant.worldX;
+          if (px < viewL - 200 || px > viewR + 200) continue;
+          const pt = PLANT_TYPES[plant.typeIdx];
+          const drawW = pt.sw * plant.scale;
+          const drawH = pt.sh * plant.scale;
+          const sway = Math.sin(s.time * plant.swaySpeed + plant.phase) * plant.swayAmp * plant.scale;
+          const drawY = plant.baseY - drawH;
+          if (drawY < waterY) continue;
+          ctx.save();
+          ctx.globalAlpha = 0.7;
+          const sliceCount = Math.max(4, Math.min(16, Math.floor(drawH / 8)));
+          const sliceH = drawH / sliceCount;
+          const srcSliceH = pt.sh / sliceCount;
+          for (let sl = 0; sl < sliceCount; sl++) {
+            const t = sl / sliceCount;
+            const offsetX = sway * t * t;
+            ctx.drawImage(
+              plantSheet,
+              pt.sx, pt.sy + sl * srcSliceH, pt.sw, srcSliceH,
+              px - drawW / 2 + offsetX, drawY + sl * sliceH, drawW, sliceH + 1
+            );
+          }
+          ctx.restore();
+        }
       }
 
       // Predator alert text
