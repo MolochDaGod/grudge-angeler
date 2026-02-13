@@ -41,6 +41,9 @@ The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a f
 - **Predator System:** Three types of predators (Shark, Kraken, Sea Devil) with AI behaviors (patrol, chase, attack, flee), affecting fish and potentially the player. Spawn probability scales by world position and depth.
 - **Ocean Depth Zones:** Three distinct depth zones (shallow, mid-depth, deep ocean) with visual transitions and varying fish populations.
 - **3D Visual Effects:** Includes god rays, underwater particles, depth fog, and caustic light patches to enhance visual immersion.
+- **Admin Debug Tools:** Toggle with backtick key. Three tabs: Asset Deck (categorized sprite previews with unused indicators), Gizmo (click-select and drag-move world objects with selection boxes/handles), Trace (pause game and inspect rod tip, hook, rope segment positions with visual markers and coordinate readouts).
+- **2D Rope Physics:** Verlet integration fishing line with 12 segments, 15px segment length, 3 constraint iterations, gravity 0.3, damping 0.98. Segment 0 pinned to rod tip, last segment follows hook. Cast-flight projectile arc with gravity and water collision detection.
+- **World Objects System:** Array-based world object rendering (barrels, grass, signs) replacing hardcoded positions, supporting gizmo manipulation.
 - **Core Features:** Random fish sizes, combo system, rod leveling, fish collection log, dynamic day/night cycle (30-minute), weather system, far background parallax, water effects (ripples, particles, screen shake), catch cutscenes, character movement (walking, swimming), and an informational `info.html` page.
 
 ## External Dependencies

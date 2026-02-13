@@ -4,6 +4,18 @@ import beachCrabSheetUrl from "@assets/fish_sprite_sheet_16_1770947489402.png";
 const SCALE = 4;
 const FRAME_H = 48;
 
+const ROPE_SEGMENTS = 12;
+const ROPE_SEG_LEN = 15;
+
+function initRopeSegments(startX: number, startY: number, targetX: number, targetY: number) {
+  const segs = [];
+  for (let i = 0; i < ROPE_SEGMENTS; i++) {
+    const t = i / (ROPE_SEGMENTS - 1);
+    segs.push({ x: startX + (targetX - startX) * t, y: startY + (targetY - startY) * t, ox: startX + (targetX - startX) * t, oy: startY + (targetY - startY) * t });
+  }
+  return segs;
+}
+
 interface FishType {
   name: string;
   catchAsset: string;
@@ -439,6 +451,8 @@ export default function FishingGame() {
     boardingTimer: 0,
     lastFishermanX: 0,
     lastFishermanY: 0,
+    lastRodTipX: 0,
+    lastRodTipY: 0,
     cameraX: 0,
     selectedCharacter: 0,
     characterSelected: false,
@@ -524,6 +538,32 @@ export default function FishingGame() {
     predatorAlert: "" as string,
     predatorAlertTimer: 0,
     boatDamageShake: 0,
+    adminOpen: false,
+    adminTab: "assets" as "assets" | "gizmo" | "trace",
+    gizmoEnabled: false,
+    gizmoSelected: -1,
+    gizmoDragging: false,
+    gizmoDragOffX: 0,
+    gizmoDragOffY: 0,
+    gamePaused: false,
+    traceMode: false,
+    worldObjects: [
+      { id: "barrel4", sprite: "/assets/objects/Fishbarrel4.png", x: 0, y: 0, scale: 2.2, label: "Fish Barrel 4" },
+      { id: "barrel1", sprite: "/assets/objects/Fishbarrel1.png", x: 0, y: 0, scale: 2.2, label: "Fish Barrel 1" },
+      { id: "barrel2", sprite: "/assets/objects/Fishbarrel2.png", x: 0, y: 0, scale: 2.2, label: "Fish Barrel 2" },
+      { id: "fishrod", sprite: "/assets/objects/Fish-rod.png", x: 0, y: 0, scale: 2, label: "Fish Rod Stand" },
+      { id: "stay", sprite: "/assets/objects/Stay.png", x: 0, y: 0, scale: 2.2, label: "Stay Sign" },
+      { id: "grass1", sprite: "/assets/objects/Grass1.png", x: 0, y: 0, scale: 1.8, label: "Grass 1" },
+      { id: "grass3", sprite: "/assets/objects/Grass3.png", x: 0, y: 0, scale: 1.5, label: "Grass 3" },
+      { id: "grass2", sprite: "/assets/objects/Grass2.png", x: 0, y: 0, scale: 1.6, label: "Grass 2" },
+      { id: "grass4", sprite: "/assets/objects/Grass4.png", x: 0, y: 0, scale: 1.4, label: "Grass 4" },
+    ] as { id: string; sprite: string; x: number; y: number; scale: number; label: string }[],
+    ropeSegments: [] as { x: number; y: number; ox: number; oy: number }[],
+    castLineActive: false,
+    castLineFlying: false,
+    castLineLanded: false,
+    castVelX: 0,
+    castVelY: 0,
   });
 
   const imagesRef = useRef<Map<string, HTMLImageElement>>(new Map());
@@ -594,6 +634,11 @@ export default function FishingGame() {
     chumActiveType: -1,
     toolMode: "rod" as "rod" | "net",
     netActive: false,
+    adminOpen: false,
+    adminTab: "assets" as "assets" | "gizmo" | "trace",
+    gizmoEnabled: false,
+    gamePaused: false,
+    traceMode: false,
   });
 
   const loadImage = useCallback((src: string): Promise<HTMLImageElement> => {
@@ -929,6 +974,11 @@ export default function FishingGame() {
       chumActiveType: s.chumActiveType,
       toolMode: s.toolMode,
       netActive: s.netActive,
+      adminOpen: s.adminOpen,
+      adminTab: s.adminTab,
+      gizmoEnabled: s.gizmoEnabled,
+      gamePaused: s.gamePaused,
+      traceMode: s.traceMode,
     });
   }, []);
 
@@ -1176,7 +1226,8 @@ export default function FishingGame() {
     const s = stateRef.current;
 
     const gameLoop = (timestamp: number) => {
-      const dt = Math.min((timestamp - lastTime) / 16.67, 3);
+      const rawDt = Math.min((timestamp - lastTime) / 16.67, 3);
+      const dt = s.gamePaused ? 0 : rawDt;
       lastTime = timestamp;
 
       const W = canvas.width;
@@ -1186,6 +1237,21 @@ export default function FishingGame() {
       const defaultFishermanX = W * FISHERMAN_X_RATIO;
 
       if (s.playerX === 0) s.playerX = defaultFishermanX;
+
+      if (s.worldObjects[0].x === 0 && s.worldObjects[0].y === 0) {
+        const initObjY = pierY - 2;
+        const initHutX = W * 0.85;
+        const initHutW = 192 * 2.2;
+        s.worldObjects[0].x = defaultFishermanX + 160; s.worldObjects[0].y = initObjY - 25 * 2.2;
+        s.worldObjects[1].x = defaultFishermanX + 210; s.worldObjects[1].y = initObjY - 11 * 2.2;
+        s.worldObjects[2].x = defaultFishermanX + 245; s.worldObjects[2].y = initObjY - 15 * 2.2;
+        s.worldObjects[3].x = defaultFishermanX + 290; s.worldObjects[3].y = initObjY - 26 * 2;
+        s.worldObjects[4].x = defaultFishermanX + 320; s.worldObjects[4].y = initObjY - 15 * 2.2;
+        s.worldObjects[5].x = initHutX - 15; s.worldObjects[5].y = initObjY - 33 * 1.8 + 5;
+        s.worldObjects[6].x = initHutX + 30; s.worldObjects[6].y = initObjY - 24 * 1.5 + 3;
+        s.worldObjects[7].x = initHutX + initHutW - 20; s.worldObjects[7].y = initObjY - 25 * 1.6 + 3;
+        s.worldObjects[8].x = initHutX + initHutW + 5; s.worldObjects[8].y = initObjY - 23 * 1.4 + 2;
+      }
 
       s.time += dt;
       s.waterOffset += 0.12 * dt;
@@ -2341,19 +2407,34 @@ export default function FishingGame() {
       const boatDrawX = s.inBoat || s.gameState === "boarding" ? s.boatX : pierStartX - 74 * boatScale - 30;
       drawImage("/assets/objects/Boat.png", boatDrawX, waterY - 10 * boatScale + boatBob, boatScale);
 
-      // Decorative objects on pier - positioned relative to pier surface
-      const objY = pierY - 2;
-      drawImage("/assets/objects/Fishbarrel4.png", defaultFishermanX + 160, objY - 25 * 2.2, 2.2);
-      drawImage("/assets/objects/Fishbarrel1.png", defaultFishermanX + 210, objY - 11 * 2.2, 2.2);
-      drawImage("/assets/objects/Fishbarrel2.png", defaultFishermanX + 245, objY - 15 * 2.2, 2.2);
-      drawImage("/assets/objects/Fish-rod.png", defaultFishermanX + 290, objY - 26 * 2, 2);
-      drawImage("/assets/objects/Stay.png", defaultFishermanX + 320, objY - 15 * 2.2, 2.2);
-
-      // Grass near the hut and pier edges
-      drawImage("/assets/objects/Grass1.png", hutX - 15, objY - 33 * 1.8 + 5, 1.8);
-      drawImage("/assets/objects/Grass3.png", hutX + 30, objY - 24 * 1.5 + 3, 1.5);
-      drawImage("/assets/objects/Grass2.png", hutX + hutW - 20, objY - 25 * 1.6 + 3, 1.6);
-      drawImage("/assets/objects/Grass4.png", hutX + hutW + 5, objY - 23 * 1.4 + 2, 1.4);
+      // Decorative objects on pier - positioned from worldObjects array
+      s.worldObjects.forEach((obj, i) => {
+        drawImage(obj.sprite, obj.x, obj.y, obj.scale);
+        if (s.gizmoEnabled && s.adminOpen) {
+          const img = getImg(obj.sprite);
+          if (img && img.complete) {
+            const w = img.width * obj.scale;
+            const h = img.height * obj.scale;
+            ctx.strokeStyle = s.gizmoSelected === i ? "#f1c40f" : "rgba(79,195,247,0.5)";
+            ctx.lineWidth = s.gizmoSelected === i ? 2 : 1;
+            ctx.setLineDash([4, 4]);
+            ctx.strokeRect(obj.x, obj.y, w, h);
+            ctx.setLineDash([]);
+            if (s.gizmoSelected === i) {
+              ctx.fillStyle = "#f1c40f";
+              ctx.fillRect(obj.x + w/2 - 4, obj.y - 12, 8, 8);
+              ctx.strokeStyle = "#f1c40f";
+              ctx.lineWidth = 2;
+              ctx.beginPath();
+              ctx.moveTo(obj.x + w/2, obj.y - 4);
+              ctx.lineTo(obj.x + w/2, obj.y + h + 4);
+              ctx.moveTo(obj.x - 4, obj.y + h/2);
+              ctx.lineTo(obj.x + w + 4, obj.y + h/2);
+              ctx.stroke();
+            }
+          }
+        }
+      });
 
       // Docks area objects (right side scenes)
       const dockObjY = pierY - 2;
@@ -3057,9 +3138,25 @@ export default function FishingGame() {
 
       s.lastFishermanX = fishermanX;
       s.lastFishermanY = fishermanY;
+      s.lastRodTipX = rodTipX;
+      s.lastRodTipY = rodTipY;
 
+      if (s.castLineActive && s.ropeSegments.length > 0) {
+        s.ropeSegments[0].x = rodTipX;
+        s.ropeSegments[0].y = rodTipY;
+      }
 
       // Fishing line, bobber, hook, and hooked fish
+      if (s.castLineFlying && s.ropeSegments.length > 0) {
+        const lead = s.ropeSegments[s.ropeSegments.length - 1];
+        ctx.strokeStyle = "#999";
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.arc(lead.x + 3, lead.y, 3.5, -0.3, Math.PI + 0.3);
+        ctx.stroke();
+        ctx.fillStyle = "#bbb";
+        ctx.fillRect(lead.x + 2, lead.y - 4, 1.5, 4);
+      }
       if (s.gameState === "waiting") {
         s.bobberBob = Math.sin(s.time * 0.08) * 2.5;
         const bobberX = s.hookX;
@@ -3079,12 +3176,31 @@ export default function FishingGame() {
           );
           ctx.stroke();
         };
-        ctx.strokeStyle = "rgba(0,0,0,0.6)";
-        ctx.lineWidth = 4;
-        drawLineCurve();
-        ctx.strokeStyle = "rgba(200,190,170,0.95)";
-        ctx.lineWidth = 2;
-        drawLineCurve();
+        if (s.castLineActive && s.ropeSegments.length > 0) {
+          ctx.strokeStyle = "rgba(0,0,0,0.6)";
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.moveTo(s.ropeSegments[0].x, s.ropeSegments[0].y);
+          for (let i = 1; i < s.ropeSegments.length; i++) {
+            ctx.lineTo(s.ropeSegments[i].x, s.ropeSegments[i].y);
+          }
+          ctx.stroke();
+          ctx.strokeStyle = "rgba(200,190,170,0.95)";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(s.ropeSegments[0].x, s.ropeSegments[0].y);
+          for (let i = 1; i < s.ropeSegments.length; i++) {
+            ctx.lineTo(s.ropeSegments[i].x, s.ropeSegments[i].y);
+          }
+          ctx.stroke();
+        } else {
+          ctx.strokeStyle = "rgba(0,0,0,0.6)";
+          ctx.lineWidth = 4;
+          drawLineCurve();
+          ctx.strokeStyle = "rgba(200,190,170,0.95)";
+          ctx.lineWidth = 2;
+          drawLineCurve();
+        }
 
         const bobberSize = 5;
         ctx.fillStyle = "#ffffff";
@@ -3235,6 +3351,44 @@ export default function FishingGame() {
       }
 
 
+      // Trace mode overlay - show rod tip, hook, rope segment markers
+      if (s.traceMode) {
+        ctx.fillStyle = "#ff2d55";
+        ctx.beginPath();
+        ctx.arc(rodTipX, rodTipY, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#ff2d55";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(rodTipX - 12, rodTipY);
+        ctx.lineTo(rodTipX + 12, rodTipY);
+        ctx.moveTo(rodTipX, rodTipY - 12);
+        ctx.lineTo(rodTipX, rodTipY + 12);
+        ctx.stroke();
+        ctx.fillStyle = "#ff2d55";
+        ctx.font = "bold 7px monospace";
+        ctx.fillText(`ROD TIP (${Math.round(rodTipX)},${Math.round(rodTipY)})`, rodTipX + 10, rodTipY - 8);
+
+        if (s.gameState === "waiting" || s.gameState === "bite" || s.gameState === "reeling") {
+          ctx.fillStyle = "#2ecc71";
+          ctx.beginPath();
+          ctx.arc(s.hookX, s.hookY, 4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillText(`HOOK (${Math.round(s.hookX)},${Math.round(s.hookY)})`, s.hookX + 8, s.hookY - 6);
+        }
+
+        if (s.ropeSegments.length > 0) {
+          s.ropeSegments.forEach((seg, i) => {
+            ctx.fillStyle = i === 0 ? "#f1c40f" : i === s.ropeSegments.length - 1 ? "#e74c3c" : "#4fc3f7";
+            ctx.beginPath();
+            ctx.arc(seg.x, seg.y, 3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.font = "5px monospace";
+            ctx.fillText(`${i}`, seg.x + 5, seg.y - 3);
+          });
+        }
+      }
+
       // Show dock climb indicator when swimming near dock
       if (s.gameState === "swimming" && s.jumpVY === 0) {
         const nearDockX = s.swimX > pierStartX - 40 && s.swimX < W * 4.8;
@@ -3331,7 +3485,12 @@ export default function FishingGame() {
       // End camera transform - everything after this is screen-space UI
       ctx.restore();
 
-      // Game state logic
+      // Game state logic - skip all updates when paused
+      if (s.gamePaused) {
+        requestAnimationFrame(gameLoop);
+        return;
+      }
+
       if (s.gameState === "casting") {
         s.castPower += s.castDirection * 1.8 * dt;
         if (s.castPower >= 100) { s.castPower = 100; s.castDirection = -1; }
@@ -3367,6 +3526,82 @@ export default function FishingGame() {
             const vitWaitReduction = 1 + s.attributes.Vitality * 0.006 * (1 + s.attributes.Tactics * 0.005);
             const chumSpeedBoost = s.chumActiveType >= 0 ? CHUM_ITEMS[s.chumActiveType].biteSpeedBoost : 1;
             s.waitTimer = (30 + Math.random() * 50) / (LURES[s.equippedLure].speedBoost * vitWaitReduction * chumSpeedBoost);
+          }
+        }
+      }
+
+      // Rope physics simulation
+      if (s.castLineActive && s.ropeSegments.length > 0) {
+        const gravity = 0.3;
+        const damping = 0.98;
+        const segLen = ROPE_SEG_LEN;
+
+        if (s.castLineFlying) {
+          const lead = s.ropeSegments[s.ropeSegments.length - 1];
+          s.castVelY += gravity * dt * 0.5;
+          lead.ox = lead.x;
+          lead.oy = lead.y;
+          lead.x += s.castVelX * dt;
+          lead.y += s.castVelY * dt;
+
+          if (lead.y >= waterY) {
+            lead.y = waterY;
+            s.castLineFlying = false;
+            s.castLineLanded = true;
+            s.hookX = lead.x;
+            s.hookY = waterY + 10;
+            addParticles(lead.x, waterY, 15, "#5dade2", 3, "splash");
+            addRipple(lead.x, waterY);
+          }
+        }
+
+        const anchor = s.ropeSegments[0];
+        anchor.x = s.lastRodTipX;
+        anchor.y = s.lastRodTipY;
+
+        for (let i = 1; i < s.ropeSegments.length - (s.castLineFlying ? 0 : 1); i++) {
+          const seg = s.ropeSegments[i];
+          const vx = (seg.x - seg.ox) * damping;
+          const vy = (seg.y - seg.oy) * damping + gravity * 0.3;
+          seg.ox = seg.x;
+          seg.oy = seg.y;
+          seg.x += vx;
+          seg.y += vy;
+        }
+
+        for (let iter = 0; iter < 3; iter++) {
+          for (let i = 0; i < s.ropeSegments.length - 1; i++) {
+            const a = s.ropeSegments[i];
+            const b = s.ropeSegments[i + 1];
+            const dx = b.x - a.x;
+            const dy = b.y - a.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist > segLen) {
+              const diff = (dist - segLen) / dist * 0.5;
+              if (i > 0) {
+                a.x += dx * diff;
+                a.y += dy * diff;
+              }
+              if (s.castLineFlying || i + 1 < s.ropeSegments.length - 1) {
+                b.x -= dx * diff;
+                b.y -= dy * diff;
+              }
+            }
+          }
+          s.ropeSegments[0].x = anchor.x;
+          s.ropeSegments[0].y = anchor.y;
+        }
+
+        if (s.castLineLanded) {
+          const lastSeg = s.ropeSegments[s.ropeSegments.length - 1];
+          lastSeg.x = s.hookX;
+          lastSeg.y = waterY + s.bobberBob;
+          let totalMotion = 0;
+          for (let i = 1; i < s.ropeSegments.length - 1; i++) {
+            totalMotion += Math.abs(s.ropeSegments[i].x - s.ropeSegments[i].ox) + Math.abs(s.ropeSegments[i].y - s.ropeSegments[i].oy);
+          }
+          if (totalMotion < 0.5) {
+            s.castLineActive = false;
           }
         }
       }
@@ -4098,10 +4333,40 @@ export default function FishingGame() {
     };
   }, [loadImage, spawnFish, addParticles, addRipple, syncUI, generateBounties, getSellPrice]);
 
+  const handleCanvasMouseDown = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+    const s = stateRef.current;
+    if (!s.gizmoEnabled || !s.adminOpen) return;
+    const worldX = e.clientX - s.cameraX;
+    const worldY = e.clientY - s.cameraY;
+    for (let i = s.worldObjects.length - 1; i >= 0; i--) {
+      const obj = s.worldObjects[i];
+      const img = imagesRef.current.get(obj.sprite);
+      if (!img || !img.complete) continue;
+      const w = img.width * obj.scale;
+      const h = img.height * obj.scale;
+      if (worldX >= obj.x && worldX <= obj.x + w && worldY >= obj.y && worldY <= obj.y + h) {
+        s.gizmoSelected = i;
+        s.gizmoDragging = true;
+        s.gizmoDragOffX = worldX - obj.x;
+        s.gizmoDragOffY = worldY - obj.y;
+        syncUI();
+        return;
+      }
+    }
+    s.gizmoSelected = -1;
+    syncUI();
+  }, [syncUI]);
+
+  const handleCanvasMouseUp = useCallback(() => {
+    const s = stateRef.current;
+    s.gizmoDragging = false;
+  }, []);
+
   const handleClick = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     const s = stateRef.current;
     const canvas = canvasRef.current;
     if (!canvas) return;
+    if (s.gizmoDragging || (s.gizmoEnabled && s.adminOpen)) return;
 
     const W = canvas.width;
     const H = canvas.height;
@@ -4166,9 +4431,20 @@ export default function FishingGame() {
       s.hookX = s.aimX;
       s.hookY = waterY + 10;
       s.hookTargetY = Math.max(waterY + 30, s.aimY);
+      s.castLineActive = true;
+      s.castLineFlying = true;
+      s.castLineLanded = false;
+      const castDist = Math.abs(s.aimX - s.playerX);
+      const castSpeed = 6 + castDist * 0.008;
+      s.castVelX = s.aimX < s.playerX ? -castSpeed : castSpeed;
+      s.castVelY = -8;
+      const rtX = s.lastRodTipX || (s.lastFishermanX + 10 * SCALE);
+      const rtY = s.lastRodTipY || (s.lastFishermanY + 8 * SCALE);
+      s.ropeSegments = [];
+      for (let i = 0; i < 12; i++) {
+        s.ropeSegments.push({ x: rtX, y: rtY, ox: rtX, oy: rtY });
+      }
       s.waitTimer = 20 + Math.random() * 40;
-      addParticles(s.hookX, waterY, 15, "#5dade2", 3, "splash");
-      addRipple(s.hookX, waterY);
       s.swimmingFish.forEach(f => { f.approachingHook = false; });
       syncUI();
       return;
@@ -4222,8 +4498,15 @@ export default function FishingGame() {
   }, [spawnFish, addParticles, addRipple, syncUI]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
-    stateRef.current.mouseX = e.clientX;
-    stateRef.current.mouseY = e.clientY;
+    const s = stateRef.current;
+    s.mouseX = e.clientX;
+    s.mouseY = e.clientY;
+    if (s.gizmoDragging && s.gizmoSelected >= 0) {
+      const worldX = e.clientX - s.cameraX;
+      const worldY = e.clientY - s.cameraY;
+      s.worldObjects[s.gizmoSelected].x = worldX - s.gizmoDragOffX;
+      s.worldObjects[s.gizmoSelected].y = worldY - s.gizmoDragOffY;
+    }
   }, []);
 
   const handleTouchMove = useCallback((_e: React.TouchEvent<HTMLCanvasElement>) => {
@@ -4278,8 +4561,10 @@ export default function FishingGame() {
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
-        style={{ cursor: uiState.gameState === "casting" ? "crosshair" : "default" }}
+        style={{ cursor: uiState.gizmoEnabled ? "move" : uiState.gameState === "casting" ? "crosshair" : "default" }}
         onClick={handleClick}
+        onMouseDown={handleCanvasMouseDown}
+        onMouseUp={handleCanvasMouseUp}
         onMouseMove={handleMouseMove}
         onTouchMove={handleTouchMove}
         data-testid="game-canvas"
@@ -5558,6 +5843,268 @@ export default function FishingGame() {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Admin Toggle Button */}
+      {uiState.gameState !== "intro" && uiState.gameState !== "title" && uiState.gameState !== "charSelect" && (
+        <div
+          onClick={() => { const s = stateRef.current; s.adminOpen = !s.adminOpen; syncUI(); }}
+          style={{
+            position: "absolute", top: 8, right: 8, zIndex: 60,
+            background: uiState.adminOpen ? "rgba(79,195,247,0.25)" : "rgba(8,15,25,0.8)",
+            border: uiState.adminOpen ? "1px solid rgba(79,195,247,0.5)" : "1px solid rgba(255,255,255,0.15)",
+            borderRadius: 6, padding: "4px 8px", cursor: "pointer", fontSize: 7, color: "#4fc3f7",
+          }}
+          data-testid="button-admin-toggle"
+        >
+          ADMIN
+        </div>
+      )}
+
+      {/* Admin Panel Overlay */}
+      {uiState.adminOpen && (
+        <div style={{
+          position: "absolute", top: 0, right: 0, width: 340, height: "100%", zIndex: 55,
+          background: "rgba(5,12,30,0.95)", borderLeft: "1px solid rgba(79,195,247,0.2)",
+          display: "flex", flexDirection: "column", fontFamily: "'Press Start 2P', monospace",
+          overflow: "hidden",
+        }} data-testid="admin-panel">
+          {/* Admin Tabs */}
+          <div style={{ display: "flex", borderBottom: "1px solid rgba(255,255,255,0.1)", padding: "6px 8px", gap: 4 }}>
+            {(["assets", "gizmo", "trace"] as const).map(tab => (
+              <div
+                key={tab}
+                onClick={() => { stateRef.current.adminTab = tab; syncUI(); }}
+                style={{
+                  flex: 1, textAlign: "center", padding: "5px 4px", cursor: "pointer", fontSize: 6,
+                  color: uiState.adminTab === tab ? "#4fc3f7" : "#607d8b",
+                  background: uiState.adminTab === tab ? "rgba(79,195,247,0.1)" : "transparent",
+                  borderRadius: 4, textTransform: "uppercase",
+                  border: uiState.adminTab === tab ? "1px solid rgba(79,195,247,0.3)" : "1px solid transparent",
+                }}
+                data-testid={`admin-tab-${tab}`}
+              >
+                {tab}
+              </div>
+            ))}
+          </div>
+
+          {/* Assets Tab */}
+          {uiState.adminTab === "assets" && (
+            <div style={{ flex: 1, overflowY: "auto", padding: 8 }}>
+              {[
+                { label: "Character Sprites", items: CHARACTER_VARIANTS.flatMap(cv => [
+                  { name: `${cv.name} Idle`, src: `/assets/${cv.folder}/Fisherman_idle.png`, frames: 4 },
+                  { name: `${cv.name} Walk`, src: `/assets/${cv.folder}/Fisherman_walk.png`, frames: 6 },
+                  { name: `${cv.name} Fish`, src: `/assets/${cv.folder}/Fisherman_fish.png`, frames: 4 },
+                  { name: `${cv.name} Attack`, src: `/assets/${cv.folder}/Fisherman_attack.png`, frames: 6 },
+                  { name: `${cv.name} Swim`, src: `/assets/${cv.folder}/Fisherman_swim.png`, frames: 6 },
+                  { name: `${cv.name} Jump`, src: `/assets/${cv.folder}/Fisherman_jump.png`, frames: 6 },
+                  { name: `${cv.name} Hurt`, src: `/assets/${cv.folder}/Fisherman_hurt.png`, frames: 2 },
+                  { name: `${cv.name} Idle2`, src: `/assets/${cv.folder}/Fisherman_idle2.png`, frames: 4, unused: true },
+                  { name: `${cv.name} Inspect`, src: `/assets/${cv.folder}/Fisherman_inspect.png`, frames: 4, unused: true },
+                  { name: `${cv.name} Death`, src: `/assets/${cv.folder}/Fisherman_death.png`, frames: 6, unused: true },
+                ]) },
+                { label: "Fish Species", items: FISH_TYPES.map(f => ({
+                  name: f.name, src: f.catchAsset, frames: 1,
+                  meta: `${f.rarity} | ${f.points}pts`,
+                })) },
+                { label: "Creatures (Swim)", items: [1,2,3,4,5,6].map(n => ({
+                  name: `Creature ${n} Walk`, src: `/assets/creatures/${n}/Walk.png`, frames: 4,
+                })) },
+                { label: "Crabs", items: BEACH_CRABS.map(c => ({
+                  name: c.name, src: c.spriteSheet || "", frames: 4,
+                  meta: c.rarity,
+                })) },
+                { label: "Predators", items: PREDATOR_TYPES.map(p => ([
+                  { name: `${p.name} Idle`, src: `/assets/predators/${p.folder}/Idle.png`, frames: p.idleFrames },
+                  { name: `${p.name} Walk`, src: `/assets/predators/${p.folder}/Walk.png`, frames: p.walkFrames },
+                  { name: `${p.name} Attack`, src: `/assets/predators/${p.folder}/Attack1.png`, frames: p.attackFrames },
+                ])).flat() },
+                { label: "Objects", items: [
+                  { name: "Fishing Hut", src: "/assets/objects/Fishing_hut.png", frames: 1 },
+                  { name: "Pier Tiles", src: "/assets/objects/Pier_Tiles.png", frames: 1 },
+                  { name: "Boat", src: "/assets/objects/Boat.png", frames: 1 },
+                  { name: "Boat 2", src: "/assets/objects/Boat2.png", frames: 1 },
+                  { name: "Fish Rod", src: "/assets/objects/Fish-rod.png", frames: 1 },
+                  { name: "Stay Sign", src: "/assets/objects/Stay.png", frames: 1 },
+                  { name: "Water", src: "/assets/objects/Water.png", frames: 1 },
+                  ...([1,2,3,4] as number[]).map(n => ({ name: `Grass ${n}`, src: `/assets/objects/Grass${n}.png`, frames: 1 })),
+                  ...([1,2,3,4] as number[]).map(n => ({ name: `Barrel ${n}`, src: `/assets/objects/Fishbarrel${n}.png`, frames: 1 })),
+                ] },
+                { label: "Icons", items: Array.from({length: 20}, (_, i) => ({
+                  name: `Icon ${i+1}`, src: `/assets/icons/Icons_${String(i+1).padStart(2,'0')}.png`, frames: 1,
+                })).concat([
+                  { name: "Gbux", src: "/assets/icons/gbux.png", frames: 1 },
+                  { name: "Fabled", src: "/assets/icons/faction_fabled.png", frames: 1 },
+                  { name: "Legion", src: "/assets/icons/faction_legion.png", frames: 1 },
+                  { name: "Crusade", src: "/assets/icons/faction_crusade.png", frames: 1 },
+                ]) },
+                { label: "Lures", items: LURES.map(l => ({
+                  name: l.name, src: l.icon, frames: 1, meta: l.type,
+                })) },
+                { label: "Catch Assets", items: [
+                  ...Array.from({length: 8}, (_, i) => ({ name: `Catch ${i+1}`, src: `/assets/catch/${i+1}.png`, frames: 1 })),
+                  { name: "Barrel", src: "/assets/catch/Barrel.png", frames: 1 },
+                  { name: "Box", src: "/assets/catch/Box.png", frames: 1 },
+                  { name: "Chest", src: "/assets/catch/Chest.png", frames: 1 },
+                ] },
+                { label: "Misc", items: [
+                  { name: "Logo", src: "/assets/logo.png", frames: 1 },
+                  { name: "Beach Crabs Sheet", src: "/assets/beach_crabs.png", frames: 1 },
+                  { name: "Char Fabled", src: "/assets/char_fabled.png", frames: 1 },
+                  { name: "Char Legion", src: "/assets/char_legion.png", frames: 1 },
+                  { name: "Char Crusade", src: "/assets/char_crusade.png", frames: 1 },
+                ] },
+              ].map(category => (
+                <div key={category.label} style={{ marginBottom: 10 }}>
+                  <div style={{ color: "#4fc3f7", fontSize: 7, marginBottom: 4, padding: "2px 0", borderBottom: "1px solid rgba(79,195,247,0.2)" }}>
+                    {category.label} ({category.items.length})
+                  </div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                    {category.items.map((item, idx) => (
+                      <div key={`${item.name}-${idx}`} style={{
+                        width: 56, display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
+                        padding: 3, background: "rgba(255,255,255,0.03)", borderRadius: 4,
+                        border: (item as any).unused ? "1px solid rgba(255,80,80,0.4)" : "1px solid rgba(255,255,255,0.06)",
+                      }}>
+                        <div style={{ width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+                          <img src={item.src} alt={item.name} style={{
+                            maxWidth: 40, maxHeight: 40, imageRendering: "pixelated",
+                            objectFit: "contain",
+                          }} />
+                        </div>
+                        <div style={{ fontSize: 4, color: (item as any).unused ? "#ff6b6b" : "#90a4ae", textAlign: "center", lineHeight: "1.3", wordBreak: "break-word" }}>
+                          {item.name}
+                        </div>
+                        {(item as any).unused && (
+                          <div style={{ fontSize: 3, color: "#ff6b6b", fontWeight: "bold" }}>UNUSED</div>
+                        )}
+                        {(item as any).meta && (
+                          <div style={{ fontSize: 3, color: "#607d8b" }}>{(item as any).meta}</div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Gizmo Tab */}
+          {uiState.adminTab === "gizmo" && (
+            <div style={{ flex: 1, overflowY: "auto", padding: 8 }}>
+              <div
+                onClick={() => { const s = stateRef.current; s.gizmoEnabled = !s.gizmoEnabled; s.gizmoSelected = -1; syncUI(); }}
+                style={{
+                  padding: "6px 10px", cursor: "pointer", fontSize: 7, textAlign: "center",
+                  color: uiState.gizmoEnabled ? "#2ecc71" : "#e74c3c",
+                  background: uiState.gizmoEnabled ? "rgba(46,204,113,0.15)" : "rgba(231,76,60,0.1)",
+                  border: `1px solid ${uiState.gizmoEnabled ? "rgba(46,204,113,0.4)" : "rgba(231,76,60,0.3)"}`,
+                  borderRadius: 6, marginBottom: 8,
+                }}
+                data-testid="button-gizmo-toggle"
+              >
+                GIZMO: {uiState.gizmoEnabled ? "ON" : "OFF"}
+              </div>
+              <div style={{ color: "#607d8b", fontSize: 5, marginBottom: 8, lineHeight: "1.8" }}>
+                When enabled, click objects in the game world to select them. Drag to reposition.
+              </div>
+              <div style={{ color: "#4fc3f7", fontSize: 6, marginBottom: 4, borderBottom: "1px solid rgba(79,195,247,0.2)", paddingBottom: 2 }}>
+                World Objects
+              </div>
+              {stateRef.current.worldObjects.map((obj, i) => (
+                <div key={obj.id} style={{
+                  display: "flex", alignItems: "center", gap: 6, padding: "4px 6px", marginBottom: 3,
+                  background: stateRef.current.gizmoSelected === i ? "rgba(241,196,15,0.1)" : "rgba(255,255,255,0.02)",
+                  border: stateRef.current.gizmoSelected === i ? "1px solid rgba(241,196,15,0.4)" : "1px solid rgba(255,255,255,0.05)",
+                  borderRadius: 4, cursor: "pointer",
+                }} onClick={() => { stateRef.current.gizmoSelected = i; syncUI(); }}>
+                  <div style={{ width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <img src={obj.sprite} alt={obj.label} style={{ maxWidth: 24, maxHeight: 24, imageRendering: "pixelated" }} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 5, color: "#e0e0e0" }}>{obj.label}</div>
+                    <div style={{ fontSize: 4, color: "#607d8b" }}>x:{Math.round(obj.x)} y:{Math.round(obj.y)} s:{obj.scale}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Trace Tab */}
+          {uiState.adminTab === "trace" && (
+            <div style={{ flex: 1, overflowY: "auto", padding: 8 }}>
+              <div style={{ color: "#4fc3f7", fontSize: 7, marginBottom: 6 }}>Line Trace Tool</div>
+              <div style={{ color: "#607d8b", fontSize: 5, marginBottom: 8, lineHeight: "1.8" }}>
+                Pause the game and inspect fishing line anchor points, rod tip connections, and rope segment positions.
+              </div>
+              <div
+                onClick={() => {
+                  const s = stateRef.current;
+                  s.traceMode = !s.traceMode;
+                  s.gamePaused = s.traceMode;
+                  syncUI();
+                }}
+                style={{
+                  padding: "6px 10px", cursor: "pointer", fontSize: 7, textAlign: "center",
+                  color: uiState.traceMode ? "#f1c40f" : "#94a3b8",
+                  background: uiState.traceMode ? "rgba(241,196,15,0.15)" : "rgba(255,255,255,0.03)",
+                  border: `1px solid ${uiState.traceMode ? "rgba(241,196,15,0.4)" : "rgba(255,255,255,0.1)"}`,
+                  borderRadius: 6, marginBottom: 8,
+                }}
+                data-testid="button-trace-toggle"
+              >
+                {uiState.traceMode ? "TRACING (PAUSED)" : "START TRACE"}
+              </div>
+              {uiState.traceMode && (
+                <div style={{ background: "rgba(0,0,0,0.3)", borderRadius: 6, padding: 8 }}>
+                  <div style={{ color: "#f1c40f", fontSize: 6, marginBottom: 4 }}>Rod Tip Position</div>
+                  <div style={{ color: "#e0e0e0", fontSize: 5, marginBottom: 2 }}>
+                    X: {Math.round(stateRef.current.lastRodTipX)} Y: {Math.round(stateRef.current.lastRodTipY)}
+                  </div>
+                  <div style={{ color: "#f1c40f", fontSize: 6, marginTop: 8, marginBottom: 4 }}>Rod Tip Sprite Data</div>
+                  <div style={{ color: "#90a4ae", fontSize: 4, lineHeight: "1.8" }}>
+                    idle: [43,24] per frame<br/>
+                    fish: [43,24] [42,24] [42,25] [43,24]<br/>
+                    hook: [43,24] [36,19] [35,17] [34,7] [27,4] [25,3]
+                  </div>
+                  <div style={{ color: "#f1c40f", fontSize: 6, marginTop: 8, marginBottom: 4 }}>Hook Position</div>
+                  <div style={{ color: "#e0e0e0", fontSize: 5 }}>
+                    X: {Math.round(stateRef.current.hookX)} Y: {Math.round(stateRef.current.hookY)}
+                  </div>
+                  {stateRef.current.ropeSegments.length > 0 && (
+                    <>
+                      <div style={{ color: "#f1c40f", fontSize: 6, marginTop: 8, marginBottom: 4 }}>Rope Segments ({stateRef.current.ropeSegments.length})</div>
+                      {stateRef.current.ropeSegments.map((seg, i) => (
+                        <div key={i} style={{ color: "#78909c", fontSize: 4 }}>
+                          [{i}] x:{Math.round(seg.x)} y:{Math.round(seg.y)}
+                        </div>
+                      ))}
+                    </>
+                  )}
+                  <div style={{ color: "#f1c40f", fontSize: 6, marginTop: 8, marginBottom: 4 }}>Cast Line State</div>
+                  <div style={{ color: "#e0e0e0", fontSize: 5 }}>
+                    Active: {stateRef.current.castLineActive ? "YES" : "NO"} |
+                    Flying: {stateRef.current.castLineFlying ? "YES" : "NO"} |
+                    Landed: {stateRef.current.castLineLanded ? "YES" : "NO"}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Pause Overlay when tracing */}
+      {uiState.gamePaused && uiState.traceMode && (
+        <div style={{
+          position: "absolute", top: 12, left: "50%", transform: "translateX(-50%)", zIndex: 56,
+          background: "rgba(241,196,15,0.15)", border: "1px solid rgba(241,196,15,0.4)",
+          borderRadius: 6, padding: "4px 16px", fontSize: 8, color: "#f1c40f",
+        }}>
+          GAME PAUSED - TRACE MODE
         </div>
       )}
 
