@@ -3729,7 +3729,7 @@ export default function FishingGame() {
                     display: "flex", alignItems: "center", justifyContent: "center",
                     fontSize: 16,
                   }}>
-                    <img src="/assets/icons/Icons_05.png" alt="" style={{ width: 20, height: 20, imageRendering: "pixelated" }} />
+                    <img src={stateRef.current.currentCatch?.catchAsset || stateRef.current.currentJunk?.asset || "/assets/icons/Icons_05.png"} alt="" style={{ width: 20, height: 20, imageRendering: "pixelated" }} />
                   </div>
                 </div>
                 <div className="relative" style={{
