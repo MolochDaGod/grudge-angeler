@@ -7560,41 +7560,41 @@ export default function FishingGame() {
           }}>
             <div style={{ background: "linear-gradient(90deg, rgba(168,85,247,0.2), rgba(239,68,68,0.2))", padding: "16px 24px", borderBottom: "1px solid rgba(168,85,247,0.3)" }}>
               <div style={{ textAlign: "center" }}>
-                <div style={{ color: "#a855f7", fontSize: 14, letterSpacing: 3, marginBottom: 6 }}>LIMITED EDITION</div>
-                <div style={{ color: "#f59e0b", fontSize: 10, letterSpacing: 2 }}>BetaXGruda Eggs & Warlords</div>
+                <div style={{ color: "#a855f7", fontSize: 18, letterSpacing: 3, marginBottom: 6 }}>LIMITED EDITION</div>
+                <div style={{ color: "#f59e0b", fontSize: 13, letterSpacing: 2 }}>BetaXGruda Eggs & Warlords</div>
               </div>
             </div>
 
             <div style={{ padding: "20px 24px", overflowY: "auto" }}>
               <div style={{ display: "flex", gap: 16, marginBottom: 20 }}>
                 <div style={{ flex: 1, background: "rgba(168,85,247,0.08)", borderRadius: 10, border: "1px solid rgba(168,85,247,0.25)", padding: 14, textAlign: "center" }}>
-                  <div style={{ color: "#ec4899", fontSize: 10, marginBottom: 6 }}>BETA EGGS</div>
-                  <div style={{ color: "#f59e0b", fontSize: 18, marginBottom: 4 }}>{BETA_EGG_MAX_STOCK}</div>
-                  <div style={{ color: "#78909c", fontSize: 6, lineHeight: "1.8" }}>Only {BETA_EGG_MAX_STOCK} of each<br />beta fish egg exist</div>
+                  <div style={{ color: "#ec4899", fontSize: 14, marginBottom: 6 }}>BETA EGGS</div>
+                  <div style={{ color: "#f59e0b", fontSize: 22, marginBottom: 4 }}>{BETA_EGG_MAX_STOCK}</div>
+                  <div style={{ color: "#78909c", fontSize: 10, lineHeight: "1.8" }}>Only {BETA_EGG_MAX_STOCK} of each<br />beta fish egg exist</div>
                   <div style={{ marginTop: 8, display: "flex", justifyContent: "center", gap: 6 }}>
                     <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#ef4444" }} />
                     <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#22c55e" }} />
                     <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#3b82f6" }} />
                     <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#e0e0e0" }} />
                   </div>
-                  <div style={{ color: "#78909c", fontSize: 5, marginTop: 6 }}>Crimson / Emerald / Sapphire / Ivory</div>
+                  <div style={{ color: "#78909c", fontSize: 8, marginTop: 6 }}>Crimson / Emerald / Sapphire / Ivory</div>
                 </div>
                 <div style={{ flex: 1, background: "rgba(239,68,68,0.08)", borderRadius: 10, border: "1px solid rgba(239,68,68,0.25)", padding: 14, textAlign: "center" }}>
-                  <div style={{ color: "#ef4444", fontSize: 10, marginBottom: 6 }}>WARLORDS</div>
-                  <div style={{ color: "#f59e0b", fontSize: 18, marginBottom: 4 }}>{WARLORD_EGG_MAX_STOCK}</div>
-                  <div style={{ color: "#78909c", fontSize: 6, lineHeight: "1.8" }}>Only {WARLORD_EGG_MAX_STOCK} of each<br />warlord egg exist</div>
+                  <div style={{ color: "#ef4444", fontSize: 14, marginBottom: 6 }}>WARLORDS</div>
+                  <div style={{ color: "#f59e0b", fontSize: 22, marginBottom: 4 }}>{WARLORD_EGG_MAX_STOCK}</div>
+                  <div style={{ color: "#78909c", fontSize: 10, lineHeight: "1.8" }}>Only {WARLORD_EGG_MAX_STOCK} of each<br />warlord egg exist</div>
                   <div style={{ marginTop: 8, display: "flex", justifyContent: "center", gap: 6 }}>
                     <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#a855f7" }} />
                     <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#94a3b8" }} />
                     <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#16a34a" }} />
                   </div>
-                  <div style={{ color: "#78909c", fontSize: 5, marginTop: 6 }}>Dusk Tyrant / Iron Sovereign / Venom King</div>
+                  <div style={{ color: "#78909c", fontSize: 8, marginTop: 6 }}>Dusk Tyrant / Iron Sovereign / Venom King</div>
                 </div>
               </div>
 
               <div style={{ background: "rgba(245,158,11,0.08)", borderRadius: 8, border: "1px solid rgba(245,158,11,0.25)", padding: 12, marginBottom: 16 }}>
-                <div style={{ color: "#f59e0b", fontSize: 8, marginBottom: 6, textAlign: "center" }}>HOW TO EARN</div>
-                <div style={{ color: "#b0bec5", fontSize: 6, lineHeight: "2", textAlign: "center" }}>
+                <div style={{ color: "#f59e0b", fontSize: 12, marginBottom: 6, textAlign: "center" }}>HOW TO EARN</div>
+                <div style={{ color: "#b0bec5", fontSize: 10, lineHeight: "2", textAlign: "center" }}>
                   Catch each of the <span style={{ color: "#ff4060" }}>Legendary 9</span> fish species for the first time to earn
                   <span style={{ color: "#a855f7" }}> Head of Legends</span> currency.<br />
                   Spend them in the <span style={{ color: "#f1c40f" }}>SHOP</span> under the EGGS tab.
@@ -7602,7 +7602,7 @@ export default function FishingGame() {
               </div>
 
               <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: 8, border: "1px solid rgba(255,255,255,0.06)", padding: 12, marginBottom: 16 }}>
-                <div style={{ color: "#78909c", fontSize: 6, lineHeight: "1.8", textAlign: "center" }}>
+                <div style={{ color: "#78909c", fontSize: 10, lineHeight: "1.8", textAlign: "center" }}>
                   Beta eggs cost <span style={{ color: "#a855f7" }}>1 Head</span> each.<br />
                   Warlord eggs cost <span style={{ color: "#ef4444" }}>2 Heads</span> each.<br />
                   Once sold out, they are <span style={{ color: "#f59e0b" }}>gone forever</span>.
@@ -7617,7 +7617,7 @@ export default function FishingGame() {
                 style={{
                   background: "linear-gradient(135deg, rgba(168,85,247,0.3), rgba(239,68,68,0.3))",
                   border: "2px solid rgba(168,85,247,0.5)", borderRadius: 10,
-                  padding: "10px 40px", color: "#e0e0e0", fontSize: 10,
+                  padding: "10px 40px", color: "#e0e0e0", fontSize: 12,
                   fontFamily: "'Press Start 2P', monospace", letterSpacing: 2,
                 }}
                 data-testid="button-close-promo"
