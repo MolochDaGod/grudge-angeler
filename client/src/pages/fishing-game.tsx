@@ -5384,6 +5384,24 @@ export default function FishingGame() {
                       position: "relative",
                       transition: "all 0.4s",
                     }}>
+                      <img
+                        src={cv.factionIcon}
+                        alt=""
+                        style={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
+                          width: 120,
+                          height: 120,
+                          opacity: isSelected ? 0.15 : 0.04,
+                          filter: isSelected ? `drop-shadow(0 0 20px ${cv.color}40)` : "grayscale(1)",
+                          pointerEvents: "none",
+                          transition: "all 0.4s",
+                          imageRendering: "pixelated",
+                          zIndex: 0,
+                        }}
+                      />
                       {isSelected && (
                         <div style={{
                           position: "absolute",
@@ -5404,6 +5422,7 @@ export default function FishingGame() {
                           filter: isSelected ? `drop-shadow(0 0 12px ${cv.color}60)` : "brightness(0.08) contrast(0.5)",
                           transition: "filter 0.4s",
                           position: "relative",
+                          zIndex: 1,
                         }}
                       />
                     </div>
