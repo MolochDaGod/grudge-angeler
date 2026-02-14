@@ -5402,16 +5402,6 @@ export default function FishingGame() {
                           zIndex: 0,
                         }}
                       />
-                      {isSelected && (
-                        <div style={{
-                          position: "absolute",
-                          inset: -6,
-                          borderRadius: "50%",
-                          background: `radial-gradient(ellipse at center, ${cv.color}20 0%, transparent 70%)`,
-                          filter: `blur(8px)`,
-                          pointerEvents: "none",
-                        }} />
-                      )}
                       <img
                         src={cv.selectImg}
                         alt={cv.name}
@@ -5419,7 +5409,7 @@ export default function FishingGame() {
                           imageRendering: "pixelated",
                           height: 140,
                           width: "auto",
-                          filter: isSelected ? `drop-shadow(0 0 12px ${cv.color}60)` : "brightness(0.08) contrast(0.5)",
+                          filter: isSelected ? "none" : "brightness(0.08) contrast(0.5)",
                           transition: "filter 0.4s",
                           position: "relative",
                           zIndex: 1,
