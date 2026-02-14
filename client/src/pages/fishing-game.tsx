@@ -2761,66 +2761,62 @@ export default function FishingGame() {
         }
 
         // Top header bar
-        ctx.fillStyle = "rgba(0,0,0,0.4)";
-        ctx.fillRect(bbX, bbY, bbW, 28);
+        ctx.fillStyle = "rgba(0,0,0,0.45)";
+        ctx.fillRect(bbX, bbY, bbW, 40);
         ctx.fillStyle = "rgba(255,255,255,0.08)";
-        ctx.fillRect(bbX, bbY + 27, bbW, 1);
+        ctx.fillRect(bbX, bbY + 39, bbW, 1);
 
         // Slide titles
         ctx.textAlign = "center";
-        ctx.font = "bold 10px 'Press Start 2P', monospace";
+        ctx.font = "bold 16px 'Press Start 2P', monospace";
         const slideLabels = ["GLOBAL LEADERBOARD", "PERSONAL BEST", "RECENT CATCHES", "STORE DEALS", "LIMITED EGGS", "ACTIVE BOUNTIES", "GRUDGE ANGELER"];
         const titleColors = ["#4fc3f7", "#e040fb", "#66bb6a", "#ff7043", "#f59e0b", "#a1887f", "#00e5ff"];
         ctx.fillStyle = titleColors[slide];
-        ctx.fillText(slideLabels[slide], bbCx, bbY + 18);
+        ctx.fillText(slideLabels[slide], bbCx, bbY + 28);
 
         // Slide indicator dots
         for (let d = 0; d < 7; d++) {
           ctx.fillStyle = d === slide ? "#ffffff" : "rgba(255,255,255,0.25)";
           ctx.beginPath();
-          ctx.arc(bbCx - 24 + d * 8, bbY + bbH - 10, d === slide ? 3 : 2, 0, Math.PI * 2);
+          ctx.arc(bbCx - 36 + d * 12, bbY + bbH - 14, d === slide ? 4 : 3, 0, Math.PI * 2);
           ctx.fill();
         }
 
         // Content area
-        const contentY = bbY + 38;
-        const contentH = bbH - 58;
-        ctx.font = "7px 'Press Start 2P', monospace";
+        const contentY = bbY + 50;
+        const contentH = bbH - 72;
 
         if (slide === 0) {
           // Global Leaderboard - top 5
           const lb = s.billboardLeaderboard;
           if (lb.length === 0) {
             ctx.fillStyle = "rgba(255,255,255,0.5)";
-            ctx.font = "8px 'Press Start 2P', monospace";
+            ctx.font = "14px 'Press Start 2P', monospace";
             ctx.fillText("Loading rankings...", bbCx, contentY + contentH / 2);
           } else {
             const medalColors = ["#ffd54f", "#b0bec5", "#cd7f32", "#78909c", "#78909c"];
             const medalLabels = ["1ST", "2ND", "3RD", "4TH", "5TH"];
             ctx.textAlign = "left";
+            const rowH = Math.min(36, contentH / Math.min(lb.length, 5));
             for (let i = 0; i < Math.min(lb.length, 5); i++) {
-              const ey = contentY + 8 + i * 34;
-              // Row background
+              const ey = contentY + 4 + i * rowH;
               ctx.fillStyle = i < 3 ? `rgba(255,255,255,0.06)` : `rgba(255,255,255,0.02)`;
-              drawRoundRect(bbX + 12, ey - 6, bbW - 24, 28, 4);
+              drawRoundRect(bbX + 12, ey, bbW - 24, rowH - 4, 4);
               ctx.fill();
-              // Medal
               ctx.fillStyle = medalColors[i];
-              ctx.font = "bold 8px 'Press Start 2P', monospace";
-              ctx.fillText(medalLabels[i], bbX + 20, ey + 6);
-              // Name
+              ctx.font = "bold 14px 'Press Start 2P', monospace";
+              ctx.fillText(medalLabels[i], bbX + 20, ey + rowH / 2 + 2);
               ctx.fillStyle = i < 3 ? "#e0e0e0" : "#90a4ae";
-              ctx.font = "7px 'Press Start 2P', monospace";
-              const pName = (lb[i].playerName || "???").substring(0, 12);
-              ctx.fillText(pName, bbX + 70, ey + 6);
-              // Fish + Weight
+              ctx.font = "12px 'Press Start 2P', monospace";
+              const pName = (lb[i].playerName || "???").substring(0, 10);
+              ctx.fillText(pName, bbX + 80, ey + rowH / 2 - 2);
               ctx.fillStyle = "#78909c";
-              ctx.font = "5px 'Press Start 2P', monospace";
-              ctx.fillText((lb[i].fishName || "").substring(0, 14), bbX + 70, ey + 16);
+              ctx.font = "9px 'Press Start 2P', monospace";
+              ctx.fillText((lb[i].fishName || "").substring(0, 10), bbX + 80, ey + rowH / 2 + 12);
               ctx.fillStyle = titleColors[0];
               ctx.textAlign = "right";
-              ctx.font = "bold 7px 'Press Start 2P', monospace";
-              ctx.fillText((lb[i].value || 0).toFixed(1) + " lb", bbX + bbW - 18, ey + 6);
+              ctx.font = "bold 12px 'Press Start 2P', monospace";
+              ctx.fillText((lb[i].value || 0).toFixed(1) + " lb", bbX + bbW - 20, ey + rowH / 2 + 4);
               ctx.textAlign = "left";
             }
           }
@@ -2828,69 +2824,63 @@ export default function FishingGame() {
           // Personal Best
           ctx.textAlign = "center";
           if (s.biggestCatchName) {
-            // Big fish name
             ctx.fillStyle = "#e040fb";
-            ctx.font = "bold 14px 'Press Start 2P', monospace";
-            ctx.fillText(s.biggestCatchName, bbCx, contentY + 30);
-            // Stats
+            ctx.font = "bold 22px 'Press Start 2P', monospace";
+            ctx.fillText(s.biggestCatchName, bbCx, contentY + 40);
             ctx.fillStyle = "#e0e0e0";
-            ctx.font = "9px 'Press Start 2P', monospace";
-            ctx.fillText("Size: " + s.biggestCatchSize.toFixed(1) + "x", bbCx, contentY + 55);
-            ctx.fillText("Weight: " + s.biggestCatchWeight.toFixed(1) + " lb", bbCx, contentY + 72);
-            // Session stats
-            ctx.fillStyle = "rgba(255,255,255,0.5)";
-            ctx.font = "6px 'Press Start 2P', monospace";
-            ctx.fillText("Session Catches: " + s.sessionCatches, bbCx, contentY + 100);
-            ctx.fillText("Level " + s.playerLevel + " Angler", bbCx, contentY + 115);
-            // Decorative line
+            ctx.font = "14px 'Press Start 2P', monospace";
+            ctx.fillText("Size: " + s.biggestCatchSize.toFixed(1) + "x", bbCx, contentY + 70);
+            ctx.fillText("Weight: " + s.biggestCatchWeight.toFixed(1) + " lb", bbCx, contentY + 92);
             ctx.strokeStyle = "rgba(224,64,251,0.3)";
             ctx.lineWidth = 1;
             ctx.beginPath();
-            ctx.moveTo(bbX + 40, contentY + 85);
-            ctx.lineTo(bbX + bbW - 40, contentY + 85);
+            ctx.moveTo(bbX + 40, contentY + 108);
+            ctx.lineTo(bbX + bbW - 40, contentY + 108);
             ctx.stroke();
+            ctx.fillStyle = "rgba(255,255,255,0.5)";
+            ctx.font = "10px 'Press Start 2P', monospace";
+            ctx.fillText("Session Catches: " + s.sessionCatches, bbCx, contentY + 130);
+            ctx.fillText("Level " + s.playerLevel + " Angler", bbCx, contentY + 148);
           } else {
             ctx.fillStyle = "rgba(255,255,255,0.5)";
-            ctx.font = "8px 'Press Start 2P', monospace";
-            ctx.fillText("No catches yet!", bbCx, contentY + 40);
+            ctx.font = "14px 'Press Start 2P', monospace";
+            ctx.fillText("No catches yet!", bbCx, contentY + 50);
             ctx.fillStyle = "rgba(255,255,255,0.3)";
-            ctx.font = "6px 'Press Start 2P', monospace";
-            ctx.fillText("Cast your line to", bbCx, contentY + 65);
-            ctx.fillText("set a record!", bbCx, contentY + 80);
+            ctx.font = "11px 'Press Start 2P', monospace";
+            ctx.fillText("Cast your line to", bbCx, contentY + 80);
+            ctx.fillText("set a record!", bbCx, contentY + 100);
           }
         } else if (slide === 2) {
-          // Recent Catches - last 5
+          // Recent Catches - last 4
           ctx.textAlign = "left";
-          const hist = s.catchHistory.slice(0, 5);
+          const hist = s.catchHistory.slice(0, 4);
           if (hist.length === 0) {
             ctx.textAlign = "center";
             ctx.fillStyle = "rgba(255,255,255,0.5)";
-            ctx.font = "8px 'Press Start 2P', monospace";
+            ctx.font = "14px 'Press Start 2P', monospace";
             ctx.fillText("No recent catches", bbCx, contentY + contentH / 2);
           } else {
             const rarityColors: Record<string, string> = { common: "#90a4ae", uncommon: "#66bb6a", rare: "#42a5f5", legendary: "#ffa726", ultra_rare: "#ff4060" };
+            const rowH = Math.min(42, contentH / hist.length);
             for (let i = 0; i < hist.length; i++) {
-              const ey = contentY + 6 + i * 32;
+              const ey = contentY + 4 + i * rowH;
               ctx.fillStyle = "rgba(255,255,255,0.04)";
-              drawRoundRect(bbX + 12, ey - 4, bbW - 24, 26, 4);
+              drawRoundRect(bbX + 12, ey, bbW - 24, rowH - 4, 4);
               ctx.fill();
-              // Rarity dot
               ctx.fillStyle = rarityColors[hist[i].rarity] || "#78909c";
               ctx.beginPath();
-              ctx.arc(bbX + 24, ey + 8, 4, 0, Math.PI * 2);
+              ctx.arc(bbX + 28, ey + rowH / 2 - 2, 6, 0, Math.PI * 2);
               ctx.fill();
-              // Fish name
               ctx.fillStyle = rarityColors[hist[i].rarity] || "#e0e0e0";
-              ctx.font = "7px 'Press Start 2P', monospace";
-              ctx.fillText(hist[i].name.substring(0, 14), bbX + 36, ey + 10);
-              // Weight + price
+              ctx.font = "12px 'Press Start 2P', monospace";
+              ctx.fillText(hist[i].name.substring(0, 12), bbX + 44, ey + rowH / 2 - 2);
               ctx.fillStyle = "#78909c";
-              ctx.font = "5px 'Press Start 2P', monospace";
-              ctx.fillText(hist[i].weight.toFixed(1) + " lb", bbX + 36, ey + 20);
+              ctx.font = "9px 'Press Start 2P', monospace";
+              ctx.fillText(hist[i].weight.toFixed(1) + " lb", bbX + 44, ey + rowH / 2 + 14);
               ctx.fillStyle = "#f1c40f";
               ctx.textAlign = "right";
-              ctx.font = "6px 'Press Start 2P', monospace";
-              ctx.fillText(hist[i].sellPrice + "g", bbX + bbW - 18, ey + 10);
+              ctx.font = "bold 12px 'Press Start 2P', monospace";
+              ctx.fillText(hist[i].sellPrice + "g", bbX + bbW - 20, ey + rowH / 2 + 2);
               ctx.textAlign = "left";
             }
           }
@@ -2898,9 +2888,8 @@ export default function FishingGame() {
           // Store Deals
           ctx.textAlign = "center";
           ctx.fillStyle = "#ff7043";
-          ctx.font = "bold 11px 'Press Start 2P', monospace";
-          ctx.fillText("HOT DEALS", bbCx, contentY + 20);
-          // Show actual rod/lure prices
+          ctx.font = "bold 18px 'Press Start 2P', monospace";
+          ctx.fillText("HOT DEALS", bbCx, contentY + 26);
           ctx.textAlign = "left";
           const deals = [
             { name: "Storm Rod", price: 500, color: "#42a5f5" },
@@ -2908,94 +2897,90 @@ export default function FishingGame() {
             { name: "Golden Lure", price: 800, color: "#ffd54f" },
           ];
           for (let i = 0; i < deals.length; i++) {
-            const dy = contentY + 40 + i * 32;
+            const dy = contentY + 46 + i * 42;
             ctx.fillStyle = "rgba(255,255,255,0.05)";
-            drawRoundRect(bbX + 20, dy - 4, bbW - 40, 26, 4);
+            drawRoundRect(bbX + 20, dy, bbW - 40, 36, 4);
             ctx.fill();
             ctx.fillStyle = deals[i].color;
-            ctx.font = "7px 'Press Start 2P', monospace";
-            ctx.fillText(deals[i].name, bbX + 32, dy + 10);
+            ctx.font = "12px 'Press Start 2P', monospace";
+            ctx.fillText(deals[i].name, bbX + 34, dy + 22);
             ctx.fillStyle = "#f1c40f";
             ctx.textAlign = "right";
-            ctx.font = "bold 7px 'Press Start 2P', monospace";
-            ctx.fillText(deals[i].price + "g", bbX + bbW - 28, dy + 10);
+            ctx.font = "bold 12px 'Press Start 2P', monospace";
+            ctx.fillText(deals[i].price + "g", bbX + bbW - 30, dy + 22);
             ctx.textAlign = "left";
           }
           ctx.textAlign = "center";
           ctx.fillStyle = "rgba(255,255,255,0.4)";
-          ctx.font = "5px 'Press Start 2P', monospace";
-          ctx.fillText("Visit the shop near the hut!", bbCx, contentY + contentH - 8);
+          ctx.font = "9px 'Press Start 2P', monospace";
+          ctx.fillText("Visit the shop!", bbCx, contentY + contentH - 6);
         } else if (slide === 4) {
           // Limited Eggs
           ctx.textAlign = "center";
           ctx.fillStyle = "#f59e0b";
-          ctx.font = "bold 11px 'Press Start 2P', monospace";
-          ctx.fillText("LIMITED EDITION", bbCx, contentY + 18);
-          // Beta eggs
+          ctx.font = "bold 18px 'Press Start 2P', monospace";
+          ctx.fillText("LIMITED EDITION", bbCx, contentY + 24);
+          const halfW = (bbW - 50) / 2;
           ctx.fillStyle = "rgba(168,85,247,0.15)";
-          drawRoundRect(bbX + 15, contentY + 28, (bbW - 40) / 2, 100, 6);
+          drawRoundRect(bbX + 15, contentY + 36, halfW, 120, 6);
           ctx.fill();
           ctx.fillStyle = "#ec4899";
-          ctx.font = "bold 8px 'Press Start 2P', monospace";
-          ctx.fillText("BETA EGGS", bbX + 15 + (bbW - 40) / 4, contentY + 46);
+          ctx.font = "bold 13px 'Press Start 2P', monospace";
+          ctx.fillText("BETA", bbX + 15 + halfW / 2, contentY + 60);
           ctx.fillStyle = "#f59e0b";
-          ctx.font = "bold 18px 'Press Start 2P', monospace";
+          ctx.font = "bold 28px 'Press Start 2P', monospace";
           const betaRemaining = s.eggStock ? s.eggStock.filter((e: any) => e.type === "beta").reduce((sum: number, e: any) => sum + e.remaining, 0) : BETA_EGG_MAX_STOCK * 4;
-          ctx.fillText("" + betaRemaining, bbX + 15 + (bbW - 40) / 4, contentY + 72);
+          ctx.fillText("" + betaRemaining, bbX + 15 + halfW / 2, contentY + 96);
           ctx.fillStyle = "#78909c";
-          ctx.font = "5px 'Press Start 2P', monospace";
-          ctx.fillText("remaining", bbX + 15 + (bbW - 40) / 4, contentY + 86);
-          ctx.fillText("1 Head each", bbX + 15 + (bbW - 40) / 4, contentY + 100);
-          // Warlord eggs
-          const wX = bbX + 25 + (bbW - 40) / 2;
+          ctx.font = "8px 'Press Start 2P', monospace";
+          ctx.fillText("remaining", bbX + 15 + halfW / 2, contentY + 114);
+          ctx.fillText("1 Head each", bbX + 15 + halfW / 2, contentY + 130);
+          const wX = bbX + 35 + halfW;
           ctx.fillStyle = "rgba(239,68,68,0.15)";
-          drawRoundRect(wX, contentY + 28, (bbW - 40) / 2, 100, 6);
+          drawRoundRect(wX, contentY + 36, halfW, 120, 6);
           ctx.fill();
           ctx.fillStyle = "#ef4444";
-          ctx.font = "bold 8px 'Press Start 2P', monospace";
-          ctx.fillText("WARLORDS", wX + (bbW - 40) / 4, contentY + 46);
+          ctx.font = "bold 13px 'Press Start 2P', monospace";
+          ctx.fillText("WARLORD", wX + halfW / 2, contentY + 60);
           ctx.fillStyle = "#f59e0b";
-          ctx.font = "bold 18px 'Press Start 2P', monospace";
+          ctx.font = "bold 28px 'Press Start 2P', monospace";
           const warlordRemaining = s.eggStock ? s.eggStock.filter((e: any) => e.type === "warlord").reduce((sum: number, e: any) => sum + e.remaining, 0) : WARLORD_EGG_MAX_STOCK * 3;
-          ctx.fillText("" + warlordRemaining, wX + (bbW - 40) / 4, contentY + 72);
+          ctx.fillText("" + warlordRemaining, wX + halfW / 2, contentY + 96);
           ctx.fillStyle = "#78909c";
-          ctx.font = "5px 'Press Start 2P', monospace";
-          ctx.fillText("remaining", wX + (bbW - 40) / 4, contentY + 86);
-          ctx.fillText("2 Heads each", wX + (bbW - 40) / 4, contentY + 100);
+          ctx.font = "8px 'Press Start 2P', monospace";
+          ctx.fillText("remaining", wX + halfW / 2, contentY + 114);
+          ctx.fillText("2 Heads each", wX + halfW / 2, contentY + 130);
           ctx.fillStyle = "rgba(255,255,255,0.3)";
-          ctx.font = "5px 'Press Start 2P', monospace";
-          ctx.fillText("Once sold out, gone forever!", bbCx, contentY + contentH - 8);
+          ctx.font = "8px 'Press Start 2P', monospace";
+          ctx.fillText("Gone forever when sold out!", bbCx, contentY + contentH - 6);
         } else if (slide === 5) {
           // Active Bounties
           ctx.textAlign = "center";
           if (s.bounties.length === 0) {
             ctx.fillStyle = "rgba(255,255,255,0.5)";
-            ctx.font = "8px 'Press Start 2P', monospace";
+            ctx.font = "14px 'Press Start 2P', monospace";
             ctx.fillText("No active bounties", bbCx, contentY + contentH / 2);
           } else {
             ctx.textAlign = "left";
+            const rowH = Math.min(44, contentH / Math.min(s.bounties.length, 4));
             for (let i = 0; i < Math.min(s.bounties.length, 4); i++) {
-              const by = contentY + 8 + i * 38;
+              const by = contentY + 4 + i * rowH;
               ctx.fillStyle = "rgba(255,255,255,0.05)";
-              drawRoundRect(bbX + 12, by - 4, bbW - 24, 32, 4);
+              drawRoundRect(bbX + 12, by, bbW - 24, rowH - 4, 4);
               ctx.fill();
-              // Target fish
               ctx.fillStyle = "#a1887f";
-              ctx.font = "bold 7px 'Press Start 2P', monospace";
-              ctx.fillText("TARGET:", bbX + 22, by + 8);
+              ctx.font = "bold 11px 'Press Start 2P', monospace";
+              ctx.fillText("TARGET:", bbX + 22, by + rowH / 2 - 4);
               ctx.fillStyle = "#e0e0e0";
-              ctx.font = "7px 'Press Start 2P', monospace";
-              ctx.fillText(s.bounties[i].fishName, bbX + 90, by + 8);
-              // Reward
+              ctx.font = "12px 'Press Start 2P', monospace";
+              ctx.fillText(s.bounties[i].fishName.substring(0, 10), bbX + 120, by + rowH / 2 - 4);
               ctx.fillStyle = "#78909c";
-              ctx.font = "5px 'Press Start 2P', monospace";
-              ctx.fillText("Min size: " + (s.bounties[i].minSize || 1).toFixed(1) + "x", bbX + 22, by + 20);
+              ctx.font = "9px 'Press Start 2P', monospace";
+              ctx.fillText("Min: " + (s.bounties[i].minSize || 1).toFixed(1) + "x", bbX + 22, by + rowH / 2 + 12);
               ctx.fillStyle = "#f1c40f";
               ctx.textAlign = "right";
-              ctx.font = "bold 7px 'Press Start 2P', monospace";
-              const gbuxBB = getImg("/assets/icons/gbux.png");
-              if (gbuxBB) ctx.drawImage(gbuxBB, bbX + bbW - 68, by + 12, 10, 10);
-              ctx.fillText(s.bounties[i].reward + "g", bbX + bbW - 20, by + 20);
+              ctx.font = "bold 12px 'Press Start 2P', monospace";
+              ctx.fillText(s.bounties[i].reward + "g", bbX + bbW - 20, by + rowH / 2 + 4);
               ctx.textAlign = "left";
             }
           }
@@ -3003,24 +2988,21 @@ export default function FishingGame() {
           // Grudge Angeler branding
           ctx.textAlign = "center";
           ctx.fillStyle = "#00e5ff";
-          ctx.font = "bold 20px 'Press Start 2P', monospace";
-          ctx.fillText("GRUDGE", bbCx, contentY + 35);
+          ctx.font = "bold 32px 'Press Start 2P', monospace";
+          ctx.fillText("GRUDGE", bbCx, contentY + 50);
           ctx.fillStyle = "#4fc3f7";
-          ctx.font = "bold 16px 'Press Start 2P', monospace";
-          ctx.fillText("ANGELER", bbCx, contentY + 60);
-          // Tagline
+          ctx.font = "bold 26px 'Press Start 2P', monospace";
+          ctx.fillText("ANGELER", bbCx, contentY + 86);
           ctx.fillStyle = "rgba(255,255,255,0.5)";
-          ctx.font = "6px 'Press Start 2P', monospace";
-          ctx.fillText("Cast. Catch. Conquer.", bbCx, contentY + 82);
-          // Version
+          ctx.font = "10px 'Press Start 2P', monospace";
+          ctx.fillText("Cast. Catch. Conquer.", bbCx, contentY + 115);
           ctx.fillStyle = "rgba(255,255,255,0.3)";
-          ctx.font = "5px 'Press Start 2P', monospace";
-          ctx.fillText("v1.0 - Beta Season", bbCx, contentY + 100);
-          // Animated glow ring
+          ctx.font = "9px 'Press Start 2P', monospace";
+          ctx.fillText("v1.0 - Beta Season", bbCx, contentY + 140);
           ctx.strokeStyle = `rgba(0,229,255,${0.15 + 0.1 * Math.sin(bbT * 4)})`;
           ctx.lineWidth = 2;
           ctx.beginPath();
-          ctx.arc(bbCx, contentY + 48, 50 + 5 * Math.sin(bbT * 2), 0, Math.PI * 2);
+          ctx.arc(bbCx, contentY + 65, 60 + 5 * Math.sin(bbT * 2), 0, Math.PI * 2);
           ctx.stroke();
         }
 
