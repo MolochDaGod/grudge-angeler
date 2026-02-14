@@ -2548,6 +2548,30 @@ export default function FishingGame() {
       }
       ctx.globalAlpha = 1;
 
+      // --- ROLLING SHIMMER BANDS (skeleton-loader style sweeping light) ---
+      {
+        const shimmerCount = 3;
+        const shimmerCycleSpeed = 0.0008;
+        const shimmerBandW = W * 0.6;
+        for (let si = 0; si < shimmerCount; si++) {
+          const phase = ((s.time * shimmerCycleSpeed + si / shimmerCount) % 1);
+          const bandX = viewL + (viewR - viewL + shimmerBandW) * phase - shimmerBandW * 0.5;
+          const bandDepthStart = waterY + 10;
+          const bandDepthEnd = waterY + waterH * 0.85;
+          const bandAlpha = 0.04 * Math.sin(phase * Math.PI) * (0.6 + dayPhase * 0.4);
+          if (bandAlpha > 0.002) {
+            const shGrad = ctx.createLinearGradient(bandX - shimmerBandW * 0.5, 0, bandX + shimmerBandW * 0.5, 0);
+            shGrad.addColorStop(0, "rgba(140,200,240,0)");
+            shGrad.addColorStop(0.3, `rgba(160,215,250,${bandAlpha})`);
+            shGrad.addColorStop(0.5, `rgba(190,230,255,${bandAlpha * 1.5})`);
+            shGrad.addColorStop(0.7, `rgba(160,215,250,${bandAlpha})`);
+            shGrad.addColorStop(1, "rgba(140,200,240,0)");
+            ctx.fillStyle = shGrad;
+            ctx.fillRect(bandX - shimmerBandW * 0.5, bandDepthStart, shimmerBandW, bandDepthEnd - bandDepthStart);
+          }
+        }
+      }
+
       // --- GOD RAYS (tapered beams, soft edges) ---
       if (dayPhase > 0.3) {
         const rayAlpha = (dayPhase - 0.3) * 0.1;
