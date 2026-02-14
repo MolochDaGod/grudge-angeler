@@ -1100,6 +1100,7 @@ export default function FishingGame() {
       "/assets/dock_structure_full.png",
       "/assets/dock_legs_waterline.png",
       "/assets/dock_legs_underwater.png",
+      "/assets/rarity_crown.png",
       "/assets/objects/Fish-rod.png",
       "/assets/objects/Grass1.png",
       "/assets/objects/Grass2.png",
@@ -3380,37 +3381,31 @@ export default function FishingGame() {
             fish.frame, fish.type.walkFrames,
             fish.x, fish.y, creatureScale,
             fish.direction < 0,
-            fish.type.tint || null,
+            null,
             fish.type.spriteFrameH
           );
         }
-        if (fish.type.rarity === "ultra_rare") {
-          const glowPulse = 0.3 + Math.sin(s.time * 0.06 + fish.x * 0.01) * 0.15;
-          const tintColor = fish.type.tint || "#ff2d55";
-          ctx.globalAlpha = glowPulse;
-          ctx.shadowColor = tintColor;
-          ctx.shadowBlur = 25 + Math.sin(s.time * 0.04) * 8;
-          
-          const glowX = fish.x + (FRAME_H * creatureScale * 0.5);
-          const glowY = fish.y + (FRAME_H * creatureScale * 0.3);
-          ctx.fillStyle = tintColor;
-          ctx.beginPath();
-          ctx.ellipse(glowX, glowY, creatureScale * 20, creatureScale * 12, 0, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.shadowBlur = 0;
-          
-          for (let sp = 0; sp < 4; sp++) {
-            const angle = s.time * 0.04 + sp * Math.PI * 0.5 + fish.x * 0.01;
-            const orbitR = creatureScale * 18 + Math.sin(s.time * 0.08 + sp) * 4;
-            const spX = glowX + Math.cos(angle) * orbitR;
-            const spY = glowY + Math.sin(angle) * orbitR * 0.6;
-            ctx.globalAlpha = 0.5 + Math.sin(s.time * 0.1 + sp * 1.5) * 0.3;
-            ctx.fillStyle = "#ffffff";
-            ctx.beginPath();
-            ctx.arc(spX, spY, 1.5, 0, Math.PI * 2);
-            ctx.fill();
+        if (fish.type.rarity !== "common") {
+          const crownImg = getImg("/assets/rarity_crown.png");
+          if (crownImg && crownImg.complete) {
+            const crownCols = 10;
+            const crownRows = 8;
+            const crownFW = crownImg.width / crownCols;
+            const crownFH = crownImg.height / crownRows;
+            const crownFrame = Math.floor(s.time * 0.12 + fish.x * 0.1) % (crownCols * crownRows);
+            const crownSX = (crownFrame % crownCols) * crownFW;
+            const crownSY = Math.floor(crownFrame / crownCols) * crownFH;
+            const raritySizes: Record<string, number> = { uncommon: 0.28, rare: 0.4, legendary: 0.55, ultra_rare: 0.7 };
+            const crownScale = raritySizes[fish.type.rarity] || 0.3;
+            const crownDrawW = crownFW * crownScale;
+            const crownDrawH = crownFH * crownScale;
+            const fishSpriteW = FRAME_H * creatureScale;
+            const headX = fish.direction < 0
+              ? fish.x + fishSpriteW * 0.15 - crownDrawW * 0.5
+              : fish.x + fishSpriteW * 0.55 - crownDrawW * 0.5;
+            const headY = fish.y - crownDrawH * 0.5;
+            ctx.drawImage(crownImg, crownSX, crownSY, crownFW, crownFH, headX, headY, crownDrawW, crownDrawH);
           }
-          ctx.globalAlpha = 1;
         }
         ctx.globalAlpha = 1;
       }
@@ -4081,19 +4076,29 @@ export default function FishingGame() {
           s.hookedFishFrame, walkFrames,
           s.hookedFishX, s.hookedFishY, creatureScale,
           s.hookedFishDir < 0,
-          s.currentCatch?.tint || null
+          null
         );
-        if (s.currentCatch?.rarity === "ultra_rare") {
-          ctx.globalAlpha = 0.2 + Math.sin(s.time * 0.1) * 0.1;
-          ctx.shadowColor = s.currentCatch.tint || "#ff2d55";
-          ctx.shadowBlur = 25;
-          drawSprite(
-            `/assets/creatures/${creatureFolder}/Walk.png`,
-            s.hookedFishFrame, walkFrames,
-            s.hookedFishX, s.hookedFishY, creatureScale,
-            s.hookedFishDir < 0
-          );
-          ctx.shadowBlur = 0;
+        if (s.currentCatch && s.currentCatch.rarity !== "common") {
+          const crownImg = getImg("/assets/rarity_crown.png");
+          if (crownImg && crownImg.complete) {
+            const crownCols = 10;
+            const crownRows = 8;
+            const crownFW = crownImg.width / crownCols;
+            const crownFH = crownImg.height / crownRows;
+            const crownFrame = Math.floor(s.time * 0.12) % (crownCols * crownRows);
+            const crownSX = (crownFrame % crownCols) * crownFW;
+            const crownSY = Math.floor(crownFrame / crownCols) * crownFH;
+            const raritySizes: Record<string, number> = { uncommon: 0.28, rare: 0.4, legendary: 0.55, ultra_rare: 0.7 };
+            const crownScale = raritySizes[s.currentCatch.rarity] || 0.3;
+            const crownDrawW = crownFW * crownScale;
+            const crownDrawH = crownFH * crownScale;
+            const fishSpriteW = FRAME_H * creatureScale;
+            const headX = s.hookedFishDir < 0
+              ? s.hookedFishX + fishSpriteW * 0.15 - crownDrawW * 0.5
+              : s.hookedFishX + fishSpriteW * 0.55 - crownDrawW * 0.5;
+            const headY = s.hookedFishY - crownDrawH * 0.5;
+            ctx.drawImage(crownImg, crownSX, crownSY, crownFW, crownFH, headX, headY, crownDrawW, crownDrawH);
+          }
         }
         ctx.globalAlpha = 1;
 
@@ -4241,10 +4246,6 @@ export default function FishingGame() {
               ctx.scale(flopScale, 1 / flopScale);
             }
             
-            if (s.currentCatch?.tint) {
-              ctx.globalAlpha = 0.9;
-            }
-
             if (s.currentCatch?.beachCrab && s.currentCatch?.spriteRow !== undefined) {
               const cfs = s.currentCatch.spriteFrameSize || CRAB_FRAME;
               const crabCS = cs * 2;
@@ -4256,23 +4257,23 @@ export default function FishingGame() {
               const imgH = catchImg.height * cs;
               ctx.drawImage(catchImg, -imgW / 2, -imgH / 2, imgW, imgH);
             }
-            
-            if (s.currentCatch?.rarity === "ultra_rare" && s.currentCatch?.tint) {
-              ctx.globalAlpha = 0.3 + Math.sin(s.time * 0.08) * 0.15;
-              ctx.shadowColor = s.currentCatch.tint;
-              ctx.shadowBlur = 25;
-              if (s.currentCatch?.beachCrab && s.currentCatch?.spriteRow !== undefined) {
-                const cfs = s.currentCatch.spriteFrameSize || CRAB_FRAME;
-                const crabCS = cs * 2;
-                const dw = cfs * crabCS;
-                const dh = cfs * crabCS;
-                ctx.drawImage(catchImg, 0, s.currentCatch.spriteRow * cfs, cfs, cfs, -dw / 2, -dh / 2, dw, dh);
-              } else {
-                const imgW = catchImg.width * cs;
-                const imgH = catchImg.height * cs;
-                ctx.drawImage(catchImg, -imgW / 2, -imgH / 2, imgW, imgH);
+
+            if (s.currentCatch && s.currentCatch.rarity !== "common") {
+              const crownImg = getImg("/assets/rarity_crown.png");
+              if (crownImg && crownImg.complete) {
+                const crownCols = 10;
+                const crownRows = 8;
+                const crownFW = crownImg.width / crownCols;
+                const crownFH = crownImg.height / crownRows;
+                const crownFrame = Math.floor(s.time * 0.12) % (crownCols * crownRows);
+                const crownSX = (crownFrame % crownCols) * crownFW;
+                const crownSY = Math.floor(crownFrame / crownCols) * crownFH;
+                const raritySizes: Record<string, number> = { uncommon: 0.35, rare: 0.5, legendary: 0.7, ultra_rare: 0.9 };
+                const crownScale = raritySizes[s.currentCatch.rarity] || 0.35;
+                const crownDrawW = crownFW * crownScale;
+                const crownDrawH = crownFH * crownScale;
+                ctx.drawImage(crownImg, crownSX, crownSY, crownFW, crownFH, -crownDrawW * 0.5, -catchImg.height * cs * 0.5 - crownDrawH * 0.4, crownDrawW, crownDrawH);
               }
-              ctx.shadowBlur = 0;
             }
             
             ctx.globalAlpha = 1;
