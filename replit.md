@@ -26,7 +26,7 @@ The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a f
 - **Net Tool:** An alternative fishing method with specific casting mechanics, auto-catching, cooldowns, and a chance to catch chum items.
 - **Sprite Orientation:** Standardized sprite conventions for character facing, movement, and mirroring.
 - **Character System:** Three selectable character variants, each with unique recolored sprite sets.
-- **Fish Species:** 17 distinct fish species across 5 rarity tiers (common, uncommon, rare, legendary, ultra_rare), including 9 ultra-rare variants with unique visual traits and spawn mechanics.
+- **Fish Species:** 17 distinct fish species across 5 rarity tiers (common, uncommon, rare, legendary, ultra_rare), including 10 ultra-rare variants (The Legendary 10) with unique visual traits and spawn mechanics. The 10th legendary "The Seal at the Seam" uses the grudge skull logo as its image.
 - **Equipment System:** Diverse range of 5 rods, 5 live baits, 11 artificial lures, and 22 chum items, each affecting gameplay mechanics.
 - **Chum System:** Throwable items that boost fish spawns, rarity, and bite speed, activated via the hotbar.
 - **Rarity System:** 5 tiers (common to ultra_rare) with distinct colors, star ratings, sell price multipliers, and reeling difficulty multipliers.

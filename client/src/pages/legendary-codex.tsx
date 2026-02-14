@@ -11,6 +11,8 @@ import neonEelImg from "../assets/images/legendary-neon-eel.png";
 import goldenSalmonImg from "../assets/images/legendary-golden-salmon.png";
 import shadowLeviathanImg from "../assets/images/legendary-shadow-leviathan.png";
 
+const sealAtTheSeamImg = "/assets/grudge_logo.png";
+
 function UnderwaterBackground() {
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden" }}>
@@ -146,7 +148,7 @@ const legendaries = [
     zone: "Deep Ocean",
     aura: "rgba(255,255,0,0.35)",
     auraCss: "255, 255, 0",
-    lore: `Lightning was born in the sky. But something learned to carry it beneath the waves.\n\nThe Storm Swordfish is velocity incarnate — a living thunderbolt that cuts through the deep ocean at speeds that create sonic booms underwater. Its elongated bill crackles with accumulated electrical charge, and in its wake, the water ionizes into a trail of plasma that illuminates the abyss like a highway of light.\n\nSailors have reported seeing its glow from the surface during storms, a jagged yellow streak beneath the waves that mirrors the lightning above. Some believe the fish doesn't just ride storms — it creates them. Barometric readings plummet when a Storm Swordfish surfaces, and thunder follows within minutes.\n\nOf all the Legendary 9, the Storm Swordfish is the most dangerous to catch. Its electric discharge has fried equipment, paralyzed anglers, and once caused a fishing vessel's entire electrical system to overload. Those brave or foolish enough to pursue it use insulated rods and rubber-lined gloves — and still describe the catch as "wrestling a lightning bolt."`,
+    lore: `Lightning was born in the sky. But something learned to carry it beneath the waves.\n\nThe Storm Swordfish is velocity incarnate — a living thunderbolt that cuts through the deep ocean at speeds that create sonic booms underwater. Its elongated bill crackles with accumulated electrical charge, and in its wake, the water ionizes into a trail of plasma that illuminates the abyss like a highway of light.\n\nSailors have reported seeing its glow from the surface during storms, a jagged yellow streak beneath the waves that mirrors the lightning above. Some believe the fish doesn't just ride storms — it creates them. Barometric readings plummet when a Storm Swordfish surfaces, and thunder follows within minutes.\n\nOf all the Legendaries, the Storm Swordfish is the most dangerous to catch. Its electric discharge has fried equipment, paralyzed anglers, and once caused a fishing vessel's entire electrical system to overload. Those brave or foolish enough to pursue it use insulated rods and rubber-lined gloves — and still describe the catch as "wrestling a lightning bolt."`,
     chapter: "V",
     subtitle: "The Living Thunderbolt",
   },
@@ -206,9 +208,24 @@ const legendaries = [
     zone: "Abyss",
     aura: "rgba(180,0,50,0.35)",
     auraCss: "180, 0, 50",
-    lore: `There is a reason the abyss is dark. It isn't because light cannot reach there. It's because something consumed it.\n\nThe Shadow Leviathan is the ocean's oldest nightmare — a titanic entity that exists at the boundary between the physical ocean and something far more ancient. Its body is composed of living shadow, a substance that absorbs all light and radiates a blood-red aura that turns the surrounding water into a crimson void.\n\nEvery creature in the ocean knows to flee when the Shadow Leviathan stirs. Sharks reverse course. Whales change migration routes. Even the other Legendary 9 give it wide berth. It is not merely a predator — it is the concept of predation given terrible, physical form.\n\nThe few who have encountered it and survived describe a presence that goes beyond size. The Shadow Leviathan doesn't just occupy space — it warps it. Water flows differently near it. Time feels slower. Sound distorts into bass rumbles that vibrate in the chest.\n\nTo catch the Shadow Leviathan is considered the ultimate achievement in all of fishing. It requires the strongest rod, the most potent chum, and a courage that borders on madness. Those who succeed earn a title whispered with equal parts admiration and fear: Leviathan Tamer.`,
+    lore: `There is a reason the abyss is dark. It isn't because light cannot reach there. It's because something consumed it.\n\nThe Shadow Leviathan is the ocean's oldest nightmare — a titanic entity that exists at the boundary between the physical ocean and something far more ancient. Its body is composed of living shadow, a substance that absorbs all light and radiates a blood-red aura that turns the surrounding water into a crimson void.\n\nEvery creature in the ocean knows to flee when the Shadow Leviathan stirs. Sharks reverse course. Whales change migration routes. Even the other Legendaries give it wide berth. It is not merely a predator — it is the concept of predation given terrible, physical form.\n\nThe few who have encountered it and survived describe a presence that goes beyond size. The Shadow Leviathan doesn't just occupy space — it warps it. Water flows differently near it. Time feels slower. Sound distorts into bass rumbles that vibrate in the chest.\n\nTo catch the Shadow Leviathan is considered the ultimate achievement in all of fishing. It requires the strongest rod, the most potent chum, and a courage that borders on madness. Those who succeed earn a title whispered with equal parts admiration and fear: Leviathan Tamer.`,
     chapter: "IX",
     subtitle: "The End of All Light",
+  },
+  {
+    name: "The Seal at the Seam",
+    image: sealAtTheSeamImg,
+    stars: 5,
+    pts: 5000,
+    wt: "0.01%",
+    spd: 0.1,
+    dep: "99%",
+    zone: "The Seam",
+    aura: "rgba(30,60,140,0.5)",
+    auraCss: "30, 60, 140",
+    lore: `There is a place beneath the abyss that has no name in any human language. Cartographers leave it blank. Sonar returns nothing. It is not a depth — it is a boundary. The fishermen who know of it call it the Seam.\n\nThe Seal at the Seam is not a fish in any biological sense. It is a sigil — a living mark pressed into the fabric of the ocean where the physical world ends and something else begins. It does not swim. It does not feed. It simply exists at the absolute bottom, a sentinel at the threshold between what is known and what can never be.\n\nIts form resembles a skull forged from deep-ocean pressure and mineral deposits accumulated over geological epochs. Blue-black and ancient, it pulses with a light that has no visible source — a cold, authoritative glow that seems to come from the concept of depth itself.\n\nNo expedition has ever intentionally reached it. The three documented encounters were accidents — lines cast too deep, hooks dragged by currents into crevasses that should not exist. In each case, the angler reported the same phenomenon: the line went taut with a weight that felt infinite, and then, impossibly, something let itself be pulled.\n\nThe Seal does not resist capture. It allows itself to be taken — briefly — as if granting an audience. Those who have held it describe an understanding that floods the mind: that the ocean has a floor, and beneath that floor is another ocean, and beneath that is another, and the Seal guards every border between them.\n\nIt is the 10th Legendary. The one that was always there, waiting at the seam for someone brave enough — or lost enough — to drop a hook into forever.`,
+    chapter: "X",
+    subtitle: "The Guardian of the Lowest Deep",
   },
 ];
 
@@ -382,7 +399,7 @@ function CoverPage({ onEnter }: { onEnter: () => void }) {
             filter: "drop-shadow(0 0 30px rgba(200,160,50,0.3))",
           }}
         >
-          THE LEGENDARY 9
+          THE LEGENDARY 10
         </h1>
 
         <div
@@ -394,7 +411,7 @@ function CoverPage({ onEnter }: { onEnter: () => void }) {
             letterSpacing: "3px",
           }}
         >
-          A Codex of the Ultra Rare
+          A Codex of the Ultra Rare &mdash; Complete Edition
         </div>
 
         <div
@@ -416,9 +433,9 @@ function CoverPage({ onEnter }: { onEnter: () => void }) {
           }}
         >
           Beneath the waves, in depths where sunlight is a forgotten memory,
-          nine creatures of impossible power await the boldest anglers.
+          ten creatures of impossible power await the boldest anglers.
           Each is a legend. Each defies nature. Together, they are
-          <span style={{ color: "#c4a050" }}> The Legendary 9</span> —
+          <span style={{ color: "#c4a050" }}> The Legendary 10</span> —
           the rarest catches in all the world's oceans.
         </div>
 
@@ -539,7 +556,7 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
             padding: "4px 0",
           }}
         >
-          The Legendary 9
+          The Legendary 10
         </button>
         <div style={{ fontSize: "13px", color: "#555568", letterSpacing: "1px" }}>
           {pageNum + 1} / {totalPages}
@@ -576,7 +593,7 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
           textAlign: "center",
           fontSize: "clamp(13px, 2vw, 17px)",
           fontStyle: "italic",
-          color: `rgba(${fish.auraCss}, 0.7)`,
+          color: "#9090b0",
           marginBottom: "32px",
         }}
       >
@@ -587,7 +604,7 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
         style={{
           width: "40px",
           height: "1px",
-          background: `linear-gradient(90deg, transparent, rgba(${fish.auraCss}, 0.5), transparent)`,
+          background: "linear-gradient(90deg, transparent, rgba(196,160,80,0.4), transparent)",
           margin: "0 auto 32px",
         }}
       />
@@ -598,7 +615,6 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
           marginBottom: "40px",
           borderRadius: "4px",
           overflow: "hidden",
-          boxShadow: `0 0 60px rgba(${fish.auraCss}, 0.15), 0 4px 30px rgba(0,0,0,0.5)`,
         }}
       >
         <img
@@ -607,25 +623,10 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
           data-testid={`img-legendary-${fish.name.toLowerCase().replace(/\s+/g, "-")}`}
           style={{
             width: "100%",
+            maxWidth: "400px",
             display: "block",
-            imageRendering: "auto",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: `linear-gradient(180deg, transparent 60%, rgba(10,10,18,0.8) 100%)`,
-            pointerEvents: "none",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            border: `1px solid rgba(${fish.auraCss}, 0.15)`,
-            borderRadius: "4px",
-            pointerEvents: "none",
+            margin: "0 auto",
+            imageRendering: "pixelated",
           }}
         />
       </div>
@@ -683,7 +684,7 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
             <div style={{ color: "#666680", fontSize: "10px", marginBottom: "4px", textTransform: "uppercase" }}>
               {stat.label}
             </div>
-            <div style={{ color: `rgba(${fish.auraCss}, 0.85)`, fontWeight: 600 }}>
+            <div style={{ color: "#c4a050", fontWeight: 600 }}>
               {stat.value}
             </div>
           </div>
@@ -720,7 +721,7 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
                   lineHeight: 0.8,
                   marginRight: "8px",
                   marginTop: "4px",
-                  color: `rgba(${fish.auraCss}, 0.6)`,
+                  color: "#c4a050",
                   fontWeight: 700,
                 }}
               >
@@ -797,11 +798,11 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
                 padding: 0,
                 background:
                   i === pageNum
-                    ? `rgba(${fish.auraCss}, 0.8)`
+                    ? "rgba(196,160,80,0.8)"
                     : "rgba(255,255,255,0.15)",
                 boxShadow:
                   i === pageNum
-                    ? `0 0 8px rgba(${fish.auraCss}, 0.4)`
+                    ? "0 0 8px rgba(196,160,80,0.4)"
                     : "none",
                 transition: "all 0.3s ease",
               }}

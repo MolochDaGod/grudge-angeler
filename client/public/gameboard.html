@@ -244,11 +244,89 @@
     }
 
     #board {
-      padding: 50px;
+      padding: 60px 80px;
       display: flex;
       flex-direction: column;
       gap: 50px;
-      width: 4200px;
+      width: 5200px;
+      position: relative;
+    }
+
+    .deep-ocean-trench {
+      position: relative;
+      margin-top: 40px;
+      background: linear-gradient(180deg, rgba(0,5,20,0.9) 0%, rgba(0,2,10,1) 60%, rgba(0,0,5,1) 100%);
+      border: 1px solid rgba(20,40,80,0.3);
+      border-radius: 16px;
+      padding: 60px 40px 80px;
+      overflow: hidden;
+      min-height: 400px;
+    }
+    .deep-ocean-trench::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(20,60,120,0.4), transparent);
+    }
+    .trench-title {
+      text-align: center;
+      font-size: 10px;
+      letter-spacing: 6px;
+      color: rgba(40,80,140,0.5);
+      margin-bottom: 40px;
+    }
+    .trench-depth-markers {
+      position: absolute;
+      right: 20px;
+      top: 60px;
+      bottom: 60px;
+      width: 1px;
+      background: linear-gradient(180deg, rgba(20,60,120,0.2), rgba(10,30,60,0.05));
+    }
+    .trench-depth-markers::before {
+      content: '- 1000m';
+      position: absolute;
+      top: 20%;
+      right: 10px;
+      font-size: 5px;
+      color: rgba(40,80,140,0.3);
+      font-family: 'Press Start 2P', monospace;
+      white-space: nowrap;
+    }
+    .trench-depth-markers::after {
+      content: '- 5000m';
+      position: absolute;
+      bottom: 10%;
+      right: 10px;
+      font-size: 5px;
+      color: rgba(20,40,80,0.2);
+      font-family: 'Press Start 2P', monospace;
+      white-space: nowrap;
+    }
+    .hidden-treasure {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      opacity: 0.25;
+      transition: opacity 1.5s ease;
+    }
+    .hidden-treasure:hover {
+      opacity: 0.7;
+    }
+    .hidden-treasure img {
+      width: 64px;
+      height: 64px;
+      image-rendering: pixelated;
+      filter: drop-shadow(0 0 20px rgba(200,160,40,0.4));
+    }
+    .hidden-treasure .treasure-label {
+      font-size: 5px;
+      color: rgba(200,160,40,0.3);
+      margin-top: 6px;
+      letter-spacing: 2px;
     }
 
     .logo-area {
@@ -459,7 +537,7 @@
       margin-bottom: 5px;
       letter-spacing: 1px;
     }
-    .tint-indicator { font-size: 5px; color: var(--text-dim); margin-top: 4px; font-style: italic; }
+    .tint-indicator { display: none; }
     .stars { letter-spacing: 2px; font-size: 7px; }
 
     .equip-grid {
@@ -693,6 +771,7 @@
     <div id="board">
 
       <div class="logo-area">
+        <img src="/assets/grudge_logo.png" alt="Grudge Angeler" onerror="this.style.display='none'" style="max-width:120px;margin-bottom:16px;">
         <img src="/assets/logo.png" alt="Grudge Angeler" onerror="this.style.display='none'">
         <div class="board-title">GRUDGE ANGELER</div>
         <div class="board-subtitle">COMPLETE GAME BOARD &mdash; ALL SPECIES, EQUIPMENT, CHARACTERS & WORLD DATA</div>
@@ -783,10 +862,10 @@
       <div class="section ultra-section">
         <div class="section-header" style="border-bottom-color:rgba(255,64,96,0.15);">
           <div class="section-dot" style="background:var(--ultra-rare);color:var(--ultra-rare);box-shadow:0 0 12px rgba(255,64,96,0.6);"></div>
-          <div class="section-title" style="color:var(--ultra-rare);text-shadow:0 0 12px rgba(255,64,96,0.3);">THE LEGENDARY 9 &mdash; ULTRA RARE</div>
+          <div class="section-title" style="color:var(--ultra-rare);text-shadow:0 0 12px rgba(255,64,96,0.3);">THE LEGENDARY 10 &mdash; ULTRA RARE</div>
           <div class="section-count" id="ultra-count"></div>
         </div>
-        <div class="section-desc" style="color:rgba(255,180,200,0.6);">The 9 rarest fish in existence. Each radiates a unique aura and requires extreme depth, skill, and fortune to catch. Read their full lore in the <a href="/legendaries" style="color:var(--ultra-rare);text-decoration:underline;">Legendary Codex</a>.</div>
+        <div class="section-desc" style="color:rgba(255,180,200,0.6);">The 10 rarest fish in existence. Each requires extreme depth, skill, and fortune to catch. The 10th was discovered at the very seam of the ocean floor. Read their full lore in the <a href="/legendaries" style="color:var(--ultra-rare);text-decoration:underline;">Legendary Codex</a>.</div>
         <div class="fish-grid" id="ultra-fish"></div>
       </div>
 
@@ -853,7 +932,7 @@
           <div class="section-count">7 ITEMS</div>
         </div>
         <div class="section-desc" style="color:rgba(200,170,255,0.5);">
-          Special items purchasable only with "Head of Legends" &mdash; a reward earned by catching each Legendary 9 fish for the first time.
+          Special items purchasable only with "Head of Legends" &mdash; a reward earned by catching each Legendary 10 fish for the first time.
           Limited stock: 50 Beta Eggs and 50 Warlord Eggs per type worldwide.
         </div>
         <div style="color:#ec4899;font-size:9px;margin-bottom:10px;letter-spacing:1px;">BETA FISH EGGS (1 HEAD EACH)</div>
@@ -934,6 +1013,20 @@
         </div>
         <div class="section-desc">Live leaderboard backed by PostgreSQL. Scores auto-submit on each fish catch. Accessible in-game via the LEADERBOARD button.</div>
         <div class="equip-grid" id="leaderboard-grid"></div>
+      </div>
+
+      <!-- DEEP OCEAN TRENCH -->
+      <div class="deep-ocean-trench">
+        <div class="trench-depth-markers"></div>
+        <div class="trench-title">THE DEEPEST REACH</div>
+        <div style="text-align:center;font-size:6px;color:rgba(30,60,100,0.4);line-height:16px;max-width:800px;margin:0 auto 40px;">
+          Below the abyss, past where light has any meaning, lies the seam between the ocean and something older.
+          Only the most determined anglers will ever cast a line this deep. Something waits here.
+        </div>
+        <div class="hidden-treasure" data-testid="hidden-treasure-helmet">
+          <img src="/assets/legendary_helmet.png" alt="Hidden Treasure">
+          <div class="treasure-label">HOOK IT IF YOU CAN</div>
+        </div>
       </div>
 
       <div style="text-align:center;padding:30px 0;">
@@ -1024,15 +1117,16 @@ var EPIC_FISH = [
 ];
 
 var ULTRA_RARE_FISH = [
-  { name: "Phantom Minnow", img: "/assets/catch/1.png", points: 500, rarity: "ultra_rare", weight: 0.3, minDepth: 0.55, speed: 2.2, description: "A ghostly minnow wreathed in spectral flame. Blinks in and out of reality.", tint: "rgba(0,255,200,0.35)", zone: "Deep", stars: 5 },
-  { name: "Volcanic Perch", img: "/assets/catch/2.png", points: 600, rarity: "ultra_rare", weight: 0.25, minDepth: 0.6, speed: 1.6, description: "A perch superheated by deep-sea vents. Its scales glow molten orange.", tint: "rgba(255,80,0,0.4)", zone: "Deep Ocean", stars: 5 },
-  { name: "Abyssal Bass", img: "/assets/catch/3.png", points: 750, rarity: "ultra_rare", weight: 0.2, minDepth: 0.65, speed: 1.4, description: "A colossal bass from the deepest trenches. Radiates dark energy.", tint: "rgba(120,0,255,0.35)", zone: "Abyss", stars: 5 },
-  { name: "Frost Catfish", img: "/assets/catch/4.png", points: 800, rarity: "ultra_rare", weight: 0.18, minDepth: 0.6, speed: 0.9, description: "An ancient catfish encased in living ice. Freezes the water around it.", tint: "rgba(100,200,255,0.4)", zone: "Deep Ocean", stars: 5 },
-  { name: "Storm Swordfish", img: "/assets/catch/5.png", points: 1000, rarity: "ultra_rare", weight: 0.12, minDepth: 0.7, speed: 2.5, description: "A swordfish that rides lightning bolts. Crackles with electric fury.", tint: "rgba(255,255,0,0.35)", zone: "Deep Ocean", stars: 5 },
-  { name: "Celestial Whale", img: "/assets/catch/6.png", points: 2000, rarity: "ultra_rare", weight: 0.05, minDepth: 0.75, speed: 0.4, description: "A cosmic whale that swallowed a dying star. The rarest creature in existence.", tint: "rgba(255,180,255,0.3)", zone: "Abyss", stars: 5 },
-  { name: "Neon Eel", img: "/assets/catch/7.png", points: 650, rarity: "ultra_rare", weight: 0.22, minDepth: 0.55, speed: 1.9, description: "A bioluminescent eel pulsing with neon colors. Mesmerizing.", tint: "rgba(0,255,100,0.4)", zone: "Deep", stars: 5 },
-  { name: "Golden Salmon", img: "/assets/catch/8.png", points: 700, rarity: "ultra_rare", weight: 0.2, minDepth: 0.6, speed: 1.5, description: "A legendary salmon with solid gold scales. Worth a fortune.", tint: "rgba(255,200,0,0.45)", zone: "Deep Ocean", stars: 5 },
-  { name: "Shadow Leviathan", img: "/assets/catch/6.png", points: 1500, rarity: "ultra_rare", weight: 0.08, minDepth: 0.8, speed: 0.6, description: "A titanic shadow beast from beyond the abyss. Feared by all ocean life.", tint: "rgba(180,0,50,0.35)", zone: "Abyss", stars: 5 },
+  { name: "Phantom Minnow", img: "/assets/catch/1.png", points: 500, rarity: "ultra_rare", weight: 0.3, minDepth: 0.55, speed: 2.2, description: "A ghostly minnow wreathed in spectral flame. Blinks in and out of reality.", zone: "Deep", stars: 5 },
+  { name: "Volcanic Perch", img: "/assets/catch/2.png", points: 600, rarity: "ultra_rare", weight: 0.25, minDepth: 0.6, speed: 1.6, description: "A perch superheated by deep-sea vents. Its scales glow molten orange.", zone: "Deep Ocean", stars: 5 },
+  { name: "Abyssal Bass", img: "/assets/catch/3.png", points: 750, rarity: "ultra_rare", weight: 0.2, minDepth: 0.65, speed: 1.4, description: "A colossal bass from the deepest trenches. Radiates dark energy.", zone: "Abyss", stars: 5 },
+  { name: "Frost Catfish", img: "/assets/catch/4.png", points: 800, rarity: "ultra_rare", weight: 0.18, minDepth: 0.6, speed: 0.9, description: "An ancient catfish encased in living ice. Freezes the water around it.", zone: "Deep Ocean", stars: 5 },
+  { name: "Storm Swordfish", img: "/assets/catch/5.png", points: 1000, rarity: "ultra_rare", weight: 0.12, minDepth: 0.7, speed: 2.5, description: "A swordfish that rides lightning bolts. Crackles with electric fury.", zone: "Deep Ocean", stars: 5 },
+  { name: "Celestial Whale", img: "/assets/catch/6.png", points: 2000, rarity: "ultra_rare", weight: 0.05, minDepth: 0.75, speed: 0.4, description: "A cosmic whale that swallowed a dying star. The rarest creature in existence.", zone: "Abyss", stars: 5 },
+  { name: "Neon Eel", img: "/assets/catch/7.png", points: 650, rarity: "ultra_rare", weight: 0.22, minDepth: 0.55, speed: 1.9, description: "A bioluminescent eel pulsing with neon colors. Mesmerizing.", zone: "Deep", stars: 5 },
+  { name: "Golden Salmon", img: "/assets/catch/8.png", points: 700, rarity: "ultra_rare", weight: 0.2, minDepth: 0.6, speed: 1.5, description: "A legendary salmon with solid gold scales. Worth a fortune.", zone: "Deep Ocean", stars: 5 },
+  { name: "Shadow Leviathan", img: "/assets/catch/6.png", points: 1500, rarity: "ultra_rare", weight: 0.08, minDepth: 0.8, speed: 0.6, description: "A titanic shadow beast from beyond the abyss. Feared by all ocean life.", zone: "Abyss", stars: 5 },
+  { name: "The Seal at the Seam", img: "/assets/grudge_logo.png", points: 5000, rarity: "ultra_rare", weight: 0.01, minDepth: 0.99, speed: 0.1, description: "The 10th Legendary. A living sigil found at the deepest seam of reality. Those who hook it claim the ocean itself shuddered.", zone: "The Seam", stars: 5 },
 ];
 
 var BEACH_CRABS = [
@@ -1178,9 +1272,9 @@ var RARITY_INFO = [
   { title: "RARE (3 Stars)", desc: "Significantly harder to find. Deep waters required. Sell price 2.5x multiplier. Weight: 2-6% spawn chance.", color: "var(--rare)" },
   { title: "EPIC (4 Stars)", desc: "Extremely rare deep-sea creatures. Sell price 4x multiplier. Weight: 0.7-1.5% spawn chance.", color: "var(--epic)" },
   { title: "LEGENDARY (4 Stars)", desc: "The rarest normal fish. Sell price 6x multiplier. Weight: 1% spawn chance.", color: "var(--legendary)" },
-  { title: "ULTRA RARE (5 Stars)", desc: "The Legendary 9. Mythical creatures with unique auras and abilities. Sell price 10x multiplier. Weight: 0.05-0.3%.", color: "var(--ultra-rare)" },
+  { title: "ULTRA RARE (5 Stars)", desc: "The Legendary 10. Mythical creatures of impossible power. Sell price 10x multiplier. Weight: 0.01-0.3%.", color: "var(--ultra-rare)" },
   { title: "GBUX CURRENCY", desc: "In-game currency earned by selling fish. Used to buy equipment, lures, and chum. Market prices fluctuate.", color: "#2ecc71" },
-  { title: "HEAD OF LEGENDS", desc: "Special currency earned by catching each of the Legendary 9 for the first time. Used to buy BetaXGruda Eggs.", color: "#a855f7" },
+  { title: "HEAD OF LEGENDS", desc: "Special currency earned by catching each of the Legendary 10 for the first time. Used to buy BetaXGruda Eggs.", color: "#a855f7" },
 ];
 
 var LEADERBOARD_INFO = [
@@ -1287,7 +1381,7 @@ function populateBoard() {
   document.getElementById("rare-count").textContent = RARE_FISH.length + " SPECIES";
   document.getElementById("epic-count").textContent = EPIC_FISH.length + " SPECIES";
   document.getElementById("legendary-count").textContent = FISH_SPECIES.filter(function(f) { return f.rarity === "legendary"; }).length + " SPECIES";
-  document.getElementById("ultra-count").textContent = ULTRA_RARE_FISH.length + " THE LEGENDARY 9";
+  document.getElementById("ultra-count").textContent = ULTRA_RARE_FISH.length + " THE LEGENDARY 10";
   document.getElementById("crab-count").textContent = BEACH_CRABS.length + " VARIANTS";
   document.getElementById("lure-count").textContent = LURES.length + " ITEMS";
   document.getElementById("chum-count").textContent = CHUM_ITEMS.length + " ITEMS";
