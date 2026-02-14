@@ -724,6 +724,10 @@ export default function FishingGame() {
     gizmoDragging: false,
     gizmoDragOffX: 0,
     gizmoDragOffY: 0,
+    deckOffsetX: 0,
+    deckOffsetY: 0,
+    deckLegsOffsetX: 0,
+    deckLegsOffsetY: 0,
     gamePaused: false,
     traceMode: false,
     worldObjects: [
@@ -2672,10 +2676,11 @@ export default function FishingGame() {
       // Pier using Pier_Tiles.png tileset with 3D depth
       const pierTiles = getImg("/assets/objects/Pier_Tiles.png");
       const pierScale = 2.5;
-      const pierStartX = defaultFishermanX - 80;
-      const pierRight = W * 2.8;
+      const pierStartX = defaultFishermanX - 80 + s.deckOffsetX;
+      const pierRight = W * 2.8 + s.deckOffsetX;
       const deckFrontH = 18 * pierScale;
-      const deckEdgeY = pierY + 16 * pierScale;
+      const deckPierY = pierY + s.deckOffsetY;
+      const deckEdgeY = deckPierY + 16 * pierScale;
 
       const poleSpacing = 120;
       const poleSrcX = 14;
@@ -2698,7 +2703,7 @@ export default function FishingGame() {
         const uwH = dockLegsUW.height * uwScale;
         for (let px = pierStartX + 30; px < pierRight - 60; px += poleSpacing * 2) {
           ctx.globalAlpha = 0.45;
-          ctx.drawImage(dockLegsUW, px - uwW / 2 + 10, waterY + 10, uwW, uwH);
+          ctx.drawImage(dockLegsUW, px - uwW / 2 + 10 + s.deckLegsOffsetX, waterY + 10 + s.deckLegsOffsetY, uwW, uwH);
         }
         ctx.globalAlpha = 1;
       }
@@ -2763,7 +2768,7 @@ export default function FishingGame() {
         const wlW = dockLegsWL.width * wlScale;
         const wlH = dockLegsWL.height * wlScale;
         for (let px = pierStartX + 30; px < pierRight - 60; px += poleSpacing * 2) {
-          ctx.drawImage(dockLegsWL, px - wlW / 2 + 10, waterY - wlH * 0.4, wlW, wlH);
+          ctx.drawImage(dockLegsWL, px - wlW / 2 + 10 + s.deckLegsOffsetX, waterY - wlH * 0.4 + s.deckLegsOffsetY, wlW, wlH);
         }
       }
 
@@ -2783,14 +2788,14 @@ export default function FishingGame() {
         for (let px = pierStartX; px < pierRight; px += plankDrawW) {
           const drawW = Math.min(plankDrawW, pierRight - px);
           const srcW = drawW / pierScale;
-          ctx.drawImage(pierTiles, 0, 0, srcW, plankSrcH, px, pierY, drawW, plankDrawH);
+          ctx.drawImage(pierTiles, 0, 0, srcW, plankSrcH, px, deckPierY, drawW, plankDrawH);
         }
       } else {
         const pierWidth = pierRight - pierStartX;
         const plankColors = ["#6b4423", "#5a3a1a", "#7a5030", "#634020", "#6b4423"];
         for (let py = 0; py < 5; py++) {
           ctx.fillStyle = plankColors[py];
-          ctx.fillRect(pierStartX, pierY + py * 8, pierWidth, 8);
+          ctx.fillRect(pierStartX, deckPierY + py * 8, pierWidth, 8);
         }
       }
 
@@ -2800,9 +2805,9 @@ export default function FishingGame() {
           const capW = poleSrcW * poleScale + 4;
           const capH = 6;
           ctx.fillStyle = "#4a2515";
-          ctx.fillRect(px - capW / 2, pierY - 1, capW, capH);
+          ctx.fillRect(px - capW / 2, deckPierY - 1, capW, capH);
           ctx.fillStyle = "#6b3a22";
-          ctx.fillRect(px - capW / 2 + 2, pierY, capW - 4, capH - 2);
+          ctx.fillRect(px - capW / 2 + 2, deckPierY, capW - 4, capH - 2);
         }
       }
 
@@ -3216,6 +3221,31 @@ export default function FishingGame() {
           }
         }
       });
+
+      if (s.gizmoEnabled && s.adminOpen) {
+        const gPierScale = 2.5;
+        if (s.gizmoSelected === -10) {
+          const gDeckTopY = deckPierY;
+          const gDeckW = pierRight - pierStartX;
+          const gDeckH = 16 * gPierScale + 18 * gPierScale;
+          ctx.strokeStyle = "#f1c40f";
+          ctx.lineWidth = 2;
+          ctx.setLineDash([4, 4]);
+          ctx.strokeRect(pierStartX, gDeckTopY, gDeckW, gDeckH);
+          ctx.setLineDash([]);
+        } else if (s.gizmoSelected === -11) {
+          const gWaterY = H * 0.42;
+          const gLegsY = gWaterY + s.deckLegsOffsetY - 20;
+          const gLegsStartX = pierStartX + s.deckLegsOffsetX;
+          const gLegsW = pierRight - pierStartX;
+          const gLegsH = 140;
+          ctx.strokeStyle = "#f1c40f";
+          ctx.lineWidth = 2;
+          ctx.setLineDash([4, 4]);
+          ctx.strokeRect(gLegsStartX, gLegsY, gLegsW, gLegsH);
+          ctx.setLineDash([]);
+        }
+      }
 
       // NPC rendering disabled
 
@@ -5242,6 +5272,8 @@ export default function FishingGame() {
   const handleCanvasMouseDown = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     const s = stateRef.current;
     if (!s.gizmoEnabled || !s.adminOpen) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
     const worldX = e.clientX - s.cameraX;
     const worldY = e.clientY - s.cameraY;
     for (let i = s.worldObjects.length - 1; i >= 0; i--) {
@@ -5258,6 +5290,32 @@ export default function FishingGame() {
         syncUI();
         return;
       }
+    }
+    const W = canvas.width;
+    const H = canvas.height;
+    const gPierY = H * 0.38;
+    const gPierStartX = W * 0.45 - 80 + s.deckOffsetX;
+    const gPierRight = W * 2.8 + s.deckOffsetX;
+    const gDeckH = 16 * 2.5 + 18 * 2.5;
+    if (worldX >= gPierStartX && worldX <= gPierRight && worldY >= gPierY + s.deckOffsetY && worldY <= gPierY + s.deckOffsetY + gDeckH) {
+      s.gizmoSelected = -10;
+      s.gizmoDragging = true;
+      s.gizmoDragOffX = worldX - gPierStartX;
+      s.gizmoDragOffY = worldY - (gPierY + s.deckOffsetY);
+      syncUI();
+      return;
+    }
+    const gWaterY = H * 0.42;
+    const gLegsH = 120;
+    const gLegsStartX = gPierStartX + s.deckLegsOffsetX;
+    const gLegsRight = gPierRight + s.deckLegsOffsetX;
+    if (worldX >= gLegsStartX && worldX <= gLegsRight && worldY >= gWaterY + s.deckLegsOffsetY && worldY <= gWaterY + s.deckLegsOffsetY + gLegsH) {
+      s.gizmoSelected = -11;
+      s.gizmoDragging = true;
+      s.gizmoDragOffX = worldX - gLegsStartX;
+      s.gizmoDragOffY = worldY - (gWaterY + s.deckLegsOffsetY);
+      syncUI();
+      return;
     }
     s.gizmoSelected = -1;
     syncUI();
@@ -5407,11 +5465,27 @@ export default function FishingGame() {
     const s = stateRef.current;
     s.mouseX = e.clientX;
     s.mouseY = e.clientY;
-    if (s.gizmoDragging && s.gizmoSelected >= 0) {
+    if (s.gizmoDragging && s.gizmoSelected !== -1) {
       const worldX = e.clientX - s.cameraX;
       const worldY = e.clientY - s.cameraY;
-      s.worldObjects[s.gizmoSelected].x = worldX - s.gizmoDragOffX;
-      s.worldObjects[s.gizmoSelected].y = worldY - s.gizmoDragOffY;
+      if (s.gizmoSelected === -10) {
+        const canvas = canvasRef.current;
+        if (canvas) {
+          const baseStartX = canvas.width * 0.45 - 80;
+          s.deckOffsetX = (worldX - s.gizmoDragOffX) - baseStartX;
+          s.deckOffsetY = (worldY - s.gizmoDragOffY) - canvas.height * 0.38;
+        }
+      } else if (s.gizmoSelected === -11) {
+        const canvas = canvasRef.current;
+        if (canvas) {
+          const baseStartX = canvas.width * 0.45 - 80 + s.deckOffsetX;
+          s.deckLegsOffsetX = (worldX - s.gizmoDragOffX) - baseStartX;
+          s.deckLegsOffsetY = (worldY - s.gizmoDragOffY) - canvas.height * 0.42;
+        }
+      } else if (s.gizmoSelected >= 0) {
+        s.worldObjects[s.gizmoSelected].x = worldX - s.gizmoDragOffX;
+        s.worldObjects[s.gizmoSelected].y = worldY - s.gizmoDragOffY;
+      }
     }
   }, []);
 
@@ -7301,7 +7375,30 @@ export default function FishingGame() {
               <div style={{ color: "#607d8b", fontSize: 5, marginBottom: 8, lineHeight: "1.8" }}>
                 When enabled, click objects in the game world to select them. Drag to reposition.
               </div>
-              <div style={{ color: "#4fc3f7", fontSize: 6, marginBottom: 4, borderBottom: "1px solid rgba(79,195,247,0.2)", paddingBottom: 2 }}>
+              <div style={{ color: "#ff9800", fontSize: 6, marginBottom: 4, borderBottom: "1px solid rgba(255,152,0,0.2)", paddingBottom: 2 }}>
+                Structure
+              </div>
+              {[
+                { id: -10, label: "Deck (Planks + Front)", icon: "/assets/objects/Pier_Tiles.png", ox: stateRef.current.deckOffsetX, oy: stateRef.current.deckOffsetY },
+                { id: -11, label: "Deck Legs (Underwater)", icon: "/assets/dock_legs_underwater.png", ox: stateRef.current.deckLegsOffsetX, oy: stateRef.current.deckLegsOffsetY },
+              ].map(item => (
+                <div key={item.id} style={{
+                  display: "flex", alignItems: "center", gap: 6, padding: "4px 6px", marginBottom: 3,
+                  background: stateRef.current.gizmoSelected === item.id ? "rgba(241,196,15,0.1)" : "rgba(255,255,255,0.02)",
+                  border: stateRef.current.gizmoSelected === item.id ? "1px solid rgba(241,196,15,0.4)" : "1px solid rgba(255,255,255,0.05)",
+                  borderRadius: 4, cursor: "pointer",
+                }} onClick={() => { stateRef.current.gizmoSelected = item.id; syncUI(); }}>
+                  <div style={{ width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <img src={item.icon} alt={item.label} style={{ maxWidth: 24, maxHeight: 24, imageRendering: "pixelated" }} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 5, color: "#e0e0e0" }}>{item.label}</div>
+                    <div style={{ fontSize: 4, color: "#607d8b" }}>offset x:{Math.round(item.ox)} y:{Math.round(item.oy)}</div>
+                  </div>
+                </div>
+              ))}
+
+              <div style={{ color: "#4fc3f7", fontSize: 6, marginBottom: 4, marginTop: 8, borderBottom: "1px solid rgba(79,195,247,0.2)", paddingBottom: 2 }}>
                 World Objects
               </div>
               {stateRef.current.worldObjects.map((obj, i) => (
