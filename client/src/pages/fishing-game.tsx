@@ -114,14 +114,16 @@ const FISH_TYPES: FishType[] = [
   { name: "Shadow Leviathan", catchAsset: "/assets/catch/6.png", catchW: 108, catchH: 22, creatureFolder: "6", idleFrames: 6, walkFrames: 6, points: 1500, rarity: "ultra_rare", weight: 0.08, minDepth: 0.8, speed: 0.6, description: "A titanic shadow beast from beyond the abyss. Feared by all ocean life.", tint: "rgba(180,0,50,0.35)", baseScale: 1.8 },
 ];
 
+const BETA_EGG_MAX_STOCK = 50;
+const WARLORD_EGG_MAX_STOCK = 50;
 const BETAXGRUDA_EGGS = [
-  { name: "Crimson BetaXGruda Egg", img: "/assets/eggs/egg_red.png", type: "beta", description: "Contains a crimson beta fish character. Hatches with fire affinity.", cost: 1 },
-  { name: "Emerald BetaXGruda Egg", img: "/assets/eggs/egg_green.png", type: "beta", description: "Contains an emerald beta fish character. Hatches with nature affinity.", cost: 1 },
-  { name: "Sapphire BetaXGruda Egg", img: "/assets/eggs/egg_blue.png", type: "beta", description: "Contains a sapphire beta fish character. Hatches with water affinity.", cost: 1 },
-  { name: "Ivory BetaXGruda Egg", img: "/assets/eggs/egg_white.png", type: "beta", description: "Contains an ivory beta fish character. Hatches with spirit affinity.", cost: 1 },
-  { name: "Warlord Egg: Dusk Tyrant", img: "/assets/eggs/warlord_purple.png", type: "warlord", description: "Contains the Dusk Tyrant warlord. Commands shadow armies.", cost: 2 },
-  { name: "Warlord Egg: Iron Sovereign", img: "/assets/eggs/warlord_silver.png", type: "warlord", description: "Contains the Iron Sovereign warlord. Unbreakable defense.", cost: 2 },
-  { name: "Warlord Egg: Venom King", img: "/assets/eggs/warlord_green.png", type: "warlord", description: "Contains the Venom King warlord. Poisons all who oppose.", cost: 2 },
+  { name: "Crimson BetaXGruda Egg", img: "/assets/eggs/egg_red.png", type: "beta", description: "Contains a crimson beta fish character. Hatches with fire affinity.", cost: 1, maxStock: BETA_EGG_MAX_STOCK },
+  { name: "Emerald BetaXGruda Egg", img: "/assets/eggs/egg_green.png", type: "beta", description: "Contains an emerald beta fish character. Hatches with nature affinity.", cost: 1, maxStock: BETA_EGG_MAX_STOCK },
+  { name: "Sapphire BetaXGruda Egg", img: "/assets/eggs/egg_blue.png", type: "beta", description: "Contains a sapphire beta fish character. Hatches with water affinity.", cost: 1, maxStock: BETA_EGG_MAX_STOCK },
+  { name: "Ivory BetaXGruda Egg", img: "/assets/eggs/egg_white.png", type: "beta", description: "Contains an ivory beta fish character. Hatches with spirit affinity.", cost: 1, maxStock: BETA_EGG_MAX_STOCK },
+  { name: "Warlord Egg: Dusk Tyrant", img: "/assets/eggs/warlord_purple.png", type: "warlord", description: "Contains the Dusk Tyrant warlord. Commands shadow armies.", cost: 2, maxStock: WARLORD_EGG_MAX_STOCK },
+  { name: "Warlord Egg: Iron Sovereign", img: "/assets/eggs/warlord_silver.png", type: "warlord", description: "Contains the Iron Sovereign warlord. Unbreakable defense.", cost: 2, maxStock: WARLORD_EGG_MAX_STOCK },
+  { name: "Warlord Egg: Venom King", img: "/assets/eggs/warlord_green.png", type: "warlord", description: "Contains the Venom King warlord. Poisons all who oppose.", cost: 2, maxStock: WARLORD_EGG_MAX_STOCK },
 ];
 
 const CRAB_SHEET = beachCrabSheetUrl;
@@ -746,9 +748,12 @@ export default function FishingGame() {
     npcTab: "talk" as "talk" | "shop" | "request" | "mission",
     headOfLegends: 0,
     ownedEggs: Array.from({ length: BETAXGRUDA_EGGS.length }, () => false) as boolean[],
+    eggStock: BETAXGRUDA_EGGS.map(e => e.maxStock) as number[],
     legendsCaught: new Set<string>(),
     headOfLegendsNotif: "" as string,
     headOfLegendsNotifTimer: 0,
+    showPromo: false,
+    promoShown: false,
     underwaterPlants: [] as UnderwaterPlant[],
     plantsInitialized: false,
   });
@@ -837,6 +842,7 @@ export default function FishingGame() {
     })),
     headOfLegends: 0,
     ownedEggs: Array.from({ length: BETAXGRUDA_EGGS.length }, () => false) as boolean[],
+    eggStock: BETAXGRUDA_EGGS.map(e => e.maxStock) as number[],
     headOfLegendsNotif: "" as string,
     headOfLegendsNotifTimer: 0,
     showLeaderboard: false,
@@ -844,6 +850,8 @@ export default function FishingGame() {
     leaderboardData: [] as any[],
     leaderboardLoading: false,
     showInstallPrompt: false,
+    showPromo: false,
+    promoShown: false,
     underwaterPlants: [] as UnderwaterPlant[],
     plantsInitialized: false,
   });
@@ -1201,6 +1209,7 @@ export default function FishingGame() {
       npcs: s.npcs.map(n => ({ ...n, request: n.request ? { ...n.request } : undefined, mission: n.mission ? { ...n.mission } : undefined })),
       headOfLegends: s.headOfLegends,
       ownedEggs: [...s.ownedEggs],
+      eggStock: [...s.eggStock],
       headOfLegendsNotif: s.headOfLegendsNotif,
       headOfLegendsNotifTimer: s.headOfLegendsNotifTimer,
       showLeaderboard: s.showLeaderboard,
@@ -1208,6 +1217,7 @@ export default function FishingGame() {
       leaderboardData: s.leaderboardData || [],
       leaderboardLoading: s.leaderboardLoading || false,
       showInstallPrompt: s.showInstallPrompt || false,
+      showPromo: s.showPromo || false,
       underwaterPlants: s.underwaterPlants,
       plantsInitialized: s.plantsInitialized,
     });
@@ -1529,7 +1539,7 @@ export default function FishingGame() {
       s.billboardTimer += dt;
       if (s.billboardTimer > 300) {
         s.billboardTimer = 0;
-        s.billboardSlide = (s.billboardSlide + 1) % 4;
+        s.billboardSlide = (s.billboardSlide + 1) % 5;
       }
 
       const WALK_SPEED = 2.5;
@@ -1565,7 +1575,7 @@ export default function FishingGame() {
           s.gameState = "swimming";
           s.isSwimming = true;
           s.swimX = s.playerX;
-          s.swimY = pierY - FRAME_H * SCALE + 12;
+          s.swimY = pierY - FRAME_H * SCALE * 0.5 + 12;
           s.playerVY = 0;
           s.jumpVY = -4.5;
           s.jumpArc = 0;
@@ -2672,7 +2682,7 @@ export default function FishingGame() {
         ctx.fillStyle = "#ffd54f";
         ctx.font = "bold 6px 'Press Start 2P', monospace";
         
-        const slide = s.billboardSlide % 4;
+        const slide = s.billboardSlide % 5;
         if (slide === 0) {
           ctx.fillText("BOUNTIES", bbX + bbW/2, bbY + 12);
           ctx.fillStyle = "#e0e0e0";
@@ -2704,6 +2714,17 @@ export default function FishingGame() {
           ctx.font = "4px 'Press Start 2P', monospace";
           ctx.fillText("Rare fish", bbX + bbW/2, bbY + 24);
           ctx.fillText("pay more!", bbX + bbW/2, bbY + 32);
+        } else if (slide === 3) {
+          ctx.fillStyle = "#a855f7";
+          ctx.fillText("EGGS", bbX + bbW/2, bbY + 12);
+          ctx.fillStyle = "#f59e0b";
+          ctx.font = "4px 'Press Start 2P', monospace";
+          ctx.fillText("Limited 50!", bbX + bbW/2, bbY + 24);
+          ctx.fillStyle = "#ec4899";
+          ctx.font = "3px 'Press Start 2P', monospace";
+          ctx.fillText("Beta+Warlord", bbX + bbW/2, bbY + 33);
+          ctx.fillStyle = "#78909c";
+          ctx.fillText("in SHOP", bbX + bbW/2, bbY + 42);
         } else {
           ctx.fillText("GRUDGE", bbX + bbW/2, bbY + 15);
           ctx.fillStyle = "#4fc3f7";
@@ -3356,7 +3377,7 @@ export default function FishingGame() {
         if (s.jumpVY !== 0) {
           fishermanSprite = `/assets/${charFolder}/Fisherman_jump.png`;
           fishermanFrameCount = 6;
-          fishermanFrame = Math.min(Math.floor((s.swimY - waterY + 50) / 15), 5);
+          fishermanFrame = Math.max(0, Math.min(Math.floor((s.swimY - waterY + 50) / 15), 5));
         } else if (isMoving) {
           fishermanSprite = `/assets/${charFolder}/Fisherman_swim.png`;
           fishermanFrameCount = 6;
@@ -3369,7 +3390,7 @@ export default function FishingGame() {
         rodTipKey = "";
 
         const swimmerDepth = (s.swimY - waterY) / (H - waterY);
-        const swimAlpha = Math.max(0.3, 0.95 - swimmerDepth * 0.4);
+        const swimAlpha = s.jumpVY !== 0 ? 1 : Math.max(0.3, 0.95 - swimmerDepth * 0.4);
         ctx.globalAlpha = swimAlpha;
 
         const spriteW = SPRITE_FRAME_W * SCALE;
@@ -5169,6 +5190,10 @@ export default function FishingGame() {
                   s.playerX = W * 0.45;
                   for (let i = 0; i < 6; i++) spawnFish(W, waterY, H);
                 }
+                if (!s.promoShown) {
+                  s.showPromo = true;
+                  s.promoShown = true;
+                }
                 syncUI();
               }}
               style={{
@@ -5809,16 +5834,21 @@ export default function FishingGame() {
                       <span style={{ color: "#78909c", fontSize: 6, lineHeight: "1.6", padding: "0 2px" }}>
                         Earn Head of Legends by catching each Legendary 9 fish for the first time. Spend them on rare BetaXGruda Eggs.
                       </span>
-                      <div className="flex items-center gap-2 px-1 pt-1">
-                        <span style={{ color: "#ec4899", fontSize: 8, fontFamily: "'Press Start 2P', monospace", letterSpacing: 1 }}>BETA FISH EGGS</span>
-                        <div style={{ flex: 1, height: 1, background: "rgba(236,72,153,0.3)" }} />
+                      <div className="flex items-center justify-between px-1 pt-1">
+                        <div className="flex items-center gap-2">
+                          <span style={{ color: "#ec4899", fontSize: 8, fontFamily: "'Press Start 2P', monospace", letterSpacing: 1 }}>BETA FISH EGGS</span>
+                          <div style={{ flex: 1, height: 1, background: "rgba(236,72,153,0.3)" }} />
+                        </div>
+                        <span style={{ color: "#f59e0b", fontSize: 6, fontFamily: "'Press Start 2P', monospace", background: "rgba(245,158,11,0.15)", padding: "2px 6px", borderRadius: 4, border: "1px solid rgba(245,158,11,0.3)" }} data-testid="text-beta-stock">LIMITED: {BETA_EGG_MAX_STOCK} TOTAL</span>
                       </div>
                       {BETAXGRUDA_EGGS.filter(e => e.type === "beta").map((egg, i) => {
                         const eggIdx = BETAXGRUDA_EGGS.indexOf(egg);
                         const owned = uiState.ownedEggs[eggIdx];
-                        const canAfford = uiState.headOfLegends >= egg.cost;
+                        const stock = uiState.eggStock?.[eggIdx] ?? egg.maxStock;
+                        const soldOut = stock <= 0 && !owned;
+                        const canAfford = uiState.headOfLegends >= egg.cost && stock > 0;
                         return (
-                          <div key={egg.name} className="flex items-start gap-2.5 p-2.5" style={{ background: owned ? "rgba(168,85,247,0.12)" : "rgba(255,255,255,0.03)", borderRadius: 8, border: owned ? "1px solid rgba(168,85,247,0.4)" : "1px solid rgba(255,255,255,0.06)" }}>
+                          <div key={egg.name} className="flex items-start gap-2.5 p-2.5" style={{ background: owned ? "rgba(168,85,247,0.12)" : soldOut ? "rgba(255,0,0,0.04)" : "rgba(255,255,255,0.03)", borderRadius: 8, border: owned ? "1px solid rgba(168,85,247,0.4)" : soldOut ? "1px solid rgba(255,0,0,0.15)" : "1px solid rgba(255,255,255,0.06)", opacity: soldOut ? 0.5 : 1 }}>
                             <div className="flex items-center justify-center" style={{ width: 52, height: 52, background: "rgba(0,0,0,0.4)", borderRadius: 8, overflow: "hidden" }}>
                               <img src={egg.img} alt="" style={{ width: 48, height: 48, objectFit: "cover", borderRadius: 6 }} />
                             </div>
@@ -5826,11 +5856,13 @@ export default function FishingGame() {
                               <div className="flex items-center gap-2 flex-wrap">
                                 <span style={{ color: owned ? "#a855f7" : "#e0e0e0", fontSize: 8 }}>{egg.name}</span>
                                 {owned && <span style={{ color: "#a855f7", fontSize: 6, background: "rgba(168,85,247,0.2)", padding: "1px 4px", borderRadius: 3 }}>OWNED</span>}
+                                {soldOut && <span style={{ color: "#ef4444", fontSize: 6, background: "rgba(239,68,68,0.2)", padding: "1px 4px", borderRadius: 3 }}>SOLD OUT</span>}
                               </div>
                               <span style={{ color: "#78909c", fontSize: 7, lineHeight: "1.5" }}>{egg.description}</span>
+                              {!owned && !soldOut && <span style={{ color: "#f59e0b", fontSize: 6 }}>{stock} of {egg.maxStock} remaining</span>}
                             </div>
                             <div className="flex flex-col items-end gap-1">
-                              {!owned ? (
+                              {!owned && !soldOut ? (
                                 <button
                                   className="cursor-pointer px-3 py-1.5"
                                   style={{ background: canAfford ? "rgba(168,85,247,0.25)" : "rgba(255,255,255,0.05)", borderRadius: 6, border: canAfford ? "1px solid rgba(168,85,247,0.5)" : "1px solid rgba(255,255,255,0.1)", fontFamily: "'Press Start 2P', monospace", color: canAfford ? "#a855f7" : "#455a64", fontSize: 7, opacity: canAfford ? 1 : 0.5 }}
@@ -5840,6 +5872,7 @@ export default function FishingGame() {
                                     const st = stateRef.current;
                                     st.headOfLegends -= egg.cost;
                                     st.ownedEggs[eggIdx] = true;
+                                    st.eggStock[eggIdx] = Math.max(0, st.eggStock[eggIdx] - 1);
                                     syncUI();
                                   }}
                                   data-testid={`button-buy-egg-${eggIdx}`}
@@ -5851,16 +5884,21 @@ export default function FishingGame() {
                           </div>
                         );
                       })}
-                      <div className="flex items-center gap-2 px-1 pt-2">
-                        <span style={{ color: "#ef4444", fontSize: 8, fontFamily: "'Press Start 2P', monospace", letterSpacing: 1 }}>WARLORD EGGS</span>
-                        <div style={{ flex: 1, height: 1, background: "rgba(239,68,68,0.3)" }} />
+                      <div className="flex items-center justify-between px-1 pt-2">
+                        <div className="flex items-center gap-2">
+                          <span style={{ color: "#ef4444", fontSize: 8, fontFamily: "'Press Start 2P', monospace", letterSpacing: 1 }}>WARLORD EGGS</span>
+                          <div style={{ flex: 1, height: 1, background: "rgba(239,68,68,0.3)" }} />
+                        </div>
+                        <span style={{ color: "#ef4444", fontSize: 6, fontFamily: "'Press Start 2P', monospace", background: "rgba(239,68,68,0.15)", padding: "2px 6px", borderRadius: 4, border: "1px solid rgba(239,68,68,0.3)" }} data-testid="text-warlord-stock">LIMITED: {WARLORD_EGG_MAX_STOCK} TOTAL</span>
                       </div>
                       {BETAXGRUDA_EGGS.filter(e => e.type === "warlord").map((egg) => {
                         const eggIdx = BETAXGRUDA_EGGS.indexOf(egg);
                         const owned = uiState.ownedEggs[eggIdx];
-                        const canAfford = uiState.headOfLegends >= egg.cost;
+                        const stock = uiState.eggStock?.[eggIdx] ?? egg.maxStock;
+                        const soldOut = stock <= 0 && !owned;
+                        const canAfford = uiState.headOfLegends >= egg.cost && stock > 0;
                         return (
-                          <div key={egg.name} className="flex items-start gap-2.5 p-2.5" style={{ background: owned ? "rgba(239,68,68,0.12)" : "rgba(255,255,255,0.03)", borderRadius: 8, border: owned ? "1px solid rgba(239,68,68,0.4)" : "1px solid rgba(255,255,255,0.06)" }}>
+                          <div key={egg.name} className="flex items-start gap-2.5 p-2.5" style={{ background: owned ? "rgba(239,68,68,0.12)" : soldOut ? "rgba(255,0,0,0.04)" : "rgba(255,255,255,0.03)", borderRadius: 8, border: owned ? "1px solid rgba(239,68,68,0.4)" : soldOut ? "1px solid rgba(255,0,0,0.15)" : "1px solid rgba(255,255,255,0.06)", opacity: soldOut ? 0.5 : 1 }}>
                             <div className="flex items-center justify-center" style={{ width: 52, height: 52, background: "rgba(0,0,0,0.4)", borderRadius: 8, overflow: "hidden" }}>
                               <img src={egg.img} alt="" style={{ width: 48, height: 48, objectFit: "cover", borderRadius: 6 }} />
                             </div>
@@ -5868,12 +5906,14 @@ export default function FishingGame() {
                               <div className="flex items-center gap-2 flex-wrap">
                                 <span style={{ color: owned ? "#ef4444" : "#e0e0e0", fontSize: 8 }}>{egg.name}</span>
                                 {owned && <span style={{ color: "#ef4444", fontSize: 6, background: "rgba(239,68,68,0.2)", padding: "1px 4px", borderRadius: 3 }}>OWNED</span>}
+                                {soldOut && <span style={{ color: "#ef4444", fontSize: 6, background: "rgba(239,68,68,0.2)", padding: "1px 4px", borderRadius: 3 }}>SOLD OUT</span>}
                               </div>
                               <span style={{ color: "#78909c", fontSize: 7, lineHeight: "1.5" }}>{egg.description}</span>
-                              <span style={{ color: "#f59e0b", fontSize: 6 }}>Requires 2 Heads of Legends</span>
+                              {!owned && !soldOut && <span style={{ color: "#f59e0b", fontSize: 6 }}>{stock} of {egg.maxStock} remaining</span>}
+                              {!owned && !soldOut && <span style={{ color: "#f59e0b", fontSize: 6 }}>Requires 2 Heads of Legends</span>}
                             </div>
                             <div className="flex flex-col items-end gap-1">
-                              {!owned ? (
+                              {!owned && !soldOut ? (
                                 <button
                                   className="cursor-pointer px-3 py-1.5"
                                   style={{ background: canAfford ? "rgba(239,68,68,0.25)" : "rgba(255,255,255,0.05)", borderRadius: 6, border: canAfford ? "1px solid rgba(239,68,68,0.5)" : "1px solid rgba(255,255,255,0.1)", fontFamily: "'Press Start 2P', monospace", color: canAfford ? "#ef4444" : "#455a64", fontSize: 7, opacity: canAfford ? 1 : 0.5 }}
@@ -5883,6 +5923,7 @@ export default function FishingGame() {
                                     const st = stateRef.current;
                                     st.headOfLegends -= egg.cost;
                                     st.ownedEggs[eggIdx] = true;
+                                    st.eggStock[eggIdx] = Math.max(0, st.eggStock[eggIdx] - 1);
                                     syncUI();
                                   }}
                                   data-testid={`button-buy-egg-${eggIdx}`}
@@ -6902,6 +6943,90 @@ export default function FishingGame() {
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           DOWNLOAD
+        </div>
+      )}
+
+      {uiState.showPromo && (
+        <div style={{
+          position: "absolute", inset: 0, zIndex: 70,
+          background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center",
+          fontFamily: "'Press Start 2P', monospace", pointerEvents: "auto",
+        }} data-testid="promo-overlay">
+          <div style={{
+            background: "linear-gradient(135deg, rgba(15,5,30,0.98), rgba(30,10,20,0.98))",
+            border: "2px solid rgba(168,85,247,0.4)", borderRadius: 16, padding: 0,
+            width: "min(480px, 92vw)", maxHeight: "85vh", display: "flex", flexDirection: "column",
+            boxShadow: "0 0 80px rgba(168,85,247,0.15), 0 0 40px rgba(239,68,68,0.1)",
+            overflow: "hidden",
+          }}>
+            <div style={{ background: "linear-gradient(90deg, rgba(168,85,247,0.2), rgba(239,68,68,0.2))", padding: "16px 24px", borderBottom: "1px solid rgba(168,85,247,0.3)" }}>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ color: "#a855f7", fontSize: 14, letterSpacing: 3, marginBottom: 6 }}>LIMITED EDITION</div>
+                <div style={{ color: "#f59e0b", fontSize: 10, letterSpacing: 2 }}>BetaXGruda Eggs & Warlords</div>
+              </div>
+            </div>
+
+            <div style={{ padding: "20px 24px", overflowY: "auto" }}>
+              <div style={{ display: "flex", gap: 16, marginBottom: 20 }}>
+                <div style={{ flex: 1, background: "rgba(168,85,247,0.08)", borderRadius: 10, border: "1px solid rgba(168,85,247,0.25)", padding: 14, textAlign: "center" }}>
+                  <div style={{ color: "#ec4899", fontSize: 10, marginBottom: 6 }}>BETA EGGS</div>
+                  <div style={{ color: "#f59e0b", fontSize: 18, marginBottom: 4 }}>{BETA_EGG_MAX_STOCK}</div>
+                  <div style={{ color: "#78909c", fontSize: 6, lineHeight: "1.8" }}>Only {BETA_EGG_MAX_STOCK} of each<br />beta fish egg exist</div>
+                  <div style={{ marginTop: 8, display: "flex", justifyContent: "center", gap: 6 }}>
+                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#ef4444" }} />
+                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#22c55e" }} />
+                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#3b82f6" }} />
+                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#e0e0e0" }} />
+                  </div>
+                  <div style={{ color: "#78909c", fontSize: 5, marginTop: 6 }}>Crimson / Emerald / Sapphire / Ivory</div>
+                </div>
+                <div style={{ flex: 1, background: "rgba(239,68,68,0.08)", borderRadius: 10, border: "1px solid rgba(239,68,68,0.25)", padding: 14, textAlign: "center" }}>
+                  <div style={{ color: "#ef4444", fontSize: 10, marginBottom: 6 }}>WARLORDS</div>
+                  <div style={{ color: "#f59e0b", fontSize: 18, marginBottom: 4 }}>{WARLORD_EGG_MAX_STOCK}</div>
+                  <div style={{ color: "#78909c", fontSize: 6, lineHeight: "1.8" }}>Only {WARLORD_EGG_MAX_STOCK} of each<br />warlord egg exist</div>
+                  <div style={{ marginTop: 8, display: "flex", justifyContent: "center", gap: 6 }}>
+                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#a855f7" }} />
+                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#94a3b8" }} />
+                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#16a34a" }} />
+                  </div>
+                  <div style={{ color: "#78909c", fontSize: 5, marginTop: 6 }}>Dusk Tyrant / Iron Sovereign / Venom King</div>
+                </div>
+              </div>
+
+              <div style={{ background: "rgba(245,158,11,0.08)", borderRadius: 8, border: "1px solid rgba(245,158,11,0.25)", padding: 12, marginBottom: 16 }}>
+                <div style={{ color: "#f59e0b", fontSize: 8, marginBottom: 6, textAlign: "center" }}>HOW TO EARN</div>
+                <div style={{ color: "#b0bec5", fontSize: 6, lineHeight: "2", textAlign: "center" }}>
+                  Catch each of the <span style={{ color: "#ff4060" }}>Legendary 9</span> fish species for the first time to earn
+                  <span style={{ color: "#a855f7" }}> Head of Legends</span> currency.<br />
+                  Spend them in the <span style={{ color: "#f1c40f" }}>SHOP</span> under the EGGS tab.
+                </div>
+              </div>
+
+              <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: 8, border: "1px solid rgba(255,255,255,0.06)", padding: 12, marginBottom: 16 }}>
+                <div style={{ color: "#78909c", fontSize: 6, lineHeight: "1.8", textAlign: "center" }}>
+                  Beta eggs cost <span style={{ color: "#a855f7" }}>1 Head</span> each.<br />
+                  Warlord eggs cost <span style={{ color: "#ef4444" }}>2 Heads</span> each.<br />
+                  Once sold out, they are <span style={{ color: "#f59e0b" }}>gone forever</span>.
+                </div>
+              </div>
+            </div>
+
+            <div style={{ padding: "12px 24px 20px", textAlign: "center", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+              <button
+                className="cursor-pointer"
+                onClick={(e) => { e.stopPropagation(); stateRef.current.showPromo = false; syncUI(); }}
+                style={{
+                  background: "linear-gradient(135deg, rgba(168,85,247,0.3), rgba(239,68,68,0.3))",
+                  border: "2px solid rgba(168,85,247,0.5)", borderRadius: 10,
+                  padding: "10px 40px", color: "#e0e0e0", fontSize: 10,
+                  fontFamily: "'Press Start 2P', monospace", letterSpacing: 2,
+                }}
+                data-testid="button-close-promo"
+              >
+                ENTER THE WATERS
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
