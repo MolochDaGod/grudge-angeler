@@ -6,12 +6,30 @@ Grudge Angeler is a pixel art fishing game developed with HTML5 Canvas and React
 ## User Preferences
 I want to prioritize iterative development. I prefer detailed explanations for complex features. Ask before making major changes to the core game loop or architectural decisions. Do not make changes to files in the `client/public/assets/` folder.
 
+## Recent Changes
+- **2026-02-14:** Updated Agent skill file with comprehensive project documentation
+- **2026-02-14:** Added faction icon backgrounds on character selection screen
+- **2026-02-14:** Mobile touch controls: bottom action bar, D-pad, Dive/E buttons, onTouchCancel handlers
+- **2026-02-14:** UI repositioning for mobile (hotbar, prompts, reel bar offset higher)
+- **2026-02-14:** Touch-friendly prompt text (adapts instructions for mobile vs desktop)
+- **2026-02-14:** Dock underwater structure visualization in gameboard
+
 ## System Architecture
 The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a fullscreen, immersive experience. The backend is a minimal Express server primarily for serving static assets, as game state is managed client-side in-memory.
 
+### Key Files
+- `client/src/pages/fishing-game.tsx` - Main game (7700+ lines, all game logic + canvas + UI overlays)
+- `client/src/pages/legendary-codex.tsx` - Legendary 10 lore page (/legendaries route)
+- `client/src/App.tsx` - Router: / = FishingGame, /legendaries = LegendaryCodex
+- `client/src/lib/grudge-sdk.ts` - GrudgeSDK client for Grudge Studio ObjectStore API
+- `client/public/gameboard.html` - Standalone interactive reference board
+- `server/routes.ts` - Express API routes (leaderboard)
+- `server/storage.ts` - IStorage interface + DatabaseStorage
+- `shared/schema.ts` - Drizzle ORM schema (users, leaderboard_entries)
+
 **UI/UX and Design:**
 - **Pixel Art:** All game assets are pixel art, maintaining a consistent aesthetic.
-- **Character Selection:** HTML overlay for character variant selection (Classic, Ocean Blue, Crimson) and username input.
+- **Character Selection:** HTML overlay for faction variant selection (Fabled/Legion/Crusade) with faction icon backgrounds behind each fisherman, and username input.
 - **Hotbar System:** A 5-slot hotbar (Rod, Lure/Bait, Chum, Net, Binoculars) provides quick access to equipment.
 - **Shop Interface:** Full-screen shop overlay for purchasing rods, baits, and lures.
 - **Billboard System:** Canvas-rendered sign near the fishing hut rotates through bounties, records, deals, and the game logo.
@@ -19,13 +37,14 @@ The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a f
 - **UI Icons:** Consistent 32x32 pixel icons for all UI elements.
 - **Weather Effects:** Dynamic weather (clear, cloudy, rain, storm, fog) with visual elements like rain particles, lightning, and murky water effects.
 - **Celestial Events:** Rare celestial events (Red Sun, Green Moon, Tentacle Sun, Blood Moon) with unique visual phenomena like aurora borealis.
+- **Mobile Controls:** Touch-friendly bottom action bar (Cast, Reel, Release, Force, Resilience), D-pad for movement, Dive and E (interact) buttons. All with onTouchCancel safety. UI elements reposition on mobile to avoid overlap.
 
 **Technical Implementations & Features:**
 - **Game Flow:** Structured progression from title screen, character select, idle, casting, waiting, bite, reeling, to caught, and shop interactions.
 - **Reeling Minigame:** A Palworld-style minigame with a horizontal bar, moving catch zone, and mechanics affected by rod stats. Includes Force Bar (spacebar active reel) and Resilience Bar (S-key for line letting).
 - **Net Tool:** An alternative fishing method with specific casting mechanics, auto-catching, cooldowns, and a chance to catch chum items.
 - **Sprite Orientation:** Standardized sprite conventions for character facing, movement, and mirroring.
-- **Character System:** Three selectable character variants, each with unique recolored sprite sets.
+- **Character System:** Three selectable factions (Fabled, Legion, Crusade), each with unique recolored sprite sets and faction icons.
 - **Fish Species:** 17 distinct fish species across 5 rarity tiers (common, uncommon, rare, legendary, ultra_rare), including 10 ultra-rare variants (The Legendary 10) with unique visual traits and spawn mechanics. The 10th legendary "The Seal at the Seam" uses the grudge skull logo as its image.
 - **Equipment System:** Diverse range of 5 rods, 5 live baits, 11 artificial lures, and 22 chum items, each affecting gameplay mechanics.
 - **Chum System:** Throwable items that boost fish spawns, rarity, and bite speed, activated via the hotbar.
@@ -54,8 +73,14 @@ The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a f
 
 ## Database
 - **PostgreSQL (Neon-backed):** Stores leaderboard entries. Schema defined in `shared/schema.ts` using Drizzle ORM.
-- **Tables:** `users` (unused placeholder), `leaderboard_entries` (id, player_name, category, fish_name, fish_rarity, value, score, created_at).
+- **Tables:** `users` (placeholder for Grudge ID login), `leaderboard_entries` (id, player_name, category, fish_name, fish_rarity, value, score, created_at).
 - **API Routes:** `GET /api/leaderboard/:category` (fetch top entries), `POST /api/leaderboard` (submit new entry).
+
+## Grudge Studio Integration
+- **GrudgeSDK** (`client/src/lib/grudge-sdk.ts`): Client for Grudge Studio ObjectStore API at `https://grudge-studio.github.io/ObjectStore`
+- Fetches weapons, materials, armor, consumables from static JSON API with 5-minute cache
+- Database schemas referenced: `studio_core` (accounts, sessions, api_keys), `warlord_crafting` (characters, inventory, battles)
+- **Planned - Grudge ID:** Server-side authentication system linking players to Grudge Studio accounts, providing persistent wallets (gbux + Head of Legends), server-side save state, and cross-game identity
 
 ## External Dependencies
 - **React:** Frontend JavaScript library for building user interfaces.
@@ -63,3 +88,5 @@ The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a f
 - **HTML5 Canvas:** Core technology for 2D graphics rendering.
 - **Drizzle ORM:** TypeScript ORM for PostgreSQL database management.
 - **pg:** PostgreSQL client for Node.js.
+- **wouter:** Lightweight React router (routes: /, /legendaries).
+- **@tanstack/react-query:** Data fetching and caching for leaderboard API.
