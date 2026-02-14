@@ -612,6 +612,7 @@ export default function FishingGame() {
     showBoatPrompt: false,
     nearBoat: false,
     inBoat: false,
+    boatOwned: false,
     boatStanding: false,
     boatRowing: false,
     boatX: 0,
@@ -786,6 +787,7 @@ export default function FishingGame() {
     showBoatPrompt: false,
     nearBoat: false,
     inBoat: false,
+    boatOwned: false,
     selectedCharacter: 0,
     characterSelected: false,
     playerName: "",
@@ -1163,6 +1165,7 @@ export default function FishingGame() {
       showBoatPrompt: s.showBoatPrompt,
       nearBoat: s.nearBoat,
       inBoat: s.inBoat,
+      boatOwned: s.boatOwned,
       selectedCharacter: s.selectedCharacter,
       characterSelected: s.characterSelected,
       playerName: s.playerName,
@@ -3157,6 +3160,33 @@ export default function FishingGame() {
       const boatBob = boatBobVal;
       const boatDrawX = s.inBoat || s.gameState === "boarding" ? s.boatX : pierStartX - 74 * boatScale - 30;
       drawImage("/assets/objects/Boat.png", boatDrawX, waterY - 10 * boatScale + boatBob, boatScale);
+
+      if (!s.boatOwned && !s.inBoat && s.gameState !== "boarding") {
+        ctx.save();
+        const signW = 58;
+        const signH = 30;
+        const signX = boatDrawX + (74 * boatScale) / 2 - signW / 2;
+        const signY = waterY - 10 * boatScale + boatBob - signH + 8;
+
+        ctx.fillStyle = "rgba(60,40,20,0.92)";
+        ctx.fillRect(signX, signY, signW, signH);
+        ctx.strokeStyle = "#8B6914";
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(signX, signY, signW, signH);
+
+        ctx.fillStyle = "#f1c40f";
+        ctx.font = "bold 7px 'Press Start 2P', monospace";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("4 SALE", signX + signW / 2, signY + 10);
+        ctx.fillStyle = "#2ecc71";
+        ctx.font = "bold 8px 'Press Start 2P', monospace";
+        ctx.fillText("$400", signX + signW / 2, signY + 22);
+
+        ctx.restore();
+        ctx.textAlign = "left";
+        ctx.textBaseline = "alphabetic";
+      }
 
       // Decorative objects on pier - positioned from worldObjects array
       s.worldObjects.forEach((obj, i) => {
@@ -5971,7 +6001,9 @@ export default function FishingGame() {
           {/* Boat Prompt */}
           {uiState.nearBoat && !uiState.showBoatPrompt && (
             <div className="absolute bottom-24 left-1/2 -translate-x-1/2 text-center px-5 py-3 flex flex-col items-center gap-2" style={{ background: "rgba(8,15,25,0.9)", borderRadius: 10, border: "1px solid rgba(241,196,15,0.4)", zIndex: 50 }} data-testid="boat-hint">
-              <span style={{ color: "#f1c40f", fontSize: 10, textShadow: "1px 1px 0 #000" }}>Press E to enter boat</span>
+              <span style={{ color: "#f1c40f", fontSize: 10, textShadow: "1px 1px 0 #000" }}>
+                {isMobile ? "Tap E to " : "Press E to "}{uiState.boatOwned ? "enter boat" : "inspect boat"}
+              </span>
             </div>
           )}
 
@@ -5979,40 +6011,90 @@ export default function FishingGame() {
             <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 60, background: "rgba(0,0,0,0.4)" }} data-testid="boat-prompt-overlay">
               <div className="flex flex-col items-center gap-4 px-8 py-6" style={{ background: "rgba(8,15,25,0.95)", borderRadius: 12, border: "1px solid rgba(241,196,15,0.5)", minWidth: 220 }} data-testid="boat-prompt">
                 <img src="/assets/objects/Boat.png" alt="" style={{ width: 80, imageRendering: "pixelated" }} />
-                <span style={{ color: "#f1c40f", fontSize: 12, textShadow: "1px 1px 0 #000" }}>Enter Boat?</span>
-                <div className="flex gap-4">
-                  <button
-                    className="cursor-pointer px-5 py-2"
-                    style={{ background: "rgba(46,204,113,0.25)", borderRadius: 8, border: "1px solid rgba(46,204,113,0.5)", fontFamily: "'Press Start 2P', monospace", color: "#2ecc71", fontSize: 10 }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const s = stateRef.current;
-                      const canvas = canvasRef.current;
-                      s.showBoatPrompt = false;
-                      s.gameState = "boarding";
-                      s.boardingPhase = 0;
-                      s.boardingTimer = 0;
-                      s.playerVY = 0;
-                      s.jumpVY = 0;
-                      if (canvas) {
-                        const pierStartX = canvas.width * 0.45 - 80;
-                        s.boatX = pierStartX - 74 * 2.5 - 30;
-                      }
-                      syncUI();
-                    }}
-                    data-testid="button-boat-yes"
-                  >
-                    Yes
-                  </button>
-                  <button
-                    className="cursor-pointer px-5 py-2"
-                    style={{ background: "rgba(231,76,60,0.25)", borderRadius: 8, border: "1px solid rgba(231,76,60,0.5)", fontFamily: "'Press Start 2P', monospace", color: "#e74c3c", fontSize: 10 }}
-                    onClick={(e) => { e.stopPropagation(); stateRef.current.showBoatPrompt = false; syncUI(); }}
-                    data-testid="button-boat-no"
-                  >
-                    No
-                  </button>
-                </div>
+                {uiState.boatOwned ? (
+                  <>
+                    <span style={{ color: "#f1c40f", fontSize: 12, textShadow: "1px 1px 0 #000" }}>Enter Boat?</span>
+                    <div className="flex gap-4">
+                      <button
+                        className="cursor-pointer px-5 py-2"
+                        style={{ background: "rgba(46,204,113,0.25)", borderRadius: 8, border: "1px solid rgba(46,204,113,0.5)", fontFamily: "'Press Start 2P', monospace", color: "#2ecc71", fontSize: 10 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const s = stateRef.current;
+                          const canvas = canvasRef.current;
+                          s.showBoatPrompt = false;
+                          s.gameState = "boarding";
+                          s.boardingPhase = 0;
+                          s.boardingTimer = 0;
+                          s.playerVY = 0;
+                          s.jumpVY = 0;
+                          if (canvas) {
+                            const pierStartX = canvas.width * 0.45 - 80;
+                            s.boatX = pierStartX - 74 * 2.5 - 30;
+                          }
+                          syncUI();
+                        }}
+                        data-testid="button-boat-yes"
+                      >
+                        Yes
+                      </button>
+                      <button
+                        className="cursor-pointer px-5 py-2"
+                        style={{ background: "rgba(231,76,60,0.25)", borderRadius: 8, border: "1px solid rgba(231,76,60,0.5)", fontFamily: "'Press Start 2P', monospace", color: "#e74c3c", fontSize: 10 }}
+                        onClick={(e) => { e.stopPropagation(); stateRef.current.showBoatPrompt = false; syncUI(); }}
+                        data-testid="button-boat-no"
+                      >
+                        No
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <span style={{ color: "#f1c40f", fontSize: 11, textShadow: "1px 1px 0 #000" }}>Buy this boat?</span>
+                    <div className="flex items-center gap-2" style={{ marginTop: -4 }}>
+                      <img src="/assets/icons/gbux.png" alt="gbux" style={{ width: 14, height: 14 }} />
+                      <span style={{ color: "#2ecc71", fontSize: 14, fontFamily: "'Press Start 2P', monospace" }}>400</span>
+                    </div>
+                    <span style={{ color: "#78909c", fontSize: 8, textShadow: "1px 1px 0 #000" }}>
+                      You have: {uiState.money} gbux
+                    </span>
+                    <div className="flex gap-4">
+                      <button
+                        className="cursor-pointer px-5 py-2"
+                        style={{
+                          background: uiState.money >= 400 ? "rgba(46,204,113,0.25)" : "rgba(120,120,120,0.25)",
+                          borderRadius: 8,
+                          border: uiState.money >= 400 ? "1px solid rgba(46,204,113,0.5)" : "1px solid rgba(120,120,120,0.4)",
+                          fontFamily: "'Press Start 2P', monospace",
+                          color: uiState.money >= 400 ? "#2ecc71" : "#78909c",
+                          fontSize: 10,
+                          opacity: uiState.money >= 400 ? 1 : 0.6,
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const s = stateRef.current;
+                          if (s.money < 400) return;
+                          s.money -= 400;
+                          s.boatOwned = true;
+                          s.showBoatPrompt = false;
+                          syncUI();
+                        }}
+                        disabled={uiState.money < 400}
+                        data-testid="button-boat-buy"
+                      >
+                        {uiState.money >= 400 ? "Buy" : "Can't afford"}
+                      </button>
+                      <button
+                        className="cursor-pointer px-5 py-2"
+                        style={{ background: "rgba(231,76,60,0.25)", borderRadius: 8, border: "1px solid rgba(231,76,60,0.5)", fontFamily: "'Press Start 2P', monospace", color: "#e74c3c", fontSize: 10 }}
+                        onClick={(e) => { e.stopPropagation(); stateRef.current.showBoatPrompt = false; syncUI(); }}
+                        data-testid="button-boat-no"
+                      >
+                        No
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           )}
