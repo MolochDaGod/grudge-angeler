@@ -329,6 +329,48 @@
       letter-spacing: 2px;
     }
 
+    .dock-underwater-structure {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 0;
+      padding: 0;
+      margin: -20px 0;
+      overflow: hidden;
+    }
+    .dock-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+    .dock-column img {
+      image-rendering: pixelated;
+      display: block;
+      opacity: 0.85;
+    }
+    .dock-waterline-img {
+      width: 176px;
+      height: 50px;
+    }
+    .dock-legs-img {
+      width: 180px;
+      height: auto;
+    }
+    .dock-full-structure {
+      width: 322px;
+      height: auto;
+    }
+    .dock-underwater-label {
+      text-align: center;
+      font-size: 6px;
+      letter-spacing: 4px;
+      color: rgba(79,195,247,0.25);
+      margin-top: 10px;
+      margin-bottom: -10px;
+    }
+
     .logo-area {
       text-align: center;
       padding: 30px 0;
@@ -806,6 +848,32 @@
         </div>
         <div class="section-desc">The world is divided into 8 horizontally scrolling scenes, from sandy beach to abyssal depths. Fish rarity and size increase with depth.</div>
         <div class="world-map" id="world-zones"></div>
+      </div>
+
+      <!-- DOCK UNDERWATER STRUCTURE -->
+      <div class="dock-underwater-label">PIER SUPPORT STRUCTURE &mdash; UNDERWATER VIEW</div>
+      <div class="dock-underwater-structure" data-testid="dock-underwater-structure">
+        <div class="dock-column">
+          <img src="/assets/dock_legs_waterline.png" alt="Dock waterline" class="dock-waterline-img">
+          <img src="/assets/dock_legs_underwater.png" alt="Dock legs" class="dock-legs-img">
+          <img src="/assets/dock_legs_underwater.png" alt="Dock legs" class="dock-legs-img">
+        </div>
+        <div class="dock-column" style="margin: 0 -8px;">
+          <img src="/assets/dock_structure_full.png" alt="Dock structure" class="dock-full-structure">
+        </div>
+        <div class="dock-column">
+          <img src="/assets/dock_legs_waterline.png" alt="Dock waterline" class="dock-waterline-img">
+          <img src="/assets/dock_legs_underwater.png" alt="Dock legs" class="dock-legs-img">
+          <img src="/assets/dock_legs_underwater.png" alt="Dock legs" class="dock-legs-img">
+        </div>
+        <div class="dock-column" style="margin: 0 -8px;">
+          <img src="/assets/dock_structure_full.png" alt="Dock structure" class="dock-full-structure">
+        </div>
+        <div class="dock-column">
+          <img src="/assets/dock_legs_waterline.png" alt="Dock waterline" class="dock-waterline-img">
+          <img src="/assets/dock_legs_underwater.png" alt="Dock legs" class="dock-legs-img">
+          <img src="/assets/dock_legs_underwater.png" alt="Dock legs" class="dock-legs-img">
+        </div>
       </div>
 
       <!-- COMMON -->
