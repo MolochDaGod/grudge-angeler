@@ -1097,6 +1097,9 @@ export default function FishingGame() {
       "/assets/objects/Pier_Tiles.png",
       "/assets/objects/Fishing_hut.png",
       "/assets/objects/Stay.png",
+      "/assets/dock_structure_full.png",
+      "/assets/dock_legs_waterline.png",
+      "/assets/dock_legs_underwater.png",
       "/assets/objects/Fish-rod.png",
       "/assets/objects/Grass1.png",
       "/assets/objects/Grass2.png",
@@ -2662,15 +2665,112 @@ export default function FishingGame() {
         ctx.beginPath(); ctx.arc(dfX, dfY, dfR, 0, Math.PI * 2); ctx.fill();
       }
 
-      // Pier using Pier_Tiles.png tileset
+      // Pier using Pier_Tiles.png tileset with 3D depth
       const pierTiles = getImg("/assets/objects/Pier_Tiles.png");
       const pierScale = 2.5;
       const pierStartX = defaultFishermanX - 80;
       const pierRight = W * 2.8;
-      const pierThickness = 20 * pierScale;
+      const deckFrontH = 18 * pierScale;
+      const deckEdgeY = pierY + 16 * pierScale;
 
+      const poleSpacing = 120;
+      const poleSrcX = 14;
+      const poleSrcY = 20;
+      const poleSrcW = 10;
+      const poleSrcH = 100;
+      const poleScale = pierScale * 1.1;
+
+      const hutScale = 2.2;
+      const hutW = 192 * hutScale;
+      const hutH = 122 * hutScale;
+      const hutX = W * 0.85;
+      const hutY = pierY - hutH + 50 * hutScale;
+
+      // LAYER 1: Dock legs underwater (deepest, behind everything)
+      const dockLegsUW = getImg("/assets/dock_legs_underwater.png");
+      if (dockLegsUW && dockLegsUW.complete) {
+        const uwScale = 0.8;
+        const uwW = dockLegsUW.width * uwScale;
+        const uwH = dockLegsUW.height * uwScale;
+        for (let px = pierStartX + 30; px < pierRight - 60; px += poleSpacing * 2) {
+          ctx.globalAlpha = 0.45;
+          ctx.drawImage(dockLegsUW, px - uwW / 2 + 10, waterY + 10, uwW, uwH);
+        }
+        ctx.globalAlpha = 1;
+      }
+
+      // LAYER 2: Support poles (behind deck, going from deck edge down to water)
       if (pierTiles && pierTiles.complete) {
-        // Draw pier planks using the top portion of the tileset (horizontal planks)
+        const poleTopY = deckEdgeY + 4;
+        const poleBottomY = waterY + 60;
+        for (let px = pierStartX + 30; px < pierRight - 20; px += poleSpacing) {
+          const poleDrawW = poleSrcW * poleScale;
+          const poleDrawH = poleBottomY - poleTopY;
+          ctx.drawImage(pierTiles, poleSrcX, poleSrcY, poleSrcW, poleSrcH,
+            px - poleDrawW / 2, poleTopY, poleDrawW, poleDrawH);
+        }
+      }
+
+      // LAYER 3: Cross-beams between poles (behind deck face, structural)
+      if (pierTiles && pierTiles.complete) {
+        const beamY = deckEdgeY + deckFrontH * 0.5;
+        const beamSrcW = 64;
+        const beamSrcH = 6;
+        for (let px = pierStartX + 30; px < pierRight - poleSpacing; px += poleSpacing) {
+          const beamDrawW = poleSpacing;
+          const beamDrawH = beamSrcH * pierScale * 0.7;
+          ctx.drawImage(pierTiles, 0, 0, beamSrcW, beamSrcH,
+            px, beamY, beamDrawW, beamDrawH);
+        }
+      }
+
+      // LAYER 4: 3D deck front face (the visible thickness/edge of the deck)
+      ctx.fillStyle = "#5a3520";
+      ctx.fillRect(pierStartX, deckEdgeY, pierRight - pierStartX, deckFrontH);
+      ctx.fillStyle = "#4a2a18";
+      ctx.fillRect(pierStartX, deckEdgeY, pierRight - pierStartX, 3);
+      ctx.fillStyle = "#3a2010";
+      ctx.fillRect(pierStartX, deckEdgeY + deckFrontH - 3, pierRight - pierStartX, 3);
+      const frontPlankW = 28;
+      for (let fx = pierStartX; fx < pierRight; fx += frontPlankW) {
+        ctx.fillStyle = (Math.floor((fx - pierStartX) / frontPlankW) % 2 === 0) ? "rgba(0,0,0,0.06)" : "rgba(255,255,255,0.03)";
+        ctx.fillRect(fx, deckEdgeY, Math.min(frontPlankW, pierRight - fx), deckFrontH);
+        ctx.fillStyle = "rgba(0,0,0,0.15)";
+        ctx.fillRect(fx, deckEdgeY, 1, deckFrontH);
+      }
+
+      // LAYER 5: Dock structure panel in front of fishing hut (3D understructure)
+      const dockStructImg = getImg("/assets/dock_structure_full.png");
+      if (dockStructImg && dockStructImg.complete) {
+        const dsFrontScale = 0.85;
+        const dsW = dockStructImg.width * dsFrontScale;
+        const dsH = dockStructImg.height * dsFrontScale;
+        const dsX = hutX + hutW * 0.1;
+        const dsY = deckEdgeY + deckFrontH - 4;
+        ctx.globalAlpha = 0.8;
+        ctx.drawImage(dockStructImg, dsX, dsY, dsW, dsH);
+        ctx.globalAlpha = 1;
+      }
+
+      // LAYER 6: Dock legs at waterline (overlap water surface)
+      const dockLegsWL = getImg("/assets/dock_legs_waterline.png");
+      if (dockLegsWL && dockLegsWL.complete) {
+        const wlScale = 1.6;
+        const wlW = dockLegsWL.width * wlScale;
+        const wlH = dockLegsWL.height * wlScale;
+        for (let px = pierStartX + 30; px < pierRight - 60; px += poleSpacing * 2) {
+          ctx.drawImage(dockLegsWL, px - wlW / 2 + 10, waterY - wlH * 0.4, wlW, wlH);
+        }
+      }
+
+      // LAYER 7: Pier shadow on water surface
+      ctx.globalAlpha = 0.12;
+      ctx.fillStyle = "#000000";
+      ctx.fillRect(pierStartX, waterY, pierRight - pierStartX, 12);
+      ctx.globalAlpha = 1;
+
+      // LAYER 8: Deck surface planks (on top, the walkable surface)
+      if (pierTiles && pierTiles.complete) {
         const plankSrcW = 64;
         const plankSrcH = 16;
         const plankDrawW = plankSrcW * pierScale;
@@ -2681,7 +2781,6 @@ export default function FishingGame() {
           const srcW = drawW / pierScale;
           ctx.drawImage(pierTiles, 0, 0, srcW, plankSrcH, px, pierY, drawW, plankDrawH);
         }
-
       } else {
         const pierWidth = pierRight - pierStartX;
         const plankColors = ["#6b4423", "#5a3a1a", "#7a5030", "#634020", "#6b4423"];
@@ -2691,17 +2790,19 @@ export default function FishingGame() {
         }
       }
 
-      // Pier shadow in water
-      ctx.globalAlpha = 0.12;
-      ctx.fillStyle = "#000000";
-      ctx.fillRect(pierStartX, waterY, pierRight - pierStartX, 12);
-      ctx.globalAlpha = 1;
+      // LAYER 9: Pole caps on deck surface (topmost deck element)
+      if (pierTiles && pierTiles.complete) {
+        for (let px = pierStartX + 30; px < pierRight - 20; px += poleSpacing) {
+          const capW = poleSrcW * poleScale + 4;
+          const capH = 6;
+          ctx.fillStyle = "#4a2515";
+          ctx.fillRect(px - capW / 2, pierY - 1, capW, capH);
+          ctx.fillStyle = "#6b3a22";
+          ctx.fillRect(px - capW / 2 + 2, pierY, capW - 4, capH - 2);
+        }
+      }
 
-      const hutScale = 2.2;
-      const hutW = 192 * hutScale;
-      const hutH = 122 * hutScale;
-      const hutX = W * 0.85;
-      const hutY = pierY - hutH + 50 * hutScale;
+      // LAYER 10: Fishing hut (on top of everything)
       drawImage("/assets/objects/Fishing_hut.png", hutX, hutY, hutScale);
 
       // Digital Billboard - large display near hut
