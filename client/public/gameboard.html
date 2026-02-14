@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Grudge Angeler - Game Board</title>
-  <meta name="description" content="Complete game board for Grudge Angeler showing all fish species, equipment, and game data with interactive zoom.">
+  <title>Grudge Angeler - Complete Game Board</title>
+  <meta name="description" content="Complete game board for Grudge Angeler showing all fish species, equipment, characters, world zones, weather, celestial events, NPCs, and every game system.">
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -44,48 +44,45 @@
       z-index: 0;
       pointer-events: none;
       overflow: hidden;
-      background:
-        radial-gradient(ellipse at 30% 20%, rgba(10,60,120,0.5) 0%, transparent 60%),
-        radial-gradient(ellipse at 70% 80%, rgba(5,30,80,0.4) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 100%, rgba(0,20,60,0.6) 0%, transparent 40%),
-        linear-gradient(180deg, #040c1e 0%, #061830 30%, #0a2540 60%, #071e38 100%);
     }
-
-    .bg-coral {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 220px;
-      z-index: 0;
-      pointer-events: none;
-      opacity: 0.08;
-      background: url('/assets/underwater_bg.png') repeat-x bottom;
-      background-size: auto 220px;
-      filter: hue-rotate(15deg) saturate(0.5);
+    #ocean-bg-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.18;
+      filter: blur(2px) saturate(0.7) hue-rotate(-10deg);
+    }
+    #ocean-bg-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 30% 20%, rgba(10,60,120,0.6) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 80%, rgba(5,30,80,0.5) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 100%, rgba(0,20,60,0.7) 0%, transparent 40%),
+        linear-gradient(180deg, rgba(4,12,30,0.85) 0%, rgba(6,24,48,0.7) 30%, rgba(10,37,64,0.6) 60%, rgba(7,30,56,0.85) 100%);
     }
 
     @keyframes ray1 {
-      0%, 100% { opacity: 0.03; transform: rotate(18deg) scaleY(1); }
-      50% { opacity: 0.07; transform: rotate(20deg) scaleY(1.15); }
+      0%, 100% { opacity: 0.04; transform: rotate(18deg) scaleY(1); }
+      50% { opacity: 0.09; transform: rotate(20deg) scaleY(1.15); }
     }
     @keyframes ray2 {
-      0%, 100% { opacity: 0.025; transform: rotate(-12deg) scaleY(1.1); }
-      50% { opacity: 0.06; transform: rotate(-10deg) scaleY(0.9); }
+      0%, 100% { opacity: 0.03; transform: rotate(-12deg) scaleY(1.1); }
+      50% { opacity: 0.07; transform: rotate(-10deg) scaleY(0.9); }
     }
     @keyframes ray3 {
-      0%, 100% { opacity: 0.02; transform: rotate(35deg) scaleY(1); }
-      50% { opacity: 0.05; transform: rotate(37deg) scaleY(1.2); }
+      0%, 100% { opacity: 0.025; transform: rotate(35deg) scaleY(1); }
+      50% { opacity: 0.06; transform: rotate(37deg) scaleY(1.2); }
     }
-
     .god-ray {
-      position: fixed;
+      position: absolute;
       top: -100px;
       width: 200px;
       height: 120%;
-      z-index: 0;
       pointer-events: none;
-      background: linear-gradient(180deg, rgba(79,195,247,0.15) 0%, rgba(79,195,247,0.02) 60%, transparent 100%);
+      background: linear-gradient(180deg, rgba(79,195,247,0.18) 0%, rgba(79,195,247,0.03) 60%, transparent 100%);
     }
     .god-ray:nth-child(1) { left: 10%; animation: ray1 8s ease-in-out infinite; }
     .god-ray:nth-child(2) { left: 45%; width: 160px; animation: ray2 11s ease-in-out infinite; }
@@ -121,6 +118,21 @@
       z-index: 0;
       pointer-events: none;
       animation: particle-drift 6s ease-in-out infinite;
+    }
+
+    @keyframes caustic-shift {
+      0% { background-position: 0% 0%; }
+      100% { background-position: 100% 100%; }
+    }
+    .caustics {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.03;
+      background: repeating-conic-gradient(rgba(79,195,247,0.1) 0%, transparent 5%, rgba(79,195,247,0.05) 10%);
+      background-size: 400px 400px;
+      animation: caustic-shift 30s linear infinite;
     }
 
     #zoom-controls {
@@ -178,6 +190,31 @@
     }
     #back-link:hover { background: rgba(15,40,70,0.95); color: #fff; }
 
+    #nav-links {
+      position: fixed;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      gap: 6px;
+    }
+    .nav-btn {
+      background: rgba(8,20,40,0.95);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: var(--text-secondary);
+      font-family: 'Press Start 2P', monospace;
+      font-size: 6px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .nav-btn:hover { background: rgba(15,40,70,0.95); color: var(--accent); border-color: var(--border-accent); }
+
     #minimap {
       position: fixed;
       bottom: 12px;
@@ -211,7 +248,7 @@
       display: flex;
       flex-direction: column;
       gap: 50px;
-      width: 3800px;
+      width: 4200px;
     }
 
     .logo-area {
@@ -239,6 +276,12 @@
       color: var(--text-dim);
       letter-spacing: 2px;
       margin-top: 8px;
+    }
+    .board-version {
+      font-size: 6px;
+      color: var(--text-dim);
+      margin-top: 12px;
+      opacity: 0.6;
     }
 
     .legend-row {
@@ -310,6 +353,13 @@
       border-radius: 50%;
       flex-shrink: 0;
       box-shadow: 0 0 8px currentColor;
+    }
+    .section-desc {
+      font-size: 7px;
+      color: var(--text-secondary);
+      line-height: 16px;
+      margin-bottom: 18px;
+      max-width: 1400px;
     }
 
     .fish-grid {
@@ -387,26 +437,10 @@
       opacity: 0.6;
     }
 
-    .fish-info {
-      flex: 1;
-      min-width: 0;
-    }
-    .fish-name {
-      font-size: 9px;
-      margin-bottom: 3px;
-      word-break: break-word;
-    }
-    .fish-desc {
-      font-size: 6px;
-      color: var(--text-secondary);
-      line-height: 13px;
-      margin-bottom: 7px;
-    }
-    .fish-stats {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-    }
+    .fish-info { flex: 1; min-width: 0; }
+    .fish-name { font-size: 9px; margin-bottom: 3px; word-break: break-word; }
+    .fish-desc { font-size: 6px; color: var(--text-secondary); line-height: 13px; margin-bottom: 7px; }
+    .fish-stats { display: flex; flex-wrap: wrap; gap: 5px; }
     .fish-stat {
       font-size: 6px;
       padding: 3px 7px;
@@ -425,12 +459,7 @@
       margin-bottom: 5px;
       letter-spacing: 1px;
     }
-    .tint-indicator {
-      font-size: 5px;
-      color: var(--text-dim);
-      margin-top: 4px;
-      font-style: italic;
-    }
+    .tint-indicator { font-size: 5px; color: var(--text-dim); margin-top: 4px; font-style: italic; }
     .stars { letter-spacing: 2px; font-size: 7px; }
 
     .equip-grid {
@@ -484,13 +513,6 @@
       overflow: hidden;
     }
     .zone-card:hover { border-color: var(--border-accent); }
-    .zone-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 4px;
-      border-radius: 10px 10px 0 0;
-    }
     .zone-name { font-size: 9px; margin-bottom: 6px; margin-top: 4px; }
     .zone-desc { font-size: 6px; color: var(--text-secondary); line-height: 13px; }
     .zone-fish { font-size: 6px; color: var(--text-dim); margin-top: 8px; }
@@ -501,6 +523,96 @@
       grid-template-columns: 1fr 1fr;
       gap: 30px;
     }
+    .three-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+    }
+
+    .char-card {
+      background: rgba(5,15,35,0.8);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .char-card:hover { border-color: var(--border-accent); box-shadow: 0 0 25px rgba(79,195,247,0.08); }
+    .char-card img { height: 120px; image-rendering: pixelated; margin-bottom: 12px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5)); }
+    .char-name { font-size: 10px; margin-bottom: 6px; }
+    .char-desc { font-size: 6px; color: var(--text-secondary); line-height: 13px; }
+
+    .npc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+    }
+    .npc-card {
+      background: rgba(5,15,35,0.8);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      transition: border-color 0.3s;
+    }
+    .npc-card:hover { border-color: var(--border-accent); }
+    .npc-img { width: 48px; height: 48px; image-rendering: pixelated; border-radius: 8px; background: rgba(255,255,255,0.04); }
+
+    .weather-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 12px;
+    }
+    .weather-card {
+      background: rgba(5,15,35,0.8);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      transition: border-color 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .weather-card:hover { border-color: var(--border-accent); }
+    .weather-name { font-size: 9px; margin-bottom: 6px; }
+    .weather-desc { font-size: 6px; color: var(--text-secondary); line-height: 13px; }
+    .weather-effect { font-size: 6px; color: var(--accent); margin-top: 6px; opacity: 0.8; }
+
+    .attr-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 12px;
+    }
+    .attr-card {
+      background: rgba(5,15,35,0.8);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      transition: border-color 0.3s;
+    }
+    .attr-card:hover { border-color: var(--border-accent); }
+    .attr-name { font-size: 9px; margin-bottom: 6px; }
+    .attr-desc { font-size: 6px; color: var(--text-secondary); line-height: 13px; }
+    .attr-effect { font-size: 6px; color: var(--gold); margin-top: 6px; }
+
+    .celestial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+    }
+    .celestial-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .celestial-card:hover { box-shadow: 0 0 25px rgba(255,255,255,0.05); }
+    .celestial-name { font-size: 10px; margin-bottom: 6px; }
+    .celestial-desc { font-size: 6px; color: var(--text-secondary); line-height: 14px; }
+    .celestial-boost { font-size: 7px; margin-top: 8px; padding: 4px 8px; border-radius: 4px; display: inline-block; }
 
     input[type="file"] { display: none; }
 
@@ -511,12 +623,31 @@
     .ultra-section::before {
       background: linear-gradient(90deg, transparent, rgba(255,64,96,0.3), transparent) !important;
     }
-    .ultra-section .fish-card {
-      border-color: rgba(255,64,96,0.15);
-    }
+    .ultra-section .fish-card { border-color: rgba(255,64,96,0.15); }
     .ultra-section .fish-card:hover {
       border-color: rgba(255,64,96,0.4);
       box-shadow: 0 0 25px rgba(255,64,96,0.1);
+    }
+
+    .predator-section {
+      border-color: rgba(239,83,80,0.2) !important;
+      background: linear-gradient(135deg, rgba(10,25,50,0.7), rgba(40,10,15,0.5)) !important;
+    }
+    .predator-section::before {
+      background: linear-gradient(90deg, transparent, rgba(239,83,80,0.25), transparent) !important;
+    }
+
+    .celestial-section {
+      border-color: rgba(200,150,255,0.2) !important;
+      background: linear-gradient(135deg, rgba(10,15,40,0.8), rgba(30,10,50,0.6)) !important;
+    }
+    .celestial-section::before {
+      background: linear-gradient(90deg, transparent, rgba(200,150,255,0.3), transparent) !important;
+    }
+
+    .egg-section {
+      border-color: rgba(168,85,247,0.2) !important;
+      background: linear-gradient(135deg, rgba(10,25,50,0.7), rgba(40,15,60,0.5)) !important;
     }
 
     @keyframes glow-pulse {
@@ -527,22 +658,29 @@
 </head>
 <body>
   <div id="ocean-bg">
+    <img id="ocean-bg-img" src="/assets/underwater_scene.png" alt="">
+    <div id="ocean-bg-overlay"></div>
     <div class="god-ray"></div>
     <div class="god-ray"></div>
     <div class="god-ray"></div>
+    <div class="caustics"></div>
   </div>
-  <div class="bg-coral"></div>
 
-  <a id="back-link" href="/">
+  <a id="back-link" href="/" data-testid="link-back-to-game">
     <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M8 1L3 6L8 11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
     BACK TO GAME
   </a>
 
+  <div id="nav-links">
+    <a class="nav-btn" href="/legendaries" data-testid="link-legendary-codex">LEGENDARY CODEX</a>
+    <a class="nav-btn" href="/" data-testid="link-play-game">PLAY GAME</a>
+  </div>
+
   <div id="zoom-controls">
-    <button id="zoom-in" title="Zoom In">+</button>
+    <button id="zoom-in" title="Zoom In" data-testid="button-zoom-in">+</button>
     <span id="zoom-level">100%</span>
-    <button id="zoom-out" title="Zoom Out">-</button>
-    <button id="zoom-reset" title="Reset" style="font-size:8px;">R</button>
+    <button id="zoom-out" title="Zoom Out" data-testid="button-zoom-out">-</button>
+    <button id="zoom-reset" title="Reset" style="font-size:8px;" data-testid="button-zoom-reset">R</button>
   </div>
 
   <div id="minimap">
@@ -557,7 +695,8 @@
       <div class="logo-area">
         <img src="/assets/logo.png" alt="Grudge Angeler" onerror="this.style.display='none'">
         <div class="board-title">GRUDGE ANGELER</div>
-        <div class="board-subtitle">COMPLETE GAME BOARD &mdash; ALL SPECIES, EQUIPMENT & WORLD DATA</div>
+        <div class="board-subtitle">COMPLETE GAME BOARD &mdash; ALL SPECIES, EQUIPMENT, CHARACTERS & WORLD DATA</div>
+        <div class="board-version">v3.0 &mdash; FULL ENCYCLOPEDIA</div>
         <div class="legend-row">
           <div class="legend-item"><div class="legend-dot" style="background:var(--common);box-shadow:0 0 6px var(--common)"></div>COMMON</div>
           <div class="legend-item"><div class="legend-dot" style="background:var(--uncommon);box-shadow:0 0 6px var(--uncommon)"></div>UNCOMMON</div>
@@ -568,15 +707,29 @@
         </div>
       </div>
 
+      <!-- CHARACTER VARIANTS -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-dot" style="background:#22d3ee;color:#22d3ee"></div>
+          <div class="section-title" style="color:#22d3ee">PLAYABLE CHARACTERS</div>
+          <div class="section-count">3 FACTIONS</div>
+        </div>
+        <div class="section-desc">Choose your character variant at the start. Each faction has unique recolored sprite sets and a distinct visual identity.</div>
+        <div class="three-col" id="char-grid"></div>
+      </div>
+
+      <!-- WORLD ZONES -->
       <div class="section">
         <div class="section-header">
           <div class="section-dot" style="background:var(--accent);color:var(--accent)"></div>
           <div class="section-title" style="color:var(--accent)">WORLD ZONES & DEPTH MAP</div>
           <div class="section-count">8 SCENES</div>
         </div>
+        <div class="section-desc">The world is divided into 8 horizontally scrolling scenes, from sandy beach to abyssal depths. Fish rarity and size increase with depth.</div>
         <div class="world-map" id="world-zones"></div>
       </div>
 
+      <!-- COMMON -->
       <div class="section">
         <div class="section-header">
           <div class="section-dot" style="background:var(--common);color:var(--common)"></div>
@@ -586,6 +739,7 @@
         <div class="fish-grid" id="common-fish"></div>
       </div>
 
+      <!-- UNCOMMON -->
       <div class="section">
         <div class="section-header">
           <div class="section-dot" style="background:var(--uncommon);color:var(--uncommon)"></div>
@@ -595,6 +749,7 @@
         <div class="fish-grid" id="uncommon-fish"></div>
       </div>
 
+      <!-- RARE -->
       <div class="section">
         <div class="section-header">
           <div class="section-dot" style="background:var(--rare);color:var(--rare)"></div>
@@ -604,6 +759,7 @@
         <div class="fish-grid" id="rare-fish"></div>
       </div>
 
+      <!-- EPIC -->
       <div class="section">
         <div class="section-header">
           <div class="section-dot" style="background:var(--epic);color:var(--epic)"></div>
@@ -613,6 +769,7 @@
         <div class="fish-grid" id="epic-fish"></div>
       </div>
 
+      <!-- LEGENDARY -->
       <div class="section">
         <div class="section-header">
           <div class="section-dot" style="background:var(--legendary);color:var(--legendary)"></div>
@@ -622,33 +779,40 @@
         <div class="fish-grid" id="legendary-fish"></div>
       </div>
 
+      <!-- ULTRA RARE -->
       <div class="section ultra-section">
         <div class="section-header" style="border-bottom-color:rgba(255,64,96,0.15);">
           <div class="section-dot" style="background:var(--ultra-rare);color:var(--ultra-rare);box-shadow:0 0 12px rgba(255,64,96,0.6);"></div>
           <div class="section-title" style="color:var(--ultra-rare);text-shadow:0 0 12px rgba(255,64,96,0.3);">THE LEGENDARY 9 &mdash; ULTRA RARE</div>
           <div class="section-count" id="ultra-count"></div>
         </div>
+        <div class="section-desc" style="color:rgba(255,180,200,0.6);">The 9 rarest fish in existence. Each radiates a unique aura and requires extreme depth, skill, and fortune to catch. Read their full lore in the <a href="/legendaries" style="color:var(--ultra-rare);text-decoration:underline;">Legendary Codex</a>.</div>
         <div class="fish-grid" id="ultra-fish"></div>
       </div>
 
+      <!-- BEACH CRABS -->
       <div class="section">
         <div class="section-header">
           <div class="section-dot" style="background:#e57373;color:#e57373"></div>
           <div class="section-title" style="color:#e57373">BEACH CRABS</div>
           <div class="section-count" id="crab-count"></div>
         </div>
+        <div class="section-desc">Small crabs found scuttling along the beach. Catchable by clicking near the shoreline. 8 unique color variants.</div>
         <div class="fish-grid" id="crab-fish"></div>
       </div>
 
-      <div class="section">
-        <div class="section-header">
-          <div class="section-dot" style="background:#ef5350;color:#ef5350"></div>
+      <!-- PREDATORS -->
+      <div class="section predator-section">
+        <div class="section-header" style="border-bottom-color:rgba(239,83,80,0.15);">
+          <div class="section-dot" style="background:#ef5350;color:#ef5350;box-shadow:0 0 10px rgba(239,83,80,0.5);"></div>
           <div class="section-title" style="color:#ef5350">OCEAN PREDATORS</div>
           <div class="section-count">3 SPECIES</div>
         </div>
+        <div class="section-desc" style="color:rgba(255,160,150,0.5);">Dangerous AI-driven predators with patrol, chase, attack, and flee behaviors. They scare fish, damage players, and increase in spawn probability with depth.</div>
         <div class="fish-grid" id="predator-fish"></div>
       </div>
 
+      <!-- EQUIPMENT: RODS + LURES -->
       <div class="two-col">
         <div class="section">
           <div class="section-header">
@@ -656,6 +820,7 @@
             <div class="section-title" style="color:#81c784">FISHING RODS</div>
             <div class="section-count">5 RODS</div>
           </div>
+          <div class="section-desc">Each rod improves catch zone size, reel speed, and line strength. Upgrade progressively for bigger fish.</div>
           <div class="equip-grid" id="rods-grid"></div>
         </div>
         <div class="section">
@@ -664,53 +829,123 @@
             <div class="section-title" style="color:#ffb74d">LURES & BAITS</div>
             <div class="section-count" id="lure-count"></div>
           </div>
+          <div class="section-desc">5 live baits and 11 artificial lures. Each has unique rarity boosts and target fish preferences.</div>
           <div class="equip-grid" id="lures-grid"></div>
         </div>
       </div>
 
+      <!-- CHUM -->
       <div class="section">
         <div class="section-header">
           <div class="section-dot" style="background:#ce93d8;color:#ce93d8"></div>
           <div class="section-title" style="color:#ce93d8">CHUM ITEMS</div>
           <div class="section-count" id="chum-count"></div>
         </div>
+        <div class="section-desc">Throwable items that boost fish spawns, rarity, and bite speed. Select from hotbar slot 3, throw into the water. Each has duration and cooldown.</div>
         <div class="equip-grid" id="chum-grid"></div>
       </div>
 
-      <div class="section" style="border-color:rgba(168,85,247,0.2);">
+      <!-- BETAXGRUDA EGGS -->
+      <div class="section egg-section">
         <div class="section-header">
           <div class="section-dot" style="background:#a855f7;color:#a855f7"></div>
           <div class="section-title" style="color:#a855f7">BETAXGRUDA EGGS</div>
           <div class="section-count">7 ITEMS</div>
         </div>
-        <div style="color:#78909c;font-size:8px;margin-bottom:14px;line-height:1.8;padding:0 4px;">
+        <div class="section-desc" style="color:rgba(200,170,255,0.5);">
           Special items purchasable only with "Head of Legends" &mdash; a reward earned by catching each Legendary 9 fish for the first time.
-          The first 4 are Beta Fish character eggs, the last 3 are Warlord eggs.
+          Limited stock: 50 Beta Eggs and 50 Warlord Eggs per type worldwide.
         </div>
         <div style="color:#ec4899;font-size:9px;margin-bottom:10px;letter-spacing:1px;">BETA FISH EGGS (1 HEAD EACH)</div>
-        <div class="equip-grid" id="beta-eggs-grid"></div>
-        <div style="color:#ef4444;font-size:9px;margin:14px 0 10px;letter-spacing:1px;">WARLORD EGGS (2 HEADS EACH)</div>
+        <div class="equip-grid" id="beta-eggs-grid" style="margin-bottom:18px;"></div>
+        <div style="color:#f59e0b;font-size:9px;margin-bottom:10px;letter-spacing:1px;">WARLORD EGGS (2 HEADS EACH)</div>
         <div class="equip-grid" id="warlord-eggs-grid"></div>
       </div>
 
+      <!-- WEATHER SYSTEM -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-dot" style="background:#64b5f6;color:#64b5f6"></div>
+          <div class="section-title" style="color:#64b5f6">WEATHER SYSTEM</div>
+          <div class="section-count">5 TYPES</div>
+        </div>
+        <div class="section-desc">Dynamic weather changes over time, affecting fish behavior, bite speed, visibility, and visual effects. Rain and storms bring rare fish closer to the surface.</div>
+        <div class="weather-grid" id="weather-grid"></div>
+      </div>
+
+      <!-- CELESTIAL EVENTS -->
+      <div class="section celestial-section">
+        <div class="section-header" style="border-bottom-color:rgba(200,150,255,0.15);">
+          <div class="section-dot" style="background:#ce93d8;color:#ce93d8;box-shadow:0 0 10px rgba(206,147,216,0.5);"></div>
+          <div class="section-title" style="color:#ce93d8;text-shadow:0 0 10px rgba(206,147,216,0.2);">CELESTIAL EVENTS</div>
+          <div class="section-count">4 EVENTS</div>
+        </div>
+        <div class="section-desc" style="color:rgba(220,180,255,0.5);">Extremely rare cosmic phenomena that dramatically alter the sky, water, and fish spawns. Watch for unique visual effects like aurora borealis.</div>
+        <div class="celestial-grid" id="celestial-grid"></div>
+      </div>
+
+      <!-- ATTRIBUTE SYSTEM -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-dot" style="background:var(--gold);color:var(--gold)"></div>
+          <div class="section-title" style="color:var(--gold)">ATTRIBUTE PHYSICS SYSTEM</div>
+          <div class="section-count">8 STATS</div>
+        </div>
+        <div class="section-desc">A 2D physics-inspired attribute model. Level up to earn points and distribute across 8 stats that influence every aspect of gameplay.</div>
+        <div class="attr-grid" id="attr-grid"></div>
+      </div>
+
+      <!-- NPC SYSTEM -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-dot" style="background:#4db6ac;color:#4db6ac"></div>
+          <div class="section-title" style="color:#4db6ac">NPC SYSTEM</div>
+          <div class="section-count">5 NPCS</div>
+        </div>
+        <div class="section-desc">Interactive NPCs on the pier/dock. Press E within 60px to interact. Three roles: Shopkeeper, Requester, and Mission Giver. Each has unique inventory and quests.</div>
+        <div class="npc-grid" id="npc-grid"></div>
+      </div>
+
+      <!-- GAME MECHANICS -->
       <div class="section">
         <div class="section-header">
           <div class="section-dot" style="background:var(--accent);color:var(--accent)"></div>
           <div class="section-title" style="color:var(--accent)">GAME MECHANICS & CONTROLS</div>
+          <div class="section-count">16 SYSTEMS</div>
         </div>
         <div class="equip-grid" id="mechanics-grid"></div>
       </div>
 
+      <!-- RARITY SYSTEM -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-dot" style="background:var(--gold);color:var(--gold)"></div>
+          <div class="section-title" style="color:var(--gold)">RARITY SYSTEM & ECONOMY</div>
+        </div>
+        <div class="equip-grid" id="rarity-grid"></div>
+      </div>
+
+      <!-- LEADERBOARD -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-dot" style="background:#ffd54f;color:#ffd54f"></div>
+          <div class="section-title" style="color:#ffd54f">LEADERBOARD SYSTEM</div>
+          <div class="section-count">3 CATEGORIES</div>
+        </div>
+        <div class="section-desc">Live leaderboard backed by PostgreSQL. Scores auto-submit on each fish catch. Accessible in-game via the LEADERBOARD button.</div>
+        <div class="equip-grid" id="leaderboard-grid"></div>
+      </div>
+
       <div style="text-align:center;padding:30px 0;">
-        <div style="font-size:7px;color:var(--text-dim);">GRUDGE ANGELER GAME BOARD v2.0</div>
-        <div style="font-size:6px;color:var(--text-dim);margin-top:6px;">Click any fish image to upload a custom sprite</div>
+        <div style="font-size:7px;color:var(--text-dim);">GRUDGE ANGELER GAME BOARD v3.0 &mdash; FULL ENCYCLOPEDIA</div>
+        <div style="font-size:6px;color:var(--text-dim);margin-top:6px;">Click any fish image to upload a custom sprite &mdash; Drag to pan, scroll to zoom</div>
       </div>
     </div>
   </div>
 
 <script>
 (function() {
-  var bubbleCount = 15;
+  var bubbleCount = 20;
   var bgEl = document.getElementById('ocean-bg');
   for (var i = 0; i < bubbleCount; i++) {
     var b = document.createElement('div');
@@ -724,7 +959,7 @@
     b.style.animationDelay = (Math.random() * 15) + 's';
     bgEl.appendChild(b);
   }
-  for (var j = 0; j < 20; j++) {
+  for (var j = 0; j < 25; j++) {
     var p = document.createElement('div');
     p.className = 'sea-particle';
     p.style.left = (Math.random() * 100) + '%';
@@ -812,9 +1047,9 @@ var BEACH_CRABS = [
 ];
 
 var PREDATORS = [
-  { name: "Shark", img: "/assets/predators/1/Idle.png", points: 400, rarity: "rare", weight: 3, speed: 2.2, description: "A fearsome shark prowling the deep waters.", zone: "Deep", scareRadius: 200 },
-  { name: "Kraken", img: "/assets/predators/2/Idle.png", points: 800, rarity: "legendary", weight: 1, speed: 1.5, description: "A massive squid from the abyss, feared by all.", zone: "Abyss", scareRadius: 280 },
-  { name: "Sea Devil", img: "/assets/predators/3/Idle.png", points: 600, rarity: "rare", weight: 2, speed: 1.8, description: "A monstrous crab creature from the deep trenches.", zone: "Deep", scareRadius: 240 },
+  { name: "Shark", img: "/assets/predators/1/Idle.png", points: 400, rarity: "rare", weight: 3, speed: 2.2, description: "A fearsome shark prowling the deep waters. Patrols territory, chases fish and players. Flees when damaged.", zone: "Deep", scareRadius: 200 },
+  { name: "Kraken", img: "/assets/predators/2/Idle.png", points: 800, rarity: "legendary", weight: 1, speed: 1.5, description: "A massive squid from the abyss, feared by all. Enormous scare radius drives fish away. Attacks with tentacles.", zone: "Abyss", scareRadius: 280 },
+  { name: "Sea Devil", img: "/assets/predators/3/Idle.png", points: 600, rarity: "rare", weight: 2, speed: 1.8, description: "A monstrous crab creature from the deep trenches. Ambush predator with crushing claws.", zone: "Deep", scareRadius: 240 },
 ];
 
 var RODS = [
@@ -868,33 +1103,90 @@ var CHUM_ITEMS = [
 ];
 
 var WORLD_ZONES = [
-  { name: "Beach", depth: "Surface", desc: "Sandy shores with crabs and tidal pools.", fish: "Beach Crabs, Minnow", color: "#e6d5a0" },
-  { name: "Shallow Waters", depth: "0-15%", desc: "Calm waters near the pier. Easy fishing.", fish: "Minnow, Perch, Eel", color: "#81d4fa" },
-  { name: "Pier / Dock", depth: "15-35%", desc: "The main fishing spot. Moderate variety.", fish: "Perch, Bass, Catfish, Salmon", color: "#4fc3f7" },
-  { name: "Mid Waters", depth: "35-55%", desc: "Open water with stronger fish.", fish: "Bass, Catfish, Salmon, Swordfish", color: "#29b6f6" },
-  { name: "Deep Waters", depth: "55-70%", desc: "Dangerous depths. Rare fish appear.", fish: "Swordfish, Whale, Ultra Rares", color: "#0288d1" },
-  { name: "Deep Ocean", depth: "70-80%", desc: "Near-total darkness. Legendary territory.", fish: "Ultra Rares, Whale, Predators", color: "#01579b" },
-  { name: "Abyss", depth: "80%+", desc: "The deepest void. Only the bravest fish here.", fish: "Shadow Leviathan, Celestial Whale", color: "#0a1929" },
-  { name: "Open Sea", depth: "Boat Only", desc: "Accessible only by boat. Vast open waters.", fish: "All species, higher sizes", color: "#1565c0" },
+  { name: "Beach", depth: "Surface", desc: "Sandy shores with crabs and tidal pools. Walk along the beach to find crabs.", fish: "Beach Crabs, Minnow", color: "#e6d5a0" },
+  { name: "Shallow Waters", depth: "0-15%", desc: "Calm waters near the pier. Easy fishing for beginners.", fish: "Minnow, Perch, Eel", color: "#81d4fa" },
+  { name: "Pier / Dock", depth: "15-35%", desc: "The main fishing spot. NPCs, shop, and moderate fish variety.", fish: "Perch, Bass, Catfish, Salmon", color: "#4fc3f7" },
+  { name: "Mid Waters", depth: "35-55%", desc: "Open water with stronger fish. Boat recommended.", fish: "Bass, Catfish, Salmon, Swordfish", color: "#29b6f6" },
+  { name: "Deep Waters", depth: "55-70%", desc: "Dangerous depths. Rare and ultra-rare fish appear. Predators spawn.", fish: "Swordfish, Whale, Ultra Rares", color: "#0288d1" },
+  { name: "Deep Ocean", depth: "70-80%", desc: "Near-total darkness. Legendary territory. God rays illuminate the abyss.", fish: "Ultra Rares, Whale, Predators", color: "#01579b" },
+  { name: "Abyss", depth: "80%+", desc: "The deepest void. Only the bravest fish here. Home of the Shadow Leviathan.", fish: "Shadow Leviathan, Celestial Whale", color: "#0a1929" },
+  { name: "Open Sea", depth: "Boat Only", desc: "Accessible only by boat. Vast open waters with all species at larger sizes.", fish: "All species, higher sizes", color: "#1565c0" },
+];
+
+var CHARACTERS = [
+  { name: "Fabled", img: "/assets/char_fabled.png", color: "#4fc3f7", desc: "The classic Fabled faction. Blue-toned sprites with an affinity for the ocean's ancient mysteries." },
+  { name: "Legion", img: "/assets/char_legion.png", color: "#f44336", desc: "The Crimson Legion. Red-toned warriors who fish with ferocity and determination." },
+  { name: "Crusade", img: "/assets/char_crusade.png", color: "#ffd54f", desc: "The Golden Crusade. Gold-toned knights seeking glory and legendary catches." },
+];
+
+var WEATHER_TYPES = [
+  { name: "Clear", desc: "Perfect fishing conditions. Normal fish spawns and visibility. Blue skies and calm waters.", effect: "Baseline spawn rates. No special modifiers.", color: "#64b5f6" },
+  { name: "Cloudy", desc: "Overcast skies reduce light penetration. Some fish become more active.", effect: "+10% bite speed. Slightly deeper fish rise.", color: "#90a4ae" },
+  { name: "Rain", desc: "Rainfall creates ripples and reduces surface visibility. Deep fish approach.", effect: "+20% rarity boost. Rain particles on screen.", color: "#42a5f5" },
+  { name: "Storm", desc: "Thunderstorms with lightning, heavy rain, and rough waters. Dangerous but rewarding.", effect: "+40% rarity boost. Lightning flashes. Screen shake. Storm Swordfish appears.", color: "#7e57c2" },
+  { name: "Fog", desc: "Dense fog rolls in, severely limiting visibility. Mysterious fish emerge.", effect: "Reduced draw distance. +15% rare spawn rate. Eerie atmosphere.", color: "#78909c" },
+];
+
+var CELESTIAL_EVENTS = [
+  { name: "Red Sun", desc: "The sun turns a deep crimson, casting blood-red light across the ocean. Waters turn warm and agitated.", boost: "+50% Rarity Boost", color: "#ff1744", bgColor: "rgba(255,23,68,0.1)", borderColor: "rgba(255,23,68,0.3)" },
+  { name: "Green Moon", desc: "An emerald moon rises, bathing the world in otherworldly green light. Aurora borealis shimmers in the sky.", boost: "+60% Rarity Boost", color: "#00e676", bgColor: "rgba(0,230,118,0.1)", borderColor: "rgba(0,230,118,0.3)" },
+  { name: "Tentacle Sun", desc: "The sun sprouts dark tentacles, a cosmic horror visible from the surface. Fish flee upward in terror.", boost: "+80% Rarity Boost + Epic Spawns", color: "#ab47bc", bgColor: "rgba(171,71,188,0.1)", borderColor: "rgba(171,71,188,0.3)" },
+  { name: "Blood Moon", desc: "The rarest celestial event. The moon turns deep crimson and the ocean glows red. All legendary spawns increase.", boost: "+100% Rarity Boost + Ultra Rare Spawns", color: "#d50000", bgColor: "rgba(213,0,0,0.15)", borderColor: "rgba(213,0,0,0.4)" },
+];
+
+var ATTRIBUTES = [
+  { name: "Tactics", desc: "Strategic fishing intelligence. Improves overall efficiency of all other attributes.", effect: "+0.5% efficiency per level to all stats", color: "#64b5f6" },
+  { name: "Strength", desc: "Raw physical power. Increases catch zone size during reeling.", effect: "+0.3% catch zone per level", color: "#ef5350" },
+  { name: "Agility", desc: "Quick reflexes and movement speed. Faster character movement and reeling.", effect: "Faster movement + reel speed", color: "#66bb6a" },
+  { name: "Dexterity", desc: "Precision and fine motor control. Improves casting accuracy and reduces miss chance.", effect: "Better cast aim + alignment", color: "#ffa726" },
+  { name: "Endurance", desc: "Stamina and resistance. Slower force bar drain and better line durability.", effect: "Force bar drains slower", color: "#8d6e63" },
+  { name: "Vitality", desc: "Life force and recovery. Faster force bar regeneration between catches.", effect: "Force bar regens faster", color: "#ec407a" },
+  { name: "Wisdom", desc: "Deep ocean knowledge. Increases fish size multiplier when catching.", effect: "+size multiplier per level", color: "#7e57c2" },
+  { name: "Intellect", desc: "Sharp analytical mind. Boosts rarity probability when spawning fish.", effect: "+rarity spawn boost per level", color: "#42a5f5" },
+];
+
+var NPCS = [
+  { name: "Old Pete", role: "Shopkeeper", desc: "A weathered fisherman who runs the pier shop. Sells chum and basic lures at fair prices.", img: "/assets/npcs/1/Idle.png", interact: "Press E to browse shop" },
+  { name: "Marina", role: "Requester", desc: "A marine biologist collecting specimens. Asks for specific fish types with quantity goals.", img: "/assets/npcs/2/Idle.png", interact: "Press E to see requests" },
+  { name: "Captain Rex", role: "Mission Giver", desc: "A retired sea captain who challenges anglers. Gives missions to catch fish of specific weights.", img: "/assets/npcs/3/Idle.png", interact: "Press E to view missions" },
+  { name: "Nessa", role: "Shopkeeper", desc: "A young vendor specializing in rare lures and premium baits. Higher prices but exclusive stock.", img: "/assets/npcs/4/Idle.png", interact: "Press E to browse premium shop" },
+  { name: "The Oracle", role: "Mission Giver", desc: "A mysterious figure who knows the ocean's secrets. Offers the hardest challenges with the greatest rewards.", img: "/assets/npcs/5/Idle.png", interact: "Press E to receive prophecy" },
 ];
 
 var MECHANICS = [
-  { title: "CASTING", desc: "Hold LMB to aim, release to cast. Longer hold = more power. Cast into deeper water for rarer fish." },
-  { title: "REELING", desc: "Keep the marker in the catch zone. Click to reel in. Force Bar (SPACE) speeds reel. Resilience (S) lets line out." },
-  { title: "FORCE BAR", desc: "Hold SPACEBAR during reeling for active reel power. Drains over time, regenerates when not held." },
-  { title: "RESILIENCE", desc: "Hold S key to let line out, reducing tension. Prevents line breaks on big fish." },
-  { title: "CHUM", desc: "Select chum in hotbar (slot 3), throw with LMB. Boosts bite rate, rarity, and fish attraction for a duration." },
-  { title: "NET TOOL", desc: "Switch to net (slot 4). Cast to auto-catch small fish. Has cooldown. Can catch chum items." },
-  { title: "BINOCULARS", desc: "Select binoculars (slot 5). Free camera pan with WASD. Scope overlay with crosshairs." },
-  { title: "BOAT", desc: "Press E near boat to board. Use A/D to sail. Access deep ocean fishing spots." },
-  { title: "SWIMMING", desc: "Jump into water to swim. WASD movement, SPACE to surface near dock. Sprite rotates with direction." },
-  { title: "SHOP", desc: "Press E near fishing hut. Buy rods, lures, and chum. Sell fish for gbux currency." },
-  { title: "BOUNTIES", desc: "Random challenges to catch specific fish with size requirements. Reward gbux on completion." },
-  { title: "DAY/NIGHT", desc: "30-minute cycle. Different fish at night. Weather changes affect spawns and visibility." },
-  { title: "ATTRIBUTES", desc: "Level up to earn attribute points. 8 stats: Strength, Intellect, Vitality, Dexterity, Endurance, Wisdom, Agility, Tactics." },
-  { title: "WEATHER", desc: "Clear, Cloudy, Rain, Storm, Fog. Each affects fish behavior, bite speed, and visibility." },
-  { title: "CELESTIAL EVENTS", desc: "Rare events: Red Sun, Green Moon, Tentacle Sun, Blood Moon. Massive rarity boosts during events." },
-  { title: "COMBOS", desc: "Catch fish quickly in succession for combo multiplier. Higher combos = more points and gbux." },
+  { title: "CASTING", desc: "Hold LMB to aim, release to cast. Cast into deeper water for rarer fish. Casting power affects distance." },
+  { title: "REELING MINIGAME", desc: "Palworld-style horizontal bar. Keep the marker in the catch zone. Click to reel in. Force Bar (SPACE) for active reel. Resilience (S) lets line out." },
+  { title: "FORCE BAR", desc: "Hold SPACEBAR during reeling for active reel power. Drains over time, regenerates when not held. Affected by Endurance attribute." },
+  { title: "RESILIENCE BAR", desc: "Hold S key to let line out, reducing tension. Prevents line breaks on big fish. Shows as block segments on HUD." },
+  { title: "CHUM SYSTEM", desc: "Select chum in hotbar (slot 3), throw with LMB. Boosts bite rate, rarity, and fish attraction for duration. Has cooldown timer." },
+  { title: "NET TOOL", desc: "Switch to net (slot 4). Cast to auto-catch small fish. Has cooldown. Can catch chum items. Great for farming." },
+  { title: "BINOCULARS", desc: "Select binoculars (slot 5). Free camera pan with WASD on both X/Y axes. Scope vignette overlay with crosshairs." },
+  { title: "BOAT SYSTEM", desc: "Press E near boat to board. A/D to sail. Access deep ocean. Cutscene on boarding. SPACE to stand. E near pier to exit." },
+  { title: "SWIMMING", desc: "SPACE to dive. WASD movement. Parabolic jump arc into water with splash. Sprite rotates with direction. Surface near dock." },
+  { title: "SHOP SYSTEM", desc: "Press E near fishing hut. Buy rods, lures, and chum. Sell fish for gbux. Dynamic market prices influenced by demand." },
+  { title: "BOUNTY SYSTEM", desc: "Random bounties for specific fish species with size requirements. Tracked on billboard. Reward gbux on completion." },
+  { title: "DAY/NIGHT CYCLE", desc: "30-minute real-time cycle. Sky color, lighting, and ambient sounds change. Different fish spawn at night." },
+  { title: "COMBO SYSTEM", desc: "Catch fish in quick succession for combo multiplier. Higher combos = more points and gbux. Combo resets after timeout." },
+  { title: "ROD LEVELING", desc: "Rods gain XP from catches. Level up improves catch zone, reel speed, and line strength." },
+  { title: "FISH COLLECTION LOG", desc: "Track all caught species. Shows name, rarity, best weight, and total caught per species." },
+  { title: "ADMIN DEBUG TOOLS", desc: "Toggle with backtick key. Three tabs: Asset Deck (sprite previews), Gizmo (drag world objects), Trace (inspect positions)." },
+];
+
+var RARITY_INFO = [
+  { title: "COMMON (1 Star)", desc: "Base tier fish. Found in shallow waters. Sell price 1x multiplier. Weight: 15-50% spawn chance.", color: "var(--common)" },
+  { title: "UNCOMMON (2 Stars)", desc: "Moderately rare. Found in mid-waters. Sell price 1.5x multiplier. Weight: 8-15% spawn chance.", color: "var(--uncommon)" },
+  { title: "RARE (3 Stars)", desc: "Significantly harder to find. Deep waters required. Sell price 2.5x multiplier. Weight: 2-6% spawn chance.", color: "var(--rare)" },
+  { title: "EPIC (4 Stars)", desc: "Extremely rare deep-sea creatures. Sell price 4x multiplier. Weight: 0.7-1.5% spawn chance.", color: "var(--epic)" },
+  { title: "LEGENDARY (4 Stars)", desc: "The rarest normal fish. Sell price 6x multiplier. Weight: 1% spawn chance.", color: "var(--legendary)" },
+  { title: "ULTRA RARE (5 Stars)", desc: "The Legendary 9. Mythical creatures with unique auras and abilities. Sell price 10x multiplier. Weight: 0.05-0.3%.", color: "var(--ultra-rare)" },
+  { title: "GBUX CURRENCY", desc: "In-game currency earned by selling fish. Used to buy equipment, lures, and chum. Market prices fluctuate.", color: "#2ecc71" },
+  { title: "HEAD OF LEGENDS", desc: "Special currency earned by catching each of the Legendary 9 for the first time. Used to buy BetaXGruda Eggs.", color: "#a855f7" },
+];
+
+var LEADERBOARD_INFO = [
+  { title: "BIGGEST SINGLE CATCH", desc: "Ranked by weight. Submit your heaviest fish to compete. Shows fish name, rarity, and exact weight." },
+  { title: "MOST CATCHES IN SESSION", desc: "Ranked by total fish caught in a 20-minute session. Speed and efficiency matter most." },
+  { title: "LEGENDARY/ULTRA-RARE CATCHES", desc: "Ranked by the rarity value of caught fish. Only legendary and ultra-rare catches count toward this board." },
 ];
 
 var rarityColors = {
@@ -924,9 +1216,12 @@ function createFishCard(fish, index, category) {
   var stars = rarityStars[fish.rarity] || "";
   var depthPct = fish.minDepth ? Math.round(fish.minDepth * 100) + "%" : "-";
 
+  var div = document.createElement('div');
+  div.className = 'fish-card';
+
   var imgContent = '';
   if (imgSrc) {
-    imgContent = '<img src="' + imgSrc + '" alt="' + fish.name + '" onerror="this.parentNode.innerHTML=FISH_SILHOUETTE+\'<span class=ph-label>CLICK TO ADD</span>\'">';
+    imgContent = '<img src="' + imgSrc + '" alt="' + fish.name + '" onerror="this.parentNode.innerHTML=\'<div class=fish-placeholder style=color:' + color + '>' + FISH_SILHOUETTE + '<span class=ph-label>CLICK TO ADD</span></div>\'">';
   } else {
     imgContent = '<div class="fish-placeholder" style="color:' + color + '">' + FISH_SILHOUETTE + '<span class="ph-label">CLICK TO ADD</span></div>';
   }
@@ -944,43 +1239,42 @@ function createFishCard(fish, index, category) {
     tintHTML = '<div class="tint-indicator">AURA: ' + fish.tint + '</div>';
   }
 
-  var card = document.createElement('div');
-  card.className = 'fish-card';
-  card.innerHTML = '<div class="fish-img-wrap" data-category="' + category + '" data-index="' + index + '">' + imgContent + '</div>' +
+  div.innerHTML = '<div class="fish-img-wrap" data-cat="' + category + '" data-idx="' + index + '">' + imgContent + '</div>' +
     '<div class="fish-info">' +
-    '<div class="rarity-badge" style="background:' + color + '">' + fish.rarity.replace("_"," ").toUpperCase() + '</div>' +
-    '<div class="fish-name" style="color:' + color + '">' + fish.name + '</div>' +
-    '<div class="stars" style="color:' + color + '">' + stars + '</div>' +
+    '<div class="rarity-badge" style="background:' + color + '">' + fish.rarity.toUpperCase().replace('_',' ') + '</div>' +
+    '<div class="fish-name" style="color:' + color + '">' + fish.name + ' <span class="stars" style="color:' + color + '">' + stars + '</span></div>' +
     '<div class="fish-desc">' + fish.description + '</div>' +
     '<div class="fish-stats">' + statsHTML + '</div>' +
     tintHTML +
     '</div>';
 
-  card.querySelector('.fish-img-wrap').addEventListener('click', function() {
+  div.querySelector('.fish-img-wrap').addEventListener('click', function() {
     editingCard = { category: category, index: index, element: this };
     document.getElementById('img-upload').click();
   });
 
-  return card;
+  return div;
 }
 
 function createEquipCard(item) {
+  var priceHTML = item.price !== undefined ? '<div class="equip-price">' + (item.price === 0 ? 'FREE' : item.price + ' gbux') + '</div>' : '';
   var statsHTML = '';
-  if (item.price !== undefined) statsHTML += '<span class="fish-stat" style="color:#2ecc71"><b>' + (item.price === 0 ? "FREE" : item.price + "g") + '</b></span>';
-  if (item.catchZoneBonus !== undefined) statsHTML += '<span class="fish-stat"><b>ZONE+</b> ' + item.catchZoneBonus + '</span>';
-  if (item.reelSpeedMult !== undefined) statsHTML += '<span class="fish-stat"><b>REEL:</b> ' + item.reelSpeedMult + 'x</span>';
-  if (item.lineStrength !== undefined) statsHTML += '<span class="fish-stat"><b>STR:</b> ' + item.lineStrength + 'x</span>';
-  if (item.rarityBoost !== undefined && item.rarityBoost !== 1.0) statsHTML += '<span class="fish-stat"><b>RAR:</b> ' + item.rarityBoost + 'x</span>';
-  if (item.type) statsHTML += '<span class="fish-stat"><b>TYPE:</b> ' + item.type.toUpperCase() + '</span>';
-  if (item.targets) statsHTML += '<span class="fish-stat"><b>TARG:</b> ' + item.targets + '</span>';
-  if (item.duration) statsHTML += '<span class="fish-stat"><b>DUR:</b> ' + Math.round(item.duration/60) + 'min</span>';
+  if (item.catchZoneBonus !== undefined) statsHTML += '<span class="fish-stat"><b>ZONE+:</b> ' + item.catchZoneBonus + '</span>';
+  if (item.reelSpeedMult !== undefined) statsHTML += '<span class="fish-stat"><b>REEL:</b> x' + item.reelSpeedMult + '</span>';
+  if (item.lineStrength !== undefined) statsHTML += '<span class="fish-stat"><b>LINE:</b> x' + item.lineStrength + '</span>';
+  if (item.rarityBoost !== undefined) statsHTML += '<span class="fish-stat"><b>RARE:</b> x' + item.rarityBoost + '</span>';
+  if (item.type) statsHTML += '<span class="fish-stat"><b>TYPE:</b> ' + item.type + '</span>';
+  if (item.targets) statsHTML += '<span class="fish-stat"><b>TARGETS:</b> ' + item.targets + '</span>';
+  if (item.duration !== undefined) statsHTML += '<span class="fish-stat"><b>DUR:</b> ' + item.duration + '</span>';
+  var statsWrap = statsHTML ? '<div class="equip-stats">' + statsHTML + '</div>' : '';
 
   return '<div class="equip-card">' +
-    '<div class="equip-icon"><img src="' + item.icon + '" alt="' + item.name + '" onerror="this.style.display=\'none\'"></div>' +
+    '<div class="equip-icon"><img src="' + item.icon + '" alt="' + item.name + '"></div>' +
     '<div style="flex:1;">' +
-    '<div class="equip-name" style="color:var(--text-primary)">' + item.name + '</div>' +
+    '<div class="equip-name">' + item.name + '</div>' +
     '<div class="equip-desc">' + item.description + '</div>' +
-    '<div class="equip-stats">' + statsHTML + '</div>' +
+    priceHTML +
+    statsWrap +
     '</div></div>';
 }
 
@@ -993,8 +1287,8 @@ function populateBoard() {
   document.getElementById("rare-count").textContent = RARE_FISH.length + " SPECIES";
   document.getElementById("epic-count").textContent = EPIC_FISH.length + " SPECIES";
   document.getElementById("legendary-count").textContent = FISH_SPECIES.filter(function(f) { return f.rarity === "legendary"; }).length + " SPECIES";
-  document.getElementById("ultra-count").textContent = ULTRA_RARE_FISH.length + " SPECIES";
-  document.getElementById("crab-count").textContent = BEACH_CRABS.length + " SPECIES";
+  document.getElementById("ultra-count").textContent = ULTRA_RARE_FISH.length + " THE LEGENDARY 9";
+  document.getElementById("crab-count").textContent = BEACH_CRABS.length + " VARIANTS";
   document.getElementById("lure-count").textContent = LURES.length + " ITEMS";
   document.getElementById("chum-count").textContent = CHUM_ITEMS.length + " ITEMS";
 
@@ -1032,15 +1326,15 @@ function populateBoard() {
   CHUM_ITEMS.forEach(function(c) { chumGrid.innerHTML += createEquipCard(c); });
 
   var BETA_EGGS = [
-    { name: "Crimson BetaXGruda Egg", icon: "/assets/eggs/egg_red.png", description: "Contains a crimson beta fish character. Hatches with fire affinity. Cost: 1 Head of Legends" },
-    { name: "Emerald BetaXGruda Egg", icon: "/assets/eggs/egg_green.png", description: "Contains an emerald beta fish character. Hatches with nature affinity. Cost: 1 Head of Legends" },
-    { name: "Sapphire BetaXGruda Egg", icon: "/assets/eggs/egg_blue.png", description: "Contains a sapphire beta fish character. Hatches with water affinity. Cost: 1 Head of Legends" },
-    { name: "Ivory BetaXGruda Egg", icon: "/assets/eggs/egg_white.png", description: "Contains an ivory beta fish character. Hatches with spirit affinity. Cost: 1 Head of Legends" },
+    { name: "Crimson BetaXGruda Egg", icon: "/assets/eggs/egg_red.png", description: "Contains a crimson beta fish character. Hatches with fire affinity. Cost: 1 Head of Legends. Limited: 50 worldwide." },
+    { name: "Emerald BetaXGruda Egg", icon: "/assets/eggs/egg_green.png", description: "Contains an emerald beta fish character. Hatches with nature affinity. Cost: 1 Head of Legends. Limited: 50 worldwide." },
+    { name: "Sapphire BetaXGruda Egg", icon: "/assets/eggs/egg_blue.png", description: "Contains a sapphire beta fish character. Hatches with water affinity. Cost: 1 Head of Legends. Limited: 50 worldwide." },
+    { name: "Ivory BetaXGruda Egg", icon: "/assets/eggs/egg_white.png", description: "Contains an ivory beta fish character. Hatches with spirit affinity. Cost: 1 Head of Legends. Limited: 50 worldwide." },
   ];
   var WARLORD_EGGS = [
-    { name: "Warlord Egg: Dusk Tyrant", icon: "/assets/eggs/warlord_purple.png", description: "Contains the Dusk Tyrant warlord. Commands shadow armies. Cost: 2 Heads of Legends" },
-    { name: "Warlord Egg: Iron Sovereign", icon: "/assets/eggs/warlord_silver.png", description: "Contains the Iron Sovereign warlord. Unbreakable defense. Cost: 2 Heads of Legends" },
-    { name: "Warlord Egg: Venom King", icon: "/assets/eggs/warlord_green.png", description: "Contains the Venom King warlord. Poisons all who oppose. Cost: 2 Heads of Legends" },
+    { name: "Warlord Egg: Dusk Tyrant", icon: "/assets/eggs/warlord_purple.png", description: "Contains the Dusk Tyrant warlord. Commands shadow armies. Cost: 2 Heads of Legends. Limited: 50 worldwide." },
+    { name: "Warlord Egg: Iron Sovereign", icon: "/assets/eggs/warlord_silver.png", description: "Contains the Iron Sovereign warlord. Unbreakable defense. Cost: 2 Heads of Legends. Limited: 50 worldwide." },
+    { name: "Warlord Egg: Venom King", icon: "/assets/eggs/warlord_green.png", description: "Contains the Venom King warlord. Poisons all who oppose. Cost: 2 Heads of Legends. Limited: 50 worldwide." },
   ];
 
   function createEggCard(egg) {
@@ -1072,12 +1366,81 @@ function populateBoard() {
       '</div>';
   });
 
+  var charGrid = document.getElementById("char-grid");
+  CHARACTERS.forEach(function(c) {
+    charGrid.innerHTML += '<div class="char-card" style="border-color:' + c.color + '25;">' +
+      '<img src="' + c.img + '" alt="' + c.name + '" onerror="this.style.display=\'none\'">' +
+      '<div class="char-name" style="color:' + c.color + '">' + c.name + '</div>' +
+      '<div class="char-desc">' + c.desc + '</div>' +
+      '</div>';
+  });
+
+  var weatherGrid = document.getElementById("weather-grid");
+  WEATHER_TYPES.forEach(function(w) {
+    weatherGrid.innerHTML += '<div class="weather-card" data-testid="card-weather-' + w.name.toLowerCase() + '" style="border-color:' + w.color + '25;">' +
+      '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:' + w.color + ';border-radius:10px 10px 0 0;opacity:0.6;"></div>' +
+      '<div class="weather-name" style="color:' + w.color + '">' + w.name + '</div>' +
+      '<div class="weather-desc">' + w.desc + '</div>' +
+      '<div class="weather-effect">' + w.effect + '</div>' +
+      '</div>';
+  });
+
+  var celestialGrid = document.getElementById("celestial-grid");
+  CELESTIAL_EVENTS.forEach(function(c) {
+    celestialGrid.innerHTML += '<div class="celestial-card" data-testid="card-celestial-' + c.name.toLowerCase().replace(/\s+/g,'-') + '" style="background:' + c.bgColor + ';border-color:' + c.borderColor + ';">' +
+      '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:' + c.color + ';border-radius:10px 10px 0 0;"></div>' +
+      '<div class="celestial-name" style="color:' + c.color + ';text-shadow:0 0 10px ' + c.color + '40;">' + c.name + '</div>' +
+      '<div class="celestial-desc">' + c.desc + '</div>' +
+      '<div class="celestial-boost" style="background:' + c.color + '15;color:' + c.color + ';border:1px solid ' + c.color + '30;">' + c.boost + '</div>' +
+      '</div>';
+  });
+
+  var attrGrid = document.getElementById("attr-grid");
+  ATTRIBUTES.forEach(function(a) {
+    attrGrid.innerHTML += '<div class="attr-card" style="border-color:' + a.color + '25;">' +
+      '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:' + a.color + ';border-radius:10px 10px 0 0;opacity:0.5;"></div>' +
+      '<div class="attr-name" style="color:' + a.color + '">' + a.name + '</div>' +
+      '<div class="attr-desc">' + a.desc + '</div>' +
+      '<div class="attr-effect">' + a.effect + '</div>' +
+      '</div>';
+  });
+
+  var npcGrid = document.getElementById("npc-grid");
+  NPCS.forEach(function(n) {
+    npcGrid.innerHTML += '<div class="npc-card" data-testid="card-npc-' + n.name.toLowerCase().replace(/\s+/g,'-') + '">' +
+      '<img class="npc-img" src="' + n.img + '" alt="' + n.name + '" onerror="this.style.display=\'none\'">' +
+      '<div style="flex:1;">' +
+      '<div class="equip-name" style="color:#4db6ac">' + n.name + '</div>' +
+      '<div style="font-size:6px;color:#80cbc4;margin-bottom:4px;letter-spacing:1px;">' + n.role.toUpperCase() + '</div>' +
+      '<div class="equip-desc">' + n.desc + '</div>' +
+      '<div style="font-size:6px;color:var(--accent);margin-top:4px;opacity:0.7;">' + n.interact + '</div>' +
+      '</div></div>';
+  });
+
   var mechGrid = document.getElementById("mechanics-grid");
   MECHANICS.forEach(function(m) {
     mechGrid.innerHTML += '<div class="equip-card">' +
       '<div style="flex:1;">' +
       '<div class="equip-name" style="color:var(--accent)">' + m.title + '</div>' +
       '<div class="equip-desc">' + m.desc + '</div>' +
+      '</div></div>';
+  });
+
+  var rarityGrid = document.getElementById("rarity-grid");
+  RARITY_INFO.forEach(function(r) {
+    rarityGrid.innerHTML += '<div class="equip-card">' +
+      '<div style="flex:1;">' +
+      '<div class="equip-name" style="color:' + r.color + '">' + r.title + '</div>' +
+      '<div class="equip-desc">' + r.desc + '</div>' +
+      '</div></div>';
+  });
+
+  var lbGrid = document.getElementById("leaderboard-grid");
+  LEADERBOARD_INFO.forEach(function(l) {
+    lbGrid.innerHTML += '<div class="equip-card">' +
+      '<div style="flex:1;">' +
+      '<div class="equip-name" style="color:#ffd54f">' + l.title + '</div>' +
+      '<div class="equip-desc">' + l.desc + '</div>' +
       '</div></div>';
   });
 }
@@ -1158,7 +1521,7 @@ window.addEventListener("wheel", function(e) {
 }, { passive: false });
 
 document.addEventListener("mousedown", function(e) {
-  if (e.target.closest("#zoom-controls") || e.target.closest("#back-link") || e.target.closest(".fish-img-wrap")) return;
+  if (e.target.closest("#zoom-controls") || e.target.closest("#back-link") || e.target.closest("#nav-links") || e.target.closest(".fish-img-wrap")) return;
   isDragging = true;
   dragStartX = e.clientX;
   dragStartY = e.clientY;

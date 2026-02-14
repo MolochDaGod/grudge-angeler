@@ -11,6 +11,69 @@ import neonEelImg from "../assets/images/legendary-neon-eel.png";
 import goldenSalmonImg from "../assets/images/legendary-golden-salmon.png";
 import shadowLeviathanImg from "../assets/images/legendary-shadow-leviathan.png";
 
+function UnderwaterBackground() {
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden" }}>
+      <img
+        src="/assets/underwater_scene.png"
+        alt=""
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          opacity: 0.12,
+          filter: "blur(3px) saturate(0.5) hue-rotate(-15deg)",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: "radial-gradient(ellipse at 50% 30%, rgba(15,15,30,0.6) 0%, rgba(10,10,18,0.9) 70%)",
+        }}
+      />
+      <div
+        className="codex-ray codex-ray-1"
+        style={{
+          position: "absolute",
+          top: -100,
+          left: "15%",
+          width: 180,
+          height: "120%",
+          background: "linear-gradient(180deg, rgba(200,160,80,0.06) 0%, transparent 60%)",
+          transform: "rotate(15deg)",
+          animation: "codexRay1 10s ease-in-out infinite",
+        }}
+      />
+      <div
+        className="codex-ray codex-ray-2"
+        style={{
+          position: "absolute",
+          top: -100,
+          left: "65%",
+          width: 140,
+          height: "120%",
+          background: "linear-gradient(180deg, rgba(200,160,80,0.04) 0%, transparent 50%)",
+          transform: "rotate(-10deg)",
+          animation: "codexRay2 13s ease-in-out infinite",
+        }}
+      />
+      <style>{`
+        @keyframes codexRay1 {
+          0%, 100% { opacity: 0.4; transform: rotate(15deg) scaleY(1); }
+          50% { opacity: 0.8; transform: rotate(17deg) scaleY(1.1); }
+        }
+        @keyframes codexRay2 {
+          0%, 100% { opacity: 0.3; transform: rotate(-10deg) scaleY(1.05); }
+          50% { opacity: 0.6; transform: rotate(-8deg) scaleY(0.95); }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 const legendaries = [
   {
     name: "Phantom Minnow",
@@ -185,13 +248,68 @@ export default function LegendaryCodex() {
         fontFamily: "'Georgia', 'Palatino Linotype', 'Book Antiqua', serif",
         overflowY: "auto",
         overflowX: "hidden",
+        position: "relative",
       }}
     >
+      <UnderwaterBackground />
+      <div
+        style={{
+          position: "fixed",
+          top: 12,
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 50,
+          display: "flex",
+          gap: 6,
+        }}
+      >
+        <a
+          href="/gameboard.html"
+          data-testid="link-gameboard"
+          style={{
+            background: "rgba(10,10,20,0.85)",
+            border: "1px solid rgba(196,160,80,0.2)",
+            borderRadius: 6,
+            padding: "6px 12px",
+            color: "#8888aa",
+            fontFamily: "'Press Start 2P', monospace",
+            fontSize: 6,
+            textDecoration: "none",
+            backdropFilter: "blur(10px)",
+            transition: "all 0.2s",
+            whiteSpace: "nowrap",
+          }}
+        >
+          GAME BOARD
+        </a>
+        <Link href="/">
+          <a
+            data-testid="link-play-game"
+            style={{
+              background: "rgba(10,10,20,0.85)",
+              border: "1px solid rgba(196,160,80,0.2)",
+              borderRadius: 6,
+              padding: "6px 12px",
+              color: "#8888aa",
+              fontFamily: "'Press Start 2P', monospace",
+              fontSize: 6,
+              textDecoration: "none",
+              backdropFilter: "blur(10px)",
+              transition: "all 0.2s",
+              whiteSpace: "nowrap",
+            }}
+          >
+            PLAY GAME
+          </a>
+        </Link>
+      </div>
       <div
         style={{
           transition: "opacity 0.5s ease",
           opacity,
           minHeight: "100vh",
+          position: "relative",
+          zIndex: 1,
         }}
       >
         {currentPage === -1 ? (
