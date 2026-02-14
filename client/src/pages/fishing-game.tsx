@@ -2734,17 +2734,17 @@ export default function FishingGame() {
       }
 
       // LAYER 4: 3D deck front face (the visible thickness/edge of the deck)
-      ctx.fillStyle = "#5a3520";
+      ctx.fillStyle = "#8B6B4A";
       ctx.fillRect(pierStartX, deckEdgeY, pierRight - pierStartX, deckFrontH);
-      ctx.fillStyle = "#4a2a18";
+      ctx.fillStyle = "#7A5C3A";
       ctx.fillRect(pierStartX, deckEdgeY, pierRight - pierStartX, 3);
-      ctx.fillStyle = "#3a2010";
+      ctx.fillStyle = "#6B4E30";
       ctx.fillRect(pierStartX, deckEdgeY + deckFrontH - 3, pierRight - pierStartX, 3);
       const frontPlankW = 28;
       for (let fx = pierStartX; fx < pierRight; fx += frontPlankW) {
-        ctx.fillStyle = (Math.floor((fx - pierStartX) / frontPlankW) % 2 === 0) ? "rgba(0,0,0,0.06)" : "rgba(255,255,255,0.03)";
+        ctx.fillStyle = (Math.floor((fx - pierStartX) / frontPlankW) % 2 === 0) ? "rgba(0,0,0,0.05)" : "rgba(255,255,255,0.04)";
         ctx.fillRect(fx, deckEdgeY, Math.min(frontPlankW, pierRight - fx), deckFrontH);
-        ctx.fillStyle = "rgba(0,0,0,0.15)";
+        ctx.fillStyle = "rgba(0,0,0,0.1)";
         ctx.fillRect(fx, deckEdgeY, 1, deckFrontH);
       }
 
@@ -2792,7 +2792,7 @@ export default function FishingGame() {
         }
       } else {
         const pierWidth = pierRight - pierStartX;
-        const plankColors = ["#6b4423", "#5a3a1a", "#7a5030", "#634020", "#6b4423"];
+        const plankColors = ["#9B7550", "#8B6B4A", "#A68058", "#8B6B4A", "#9B7550"];
         for (let py = 0; py < 5; py++) {
           ctx.fillStyle = plankColors[py];
           ctx.fillRect(pierStartX, deckPierY + py * 8, pierWidth, 8);
@@ -2804,9 +2804,9 @@ export default function FishingGame() {
         for (let px = pierStartX + 30; px < pierRight - 20; px += poleSpacing) {
           const capW = poleSrcW * poleScale + 4;
           const capH = 6;
-          ctx.fillStyle = "#4a2515";
+          ctx.fillStyle = "#7A5838";
           ctx.fillRect(px - capW / 2, deckPierY - 1, capW, capH);
-          ctx.fillStyle = "#6b3a22";
+          ctx.fillStyle = "#9B7550";
           ctx.fillRect(px - capW / 2 + 2, deckPierY, capW - 4, capH - 2);
         }
       }
