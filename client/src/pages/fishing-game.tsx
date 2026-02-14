@@ -647,6 +647,9 @@ export default function FishingGame() {
     sessionCatches: 0,
     showLeaderboard: false,
     leaderboardTab: "biggest" as "biggest" | "session" | "legendary",
+    leaderboardData: [] as any[],
+    leaderboardLoading: false,
+    showInstallPrompt: false,
     lastSellPrice: 0,
     lastFishWeight: 0,
     playerLevel: 1,
@@ -1223,6 +1226,9 @@ export default function FishingGame() {
       leaderboardLoading: s.leaderboardLoading || false,
       showInstallPrompt: s.showInstallPrompt || false,
       showPromo: s.showPromo || false,
+      billboardLeaderboard: s.billboardLeaderboard,
+      billboardLeaderboardTimer: s.billboardLeaderboardTimer,
+      promoShown: s.promoShown,
       underwaterPlants: s.underwaterPlants,
       plantsInitialized: s.plantsInitialized,
     });
@@ -1287,10 +1293,14 @@ export default function FishingGame() {
     const onContextMenu = (e: Event) => {
       e.preventDefault();
     };
-    const onDocTouchStart = () => {
+    const onDocTouchStart = (e: TouchEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('[data-mobile-controls]')) return;
       stateRef.current.isReeling = true;
     };
-    const onDocTouchEnd = () => {
+    const onDocTouchEnd = (e: TouchEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('[data-mobile-controls]')) return;
       stateRef.current.isReeling = false;
     };
     document.addEventListener("mousemove", onDocMouseMove);
@@ -5590,7 +5600,7 @@ export default function FishingGame() {
             const resilience = uiState.resilience;
             const resilienceMax = uiState.resilienceMax;
             return (
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2" style={{ pointerEvents: "none" }} data-testid="reel-bar">
+              <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-2" style={{ pointerEvents: "none", bottom: 'ontouchstart' in window ? 90 : 24 }} data-testid="reel-bar">
                 <div style={{ width: barW, height: 10, background: "rgba(8,15,25,0.85)", borderRadius: 5, border: "1px solid rgba(59,130,246,0.3)", overflow: "hidden", marginBottom: 4 }} data-testid="force-bar">
                   <div style={{ width: `${forceBarPercent}%`, height: "100%", background: forceBarPercent > 30 ? "linear-gradient(90deg, #3b82f6, #60a5fa)" : "linear-gradient(90deg, #ef4444, #f87171)", borderRadius: 5, transition: "width 0.1s" }} />
                 </div>
@@ -5681,7 +5691,7 @@ export default function FishingGame() {
                   </span>
                 </div>
                 <span style={{ color: "#b0bec5", fontSize: 8, textShadow: "1px 1px 0 #000" }}>
-                  Click to reel | Hold right-click for steady reel | A/D to align
+                  {'ontouchstart' in window ? "REEL to catch | FORCE for power | RES to recover" : "Click to reel | Hold right-click for steady reel | A/D to align"}
                 </span>
               </div>
             );
@@ -5689,7 +5699,7 @@ export default function FishingGame() {
 
           {/* Missed */}
           {uiState.gameState === "missed" && (
-            <div className="absolute bottom-16 left-1/2 -translate-x-1/2 text-center px-5 py-3 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 10, border: "1px solid rgba(231,76,60,0.3)", pointerEvents: "none" }} data-testid="missed-display">
+            <div className="absolute left-1/2 -translate-x-1/2 text-center px-5 py-3 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 10, border: "1px solid rgba(231,76,60,0.3)", pointerEvents: "none", bottom: 'ontouchstart' in window ? 90 : 64 }} data-testid="missed-display">
               <span style={{ color: "#e74c3c", fontSize: 11, textShadow: "1px 1px 0 #000" }}>{uiState.missReason}</span>
               <span style={{ color: "#607d8b", fontSize: 8 }}>Click to try again</span>
             </div>
@@ -5697,20 +5707,20 @@ export default function FishingGame() {
 
           {/* Idle Prompt */}
           {uiState.gameState === "idle" && !uiState.inBoat && (
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center px-4 py-2 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8, pointerEvents: "none" }} data-testid="idle-prompt">
-              <span style={{ color: "#b0bec5", fontSize: 10, textShadow: "1px 1px 0 #000" }}>Click to {uiState.toolMode === "net" ? "cast net" : "cast"}  |  A/D to walk</span>
-              <span style={{ color: "#5dade2", fontSize: 8, textShadow: "1px 1px 0 #000" }}>SPACE to dive in  |  1-5 hotbar</span>
+            <div className="absolute left-1/2 -translate-x-1/2 text-center px-4 py-2 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8, pointerEvents: "none", bottom: 'ontouchstart' in window ? 90 : 24 }} data-testid="idle-prompt">
+              <span style={{ color: "#b0bec5", fontSize: 10, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "Tap CAST" : "Click to cast"}  |  {'ontouchstart' in window ? "D-pad" : "A/D"} to walk</span>
+              <span style={{ color: "#5dade2", fontSize: 8, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "DIVE btn" : "SPACE"} to dive in  |  1-5 hotbar</span>
             </div>
           )}
           {uiState.gameState === "idle" && uiState.inBoat && (
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center px-4 py-2 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8, pointerEvents: "none" }} data-testid="boat-idle-prompt">
-              <span style={{ color: "#b0bec5", fontSize: 10, textShadow: "1px 1px 0 #000" }}>Click to {uiState.toolMode === "net" ? "cast net" : "cast"}  |  A/D to row  |  SPACE to stand</span>
-              <span style={{ color: "#f1c40f", fontSize: 8, textShadow: "1px 1px 0 #000" }}>E near pier to exit boat  |  1-5 hotbar</span>
+            <div className="absolute left-1/2 -translate-x-1/2 text-center px-4 py-2 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8, pointerEvents: "none", bottom: 'ontouchstart' in window ? 90 : 24 }} data-testid="boat-idle-prompt">
+              <span style={{ color: "#b0bec5", fontSize: 10, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "Tap CAST" : "Click to cast"}  |  {'ontouchstart' in window ? "D-pad" : "A/D"} to row</span>
+              <span style={{ color: "#f1c40f", fontSize: 8, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "E btn" : "E"} near pier to exit  |  1-5 hotbar</span>
             </div>
           )}
 
           {["idle","casting","waiting","bite","reeling","caught","missed","swimming"].includes(uiState.gameState) && (
-            <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex items-end gap-1" style={{ zIndex: 30 }} data-testid="hotbar">
+            <div className="absolute left-1/2 -translate-x-1/2 flex items-end gap-1" style={{ zIndex: 30, bottom: 'ontouchstart' in window ? 76 : 4 }} data-testid="hotbar">
               <div onClick={(e) => { e.stopPropagation(); stateRef.current.selectedHotbar = 1; stateRef.current.toolMode = "rod"; stateRef.current.showLurePopup = false; stateRef.current.showChumPopup = false; syncUI(); }}
                 className="flex flex-col items-center cursor-pointer"
                 style={{ padding: "4px 6px", borderRadius: 6, background: uiState.selectedHotbar === 1 ? "rgba(46,204,113,0.25)" : "rgba(8,15,25,0.75)", border: uiState.selectedHotbar === 1 ? "1px solid rgba(46,204,113,0.5)" : "1px solid rgba(255,255,255,0.1)", transition: "all 0.15s" }}
@@ -6427,9 +6437,9 @@ export default function FishingGame() {
 
           {/* Swimming Prompt */}
           {uiState.gameState === "swimming" && (
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center px-4 py-2 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8, pointerEvents: "none" }} data-testid="swim-prompt">
-              <span style={{ color: "#5dade2", fontSize: 10, textShadow: "1px 1px 0 #000" }}>W/A/S/D to swim</span>
-              <span style={{ color: "#78909c", fontSize: 8, textShadow: "1px 1px 0 #000" }}>SPACE near dock to climb out</span>
+            <div className="absolute left-1/2 -translate-x-1/2 text-center px-4 py-2 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8, pointerEvents: "none", bottom: 'ontouchstart' in window ? 90 : 24 }} data-testid="swim-prompt">
+              <span style={{ color: "#5dade2", fontSize: 10, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "D-pad to swim" : "W/A/S/D to swim"}</span>
+              <span style={{ color: "#78909c", fontSize: 8, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "DIVE btn near dock to climb out" : "SPACE near dock to climb out"}</span>
             </div>
           )}
         </>
@@ -7407,6 +7417,295 @@ export default function FishingGame() {
                 </div>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Controls Bottom Bar */}
+      {'ontouchstart' in window && uiState.characterSelected && !["intro", "title", "charSelect", "store", "npcChat"].includes(uiState.gameState) && (
+        <div
+          data-mobile-controls
+          className="fixed bottom-0 left-0 right-0 flex items-center justify-center"
+          style={{
+            zIndex: 150,
+            padding: "6px 8px 10px",
+            background: "linear-gradient(180deg, rgba(5,10,20,0.0) 0%, rgba(5,10,20,0.85) 30%)",
+            pointerEvents: "auto",
+            gap: 6,
+          }}
+          data-testid="mobile-controls-bar"
+        >
+          <div
+            data-mobile-controls
+            style={{ position: "absolute", left: 10, bottom: 70, display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}
+            data-testid="mobile-dpad"
+          >
+            <button
+              data-mobile-controls
+              data-testid="mobile-btn-up"
+              onTouchStart={(e) => { e.stopPropagation(); stateRef.current.keysDown.add("w"); }}
+              onTouchEnd={(e) => { e.stopPropagation(); stateRef.current.keysDown.delete("w"); }}
+              onTouchCancel={(e) => { e.stopPropagation(); stateRef.current.keysDown.delete("w"); }}
+              style={{
+                width: 40, height: 40, borderRadius: 8, border: "1px solid rgba(255,255,255,0.15)",
+                background: "rgba(255,255,255,0.08)", color: "#b0bec5", fontSize: 16,
+                display: "flex", alignItems: "center", justifyContent: "center", touchAction: "none",
+              }}
+            >W</button>
+            <div style={{ display: "flex", gap: 2 }}>
+              <button
+                data-mobile-controls
+                data-testid="mobile-btn-left"
+                onTouchStart={(e) => { e.stopPropagation(); stateRef.current.keysDown.add("a"); stateRef.current.facingLeft = true; }}
+                onTouchEnd={(e) => { e.stopPropagation(); stateRef.current.keysDown.delete("a"); }}
+                onTouchCancel={(e) => { e.stopPropagation(); stateRef.current.keysDown.delete("a"); }}
+                style={{
+                  width: 40, height: 40, borderRadius: 8, border: "1px solid rgba(255,255,255,0.15)",
+                  background: "rgba(255,255,255,0.08)", color: "#b0bec5", fontSize: 16,
+                  display: "flex", alignItems: "center", justifyContent: "center", touchAction: "none",
+                }}
+              >A</button>
+              <button
+                data-mobile-controls
+                data-testid="mobile-btn-down"
+                onTouchStart={(e) => { e.stopPropagation(); stateRef.current.keysDown.add("s"); }}
+                onTouchEnd={(e) => { e.stopPropagation(); stateRef.current.keysDown.delete("s"); }}
+                onTouchCancel={(e) => { e.stopPropagation(); stateRef.current.keysDown.delete("s"); }}
+                style={{
+                  width: 40, height: 40, borderRadius: 8, border: "1px solid rgba(255,255,255,0.15)",
+                  background: "rgba(255,255,255,0.08)", color: "#b0bec5", fontSize: 16,
+                  display: "flex", alignItems: "center", justifyContent: "center", touchAction: "none",
+                }}
+              >S</button>
+              <button
+                data-mobile-controls
+                data-testid="mobile-btn-right"
+                onTouchStart={(e) => { e.stopPropagation(); stateRef.current.keysDown.add("d"); stateRef.current.facingLeft = false; }}
+                onTouchEnd={(e) => { e.stopPropagation(); stateRef.current.keysDown.delete("d"); }}
+                onTouchCancel={(e) => { e.stopPropagation(); stateRef.current.keysDown.delete("d"); }}
+                style={{
+                  width: 40, height: 40, borderRadius: 8, border: "1px solid rgba(255,255,255,0.15)",
+                  background: "rgba(255,255,255,0.08)", color: "#b0bec5", fontSize: 16,
+                  display: "flex", alignItems: "center", justifyContent: "center", touchAction: "none",
+                }}
+              >D</button>
+            </div>
+          </div>
+
+          {(() => {
+            const gs = uiState.gameState;
+            const isReeling = gs === "reeling";
+            const isIdle = gs === "idle";
+            const isWaiting = gs === "waiting";
+            const isCasting = gs === "casting";
+            const isBite = gs === "bite";
+            const isCaught = gs === "caught";
+            const isMissed = gs === "missed";
+            const isSwimming = gs === "swimming";
+
+            const btnStyle = (active: boolean, color: string) => ({
+              width: 56, height: 56, borderRadius: 12,
+              border: `2px solid ${active ? color : "rgba(255,255,255,0.12)"}`,
+              background: active ? `${color}25` : "rgba(8,15,25,0.8)",
+              color: active ? color : "rgba(255,255,255,0.4)",
+              fontSize: 7, fontFamily: "'Press Start 2P', monospace",
+              display: "flex" as const, flexDirection: "column" as const, alignItems: "center" as const, justifyContent: "center" as const,
+              gap: 3, touchAction: "none" as const,
+              transition: "all 0.1s",
+              boxShadow: active ? `0 0 12px ${color}40` : "none",
+            });
+
+            return (
+              <div style={{ display: "flex", gap: 8, alignItems: "flex-end" }} data-mobile-controls>
+                <button
+                  data-mobile-controls
+                  data-testid="mobile-btn-cast"
+                  onTouchStart={(e) => {
+                    e.stopPropagation();
+                    const st = stateRef.current;
+                    if (st.gameState === "idle" || st.gameState === "caught" || st.gameState === "missed") {
+                      st.isReeling = true;
+                    }
+                  }}
+                  onTouchEnd={(e) => {
+                    e.stopPropagation();
+                    stateRef.current.isReeling = false;
+                  }}
+                  onTouchCancel={(e) => {
+                    e.stopPropagation();
+                    stateRef.current.isReeling = false;
+                  }}
+                  style={btnStyle(isIdle || isCaught || isMissed, "#4fc3f7")}
+                  disabled={isReeling || isSwimming}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2v8m0 0l3-3m-3 3l-3-3M5 16l7 6 7-6"/></svg>
+                  <span>CAST</span>
+                </button>
+
+                <button
+                  data-mobile-controls
+                  data-testid="mobile-btn-reel"
+                  onTouchStart={(e) => {
+                    e.stopPropagation();
+                    if (stateRef.current.gameState === "reeling") {
+                      stateRef.current.isReeling = true;
+                    }
+                  }}
+                  onTouchEnd={(e) => {
+                    e.stopPropagation();
+                    stateRef.current.isReeling = false;
+                  }}
+                  onTouchCancel={(e) => {
+                    e.stopPropagation();
+                    stateRef.current.isReeling = false;
+                  }}
+                  style={btnStyle(isReeling, "#2ecc71")}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2 2"/></svg>
+                  <span>REEL</span>
+                </button>
+
+                <button
+                  data-mobile-controls
+                  data-testid="mobile-btn-release"
+                  onTouchStart={(e) => {
+                    e.stopPropagation();
+                    const st = stateRef.current;
+                    if (st.gameState === "casting" || st.gameState === "waiting") {
+                      const wasWaiting = st.gameState === "waiting";
+                      st.gameState = "idle";
+                      st.hookX = -100;
+                      st.hookY = -100;
+                      st.ropeSegments = [];
+                      st.castLineActive = false;
+                      st.castLineLanded = false;
+                      if (wasWaiting) {
+                        st.swimmingFish.forEach(f => { f.approachingHook = false; });
+                      }
+                      syncUI();
+                    }
+                  }}
+                  style={btnStyle(isCasting || isWaiting, "#e74c3c")}
+                  disabled={isIdle && !isCasting && !isWaiting}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                  <span>RELEASE</span>
+                </button>
+
+                <button
+                  data-mobile-controls
+                  data-testid="mobile-btn-force"
+                  onTouchStart={(e) => {
+                    e.stopPropagation();
+                    if (stateRef.current.gameState === "reeling") {
+                      stateRef.current.activeReelHeld = true;
+                    }
+                  }}
+                  onTouchEnd={(e) => {
+                    e.stopPropagation();
+                    stateRef.current.activeReelHeld = false;
+                  }}
+                  onTouchCancel={(e) => {
+                    e.stopPropagation();
+                    stateRef.current.activeReelHeld = false;
+                  }}
+                  style={btnStyle(isReeling && stateRef.current.activeReelHeld, "#3b82f6")}
+                  disabled={!isReeling}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                  <span>FORCE</span>
+                </button>
+
+                <button
+                  data-mobile-controls
+                  data-testid="mobile-btn-resilience"
+                  onTouchStart={(e) => {
+                    e.stopPropagation();
+                    const st = stateRef.current;
+                    if (st.gameState === "reeling" && st.letOutLineCooldown <= 0 && st.resilience > 0) {
+                      st.resilience--;
+                      st.reelTarget += (st.reelProgress - st.reelTarget) * 0.6;
+                      st.hookedFishVX *= 0.3;
+                      st.hookedFishVY *= 0.3;
+                      st.letOutLineCooldown = 30;
+                    }
+                  }}
+                  style={btnStyle(isReeling && uiState.resilience > 0, "#f59e0b")}
+                  disabled={!isReeling || uiState.resilience <= 0}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  <span style={{ fontSize: 6 }}>RES {uiState.resilience}/{uiState.resilienceMax}</span>
+                </button>
+              </div>
+            );
+          })()}
+
+          <div
+            data-mobile-controls
+            style={{ position: "absolute", right: 10, bottom: 70, display: "flex", flexDirection: "column", gap: 4 }}
+            data-testid="mobile-extra-btns"
+          >
+            <button
+              data-mobile-controls
+              data-testid="mobile-btn-interact"
+              onTouchStart={(e) => {
+                e.stopPropagation();
+                const st = stateRef.current;
+                if (st.gameState === "idle") {
+                  if (st.nearHut) {
+                    st.gameState = "store";
+                    st.storeTab = "rod";
+                    syncUI();
+                  } else if (st.nearBoat) {
+                    st.showBoatPrompt = true;
+                    syncUI();
+                  } else if (st.nearNpc >= 0) {
+                    st.gameState = "npcChat";
+                    st.activeNpc = st.nearNpc;
+                    st.npcTab = "talk";
+                    syncUI();
+                  }
+                }
+                if (st.gameState === "swimming") {
+                  stateRef.current.keysDown.add(" ");
+                  setTimeout(() => stateRef.current.keysDown.delete(" "), 100);
+                }
+              }}
+              style={{
+                width: 44, height: 44, borderRadius: 10,
+                border: "1px solid rgba(255,255,255,0.15)",
+                background: "rgba(8,15,25,0.8)", color: "#78909c",
+                fontSize: 7, fontFamily: "'Press Start 2P', monospace",
+                display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                gap: 2, touchAction: "none",
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M13 12H3"/></svg>
+              <span>E</span>
+            </button>
+            <button
+              data-mobile-controls
+              data-testid="mobile-btn-space"
+              onTouchStart={(e) => {
+                e.stopPropagation();
+                const st = stateRef.current;
+                if (st.gameState === "idle" || st.gameState === "swimming") {
+                  stateRef.current.keysDown.add(" ");
+                  setTimeout(() => stateRef.current.keysDown.delete(" "), 100);
+                }
+              }}
+              style={{
+                width: 44, height: 44, borderRadius: 10,
+                border: "1px solid rgba(93,173,226,0.3)",
+                background: "rgba(93,173,226,0.1)", color: "#5dade2",
+                fontSize: 6, fontFamily: "'Press Start 2P', monospace",
+                display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                gap: 2, touchAction: "none",
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2v8m-4-4h8M5 12v6a2 2 0 002 2h10a2 2 0 002-2v-6"/></svg>
+              <span>DIVE</span>
+            </button>
           </div>
         </div>
       )}
