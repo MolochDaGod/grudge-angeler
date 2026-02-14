@@ -5603,13 +5603,6 @@ export default function FishingGame() {
                     }}
                     data-testid={`button-char-${i}`}
                   >
-                    {isSelected && (
-                      <img
-                        src={cv.factionIcon}
-                        alt={cv.name}
-                        style={{ width: 32, height: 32, marginBottom: 2, transition: "all 0.3s", filter: `drop-shadow(0 0 6px ${cv.color})` }}
-                      />
-                    )}
                     <div style={{
                       position: "relative",
                       transition: "all 0.4s",
