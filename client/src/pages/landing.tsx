@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 import oceanBgImg from "@assets/19c5a9e200bbc_1771115046741.png";
 import oceanRippleImg from "@assets/19c5a9be75d2a_1771115056616.png";
@@ -48,6 +48,7 @@ export default function Landing() {
   const [scrollY, setScrollY] = useState(0);
   const [hoveredLegendary, setHoveredLegendary] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [, navigate] = useLocation();
 
   useEffect(() => {
     const el = containerRef.current;
@@ -338,6 +339,7 @@ export default function Landing() {
               data-testid={`legendary-card-${i}`}
               onMouseEnter={() => setHoveredLegendary(i)}
               onMouseLeave={() => setHoveredLegendary(null)}
+              onClick={() => navigate(`/legendaries?fish=${i}&from=home`)}
               style={{
                 background: "rgba(8,18,35,0.9)",
                 border: `1px solid ${hoveredLegendary === i ? fish.aura : "rgba(79,195,247,0.08)"}`,

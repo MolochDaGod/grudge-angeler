@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "wouter";
 
 import phantomMinnowImg from "../assets/images/legendary-phantom-minnow.png";
@@ -229,18 +229,236 @@ const legendaries = [
   },
 ];
 
+function FlipbookOverlay({ targetPage, onComplete }: { targetPage: number; onComplete: () => void }) {
+  const [flipIndex, setFlipIndex] = useState(-1);
+  const [phase, setPhase] = useState<"flipping" | "landing" | "done">("flipping");
+
+  useEffect(() => {
+    let cancelled = false;
+    const pages = [];
+    for (let i = 0; i <= targetPage; i++) pages.push(i);
+
+    let step = 0;
+    const flipNext = () => {
+      if (cancelled) return;
+      if (step < pages.length) {
+        setFlipIndex(pages[step]);
+        step++;
+        const delay = step < pages.length ? Math.min(350, 180 + step * 20) : 500;
+        setTimeout(flipNext, delay);
+      } else {
+        setPhase("landing");
+        setTimeout(() => {
+          if (!cancelled) {
+            setPhase("done");
+            onComplete();
+          }
+        }, 600);
+      }
+    };
+
+    setTimeout(flipNext, 400);
+    return () => { cancelled = true; };
+  }, [targetPage, onComplete]);
+
+  const currentFish = flipIndex >= 0 && flipIndex < legendaries.length ? legendaries[flipIndex] : null;
+
+  return (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 100,
+      background: "#0a0a12",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      perspective: "1200px",
+    }}>
+      <style>{`
+        @keyframes flipPageIn {
+          0% { transform: rotateY(-90deg) scale(0.8); opacity: 0; }
+          40% { opacity: 1; }
+          100% { transform: rotateY(0deg) scale(1); opacity: 1; }
+        }
+        @keyframes flipPageOut {
+          0% { transform: rotateY(0deg) scale(1); opacity: 1; }
+          60% { opacity: 0.6; }
+          100% { transform: rotateY(90deg) scale(0.8); opacity: 0; }
+        }
+        @keyframes landingGlow {
+          0% { box-shadow: 0 0 0px transparent; }
+          50% { box-shadow: 0 0 60px rgba(196,160,80,0.4); }
+          100% { box-shadow: 0 0 25px rgba(196,160,80,0.15); }
+        }
+        @keyframes flipSpine {
+          0%, 100% { opacity: 0.3; }
+          50% { opacity: 0.8; }
+        }
+      `}</style>
+
+      <div style={{
+        position: "absolute", top: 40, left: "50%", transform: "translateX(-50%)",
+        fontSize: 11, letterSpacing: 6, color: "#555568",
+        fontFamily: "'Georgia', serif", textTransform: "uppercase",
+        opacity: phase === "flipping" ? 1 : 0, transition: "opacity 0.4s",
+      }}>
+        Opening Codex...
+      </div>
+
+      {phase === "flipping" && (
+        <div style={{
+          position: "absolute", bottom: 40, left: "50%", transform: "translateX(-50%)",
+          display: "flex", gap: 6, alignItems: "center",
+        }}>
+          {legendaries.map((f, i) => (
+            <div key={i} style={{
+              width: 8, height: 8, borderRadius: "50%",
+              background: i <= flipIndex
+                ? `rgba(${f.auraCss}, 0.9)`
+                : "rgba(255,255,255,0.1)",
+              boxShadow: i === flipIndex ? `0 0 12px rgba(${f.auraCss}, 0.7)` : "none",
+              transition: "all 0.2s",
+            }} />
+          ))}
+        </div>
+      )}
+
+      {currentFish && (
+        <div
+          key={flipIndex}
+          style={{
+            width: "min(340px, 85vw)",
+            background: "rgba(12,12,25,0.95)",
+            border: `2px solid rgba(${currentFish.auraCss}, ${phase === "landing" ? 0.6 : 0.25})`,
+            borderRadius: 12,
+            padding: "32px 24px",
+            textAlign: "center",
+            fontFamily: "'Georgia', serif",
+            transformOrigin: "left center",
+            animation: phase === "landing"
+              ? "landingGlow 0.8s ease-out forwards"
+              : `flipPageIn 0.25s ease-out forwards`,
+            position: "relative",
+            overflow: "hidden",
+          }}
+        >
+          <div style={{
+            position: "absolute", inset: 0,
+            background: `radial-gradient(circle at 50% 30%, rgba(${currentFish.auraCss}, ${phase === "landing" ? 0.12 : 0.05}), transparent 70%)`,
+            pointerEvents: "none",
+            transition: "all 0.3s",
+          }} />
+
+          <div style={{
+            position: "absolute", left: 0, top: 0, bottom: 0, width: 3,
+            background: `linear-gradient(180deg, transparent, rgba(${currentFish.auraCss}, 0.4), transparent)`,
+            animation: "flipSpine 0.4s ease-out",
+          }} />
+
+          <div style={{ position: "relative", zIndex: 1 }}>
+            <div style={{
+              fontSize: 11, letterSpacing: 5, color: "#666680",
+              textTransform: "uppercase", marginBottom: 16,
+            }}>
+              Chapter {currentFish.chapter}
+            </div>
+
+            <div style={{
+              width: 100, height: 100, margin: "0 auto 16px",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              position: "relative",
+            }}>
+              <div style={{
+                position: "absolute", inset: -10, borderRadius: "50%",
+                background: `radial-gradient(circle, rgba(${currentFish.auraCss}, 0.3), transparent 70%)`,
+              }} />
+              <img
+                src={currentFish.image}
+                alt={currentFish.name}
+                style={{
+                  width: currentFish.name === "The Seal at the Seam" ? 70 : 90,
+                  height: currentFish.name === "The Seal at the Seam" ? 70 : 90,
+                  imageRendering: "pixelated",
+                  position: "relative", zIndex: 1,
+                  objectFit: "contain",
+                  filter: `drop-shadow(0 0 12px rgba(${currentFish.auraCss}, 0.5))`,
+                }}
+              />
+            </div>
+
+            <div style={{
+              fontSize: phase === "landing" ? "clamp(18px, 4vw, 28px)" : 18,
+              fontWeight: 700, color: "#f0e6d0",
+              transition: "font-size 0.3s",
+              marginBottom: 6,
+            }}>
+              {currentFish.name}
+            </div>
+
+            <div style={{
+              fontSize: 13, fontStyle: "italic", color: "#9090b0",
+              marginBottom: phase === "landing" ? 16 : 8,
+            }}>
+              {currentFish.subtitle}
+            </div>
+
+            {phase === "landing" && (
+              <div style={{
+                display: "flex", justifyContent: "center", gap: 4, marginTop: 8,
+              }}>
+                {Array.from({ length: currentFish.stars }).map((_, si) => (
+                  <span key={si} style={{
+                    color: "#c4a050", fontSize: 16,
+                    textShadow: "0 0 8px rgba(196,160,80,0.5)",
+                  }}>&#9733;</span>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function LegendaryCodex() {
   const [currentPage, setCurrentPage] = useState(-1);
   const [fadeState, setFadeState] = useState<"in" | "out" | "visible">("in");
   const containerRef = useRef<HTMLDivElement>(null);
+  const [flipbookTarget, setFlipbookTarget] = useState<number | null>(null);
+  const [showFlipbook, setShowFlipbook] = useState(false);
+  const [fromHome, setFromHome] = useState(false);
 
   const totalPages = legendaries.length;
 
   useEffect(() => {
-    setFadeState("in");
-    const timer = setTimeout(() => setFadeState("visible"), 600);
-    return () => clearTimeout(timer);
-  }, [currentPage]);
+    const params = new URLSearchParams(window.location.search);
+    const fishParam = params.get("fish");
+    const fromParam = params.get("from");
+    if (fromParam === "home") setFromHome(true);
+    if (fishParam !== null) {
+      const idx = parseInt(fishParam, 10);
+      if (!isNaN(idx) && idx >= 0 && idx < legendaries.length) {
+        setFlipbookTarget(idx);
+        setShowFlipbook(true);
+      }
+    }
+  }, []);
+
+  const handleFlipbookComplete = useCallback(() => {
+    if (flipbookTarget !== null) {
+      setCurrentPage(flipbookTarget);
+      setShowFlipbook(false);
+      setFlipbookTarget(null);
+      if (containerRef.current) {
+        containerRef.current.scrollTo({ top: 0, behavior: "instant" });
+      }
+    }
+  }, [flipbookTarget]);
+
+  useEffect(() => {
+    if (!showFlipbook) {
+      setFadeState("in");
+      const timer = setTimeout(() => setFadeState("visible"), 600);
+      return () => clearTimeout(timer);
+    }
+  }, [currentPage, showFlipbook]);
 
   const goToPage = (page: number) => {
     setFadeState("out");
@@ -252,7 +470,7 @@ export default function LegendaryCodex() {
     }, 400);
   };
 
-  const opacity = fadeState === "visible" ? 1 : fadeState === "in" ? 1 : 0;
+  const opacity = showFlipbook ? 0 : (fadeState === "visible" ? 1 : fadeState === "in" ? 1 : 0);
 
   return (
     <div
@@ -269,6 +487,11 @@ export default function LegendaryCodex() {
       }}
     >
       <UnderwaterBackground />
+
+      {showFlipbook && flipbookTarget !== null && (
+        <FlipbookOverlay targetPage={flipbookTarget} onComplete={handleFlipbookComplete} />
+      )}
+
       <div
         style={{
           position: "fixed",
@@ -278,6 +501,9 @@ export default function LegendaryCodex() {
           zIndex: 50,
           display: "flex",
           gap: 6,
+          opacity: showFlipbook ? 0 : 1,
+          transition: "opacity 0.3s",
+          pointerEvents: showFlipbook ? "none" : "auto",
         }}
       >
         <Link href="/">
@@ -360,6 +586,7 @@ export default function LegendaryCodex() {
             onNext={currentPage < totalPages - 1 ? () => goToPage(currentPage + 1) : undefined}
             onCover={() => goToPage(-1)}
             onGoToPage={goToPage}
+            fromHome={fromHome}
           />
         )}
       </div>
@@ -538,9 +765,10 @@ interface ChapterProps {
   onNext?: () => void;
   onCover: () => void;
   onGoToPage: (page: number) => void;
+  fromHome?: boolean;
 }
 
-function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoToPage }: ChapterProps) {
+function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoToPage, fromHome }: ChapterProps) {
   const paragraphs = fish.lore.split("\n\n");
 
   return (
@@ -562,22 +790,44 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
           gap: "8px",
         }}
       >
-        <button
-          data-testid="button-back-to-cover"
-          onClick={onCover}
-          style={{
-            background: "none",
-            border: "none",
-            color: "#666680",
-            cursor: "pointer",
-            fontSize: "13px",
-            fontFamily: "inherit",
-            letterSpacing: "2px",
-            padding: "4px 0",
-          }}
-        >
-          The Legendary 10
-        </button>
+        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+          {fromHome && (
+            <Link href="/">
+              <a
+                data-testid="link-back-home"
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "#4fc3f7",
+                  cursor: "pointer",
+                  fontSize: "13px",
+                  fontFamily: "inherit",
+                  letterSpacing: "2px",
+                  padding: "4px 0",
+                  textDecoration: "none",
+                }}
+              >
+                Home
+              </a>
+            </Link>
+          )}
+          <button
+            data-testid="button-back-to-cover"
+            onClick={onCover}
+            style={{
+              background: "none",
+              border: "none",
+              color: "#666680",
+              cursor: "pointer",
+              fontSize: "13px",
+              fontFamily: "inherit",
+              letterSpacing: "2px",
+              padding: "4px 0",
+            }}
+          >
+            The Legendary 10
+          </button>
+        </div>
         <div style={{ fontSize: "13px", color: "#555568", letterSpacing: "1px" }}>
           {pageNum + 1} / {totalPages}
         </div>
