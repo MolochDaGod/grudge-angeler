@@ -74,6 +74,7 @@ function initRopeSegments(startX: number, startY: number, targetX: number, targe
 
 interface FishType {
   name: string;
+  icon: string;
   catchAsset: string;
   catchW: number;
   catchH: number;
@@ -96,23 +97,23 @@ interface FishType {
 }
 
 const FISH_TYPES: FishType[] = [
-  { name: "Minnow", catchAsset: "/assets/catch/1.png", catchW: 24, catchH: 6, creatureFolder: "1", idleFrames: 4, walkFrames: 4, points: 10, rarity: "common", weight: 40, minDepth: 0.15, speed: 1.5, description: "A tiny silver fish, common in shallow waters.", spriteFrameH: 24 },
-  { name: "Perch", catchAsset: "/assets/catch/2.png", catchW: 32, catchH: 12, creatureFolder: "2", idleFrames: 4, walkFrames: 6, points: 25, rarity: "common", weight: 30, minDepth: 0.25, speed: 1.2, description: "A striped freshwater fish with sharp fins." },
-  { name: "Bass", catchAsset: "/assets/catch/3.png", catchW: 40, catchH: 12, creatureFolder: "3", idleFrames: 4, walkFrames: 4, points: 50, rarity: "uncommon", weight: 15, minDepth: 0.35, speed: 1.0, description: "A strong fighter popular with anglers." },
-  { name: "Catfish", catchAsset: "/assets/catch/4.png", catchW: 52, catchH: 12, creatureFolder: "4", idleFrames: 4, walkFrames: 4, points: 75, rarity: "uncommon", weight: 8, minDepth: 0.45, speed: 0.8, description: "A bottom-dweller with long whiskers." },
-  { name: "Swordfish", catchAsset: "/assets/catch/5.png", catchW: 56, catchH: 24, creatureFolder: "5", idleFrames: 4, walkFrames: 6, points: 150, rarity: "rare", weight: 4, minDepth: 0.55, speed: 1.8, description: "A powerful ocean predator with a sharp bill." },
-  { name: "Whale", catchAsset: "/assets/catch/6.png", catchW: 108, catchH: 22, creatureFolder: "6", idleFrames: 6, walkFrames: 6, points: 300, rarity: "legendary", weight: 1, minDepth: 0.65, speed: 0.5, description: "The king of the deep. Incredibly rare!" },
-  { name: "Eel", catchAsset: "/assets/catch/7.png", catchW: 60, catchH: 12, creatureFolder: "4", idleFrames: 4, walkFrames: 4, points: 40, rarity: "common", weight: 20, minDepth: 0.3, speed: 1.3, description: "A slippery serpentine fish." },
-  { name: "Salmon", catchAsset: "/assets/catch/8.png", catchW: 60, catchH: 12, creatureFolder: "5", idleFrames: 4, walkFrames: 6, points: 60, rarity: "uncommon", weight: 12, minDepth: 0.35, speed: 1.1, description: "A prized pink-fleshed fish." },
-  { name: "Phantom Minnow", catchAsset: "/assets/catch/1.png", catchW: 24, catchH: 6, creatureFolder: "1", idleFrames: 4, walkFrames: 4, points: 500, rarity: "ultra_rare", weight: 0.3, minDepth: 0.55, speed: 2.2, description: "A ghostly minnow wreathed in spectral flame. Blinks in and out of reality.", tint: "rgba(0,255,200,0.35)", baseScale: 1.8, spriteFrameH: 24 },
-  { name: "Volcanic Perch", catchAsset: "/assets/catch/2.png", catchW: 32, catchH: 12, creatureFolder: "2", idleFrames: 4, walkFrames: 6, points: 600, rarity: "ultra_rare", weight: 0.25, minDepth: 0.6, speed: 1.6, description: "A perch superheated by deep-sea vents. Its scales glow molten orange.", tint: "rgba(255,80,0,0.4)", baseScale: 2.0 },
-  { name: "Abyssal Bass", catchAsset: "/assets/catch/3.png", catchW: 40, catchH: 12, creatureFolder: "3", idleFrames: 4, walkFrames: 4, points: 750, rarity: "ultra_rare", weight: 0.2, minDepth: 0.65, speed: 1.4, description: "A colossal bass from the deepest trenches. Radiates dark energy.", tint: "rgba(120,0,255,0.35)", baseScale: 2.2 },
-  { name: "Frost Catfish", catchAsset: "/assets/catch/4.png", catchW: 52, catchH: 12, creatureFolder: "4", idleFrames: 4, walkFrames: 4, points: 800, rarity: "ultra_rare", weight: 0.18, minDepth: 0.6, speed: 0.9, description: "An ancient catfish encased in living ice. Freezes the water around it.", tint: "rgba(100,200,255,0.4)", baseScale: 2.3 },
-  { name: "Storm Swordfish", catchAsset: "/assets/catch/5.png", catchW: 56, catchH: 24, creatureFolder: "5", idleFrames: 4, walkFrames: 6, points: 1000, rarity: "ultra_rare", weight: 0.12, minDepth: 0.7, speed: 2.5, description: "A swordfish that rides lightning bolts. Crackles with electric fury.", tint: "rgba(255,255,0,0.35)", baseScale: 2.0 },
-  { name: "Celestial Whale", catchAsset: "/assets/catch/6.png", catchW: 108, catchH: 22, creatureFolder: "6", idleFrames: 6, walkFrames: 6, points: 2000, rarity: "ultra_rare", weight: 0.05, minDepth: 0.75, speed: 0.4, description: "A cosmic whale that swallowed a dying star. The rarest creature in existence.", tint: "rgba(255,180,255,0.3)", baseScale: 1.5 },
-  { name: "Neon Eel", catchAsset: "/assets/catch/7.png", catchW: 60, catchH: 12, creatureFolder: "4", idleFrames: 4, walkFrames: 4, points: 650, rarity: "ultra_rare", weight: 0.22, minDepth: 0.55, speed: 1.9, description: "A bioluminescent eel pulsing with neon colors. Mesmerizing.", tint: "rgba(0,255,100,0.4)", baseScale: 2.0 },
-  { name: "Golden Salmon", catchAsset: "/assets/catch/8.png", catchW: 60, catchH: 12, creatureFolder: "5", idleFrames: 4, walkFrames: 6, points: 700, rarity: "ultra_rare", weight: 0.2, minDepth: 0.6, speed: 1.5, description: "A legendary salmon with solid gold scales. Worth a fortune.", tint: "rgba(255,200,0,0.45)", baseScale: 2.1 },
-  { name: "Shadow Leviathan", catchAsset: "/assets/catch/6.png", catchW: 108, catchH: 22, creatureFolder: "6", idleFrames: 6, walkFrames: 6, points: 1500, rarity: "ultra_rare", weight: 0.08, minDepth: 0.8, speed: 0.6, description: "A titanic shadow beast from beyond the abyss. Feared by all ocean life.", tint: "rgba(180,0,50,0.35)", baseScale: 1.8 },
+  { name: "Minnow", icon: "/assets/gen-icons/fish-minnow.png", catchAsset: "/assets/catch/1.png", catchW: 24, catchH: 6, creatureFolder: "1", idleFrames: 4, walkFrames: 4, points: 10, rarity: "common", weight: 40, minDepth: 0.15, speed: 1.5, description: "A tiny silver fish, common in shallow waters.", spriteFrameH: 24 },
+  { name: "Perch", icon: "/assets/gen-icons/fish-perch.png", catchAsset: "/assets/catch/2.png", catchW: 32, catchH: 12, creatureFolder: "2", idleFrames: 4, walkFrames: 6, points: 25, rarity: "common", weight: 30, minDepth: 0.25, speed: 1.2, description: "A striped freshwater fish with sharp fins." },
+  { name: "Bass", icon: "/assets/gen-icons/fish-bass.png", catchAsset: "/assets/catch/3.png", catchW: 40, catchH: 12, creatureFolder: "3", idleFrames: 4, walkFrames: 4, points: 50, rarity: "uncommon", weight: 15, minDepth: 0.35, speed: 1.0, description: "A strong fighter popular with anglers." },
+  { name: "Catfish", icon: "/assets/gen-icons/fish-catfish.png", catchAsset: "/assets/catch/4.png", catchW: 52, catchH: 12, creatureFolder: "4", idleFrames: 4, walkFrames: 4, points: 75, rarity: "uncommon", weight: 8, minDepth: 0.45, speed: 0.8, description: "A bottom-dweller with long whiskers." },
+  { name: "Swordfish", icon: "/assets/gen-icons/fish-swordfish.png", catchAsset: "/assets/catch/5.png", catchW: 56, catchH: 24, creatureFolder: "5", idleFrames: 4, walkFrames: 6, points: 150, rarity: "rare", weight: 4, minDepth: 0.55, speed: 1.8, description: "A powerful ocean predator with a sharp bill." },
+  { name: "Whale", icon: "/assets/gen-icons/fish-whale.png", catchAsset: "/assets/catch/6.png", catchW: 108, catchH: 22, creatureFolder: "6", idleFrames: 6, walkFrames: 6, points: 300, rarity: "legendary", weight: 1, minDepth: 0.65, speed: 0.5, description: "The king of the deep. Incredibly rare!" },
+  { name: "Eel", icon: "/assets/gen-icons/fish-eel.png", catchAsset: "/assets/catch/7.png", catchW: 60, catchH: 12, creatureFolder: "4", idleFrames: 4, walkFrames: 4, points: 40, rarity: "common", weight: 20, minDepth: 0.3, speed: 1.3, description: "A slippery serpentine fish." },
+  { name: "Salmon", icon: "/assets/gen-icons/fish-salmon.png", catchAsset: "/assets/catch/8.png", catchW: 60, catchH: 12, creatureFolder: "5", idleFrames: 4, walkFrames: 6, points: 60, rarity: "uncommon", weight: 12, minDepth: 0.35, speed: 1.1, description: "A prized pink-fleshed fish." },
+  { name: "Phantom Minnow", icon: "/assets/gen-icons/fish-phantom-minnow.png", catchAsset: "/assets/catch/1.png", catchW: 24, catchH: 6, creatureFolder: "1", idleFrames: 4, walkFrames: 4, points: 500, rarity: "ultra_rare", weight: 0.3, minDepth: 0.55, speed: 2.2, description: "A ghostly minnow wreathed in spectral flame. Blinks in and out of reality.", tint: "rgba(0,255,200,0.35)", baseScale: 1.8, spriteFrameH: 24 },
+  { name: "Volcanic Perch", icon: "/assets/gen-icons/fish-volcanic-perch.png", catchAsset: "/assets/catch/2.png", catchW: 32, catchH: 12, creatureFolder: "2", idleFrames: 4, walkFrames: 6, points: 600, rarity: "ultra_rare", weight: 0.25, minDepth: 0.6, speed: 1.6, description: "A perch superheated by deep-sea vents. Its scales glow molten orange.", tint: "rgba(255,80,0,0.4)", baseScale: 2.0 },
+  { name: "Abyssal Bass", icon: "/assets/gen-icons/fish-abyssal-bass.png", catchAsset: "/assets/catch/3.png", catchW: 40, catchH: 12, creatureFolder: "3", idleFrames: 4, walkFrames: 4, points: 750, rarity: "ultra_rare", weight: 0.2, minDepth: 0.65, speed: 1.4, description: "A colossal bass from the deepest trenches. Radiates dark energy.", tint: "rgba(120,0,255,0.35)", baseScale: 2.2 },
+  { name: "Frost Catfish", icon: "/assets/gen-icons/fish-frost-catfish.png", catchAsset: "/assets/catch/4.png", catchW: 52, catchH: 12, creatureFolder: "4", idleFrames: 4, walkFrames: 4, points: 800, rarity: "ultra_rare", weight: 0.18, minDepth: 0.6, speed: 0.9, description: "An ancient catfish encased in living ice. Freezes the water around it.", tint: "rgba(100,200,255,0.4)", baseScale: 2.3 },
+  { name: "Storm Swordfish", icon: "/assets/gen-icons/fish-storm-swordfish.png", catchAsset: "/assets/catch/5.png", catchW: 56, catchH: 24, creatureFolder: "5", idleFrames: 4, walkFrames: 6, points: 1000, rarity: "ultra_rare", weight: 0.12, minDepth: 0.7, speed: 2.5, description: "A swordfish that rides lightning bolts. Crackles with electric fury.", tint: "rgba(255,255,0,0.35)", baseScale: 2.0 },
+  { name: "Celestial Whale", icon: "/assets/gen-icons/fish-celestial-whale.png", catchAsset: "/assets/catch/6.png", catchW: 108, catchH: 22, creatureFolder: "6", idleFrames: 6, walkFrames: 6, points: 2000, rarity: "ultra_rare", weight: 0.05, minDepth: 0.75, speed: 0.4, description: "A cosmic whale that swallowed a dying star. The rarest creature in existence.", tint: "rgba(255,180,255,0.3)", baseScale: 1.5 },
+  { name: "Neon Eel", icon: "/assets/gen-icons/fish-neon-eel.png", catchAsset: "/assets/catch/7.png", catchW: 60, catchH: 12, creatureFolder: "4", idleFrames: 4, walkFrames: 4, points: 650, rarity: "ultra_rare", weight: 0.22, minDepth: 0.55, speed: 1.9, description: "A bioluminescent eel pulsing with neon colors. Mesmerizing.", tint: "rgba(0,255,100,0.4)", baseScale: 2.0 },
+  { name: "Golden Salmon", icon: "/assets/gen-icons/fish-golden-salmon.png", catchAsset: "/assets/catch/8.png", catchW: 60, catchH: 12, creatureFolder: "5", idleFrames: 4, walkFrames: 6, points: 700, rarity: "ultra_rare", weight: 0.2, minDepth: 0.6, speed: 1.5, description: "A legendary salmon with solid gold scales. Worth a fortune.", tint: "rgba(255,200,0,0.45)", baseScale: 2.1 },
+  { name: "Shadow Leviathan", icon: "/assets/gen-icons/fish-shadow-leviathan.png", catchAsset: "/assets/catch/6.png", catchW: 108, catchH: 22, creatureFolder: "6", idleFrames: 6, walkFrames: 6, points: 1500, rarity: "ultra_rare", weight: 0.08, minDepth: 0.8, speed: 0.6, description: "A titanic shadow beast from beyond the abyss. Feared by all ocean life.", tint: "rgba(180,0,50,0.35)", baseScale: 1.8 },
 ];
 
 const BETA_EGG_MAX_STOCK = 50;
@@ -133,14 +134,14 @@ const CRAB_COLS = 16;
 const CRAB_WALK_FRAMES = 4;
 
 const BEACH_CRABS: FishType[] = [
-  { name: "Red Crab", catchAsset: CRAB_SHEET, catchW: 16, catchH: 16, creatureFolder: "", idleFrames: 4, walkFrames: CRAB_WALK_FRAMES, points: 8, rarity: "common", weight: 50, minDepth: 0.05, speed: 0.9, description: "A small red crab that scuttles along the beach.", spriteSheet: CRAB_SHEET, spriteRow: 0, spriteFrameSize: CRAB_FRAME, beachCrab: true },
-  { name: "Blue Crab", catchAsset: CRAB_SHEET, catchW: 16, catchH: 16, creatureFolder: "", idleFrames: 4, walkFrames: CRAB_WALK_FRAMES, points: 10, rarity: "common", weight: 40, minDepth: 0.05, speed: 1.0, description: "A bright blue crab found near tidal pools.", spriteSheet: CRAB_SHEET, spriteRow: 3, spriteFrameSize: CRAB_FRAME, beachCrab: true },
-  { name: "Green Crab", catchAsset: CRAB_SHEET, catchW: 16, catchH: 16, creatureFolder: "", idleFrames: 4, walkFrames: CRAB_WALK_FRAMES, points: 8, rarity: "common", weight: 45, minDepth: 0.05, speed: 0.8, description: "A mossy green crab hiding in the seaweed.", spriteSheet: CRAB_SHEET, spriteRow: 5, spriteFrameSize: CRAB_FRAME, beachCrab: true },
-  { name: "Purple Crab", catchAsset: CRAB_SHEET, catchW: 16, catchH: 16, creatureFolder: "", idleFrames: 4, walkFrames: CRAB_WALK_FRAMES, points: 15, rarity: "uncommon", weight: 20, minDepth: 0.05, speed: 1.1, description: "An uncommon purple crab with iridescent shell.", spriteSheet: CRAB_SHEET, spriteRow: 2, spriteFrameSize: CRAB_FRAME, beachCrab: true },
-  { name: "Gold Crab", catchAsset: CRAB_SHEET, catchW: 16, catchH: 16, creatureFolder: "", idleFrames: 4, walkFrames: CRAB_WALK_FRAMES, points: 25, rarity: "uncommon", weight: 15, minDepth: 0.05, speed: 1.2, description: "A rare golden crab. Prized for its shimmering shell.", spriteSheet: CRAB_SHEET, spriteRow: 11, spriteFrameSize: CRAB_FRAME, beachCrab: true },
-  { name: "Cyan Crab", catchAsset: CRAB_SHEET, catchW: 16, catchH: 16, creatureFolder: "", idleFrames: 4, walkFrames: CRAB_WALK_FRAMES, points: 8, rarity: "common", weight: 45, minDepth: 0.05, speed: 0.85, description: "A pale cyan crab commonly found on sandy shores.", spriteSheet: CRAB_SHEET, spriteRow: 14, spriteFrameSize: CRAB_FRAME, beachCrab: true },
-  { name: "Pink Crab", catchAsset: CRAB_SHEET, catchW: 16, catchH: 16, creatureFolder: "", idleFrames: 4, walkFrames: CRAB_WALK_FRAMES, points: 12, rarity: "common", weight: 35, minDepth: 0.05, speed: 0.95, description: "A cute pink crab that loves warm shallow waters.", spriteSheet: CRAB_SHEET, spriteRow: 18, spriteFrameSize: CRAB_FRAME, beachCrab: true },
-  { name: "Dark Crab", catchAsset: CRAB_SHEET, catchW: 16, catchH: 16, creatureFolder: "", idleFrames: 4, walkFrames: CRAB_WALK_FRAMES, points: 20, rarity: "uncommon", weight: 18, minDepth: 0.05, speed: 1.15, description: "A dark-shelled crab with powerful pincers.", spriteSheet: CRAB_SHEET, spriteRow: 22, spriteFrameSize: CRAB_FRAME, beachCrab: true },
+  { name: "Red Crab", icon: "/assets/gen-icons/fish-red-crab.png", catchAsset: CRAB_SHEET, catchW: 16, catchH: 16, creatureFolder: "", idleFrames: 4, walkFrames: CRAB_WALK_FRAMES, points: 8, rarity: "common", weight: 50, minDepth: 0.05, speed: 0.9, description: "A small red crab that scuttles along the beach.", spriteSheet: CRAB_SHEET, spriteRow: 0, spriteFrameSize: CRAB_FRAME, beachCrab: true },
+  { name: "Blue Crab", icon: "/assets/gen-icons/fish-blue-crab.png", catchAsset: CRAB_SHEET, catchW: 16, catchH: 16, creatureFolder: "", idleFrames: 4, walkFrames: CRAB_WALK_FRAMES, points: 10, rarity: "common", weight: 40, minDepth: 0.05, speed: 1.0, description: "A bright blue crab found near tidal pools.", spriteSheet: CRAB_SHEET, spriteRow: 3, spriteFrameSize: CRAB_FRAME, beachCrab: true },
+  { name: "Green Crab", icon: "/assets/gen-icons/fish-green-crab.png", catchAsset: CRAB_SHEET, catchW: 16, catchH: 16, creatureFolder: "", idleFrames: 4, walkFrames: CRAB_WALK_FRAMES, points: 8, rarity: "common", weight: 45, minDepth: 0.05, speed: 0.8, description: "A mossy green crab hiding in the seaweed.", spriteSheet: CRAB_SHEET, spriteRow: 5, spriteFrameSize: CRAB_FRAME, beachCrab: true },
+  { name: "Purple Crab", icon: "/assets/gen-icons/fish-purple-crab.png", catchAsset: CRAB_SHEET, catchW: 16, catchH: 16, creatureFolder: "", idleFrames: 4, walkFrames: CRAB_WALK_FRAMES, points: 15, rarity: "uncommon", weight: 20, minDepth: 0.05, speed: 1.1, description: "An uncommon purple crab with iridescent shell.", spriteSheet: CRAB_SHEET, spriteRow: 2, spriteFrameSize: CRAB_FRAME, beachCrab: true },
+  { name: "Gold Crab", icon: "/assets/gen-icons/fish-gold-crab.png", catchAsset: CRAB_SHEET, catchW: 16, catchH: 16, creatureFolder: "", idleFrames: 4, walkFrames: CRAB_WALK_FRAMES, points: 25, rarity: "uncommon", weight: 15, minDepth: 0.05, speed: 1.2, description: "A rare golden crab. Prized for its shimmering shell.", spriteSheet: CRAB_SHEET, spriteRow: 11, spriteFrameSize: CRAB_FRAME, beachCrab: true },
+  { name: "Cyan Crab", icon: "/assets/gen-icons/fish-cyan-crab.png", catchAsset: CRAB_SHEET, catchW: 16, catchH: 16, creatureFolder: "", idleFrames: 4, walkFrames: CRAB_WALK_FRAMES, points: 8, rarity: "common", weight: 45, minDepth: 0.05, speed: 0.85, description: "A pale cyan crab commonly found on sandy shores.", spriteSheet: CRAB_SHEET, spriteRow: 14, spriteFrameSize: CRAB_FRAME, beachCrab: true },
+  { name: "Pink Crab", icon: "/assets/gen-icons/fish-pink-crab.png", catchAsset: CRAB_SHEET, catchW: 16, catchH: 16, creatureFolder: "", idleFrames: 4, walkFrames: CRAB_WALK_FRAMES, points: 12, rarity: "common", weight: 35, minDepth: 0.05, speed: 0.95, description: "A cute pink crab that loves warm shallow waters.", spriteSheet: CRAB_SHEET, spriteRow: 18, spriteFrameSize: CRAB_FRAME, beachCrab: true },
+  { name: "Dark Crab", icon: "/assets/gen-icons/fish-dark-crab.png", catchAsset: CRAB_SHEET, catchW: 16, catchH: 16, creatureFolder: "", idleFrames: 4, walkFrames: CRAB_WALK_FRAMES, points: 20, rarity: "uncommon", weight: 18, minDepth: 0.05, speed: 1.15, description: "A dark-shelled crab with powerful pincers.", spriteSheet: CRAB_SHEET, spriteRow: 22, spriteFrameSize: CRAB_FRAME, beachCrab: true },
 ];
 
 const JUNK_ITEMS = [
@@ -1122,6 +1123,11 @@ export default function FishingGame() {
       "/assets/objects/Fishbarrel3.png",
       "/assets/objects/Fishbarrel4.png",
       ...FISH_TYPES.map(f => f.catchAsset),
+      ...FISH_TYPES.filter(f => f.icon).map(f => f.icon!),
+      ...BEACH_CRABS.filter(f => f.icon).map(f => f.icon!),
+      "/assets/gen-icons/fish-shark.png",
+      "/assets/gen-icons/fish-kraken.png",
+      "/assets/gen-icons/fish-sea-devil.png",
       ...JUNK_ITEMS.map(j => j.asset),
       ...["1","2","3","4","5","6"].flatMap(n => [
         `/assets/creatures/${n}/Idle.png`,
@@ -3634,8 +3640,9 @@ export default function FishingGame() {
               const vitBonus = 1 + s.attributes.Vitality * 0.01 * (1 + s.attributes.Tactics * 0.005);
               s.biteTimer = (120 + Math.random() * 80) * vitBonus;
               s.exclamationTimer = 0;
+              const predIconMap: Record<string, string> = { "Shark": "/assets/gen-icons/fish-shark.png", "Kraken": "/assets/gen-icons/fish-kraken.png", "Sea Devil": "/assets/gen-icons/fish-sea-devil.png" };
               s.currentCatch = { 
-                name: pred.type.name, catchAsset: pred.type.catchAsset, catchW: pred.type.catchW, catchH: pred.type.catchH, 
+                name: pred.type.name, icon: predIconMap[pred.type.name], catchAsset: pred.type.catchAsset, catchW: pred.type.catchW, catchH: pred.type.catchH, 
                 creatureFolder: pred.type.folder, idleFrames: pred.type.idleFrames, walkFrames: pred.type.walkFrames, 
                 points: pred.type.points, rarity: pred.type.rarity, weight: pred.type.weight, 
                 minDepth: 0.5, speed: pred.type.speed, description: pred.type.description, 
@@ -4304,11 +4311,13 @@ export default function FishingGame() {
 
       // World-space catch fish rendering during cinematic phases
       if (s.gameState === "caught") {
-        const catchAsset = s.currentCatch?.catchAsset || s.currentJunk?.asset;
-        if (catchAsset) {
-          const catchImg = getImg(catchAsset);
-          if (catchImg && catchImg.complete) {
-            const cs = 3 + Math.min(3, s.hookedFishSize);
+        const iconSrc = s.currentCatch?.icon;
+        const fallbackAsset = s.currentCatch?.catchAsset || s.currentJunk?.asset;
+        const displaySrc = iconSrc || fallbackAsset;
+        if (displaySrc) {
+          const displayImg = getImg(displaySrc);
+          if (displayImg && displayImg.complete) {
+            const iconSize = 48 + Math.min(24, s.hookedFishSize * 6);
             
             ctx.save();
             ctx.translate(s.catchFishWorldX, s.catchFishWorldY);
@@ -4319,16 +4328,21 @@ export default function FishingGame() {
               ctx.scale(flopScale, 1 / flopScale);
             }
             
-            if (s.currentCatch?.beachCrab && s.currentCatch?.spriteRow !== undefined) {
+            if (iconSrc) {
+              ctx.imageSmoothingEnabled = false;
+              ctx.drawImage(displayImg, -iconSize / 2, -iconSize / 2, iconSize, iconSize);
+            } else if (s.currentCatch?.beachCrab && s.currentCatch?.spriteRow !== undefined) {
+              const cs = 3 + Math.min(3, s.hookedFishSize);
               const cfs = s.currentCatch.spriteFrameSize || CRAB_FRAME;
               const crabCS = cs * 2;
               const dw = cfs * crabCS;
               const dh = cfs * crabCS;
-              ctx.drawImage(catchImg, 0, s.currentCatch.spriteRow * cfs, cfs, cfs, -dw / 2, -dh / 2, dw, dh);
+              ctx.drawImage(displayImg, 0, s.currentCatch.spriteRow * cfs, cfs, cfs, -dw / 2, -dh / 2, dw, dh);
             } else {
-              const imgW = catchImg.width * cs;
-              const imgH = catchImg.height * cs;
-              ctx.drawImage(catchImg, -imgW / 2, -imgH / 2, imgW, imgH);
+              const cs = 3 + Math.min(3, s.hookedFishSize);
+              const imgW = displayImg.width * cs;
+              const imgH = displayImg.height * cs;
+              ctx.drawImage(displayImg, -imgW / 2, -imgH / 2, imgW, imgH);
             }
 
             if (s.currentCatch && s.currentCatch.rarity !== "common") {
@@ -4345,7 +4359,8 @@ export default function FishingGame() {
                 const crownScale = raritySizes[s.currentCatch.rarity] || 0.35;
                 const crownDrawW = crownFW * crownScale;
                 const crownDrawH = crownFH * crownScale;
-                ctx.drawImage(crownImg, crownSX, crownSY, crownFW, crownFH, -crownDrawW * 0.5, -catchImg.height * cs * 0.35, crownDrawW, crownDrawH);
+                const crownOffsetY = iconSrc ? -iconSize * 0.4 : -displayImg.height * (3 + Math.min(3, s.hookedFishSize)) * 0.35;
+                ctx.drawImage(crownImg, crownSX, crownSY, crownFW, crownFH, -crownDrawW * 0.5, crownOffsetY, crownDrawW, crownDrawH);
               }
             }
             
@@ -5881,16 +5896,7 @@ export default function FishingGame() {
                     display: "flex", alignItems: "center", justifyContent: "center",
                     fontSize: 16,
                   }}>
-                    {stateRef.current.currentCatch?.beachCrab && stateRef.current.currentCatch?.spriteRow !== undefined ? (
-                      <div style={{ width: 20, height: 20, overflow: "hidden", position: "relative" }}>
-                        <img src={stateRef.current.currentCatch.catchAsset} alt="" style={{ 
-                          position: "absolute", width: 256 * (20/16), height: 384 * (20/16), imageRendering: "pixelated",
-                          left: 0, top: -(stateRef.current.currentCatch.spriteRow * (20)),
-                        }} />
-                      </div>
-                    ) : (
-                      <img src={stateRef.current.currentCatch?.catchAsset || stateRef.current.currentJunk?.asset || "/assets/icons/Icons_05.png"} alt="" style={{ width: 20, height: 20, imageRendering: "pixelated", objectFit: "contain" }} />
-                    )}
+                    <img src={stateRef.current.currentCatch?.icon || stateRef.current.currentCatch?.catchAsset || stateRef.current.currentJunk?.asset || "/assets/icons/Icons_05.png"} alt="" style={{ width: 20, height: 20, imageRendering: "pixelated", objectFit: "contain" }} />
                   </div>
                 </div>
                 <div className="relative" style={{
@@ -5915,20 +5921,11 @@ export default function FishingGame() {
                     filter: fishInZone ? "drop-shadow(0 0 6px rgba(46,204,113,0.8))" : "drop-shadow(0 0 4px rgba(231,76,60,0.6))",
                     transition: "filter 0.1s",
                   }} data-testid="fish-icon">
-                    {stateRef.current.currentCatch?.beachCrab && stateRef.current.currentCatch?.spriteRow !== undefined ? (
-                      <div style={{ width: 24, height: 24, overflow: "hidden", position: "relative" }}>
-                        <img src={stateRef.current.currentCatch.catchAsset} alt="" style={{ 
-                          position: "absolute", width: 256 * (24/16), height: 384 * (24/16), imageRendering: "pixelated",
-                          left: 0, top: -(stateRef.current.currentCatch.spriteRow * (24)),
-                        }} />
-                      </div>
-                    ) : (
-                      <img
-                        src={stateRef.current.currentCatch?.catchAsset || stateRef.current.currentJunk?.asset || "/assets/icons/Icons_05.png"}
-                        alt=""
-                        style={{ width: 24, height: 24, imageRendering: "pixelated", objectFit: "contain" }}
-                      />
-                    )}
+                    <img
+                      src={stateRef.current.currentCatch?.icon || stateRef.current.currentCatch?.catchAsset || stateRef.current.currentJunk?.asset || "/assets/icons/Icons_05.png"}
+                      alt=""
+                      style={{ width: 24, height: 24, imageRendering: "pixelated", objectFit: "contain" }}
+                    />
                   </div>
                 </div>
                 <div className="flex items-center gap-2" style={{ marginTop: 2 }}>
