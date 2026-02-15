@@ -875,6 +875,25 @@ export default function FishingGame() {
     plantsInitialized: false,
   });
 
+  const [discordUser, setDiscordUser] = useState<{ discordId: string; username: string; avatar: string | null } | null>(null);
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then(r => r.json())
+      .then(data => {
+        if (data.authenticated && data.user) {
+          setDiscordUser(data.user);
+          stateRef.current.playerName = data.user.username;
+        }
+      })
+      .catch(() => {});
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("auth") === "success" || params.get("auth_error")) {
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, []);
+
   const loadImage = useCallback((src: string): Promise<HTMLImageElement> => {
     return new Promise((resolve) => {
       const existing = imagesRef.current.get(src);
@@ -5698,12 +5717,62 @@ export default function FishingGame() {
             </div>
 
             <div className="flex flex-col items-center gap-2" style={{ width: "100%" }}>
-              <label style={{ color: "#90a4ae", fontSize: 11 }}>ENTER YOUR NAME</label>
+              {discordUser ? (
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                  {discordUser.avatar && (
+                    <img src={discordUser.avatar} alt="" style={{ width: 28, height: 28, borderRadius: "50%" }} />
+                  )}
+                  <span style={{ color: "#7289da", fontSize: 13, fontFamily: "'Press Start 2P', monospace" }}>{discordUser.username}</span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      fetch("/api/auth/logout", { method: "POST" }).then(() => {
+                        setDiscordUser(null);
+                        stateRef.current.playerName = "";
+                      });
+                    }}
+                    style={{
+                      background: "none", border: "none", color: "#e74c3c", cursor: "pointer",
+                      fontSize: 10, fontFamily: "'Press Start 2P', monospace",
+                    }}
+                    data-testid="button-discord-logout"
+                  >LOGOUT</button>
+                </div>
+              ) : (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.location.href = "/api/auth/discord";
+                  }}
+                  style={{
+                    background: "#5865F2",
+                    border: "none",
+                    borderRadius: 8,
+                    padding: "8px 18px",
+                    color: "#fff",
+                    fontSize: 12,
+                    fontFamily: "'Press Start 2P', monospace",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    marginBottom: 4,
+                  }}
+                  data-testid="button-discord-login"
+                >
+                  <svg width="20" height="15" viewBox="0 0 71 55" fill="none">
+                    <path d="M60.1 4.9A58.5 58.5 0 0045.4.2a.2.2 0 00-.2.1 40.7 40.7 0 00-1.8 3.7 54 54 0 00-16.2 0A26.4 26.4 0 0025.4.3a.2.2 0 00-.2-.1A58.4 58.4 0 0010.5 4.9a.2.2 0 00-.1.1C1.5 18.7-.9 32.2.3 45.5v.1a58.8 58.8 0 0017.9 9.1.2.2 0 00.3-.1 42 42 0 003.6-5.9.2.2 0 00-.1-.3 38.8 38.8 0 01-5.5-2.7.2.2 0 01 0-.4c.4-.3.7-.6 1.1-.9a.2.2 0 01.2 0 42 42 0 0035.8 0 .2.2 0 01.2 0l1.1.9a.2.2 0 010 .4c-1.8 1-3.6 1.9-5.5 2.7a.2.2 0 00-.1.3 47.2 47.2 0 003.6 5.9.2.2 0 00.3.1A58.6 58.6 0 0071 45.6v-.1c1.4-15-2.3-28-9.8-39.6a.2.2 0 00-.1-.1zM23.7 37.3c-3.4 0-6.2-3.1-6.2-7s2.7-7 6.2-7 6.3 3.2 6.2 7-2.8 7-6.2 7zm23 0c-3.4 0-6.2-3.1-6.2-7s2.7-7 6.2-7 6.3 3.2 6.2 7-2.8 7-6.2 7z" fill="white"/>
+                  </svg>
+                  LOGIN WITH DISCORD
+                </button>
+              )}
+              <label style={{ color: "#90a4ae", fontSize: 11 }}>{discordUser ? "PLAYING AS" : "ENTER YOUR NAME"}</label>
               <input
+                key={discordUser?.discordId || "anon"}
                 type="text"
                 maxLength={16}
                 placeholder="Angler"
-                defaultValue={uiState.playerName}
+                defaultValue={discordUser?.username || uiState.playerName || ""}
                 onChange={(e) => {
                   stateRef.current.playerName = e.target.value;
                 }}

@@ -12,8 +12,11 @@ I want to prioritize iterative development. I prefer detailed explanations for c
 - **Status:** Live in production (deployed 2026-02-15)
 
 ## Recent Changes
+- **2026-02-15:** Discord OAuth login: /api/auth/discord flow with CSRF state param, cookie-based sessions, Discord login button on character select screen
+- **2026-02-15:** Webhook improvements: richer embeds with Discord bot username/avatar, fallback icon, image embed for legendary/ultra_rare catches, error logging
+- **2026-02-15:** Codex animated sprites: all legendary fish entries use CodexAnimatedSprite component instead of static images
 - **2026-02-15:** Deployed to production at ocean-angler-grudge.replit.app
-- **2026-02-15:** Discord webhook integration: sends fish image, weight, length, rarity, username, earnings to Discord after every catch via DISCORD_WEBHOOK_URL_FISH secret
+- **2026-02-15:** Discord webhook integration: sends fish icon (gen-icons), weight, length, rarity, username, earnings to Discord after every catch via DISCORD_WEBHOOK_URL_FISH secret
 - **2026-02-15:** Updated routing slugs: /game, /codex, /codex/:slug with redirects from /play, /legendaries
 - **2026-02-15:** Production-ready leaderboard: atomic upsert (INSERT ON CONFLICT) for biggest_catch and session_catches, partial unique index on (player_name, category), session timer UI with 20-min countdown
 - **2026-02-15:** Fixed isMobile undefined variable bug in boat prompt
