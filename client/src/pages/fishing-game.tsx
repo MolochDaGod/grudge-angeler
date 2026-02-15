@@ -94,6 +94,7 @@ interface FishType {
   spriteFrameSize?: number;
   beachCrab?: boolean;
   spriteFrameH?: number;
+  isPredator?: boolean;
 }
 
 const FISH_TYPES: FishType[] = [
@@ -114,6 +115,7 @@ const FISH_TYPES: FishType[] = [
   { name: "Neon Eel", icon: "/assets/gen-icons/fish-neon-eel.png", catchAsset: "/assets/catch/7.png", catchW: 60, catchH: 12, creatureFolder: "5", idleFrames: 4, walkFrames: 6, points: 650, rarity: "ultra_rare", weight: 0.22, minDepth: 0.55, speed: 1.9, description: "A bioluminescent eel pulsing with neon colors. Mesmerizing.", tint: "rgba(0,255,100,0.45)", baseScale: 2.0 },
   { name: "Golden Salmon", icon: "/assets/gen-icons/fish-golden-salmon.png", catchAsset: "/assets/catch/8.png", catchW: 60, catchH: 12, creatureFolder: "2", idleFrames: 4, walkFrames: 6, points: 700, rarity: "ultra_rare", weight: 0.2, minDepth: 0.6, speed: 1.5, description: "A legendary salmon with solid gold scales. Worth a fortune.", tint: "rgba(255,200,0,0.5)", baseScale: 2.1 },
   { name: "Shadow Leviathan", icon: "/assets/gen-icons/fish-shadow-leviathan.png", catchAsset: "/assets/catch/5.png", catchW: 56, catchH: 24, creatureFolder: "4", idleFrames: 4, walkFrames: 4, points: 1500, rarity: "ultra_rare", weight: 0.08, minDepth: 0.8, speed: 0.6, description: "A titanic shadow beast from beyond the abyss. Feared by all ocean life.", tint: "rgba(140,0,40,0.45)", baseScale: 2.5 },
+  { name: "The Seal at the Seam", icon: "/assets/gen-icons/fish-seal-at-the-seam.png", catchAsset: "/assets/gen-icons/fish-seal-at-the-seam.png", catchW: 64, catchH: 64, creatureFolder: "6", idleFrames: 6, walkFrames: 6, points: 5000, rarity: "ultra_rare", weight: 0.02, minDepth: 0.9, speed: 0.3, description: "A living sigil at the boundary of reality. The 10th Legendary — guardian of the Seam.", tint: "rgba(20,40,120,0.5)", baseScale: 2.8 },
 ];
 
 const BETA_EGG_MAX_STOCK = 50;
@@ -3692,7 +3694,7 @@ export default function FishingGame() {
                 creatureFolder: pred.type.folder, idleFrames: pred.type.idleFrames, walkFrames: pred.type.walkFrames, 
                 points: pred.type.points, rarity: pred.type.rarity, weight: pred.type.weight, 
                 minDepth: 0.5, speed: pred.type.speed, description: pred.type.description, 
-                tint: pred.type.tint, baseScale: pred.type.size 
+                tint: pred.type.tint, baseScale: pred.type.size, isPredator: true 
               } as FishType;
               s.hookedFishX = pred.x;
               s.hookedFishY = pred.y;
@@ -4195,14 +4197,46 @@ export default function FishingGame() {
 
         const creatureFolder = s.currentCatch?.creatureFolder || "1";
         const walkFrames = s.currentCatch?.walkFrames || 4;
-        drawSprite(
-          `/assets/creatures/${creatureFolder}/Walk.png`,
-          s.hookedFishFrame, walkFrames,
-          s.hookedFishX, s.hookedFishY, creatureScale,
-          s.hookedFishDir < 0,
-          s.currentCatch?.tint || null,
-          s.currentCatch?.spriteFrameH
-        );
+        if (s.currentCatch?.beachCrab && s.currentCatch?.spriteSheet && s.currentCatch?.spriteRow !== undefined) {
+          const crabImg = getImg(s.currentCatch.spriteSheet);
+          if (crabImg && crabImg.complete) {
+            const fs = s.currentCatch.spriteFrameSize || CRAB_FRAME;
+            const crabScale = SCALE * 1.2 * (s.hookedFishSize || 1);
+            const sx = s.hookedFishFrame * fs;
+            const sy = s.currentCatch.spriteRow * fs;
+            ctx.save();
+            if (s.hookedFishDir < 0) {
+              ctx.translate(s.hookedFishX + fs * crabScale, s.hookedFishY);
+              ctx.scale(-1, 1);
+              ctx.drawImage(crabImg, sx, sy, fs, fs, 0, 0, fs * crabScale, fs * crabScale);
+            } else {
+              ctx.drawImage(crabImg, sx, sy, fs, fs, s.hookedFishX, s.hookedFishY, fs * crabScale, fs * crabScale);
+            }
+            ctx.restore();
+          }
+        } else if (s.currentCatch?.isPredator) {
+          const PRED_FRAME = 96;
+          const predScale = SCALE * 0.8 * (s.hookedFishSize || 1);
+          const predSpriteSheet = `/assets/predators/${creatureFolder}/Walk.png`;
+          const predImg = getImg(predSpriteSheet);
+          if (predImg) {
+            ctx.save();
+            const drawX = s.hookedFishDir < 0 ? s.hookedFishX + PRED_FRAME * predScale : s.hookedFishX;
+            ctx.translate(drawX, s.hookedFishY);
+            if (s.hookedFishDir < 0) ctx.scale(-1, 1);
+            ctx.drawImage(predImg, s.hookedFishFrame * PRED_FRAME, 0, PRED_FRAME, PRED_FRAME, 0, 0, PRED_FRAME * predScale, PRED_FRAME * predScale);
+            ctx.restore();
+          }
+        } else {
+          drawSprite(
+            `/assets/creatures/${creatureFolder}/Walk.png`,
+            s.hookedFishFrame, walkFrames,
+            s.hookedFishX, s.hookedFishY, creatureScale,
+            s.hookedFishDir < 0,
+            s.currentCatch?.tint || null,
+            s.currentCatch?.spriteFrameH
+          );
+        }
         if (s.currentCatch && s.currentCatch.rarity !== "common") {
           const crownImg = getImg("/assets/rarity_crown.png");
           if (crownImg && crownImg.complete) {
