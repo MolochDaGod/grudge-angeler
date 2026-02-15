@@ -339,60 +339,82 @@ export default function Landing() {
               onMouseEnter={() => setHoveredLegendary(i)}
               onMouseLeave={() => setHoveredLegendary(null)}
               style={{
-                background: hoveredLegendary === i
-                  ? "rgba(15,25,45,0.95)"
-                  : "rgba(8,18,35,0.9)",
+                background: "rgba(8,18,35,0.9)",
                 border: `1px solid ${hoveredLegendary === i ? fish.aura : "rgba(79,195,247,0.08)"}`,
-                borderRadius: 10, padding: 16,
+                borderRadius: 10,
                 textAlign: "center",
                 transition: "all 0.3s",
                 cursor: "pointer",
                 position: "relative", overflow: "hidden",
               }}
             >
-              {hoveredLegendary === i && (
+              {/* Fish image as card background */}
+              <div style={{
+                position: "absolute", inset: 0,
+                backgroundImage: `url(${fish.img})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+                imageRendering: "pixelated",
+                opacity: hoveredLegendary === i ? 0.35 : 0.15,
+                filter: `saturate(1.3) hue-rotate(0deg)`,
+                transition: "opacity 0.3s",
+                pointerEvents: "none",
+              }} />
+              {/* Aura gradient overlay */}
+              <div style={{
+                position: "absolute", inset: 0,
+                background: `radial-gradient(circle at 50% 40%, ${fish.aura}, transparent 70%)`,
+                opacity: hoveredLegendary === i ? 0.3 : 0.08,
+                transition: "opacity 0.3s",
+                pointerEvents: "none",
+              }} />
+              {/* Dark bottom gradient for text readability */}
+              <div style={{
+                position: "absolute", inset: 0,
+                background: "linear-gradient(180deg, transparent 30%, rgba(5,12,25,0.85) 75%, rgba(5,12,25,0.95) 100%)",
+                pointerEvents: "none",
+              }} />
+
+              <div style={{ position: "relative", zIndex: 1, padding: 16 }}>
                 <div style={{
-                  position: "absolute", inset: 0,
-                  background: `radial-gradient(circle at 50% 50%, ${fish.aura}, transparent 70%)`,
-                  opacity: 0.2, pointerEvents: "none",
-                }} />
-              )}
-              <div style={{
-                position: "relative",
-                width: 80, height: 80, margin: "0 auto 10px",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
+                  width: 80, height: 80, margin: "0 auto 10px",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  position: "relative",
+                }}>
+                  <div style={{
+                    position: "absolute", inset: -5,
+                    borderRadius: "50%",
+                    background: `radial-gradient(circle, ${fish.aura}, transparent 70%)`,
+                    opacity: hoveredLegendary === i ? 0.6 : 0.25,
+                    transition: "opacity 0.3s",
+                  }} />
+                  <img
+                    src={fish.img}
+                    alt={fish.name}
+                    style={{
+                      width: fish.name === "The Seal at the Seam" ? 56 : 72,
+                      height: fish.name === "The Seal at the Seam" ? 56 : 72,
+                      imageRendering: "pixelated",
+                      position: "relative", zIndex: 1,
+                      objectFit: "contain",
+                      filter: `drop-shadow(0 0 8px ${fish.aura})`,
+                      animation: hoveredLegendary === i ? "float 2s ease-in-out infinite" : "none",
+                    }}
+                  />
+                </div>
                 <div style={{
-                  position: "absolute", inset: -5,
-                  borderRadius: "50%",
-                  background: `radial-gradient(circle, ${fish.aura}, transparent 70%)`,
-                  opacity: hoveredLegendary === i ? 0.6 : 0.2,
-                  transition: "opacity 0.3s",
-                }} />
-                <img
-                  src={fish.img}
-                  alt={fish.name}
-                  style={{
-                    width: fish.name === "The Seal at the Seam" ? 56 : 72,
-                    height: fish.name === "The Seal at the Seam" ? 56 : 72,
-                    imageRendering: "pixelated",
-                    position: "relative", zIndex: 1,
-                    objectFit: "contain",
-                    animation: hoveredLegendary === i ? "float 2s ease-in-out infinite" : "none",
-                  }}
-                />
-              </div>
-              <div style={{
-                fontSize: 5, color: "#4a6070", letterSpacing: 2, marginBottom: 4,
-              }}>CHAPTER {fish.chapter}</div>
-              <div style={{
-                fontSize: 7, color: "#e8edf2", letterSpacing: 1,
-                textShadow: hoveredLegendary === i ? `0 0 10px ${fish.aura}` : "none",
-              }}>{fish.name}</div>
-              <div style={{ marginTop: 6, display: "flex", justifyContent: "center", gap: 2 }}>
-                {[...Array(5)].map((_, s) => (
-                  <span key={s} style={{ color: "#ffd54f", fontSize: 6 }}>*</span>
-                ))}
+                  fontSize: 5, color: "#6a8090", letterSpacing: 2, marginBottom: 4,
+                }}>CHAPTER {fish.chapter}</div>
+                <div style={{
+                  fontSize: 7, color: "#e8edf2", letterSpacing: 1,
+                  textShadow: `0 0 ${hoveredLegendary === i ? 12 : 6}px ${fish.aura}`,
+                }}>{fish.name}</div>
+                <div style={{ marginTop: 6, display: "flex", justifyContent: "center", gap: 2 }}>
+                  {[...Array(5)].map((_, s) => (
+                    <span key={s} style={{ color: "#ffd54f", fontSize: 6 }}>*</span>
+                  ))}
+                </div>
               </div>
             </div>
           ))}
