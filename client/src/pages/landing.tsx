@@ -453,9 +453,25 @@ export default function Landing() {
           borderRadius: 14, padding: "40px 30px",
           textAlign: "center", position: "relative", overflow: "hidden",
         }}>
+          <img
+            src={sealAtTheSeamImg}
+            alt=""
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              top: "50%", left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "110%", height: "110%",
+              objectFit: "contain",
+              imageRendering: "pixelated",
+              opacity: 0.06,
+              pointerEvents: "none",
+              filter: "blur(1px)",
+            }}
+          />
           <div style={{
             position: "absolute", inset: 0,
-            background: "radial-gradient(circle at 50% 40%, rgba(30,60,140,0.15), transparent 60%)",
+            background: "radial-gradient(circle at 50% 40%, rgba(30,60,140,0.2), transparent 60%)",
             pointerEvents: "none",
           }} />
           <div style={{ position: "relative", zIndex: 1 }}>
