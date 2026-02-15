@@ -5,17 +5,62 @@ function toSlug(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
-import phantomMinnowImg from "../assets/images/legendary-phantom-minnow.png";
-import volcanicPerchImg from "../assets/images/legendary-volcanic-perch.png";
-import abyssalBassImg from "../assets/images/legendary-abyssal-bass.png";
-import frostCatfishImg from "../assets/images/legendary-frost-catfish.png";
-import stormSwordfishImg from "../assets/images/legendary-storm-swordfish.png";
-import celestialWhaleImg from "../assets/images/legendary-celestial-whale.png";
-import neonEelImg from "../assets/images/legendary-neon-eel.png";
-import goldenSalmonImg from "../assets/images/legendary-golden-salmon.png";
-import shadowLeviathanImg from "../assets/images/legendary-shadow-leviathan.png";
-
 import sealAtTheSeamImg from "@assets/b76a7441-d8a5-49d9-aa5e-8271fc3e3022_1771118262487.png";
+
+interface SpriteData {
+  src: string;
+  frameW: number;
+  frameH: number;
+  frames: number;
+  sheetW: number;
+  isSingleImage?: boolean;
+}
+
+function CodexAnimatedSprite({ sprite, size, tint }: { sprite: SpriteData; size: number; tint?: string }) {
+  if (sprite.isSingleImage) {
+    return (
+      <div style={{ width: size, height: size, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", flexShrink: 0 }}>
+        <img src={sprite.src} alt="" style={{ width: size, height: size, imageRendering: "pixelated", objectFit: "contain", filter: tint ? `drop-shadow(0 0 8px ${tint})` : undefined }} />
+        {tint && <div style={{ position: "absolute", inset: 0, background: tint, mixBlendMode: "overlay", pointerEvents: "none" }} />}
+      </div>
+    );
+  }
+  const scale = size / Math.max(sprite.frameW, sprite.frameH);
+  const displayW = sprite.frameW * scale;
+  const displayH = sprite.frameH * scale;
+  const totalW = sprite.sheetW * scale;
+  const animId = `codex-anim-${sprite.src.replace(/[^a-z0-9]/gi, "")}`;
+  return (
+    <div style={{ width: displayW, height: displayH, overflow: "hidden", position: "relative", flexShrink: 0 }}>
+      <style>{`
+        @keyframes ${animId} {
+          from { transform: translateX(0); }
+          to { transform: translateX(-${totalW - displayW}px); }
+        }
+      `}</style>
+      <img
+        src={sprite.src}
+        alt=""
+        style={{
+          width: totalW,
+          height: displayH,
+          imageRendering: "pixelated",
+          display: "block",
+          animation: `${animId} ${sprite.frames * 0.25}s steps(${sprite.frames - 1}) infinite`,
+          filter: tint ? `drop-shadow(0 0 6px ${tint})` : undefined,
+        }}
+      />
+      {tint && (
+        <div style={{
+          position: "absolute", inset: 0,
+          background: tint,
+          mixBlendMode: "overlay",
+          pointerEvents: "none",
+        }} />
+      )}
+    </div>
+  );
+}
 
 function UnderwaterBackground() {
   return (
@@ -83,7 +128,7 @@ function UnderwaterBackground() {
 const legendaries = [
   {
     name: "Phantom Minnow",
-    image: phantomMinnowImg,
+    sprite: { src: "/assets/catch/1.png", frameW: 6, frameH: 6, frames: 4, sheetW: 24 },
     stars: 5,
     pts: 500,
     wt: "0.3%",
@@ -98,7 +143,7 @@ const legendaries = [
   },
   {
     name: "Volcanic Perch",
-    image: volcanicPerchImg,
+    sprite: { src: "/assets/catch/2.png", frameW: 8, frameH: 12, frames: 4, sheetW: 32 },
     stars: 5,
     pts: 600,
     wt: "0.25%",
@@ -113,7 +158,7 @@ const legendaries = [
   },
   {
     name: "Abyssal Bass",
-    image: abyssalBassImg,
+    sprite: { src: "/assets/catch/3.png", frameW: 10, frameH: 12, frames: 4, sheetW: 40 },
     stars: 5,
     pts: 750,
     wt: "0.2%",
@@ -128,7 +173,7 @@ const legendaries = [
   },
   {
     name: "Frost Catfish",
-    image: frostCatfishImg,
+    sprite: { src: "/assets/catch/4.png", frameW: 13, frameH: 12, frames: 4, sheetW: 52 },
     stars: 5,
     pts: 800,
     wt: "0.18%",
@@ -143,7 +188,7 @@ const legendaries = [
   },
   {
     name: "Storm Swordfish",
-    image: stormSwordfishImg,
+    sprite: { src: "/assets/catch/5.png", frameW: 14, frameH: 24, frames: 4, sheetW: 56 },
     stars: 5,
     pts: 1000,
     wt: "0.12%",
@@ -158,7 +203,7 @@ const legendaries = [
   },
   {
     name: "Celestial Whale",
-    image: celestialWhaleImg,
+    sprite: { src: "/assets/catch/6.png", frameW: 18, frameH: 22, frames: 6, sheetW: 108 },
     stars: 5,
     pts: 2000,
     wt: "0.05%",
@@ -173,7 +218,7 @@ const legendaries = [
   },
   {
     name: "Neon Eel",
-    image: neonEelImg,
+    sprite: { src: "/assets/catch/7.png", frameW: 15, frameH: 12, frames: 4, sheetW: 60 },
     stars: 5,
     pts: 650,
     wt: "0.22%",
@@ -188,7 +233,7 @@ const legendaries = [
   },
   {
     name: "Golden Salmon",
-    image: goldenSalmonImg,
+    sprite: { src: "/assets/catch/8.png", frameW: 15, frameH: 12, frames: 4, sheetW: 60 },
     stars: 5,
     pts: 700,
     wt: "0.2%",
@@ -203,7 +248,7 @@ const legendaries = [
   },
   {
     name: "Shadow Leviathan",
-    image: shadowLeviathanImg,
+    sprite: { src: "/assets/catch/6.png", frameW: 18, frameH: 22, frames: 6, sheetW: 108 },
     stars: 5,
     pts: 1500,
     wt: "0.08%",
@@ -218,7 +263,7 @@ const legendaries = [
   },
   {
     name: "The Seal at the Seam",
-    image: sealAtTheSeamImg,
+    sprite: { src: sealAtTheSeamImg, frameW: 0, frameH: 0, frames: 1, sheetW: 0, isSingleImage: true },
     stars: 5,
     pts: 5000,
     wt: "0.01%",
@@ -239,7 +284,7 @@ function FlipbookOverlay({ targetPage, onComplete }: { targetPage: number; onCom
 
   useEffect(() => {
     let cancelled = false;
-    const pages = [];
+    const pages: number[] = [];
     for (let i = 0; i <= targetPage; i++) pages.push(i);
 
     let step = 0;
@@ -372,18 +417,13 @@ function FlipbookOverlay({ targetPage, onComplete }: { targetPage: number; onCom
                 position: "absolute", inset: -10, borderRadius: "50%",
                 background: `radial-gradient(circle, rgba(${currentFish.auraCss}, 0.3), transparent 70%)`,
               }} />
-              <img
-                src={currentFish.image}
-                alt={currentFish.name}
-                style={{
-                  width: currentFish.name === "The Seal at the Seam" ? 70 : 90,
-                  height: currentFish.name === "The Seal at the Seam" ? 70 : 90,
-                  imageRendering: "pixelated",
-                  position: "relative", zIndex: 1,
-                  objectFit: "contain",
-                  filter: `drop-shadow(0 0 12px rgba(${currentFish.auraCss}, 0.5))`,
-                }}
-              />
+              <div style={{ position: "relative", zIndex: 1 }}>
+                <CodexAnimatedSprite
+                  sprite={currentFish.sprite}
+                  size={currentFish.name === "The Seal at the Seam" ? 70 : 90}
+                  tint={currentFish.aura}
+                />
+              </div>
             </div>
 
             <div style={{
@@ -907,18 +947,21 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
           overflow: "hidden",
         }}
       >
-        <img
-          src={fish.image}
-          alt={fish.name}
+        <div
           data-testid={`img-legendary-${fish.name.toLowerCase().replace(/\s+/g, "-")}`}
           style={{
-            width: "100%",
-            maxWidth: "400px",
-            display: "block",
-            margin: "0 auto",
-            imageRendering: "pixelated",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "20px 0",
           }}
-        />
+        >
+          <CodexAnimatedSprite
+            sprite={fish.sprite}
+            size={fish.name === "The Seal at the Seam" ? 120 : 160}
+            tint={fish.aura}
+          />
+        </div>
       </div>
 
       <div
