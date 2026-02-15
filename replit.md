@@ -12,6 +12,9 @@ I want to prioritize iterative development. I prefer detailed explanations for c
 - **Status:** Live in production (deployed 2026-02-15)
 
 ## Recent Changes
+- **2026-02-15:** Equipment progression system: rods now have castRange (350-1500m) and sinkSpeed (1.0-2.5x) stats; lures have depthBoost stat; cast range enforced with visual feedback (red crosshair + MAX RANGE text when out of range, green range arc); hook sink speed scales with rod + lure depth stats; shop/equipment panels show all new stats
+- **2026-02-15:** Fixed fish sprite-to-species mapping: Eel uses folder 5, Swordfish uses folder 3, Bass/Salmon use folder 2 with tints
+- **2026-02-15:** Fixed casting restriction: removed canvas-width clamp, aim now uses world coordinates
 - **2026-02-15:** Discord OAuth login: /api/auth/discord flow with CSRF state param, cookie-based sessions, Discord login button on character select screen
 - **2026-02-15:** Webhook improvements: richer embeds with Discord bot username/avatar, fallback icon, image embed for legendary/ultra_rare catches, error logging
 - **2026-02-15:** Codex animated sprites: all legendary fish entries use CodexAnimatedSprite component instead of static images

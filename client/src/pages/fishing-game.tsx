@@ -162,16 +162,18 @@ interface Rod {
   catchZoneBonus: number;
   reelSpeedMult: number;
   lineStrength: number;
+  castRange: number;
+  sinkSpeed: number;
   description: string;
   icon: string;
 }
 
 const RODS: Rod[] = [
-  { name: "Bamboo Rod", price: 0, catchZoneBonus: 0, reelSpeedMult: 1.0, lineStrength: 1.0, description: "A simple bamboo rod. Gets the job done.", icon: "/assets/icons/Icons_07.png" },
-  { name: "Fiberglass Rod", price: 150, catchZoneBonus: 0.015, reelSpeedMult: 1.1, lineStrength: 1.15, description: "Lighter and more responsive.", icon: "/assets/icons/Icons_07.png" },
-  { name: "Carbon Rod", price: 400, catchZoneBonus: 0.025, reelSpeedMult: 1.2, lineStrength: 1.3, description: "High-tech carbon fiber build.", icon: "/assets/icons/Icons_07.png" },
-  { name: "Titanium Rod", price: 800, catchZoneBonus: 0.035, reelSpeedMult: 1.35, lineStrength: 1.5, description: "Ultra-strong titanium alloy.", icon: "/assets/icons/Icons_07.png" },
-  { name: "Legendary Rod", price: 1500, catchZoneBonus: 0.05, reelSpeedMult: 1.5, lineStrength: 1.8, description: "Forged from the anchor of a ghost ship.", icon: "/assets/icons/Icons_07.png" },
+  { name: "Bamboo Rod", price: 0, catchZoneBonus: 0, reelSpeedMult: 1.0, lineStrength: 1.0, castRange: 350, sinkSpeed: 1.0, description: "A simple bamboo rod. Short range, slow sink.", icon: "/assets/icons/Icons_07.png" },
+  { name: "Fiberglass Rod", price: 150, catchZoneBonus: 0.015, reelSpeedMult: 1.1, lineStrength: 1.15, castRange: 550, sinkSpeed: 1.3, description: "Lighter and more responsive. Better range.", icon: "/assets/icons/Icons_07.png" },
+  { name: "Carbon Rod", price: 400, catchZoneBonus: 0.025, reelSpeedMult: 1.2, lineStrength: 1.3, castRange: 800, sinkSpeed: 1.6, description: "High-tech carbon fiber. Reaches deep water.", icon: "/assets/icons/Icons_07.png" },
+  { name: "Titanium Rod", price: 800, catchZoneBonus: 0.035, reelSpeedMult: 1.35, lineStrength: 1.5, castRange: 1100, sinkSpeed: 2.0, description: "Ultra-strong titanium. Massive cast range.", icon: "/assets/icons/Icons_07.png" },
+  { name: "Legendary Rod", price: 1500, catchZoneBonus: 0.05, reelSpeedMult: 1.5, lineStrength: 1.8, castRange: 1500, sinkSpeed: 2.5, description: "Forged from a ghost ship anchor. No limits.", icon: "/assets/icons/Icons_07.png" },
 ];
 
 interface Lure {
@@ -183,28 +185,29 @@ interface Lure {
   rarityBoost: number;
   sizeBoost: number;
   speedBoost: number;
+  depthBoost: number;
   targetFish: string[];
   targetBonus: number;
   type: "live" | "lure";
 }
 
 const LURES: Lure[] = [
-  { name: "Basic Worm", price: 0, effect: "None", description: "A plain earthworm. The classic bait.", icon: "/assets/lures/worm.png", rarityBoost: 1.0, sizeBoost: 0, speedBoost: 1.0, targetFish: [], targetBonus: 1.0, type: "live" },
-  { name: "Nightcrawler", price: 40, effect: "Faster bites", description: "A fat, juicy nightcrawler. Fish can't resist the wriggle.", icon: "/assets/lures/nightcrawler.png", rarityBoost: 1.0, sizeBoost: 0.1, speedBoost: 1.4, targetFish: ["Catfish", "Bass"], targetBonus: 1.5, type: "live" },
-  { name: "Leech", price: 90, effect: "Attracts bottom feeders", description: "A slimy leech that bottom dwellers love.", icon: "/assets/lures/leech.png", rarityBoost: 1.2, sizeBoost: 0.2, speedBoost: 1.1, targetFish: ["Catfish", "Eel"], targetBonus: 2.5, type: "live" },
-  { name: "Maggots", price: 60, effect: "Quick nibbles", description: "A cluster of wriggling maggots. Small fish go crazy.", icon: "/assets/lures/maggots.png", rarityBoost: 1.0, sizeBoost: 0, speedBoost: 2.0, targetFish: ["Minnow", "Perch"], targetBonus: 2.0, type: "live" },
-  { name: "Minnow Bait", price: 150, effect: "Attracts predators", description: "A live minnow on the hook. Big predators can't resist.", icon: "/assets/lures/minnow_bait.png", rarityBoost: 1.5, sizeBoost: 0.4, speedBoost: 1.0, targetFish: ["Bass", "Salmon", "Swordfish"], targetBonus: 2.0, type: "live" },
-  { name: "Beginner Lure", price: 50, effect: "Slight speed boost", description: "A basic crankbait for beginners. Better than bare hooks.", icon: "/assets/lures/beginner_lure.png", rarityBoost: 1.0, sizeBoost: 0, speedBoost: 1.2, targetFish: [], targetBonus: 1.0, type: "lure" },
-  { name: "Crankbait", price: 120, effect: "Attracts Perch & Bass", description: "A fat-bodied diving lure with a rattling action.", icon: "/assets/lures/crankbait.png", rarityBoost: 1.1, sizeBoost: 0.2, speedBoost: 1.3, targetFish: ["Perch", "Bass"], targetBonus: 2.5, type: "lure" },
-  { name: "Silver Spoon", price: 100, effect: "Flash attracts fish", description: "A hammered metal spoon that flashes in the water.", icon: "/assets/lures/spoon.png", rarityBoost: 1.0, sizeBoost: 0.1, speedBoost: 1.5, targetFish: ["Salmon", "Minnow"], targetBonus: 2.0, type: "lure" },
-  { name: "Grub Worm", price: 80, effect: "Versatile soft bait", description: "A soft plastic grub with a curly tail. Works on everything.", icon: "/assets/lures/grub_worm.png", rarityBoost: 1.1, sizeBoost: 0.1, speedBoost: 1.2, targetFish: [], targetBonus: 1.0, type: "lure" },
-  { name: "Spinnerbait", price: 200, effect: "Flash & vibration", description: "Spinning blades create flash and vibration underwater.", icon: "/assets/lures/spinnerbait.png", rarityBoost: 1.3, sizeBoost: 0.3, speedBoost: 1.4, targetFish: ["Bass", "Perch"], targetBonus: 2.5, type: "lure" },
-  { name: "Deep Diver", price: 180, effect: "Better deep fish", description: "Dives deep to attract bottom dwellers.", icon: "/assets/lures/deep_diver.png", rarityBoost: 1.2, sizeBoost: 0.3, speedBoost: 1.0, targetFish: ["Catfish", "Eel"], targetBonus: 2.5, type: "lure" },
-  { name: "Golden Fly", price: 250, effect: "Rare fish boost", description: "An iridescent golden fly. Rare fish can't resist.", icon: "/assets/lures/golden_fly.png", rarityBoost: 2.0, sizeBoost: 0, speedBoost: 1.0, targetFish: ["Swordfish"], targetBonus: 2.0, type: "lure" },
-  { name: "Glow Jig", price: 350, effect: "Bigger fish", description: "Bioluminescent lure that attracts larger specimens.", icon: "/assets/lures/glow_jig.png", rarityBoost: 1.3, sizeBoost: 0.8, speedBoost: 1.1, targetFish: [], targetBonus: 1.0, type: "lure" },
-  { name: "Storm Shad", price: 300, effect: "Faster bites", description: "Mimics injured baitfish. Fish bite faster.", icon: "/assets/lures/storm_shad.png", rarityBoost: 1.0, sizeBoost: 0.2, speedBoost: 2.0, targetFish: ["Bass", "Salmon"], targetBonus: 2.0, type: "lure" },
-  { name: "Kraken Bait", price: 500, effect: "Legendary attraction", description: "Mysterious bait from the ocean depths.", icon: "/assets/lures/kraken_bait.png", rarityBoost: 3.0, sizeBoost: 0.5, speedBoost: 0.8, targetFish: ["Whale"], targetBonus: 4.0, type: "lure" },
-  { name: "Prismatic Lure", price: 750, effect: "All bonuses", description: "A rainbow-shifting lure. Boosts everything.", icon: "/assets/lures/prismatic_lure.png", rarityBoost: 1.8, sizeBoost: 0.5, speedBoost: 1.5, targetFish: [], targetBonus: 1.0, type: "lure" },
+  { name: "Basic Worm", price: 0, effect: "None", description: "A plain earthworm. The classic bait.", icon: "/assets/lures/worm.png", rarityBoost: 1.0, sizeBoost: 0, speedBoost: 1.0, depthBoost: 0, targetFish: [], targetBonus: 1.0, type: "live" },
+  { name: "Nightcrawler", price: 40, effect: "Faster bites", description: "A fat, juicy nightcrawler. Fish can't resist the wriggle.", icon: "/assets/lures/nightcrawler.png", rarityBoost: 1.0, sizeBoost: 0.1, speedBoost: 1.4, depthBoost: 0, targetFish: ["Catfish", "Bass"], targetBonus: 1.5, type: "live" },
+  { name: "Leech", price: 90, effect: "Attracts bottom feeders", description: "A slimy leech that bottom dwellers love. Sinks a bit faster.", icon: "/assets/lures/leech.png", rarityBoost: 1.2, sizeBoost: 0.2, speedBoost: 1.1, depthBoost: 0.3, targetFish: ["Catfish", "Eel"], targetBonus: 2.5, type: "live" },
+  { name: "Maggots", price: 60, effect: "Quick nibbles", description: "A cluster of wriggling maggots. Small fish go crazy.", icon: "/assets/lures/maggots.png", rarityBoost: 1.0, sizeBoost: 0, speedBoost: 2.0, depthBoost: 0, targetFish: ["Minnow", "Perch"], targetBonus: 2.0, type: "live" },
+  { name: "Minnow Bait", price: 150, effect: "Attracts predators", description: "A live minnow on the hook. Big predators can't resist.", icon: "/assets/lures/minnow_bait.png", rarityBoost: 1.5, sizeBoost: 0.4, speedBoost: 1.0, depthBoost: 0.2, targetFish: ["Bass", "Salmon", "Swordfish"], targetBonus: 2.0, type: "live" },
+  { name: "Beginner Lure", price: 50, effect: "Slight speed boost", description: "A basic crankbait for beginners. Better than bare hooks.", icon: "/assets/lures/beginner_lure.png", rarityBoost: 1.0, sizeBoost: 0, speedBoost: 1.2, depthBoost: 0, targetFish: [], targetBonus: 1.0, type: "lure" },
+  { name: "Crankbait", price: 120, effect: "Attracts Perch & Bass", description: "A fat-bodied diving lure with a rattling action.", icon: "/assets/lures/crankbait.png", rarityBoost: 1.1, sizeBoost: 0.2, speedBoost: 1.3, depthBoost: 0.1, targetFish: ["Perch", "Bass"], targetBonus: 2.5, type: "lure" },
+  { name: "Silver Spoon", price: 100, effect: "Flash attracts fish", description: "A hammered metal spoon that flashes in the water.", icon: "/assets/lures/spoon.png", rarityBoost: 1.0, sizeBoost: 0.1, speedBoost: 1.5, depthBoost: 0, targetFish: ["Salmon", "Minnow"], targetBonus: 2.0, type: "lure" },
+  { name: "Grub Worm", price: 80, effect: "Versatile soft bait", description: "A soft plastic grub with a curly tail. Works on everything.", icon: "/assets/lures/grub_worm.png", rarityBoost: 1.1, sizeBoost: 0.1, speedBoost: 1.2, depthBoost: 0, targetFish: [], targetBonus: 1.0, type: "lure" },
+  { name: "Spinnerbait", price: 200, effect: "Flash & vibration", description: "Spinning blades create flash and vibration underwater.", icon: "/assets/lures/spinnerbait.png", rarityBoost: 1.3, sizeBoost: 0.3, speedBoost: 1.4, depthBoost: 0, targetFish: ["Bass", "Perch"], targetBonus: 2.5, type: "lure" },
+  { name: "Deep Diver", price: 180, effect: "Dives deep fast", description: "Heavy diving lure. Sinks fast to reach bottom dwellers.", icon: "/assets/lures/deep_diver.png", rarityBoost: 1.2, sizeBoost: 0.3, speedBoost: 1.0, depthBoost: 0.8, targetFish: ["Catfish", "Eel", "Whale"], targetBonus: 2.5, type: "lure" },
+  { name: "Golden Fly", price: 250, effect: "Rare fish boost", description: "An iridescent golden fly. Rare fish can't resist.", icon: "/assets/lures/golden_fly.png", rarityBoost: 2.0, sizeBoost: 0, speedBoost: 1.0, depthBoost: 0, targetFish: ["Swordfish"], targetBonus: 2.0, type: "lure" },
+  { name: "Glow Jig", price: 350, effect: "Bigger fish + depth", description: "Bioluminescent lure. Sinks deep, attracts larger specimens.", icon: "/assets/lures/glow_jig.png", rarityBoost: 1.3, sizeBoost: 0.8, speedBoost: 1.1, depthBoost: 0.5, targetFish: [], targetBonus: 1.0, type: "lure" },
+  { name: "Storm Shad", price: 300, effect: "Faster bites", description: "Mimics injured baitfish. Fish bite faster.", icon: "/assets/lures/storm_shad.png", rarityBoost: 1.0, sizeBoost: 0.2, speedBoost: 2.0, depthBoost: 0, targetFish: ["Bass", "Salmon"], targetBonus: 2.0, type: "lure" },
+  { name: "Kraken Bait", price: 500, effect: "Legendary + deep dive", description: "Mysterious bait from the depths. Sinks to the abyss.", icon: "/assets/lures/kraken_bait.png", rarityBoost: 3.0, sizeBoost: 0.5, speedBoost: 0.8, depthBoost: 1.2, targetFish: ["Whale"], targetBonus: 4.0, type: "lure" },
+  { name: "Prismatic Lure", price: 750, effect: "All bonuses", description: "A rainbow-shifting lure. Boosts everything.", icon: "/assets/lures/prismatic_lure.png", rarityBoost: 1.8, sizeBoost: 0.5, speedBoost: 1.5, depthBoost: 0.4, targetFish: [], targetBonus: 1.0, type: "lure" },
 ];
 
 interface ChumItem {
@@ -593,6 +596,7 @@ export default function FishingGame() {
     mouseY: 0,
     aimX: 0,
     aimY: 0,
+    aimOutOfRange: false,
     hookedFishX: 0,
     hookedFishY: 0,
     hookedFishDir: 1,
@@ -1640,8 +1644,15 @@ export default function FishingGame() {
         s.nearNpc = -1;
 
         if (s.gameState === "casting") {
-          s.aimX = s.mouseX - s.cameraX;
+          const maxRange = RODS[s.equippedRod].castRange;
+          let targetX = s.mouseX - s.cameraX;
+          const dx = targetX - s.playerX;
+          if (Math.abs(dx) > maxRange) {
+            targetX = s.playerX + Math.sign(dx) * maxRange;
+          }
+          s.aimX = targetX;
           s.aimY = Math.max(waterY + 20, Math.min(H - 40, s.mouseY));
+          s.aimOutOfRange = Math.abs((s.mouseX - s.cameraX) - s.playerX) > maxRange;
         }
 
         if (s.keysDown.has(" ") && s.gameState === "idle" && !s.inBoat) {
@@ -1784,8 +1795,16 @@ export default function FishingGame() {
         if (boatMoving) s.boatStanding = false;
         s.boatX = Math.max(boatMinX, Math.min(boatMaxX, s.boatX));
         if (s.gameState === "casting") {
-          s.aimX = s.mouseX - s.cameraX;
+          const boatCenterX = s.boatX + (74 * boatScale) / 2;
+          const maxRange = RODS[s.equippedRod].castRange;
+          let targetX = s.mouseX - s.cameraX;
+          const dx = targetX - boatCenterX;
+          if (Math.abs(dx) > maxRange) {
+            targetX = boatCenterX + Math.sign(dx) * maxRange;
+          }
+          s.aimX = targetX;
           s.aimY = Math.max(waterY + 20, Math.min(H - 40, s.mouseY));
+          s.aimOutOfRange = Math.abs((s.mouseX - s.cameraX) - boatCenterX) > maxRange;
         }
       }
       if (s.inBoat && s.gameState === "reeling") {
@@ -4226,7 +4245,13 @@ export default function FishingGame() {
 
       // Crosshair and aim line during casting
       if (s.gameState === "casting") {
-        ctx.strokeStyle = "rgba(200,190,170,0.5)";
+        const rod = RODS[s.equippedRod];
+        const lure = LURES[s.equippedLure];
+        const maxRange = rod.castRange;
+        const anchorX = s.inBoat ? s.boatX + (74 * boatScale) / 2 : s.playerX;
+        const outOfRange = s.aimOutOfRange;
+
+        ctx.strokeStyle = outOfRange ? "rgba(231,76,60,0.3)" : "rgba(200,190,170,0.5)";
         ctx.lineWidth = 1;
         ctx.setLineDash([4, 4]);
         ctx.beginPath();
@@ -4235,10 +4260,19 @@ export default function FishingGame() {
         ctx.stroke();
         ctx.setLineDash([]);
 
+        const rangePulse = 0.15 + Math.sin(s.time * 0.05) * 0.08;
+        ctx.strokeStyle = outOfRange ? `rgba(231,76,60,${rangePulse + 0.1})` : `rgba(46,204,113,${rangePulse})`;
+        ctx.lineWidth = 1;
+        ctx.setLineDash([6, 8]);
+        ctx.beginPath();
+        ctx.arc(anchorX, waterY, maxRange, 0.1 * Math.PI, 0.9 * Math.PI);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
         const crossSize = 10;
         const pulse = 0.7 + Math.sin(s.time * 0.1) * 0.3;
         ctx.globalAlpha = pulse;
-        ctx.strokeStyle = "#f1c40f";
+        ctx.strokeStyle = outOfRange ? "#e74c3c" : "#f1c40f";
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(s.aimX - crossSize, s.aimY);
@@ -4250,6 +4284,21 @@ export default function FishingGame() {
         ctx.beginPath();
         ctx.arc(s.aimX, s.aimY, crossSize + 4, 0, Math.PI * 2);
         ctx.stroke();
+
+        if (outOfRange) {
+          ctx.fillStyle = "#e74c3c";
+          ctx.font = "bold 10px monospace";
+          ctx.textAlign = "center";
+          ctx.fillText("MAX RANGE", s.aimX, s.aimY - crossSize - 8);
+        }
+
+        const sinkMult = rod.sinkSpeed * (1 + lure.depthBoost);
+        if (sinkMult > 1.2) {
+          ctx.fillStyle = "rgba(93,173,226,0.7)";
+          ctx.font = "8px monospace";
+          ctx.textAlign = "center";
+          ctx.fillText(`SINK x${sinkMult.toFixed(1)}`, s.aimX, s.aimY + crossSize + 14);
+        }
         ctx.globalAlpha = 1;
       }
 
@@ -4406,7 +4455,9 @@ export default function FishingGame() {
 
       if (s.gameState === "waiting") {
         s.waitTimer -= dt;
-        s.hookY = Math.min(s.hookY + 0.4 * dt, s.hookTargetY);
+        const rodSink = RODS[s.equippedRod].sinkSpeed;
+        const lureSink = 1 + LURES[s.equippedLure].depthBoost;
+        s.hookY = Math.min(s.hookY + 0.4 * rodSink * lureSink * dt, s.hookTargetY);
 
         if (s.waitTimer <= 0) {
           const hasApproaching = s.swimmingFish.some(f => f.approachingHook);
@@ -6354,6 +6405,8 @@ export default function FishingGame() {
                             <span style={{ color: "#5dade2", fontSize: 9 }}>Zone +{(rod.catchZoneBonus * 100).toFixed(0)}%</span>
                             <span style={{ color: "#f1c40f", fontSize: 9 }}>Speed x{rod.reelSpeedMult.toFixed(1)}</span>
                             <span style={{ color: "#9b59b6", fontSize: 9 }}>Str x{rod.lineStrength.toFixed(1)}</span>
+                            <span style={{ color: "#2ecc71", fontSize: 9 }}>Range {rod.castRange}m</span>
+                            <span style={{ color: "#e67e22", fontSize: 9 }}>Sink x{rod.sinkSpeed}</span>
                           </div>
                         </div>
                         <div className="flex flex-col items-end gap-1">
@@ -6421,6 +6474,7 @@ export default function FishingGame() {
                                   {lure.rarityBoost > 1 && <span style={{ color: "#a855f7", fontSize: 9 }}>Rare x{lure.rarityBoost.toFixed(1)}</span>}
                                   {lure.sizeBoost > 0 && <span style={{ color: "#e74c3c", fontSize: 9 }}>Size +{lure.sizeBoost.toFixed(1)}</span>}
                                   {lure.speedBoost > 1 && <span style={{ color: "#5dade2", fontSize: 9 }}>Bite x{lure.speedBoost.toFixed(1)}</span>}
+                                  {lure.depthBoost > 0 && <span style={{ color: "#e67e22", fontSize: 9 }}>Depth +{lure.depthBoost.toFixed(1)}</span>}
                                 </div>
                               </div>
                               <div className="flex flex-col items-end gap-1">
@@ -7016,6 +7070,8 @@ export default function FishingGame() {
                         <span style={{ fontSize: 8, color: "#5dade2" }}>Catch Zone: +{(RODS[uiState.equippedRod].catchZoneBonus * 100).toFixed(1)}%</span>
                         <span style={{ fontSize: 8, color: "#f1c40f" }}>Reel Speed: x{RODS[uiState.equippedRod].reelSpeedMult}</span>
                         <span style={{ fontSize: 8, color: "#e74c3c" }}>Line Str: x{RODS[uiState.equippedRod].lineStrength}</span>
+                        <span style={{ fontSize: 8, color: "#2ecc71" }}>Cast Range: {RODS[uiState.equippedRod].castRange}m</span>
+                        <span style={{ fontSize: 8, color: "#9b59b6" }}>Sink Speed: x{RODS[uiState.equippedRod].sinkSpeed}</span>
                       </div>
                     </div>
                   </div>
@@ -7029,6 +7085,7 @@ export default function FishingGame() {
                         <span style={{ fontSize: 8, color: "#a855f7" }}>Rarity: x{LURES[uiState.equippedLure].rarityBoost}</span>
                         <span style={{ fontSize: 8, color: "#f59e0b" }}>Size: +{LURES[uiState.equippedLure].sizeBoost}</span>
                         <span style={{ fontSize: 8, color: "#5dade2" }}>Speed: x{LURES[uiState.equippedLure].speedBoost}</span>
+                        {LURES[uiState.equippedLure].depthBoost > 0 && <span style={{ fontSize: 8, color: "#9b59b6" }}>Depth: +{LURES[uiState.equippedLure].depthBoost}</span>}
                       </div>
                       {LURES[uiState.equippedLure].targetFish.length > 0 && (
                         <span style={{ fontSize: 8, color: "#78909c", marginTop: 2 }}>Targets: {LURES[uiState.equippedLure].targetFish.join(", ")}</span>
