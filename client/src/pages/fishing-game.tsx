@@ -6067,7 +6067,7 @@ export default function FishingGame() {
           {uiState.nearBoat && !uiState.showBoatPrompt && (
             <div className="absolute bottom-24 left-1/2 -translate-x-1/2 text-center px-5 py-3 flex flex-col items-center gap-2" style={{ background: "rgba(8,15,25,0.9)", borderRadius: 10, border: "1px solid rgba(241,196,15,0.4)", zIndex: 50 }} data-testid="boat-hint">
               <span style={{ color: "#f1c40f", fontSize: 10, textShadow: "1px 1px 0 #000" }}>
-                {isMobile ? "Tap E to " : "Press E to "}{uiState.boatOwned ? "enter boat" : "inspect boat"}
+                {'ontouchstart' in window ? "Tap E to " : "Press E to "}{uiState.boatOwned ? "enter boat" : "inspect boat"}
               </span>
             </div>
           )}
@@ -7485,6 +7485,29 @@ export default function FishingGame() {
           GAME PAUSED - TRACE MODE
         </div>
       )}
+
+      {/* Session Timer */}
+      {uiState.gameState !== "title" && uiState.gameState !== "charSelect" && uiState.gameState !== "intro" && (() => {
+        const elapsed = (Date.now() - stateRef.current.sessionStartTime) / 60000;
+        const remaining = Math.max(0, 20 - elapsed);
+        const mins = Math.floor(remaining);
+        const secs = Math.floor((remaining - mins) * 60);
+        const active = remaining > 0;
+        return (
+          <div data-testid="session-timer" style={{
+            position: "absolute", bottom: 50, left: 14, zIndex: 55,
+            background: "rgba(8,15,25,0.9)",
+            border: `1px solid ${active ? "rgba(46,204,113,0.4)" : "rgba(231,76,60,0.4)"}`,
+            borderRadius: 8, padding: "6px 12px",
+            color: active ? "#2ecc71" : "#e74c3c", fontSize: 7,
+            fontFamily: "'Press Start 2P', monospace", pointerEvents: "none",
+          }}>
+            <div style={{ opacity: 0.7, fontSize: 5, marginBottom: 2 }}>SESSION</div>
+            <div>{active ? `${mins}:${secs.toString().padStart(2, "0")}` : "ENDED"}</div>
+            <div style={{ opacity: 0.6, fontSize: 5, marginTop: 2 }}>{stateRef.current.sessionCatches} CATCHES</div>
+          </div>
+        );
+      })()}
 
       {/* Leaderboard Toggle Button */}
       {uiState.gameState !== "title" && uiState.gameState !== "charSelect" && uiState.gameState !== "intro" && (

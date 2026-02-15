@@ -35,6 +35,43 @@ export class DatabaseStorage implements IStorage {
   }
 
   async submitLeaderboardEntry(entry: InsertLeaderboardEntry): Promise<LeaderboardEntry> {
+    if (entry.category === "biggest_catch" || entry.category === "session_catches") {
+      const result = await db.execute(sql`
+        INSERT INTO leaderboard_entries (id, player_name, category, fish_name, fish_rarity, value, score, created_at)
+        VALUES (
+          ${randomUUID()},
+          ${entry.playerName},
+          ${entry.category},
+          ${entry.fishName ?? null},
+          ${entry.fishRarity ?? null},
+          ${entry.value},
+          ${entry.score ?? 0},
+          NOW()
+        )
+        ON CONFLICT (player_name, category) WHERE category IN ('biggest_catch', 'session_catches')
+        DO UPDATE SET
+          value = CASE WHEN EXCLUDED.value > leaderboard_entries.value THEN EXCLUDED.value ELSE leaderboard_entries.value END,
+          score = CASE WHEN EXCLUDED.value > leaderboard_entries.value THEN EXCLUDED.score ELSE leaderboard_entries.score END,
+          fish_name = CASE WHEN EXCLUDED.value > leaderboard_entries.value THEN EXCLUDED.fish_name ELSE leaderboard_entries.fish_name END,
+          fish_rarity = CASE WHEN EXCLUDED.value > leaderboard_entries.value THEN EXCLUDED.fish_rarity ELSE leaderboard_entries.fish_rarity END,
+          created_at = CASE WHEN EXCLUDED.value > leaderboard_entries.value THEN NOW() ELSE leaderboard_entries.created_at END
+        RETURNING *
+      `);
+      const row = (result as any).rows?.[0] || (result as any)[0];
+      if (row) {
+        return {
+          id: row.id,
+          playerName: row.player_name,
+          category: row.category,
+          fishName: row.fish_name,
+          fishRarity: row.fish_rarity,
+          value: row.value,
+          score: row.score,
+          createdAt: row.created_at,
+        } as LeaderboardEntry;
+      }
+    }
+
     const [result] = await db
       .insert(leaderboardEntries)
       .values(entry)
