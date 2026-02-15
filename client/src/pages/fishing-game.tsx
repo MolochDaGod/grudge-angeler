@@ -4147,7 +4147,8 @@ export default function FishingGame() {
           s.hookedFishFrame, walkFrames,
           s.hookedFishX, s.hookedFishY, creatureScale,
           s.hookedFishDir < 0,
-          null
+          null,
+          s.currentCatch?.spriteFrameH
         );
         if (s.currentCatch && s.currentCatch.rarity !== "common") {
           const crownImg = getImg("/assets/rarity_crown.png");
@@ -4164,7 +4165,7 @@ export default function FishingGame() {
             const crownDrawW = crownFW * crownScale;
             const crownDrawH = crownFH * crownScale;
             const fishSpriteW = FRAME_H * creatureScale;
-            const fishSpriteH2 = FRAME_H * creatureScale;
+            const fishSpriteH2 = (s.currentCatch?.spriteFrameH || FRAME_H) * creatureScale;
             const headX = s.hookedFishDir < 0
               ? s.hookedFishX + fishSpriteW * 0.15 - crownDrawW * 0.5
               : s.hookedFishX + fishSpriteW * 0.55 - crownDrawW * 0.5;
@@ -5167,8 +5168,8 @@ export default function FishingGame() {
         ctx.fillRect(0, 0, W, H);
 
         const creatureDefs = [
-          { folder: "1", walkFrames: 4, speed: 0.9, scale: 1.8, yBase: 0.48, yAmp: 8 },
-          { folder: "1", walkFrames: 4, speed: 1.3, scale: 1.4, yBase: 0.62, yAmp: 5 },
+          { folder: "1", walkFrames: 4, speed: 0.9, scale: 1.8, yBase: 0.48, yAmp: 8, frameH: 24 },
+          { folder: "1", walkFrames: 4, speed: 1.3, scale: 1.4, yBase: 0.62, yAmp: 5, frameH: 24 },
           { folder: "2", walkFrames: 6, speed: 0.7, scale: 2.0, yBase: 0.55, yAmp: 10 },
           { folder: "2", walkFrames: 6, speed: 1.1, scale: 1.5, yBase: 0.72, yAmp: 6 },
           { folder: "3", walkFrames: 4, speed: 1.0, scale: 1.7, yBase: 0.50, yAmp: 7 },
@@ -5179,13 +5180,13 @@ export default function FishingGame() {
           { folder: "5", walkFrames: 6, speed: 0.8, scale: 1.3, yBase: 0.65, yAmp: 8 },
           { folder: "6", walkFrames: 6, speed: 0.35, scale: 2.8, yBase: 0.82, yAmp: 14 },
           { folder: "6", walkFrames: 6, speed: 0.55, scale: 2.2, yBase: 0.60, yAmp: 10 },
-          { folder: "1", walkFrames: 4, speed: 1.6, scale: 1.2, yBase: 0.88, yAmp: 4 },
+          { folder: "1", walkFrames: 4, speed: 1.6, scale: 1.2, yBase: 0.88, yAmp: 4, frameH: 24 },
           { folder: "3", walkFrames: 4, speed: 0.5, scale: 2.1, yBase: 0.75, yAmp: 11 },
           { folder: "5", walkFrames: 6, speed: 1.8, scale: 1.1, yBase: 0.52, yAmp: 5 },
           { folder: "2", walkFrames: 6, speed: 0.9, scale: 1.7, yBase: 0.85, yAmp: 7 },
         ];
         for (let i = 0; i < creatureDefs.length; i++) {
-          const cd = creatureDefs[i];
+          const cd = creatureDefs[i] as any;
           const swimDir = i % 2 === 0 ? 1 : -1;
           const swimRange = W + 120;
           const phase = (s.time * cd.speed * 0.55 + i * 173) % swimRange;
@@ -5195,7 +5196,7 @@ export default function FishingGame() {
           const depth = cd.yBase;
           const depthAlpha = depth > 0.75 ? 0.5 : depth > 0.6 ? 0.7 : 0.85;
           ctx.globalAlpha = depthAlpha;
-          drawSprite(`/assets/creatures/${cd.folder}/Walk.png`, frame, cd.walkFrames, cx, H * cd.yBase + bobY, cd.scale, swimDir < 0);
+          drawSprite(`/assets/creatures/${cd.folder}/Walk.png`, frame, cd.walkFrames, cx, H * cd.yBase + bobY, cd.scale, swimDir < 0, null, cd.frameH);
         }
         ctx.globalAlpha = 1;
 
@@ -5888,7 +5889,7 @@ export default function FishingGame() {
                         }} />
                       </div>
                     ) : (
-                      <img src={stateRef.current.currentCatch?.catchAsset || stateRef.current.currentJunk?.asset || "/assets/icons/Icons_05.png"} alt="" style={{ width: 20, height: 20, imageRendering: "pixelated" }} />
+                      <img src={stateRef.current.currentCatch?.catchAsset || stateRef.current.currentJunk?.asset || "/assets/icons/Icons_05.png"} alt="" style={{ width: 20, height: 20, imageRendering: "pixelated", objectFit: "contain" }} />
                     )}
                   </div>
                 </div>
@@ -5925,7 +5926,7 @@ export default function FishingGame() {
                       <img
                         src={stateRef.current.currentCatch?.catchAsset || stateRef.current.currentJunk?.asset || "/assets/icons/Icons_05.png"}
                         alt=""
-                        style={{ width: 24, height: 24, imageRendering: "pixelated" }}
+                        style={{ width: 24, height: 24, imageRendering: "pixelated", objectFit: "contain" }}
                       />
                     )}
                   </div>
