@@ -650,6 +650,7 @@ export default function Landing() {
                 width: 80, height: 80, imageRendering: "pixelated",
                 filter: "drop-shadow(0 0 20px rgba(30,60,140,0.5))",
                 marginBottom: 16,
+                display: "block", margin: "0 auto 16px",
               }}
             />
             <h3 style={{
