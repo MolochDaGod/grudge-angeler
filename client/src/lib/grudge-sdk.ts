@@ -1,4 +1,4 @@
-const DEFAULT_BASE_URL = 'https://grudge-studio.github.io/ObjectStore';
+const DEFAULT_BASE_URL = 'https://molochdagod.github.io/ObjectStore';
 
 interface CacheEntry {
   data: any;
