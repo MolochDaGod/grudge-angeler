@@ -3,7 +3,6 @@ import { Link, useLocation } from "wouter";
 
 import oceanBgImg from "@assets/19c5a9e200bbc_1771115046741.png";
 import oceanRippleImg from "@assets/19c5a9be75d2a_1771115056616.png";
-import rodsSpriteImg from "@assets/image_1771120464498.png";
 
 import phantomMinnowImg from "../assets/images/legendary-phantom-minnow.png";
 import volcanicPerchImg from "../assets/images/legendary-volcanic-perch.png";
@@ -62,11 +61,11 @@ const RARITY_LABELS: Record<string, string> = {
 };
 
 const arsenalRods = [
-  { name: "Bamboo Rod", icon: "__rod__", spriteIndex: 0, price: 0, desc: "A simple bamboo rod. Gets the job done.", stats: "Reel 1.0x | Line 1.0x" },
-  { name: "Fiberglass Rod", icon: "__rod__", spriteIndex: 1, price: 150, desc: "Lighter and more responsive.", stats: "Reel 1.1x | Line 1.15x" },
-  { name: "Carbon Rod", icon: "__rod__", spriteIndex: 2, price: 400, desc: "High-tech carbon fiber build.", stats: "Reel 1.2x | Line 1.3x" },
-  { name: "Titanium Rod", icon: "__rod__", spriteIndex: 3, price: 800, desc: "Ultra-strong titanium alloy.", stats: "Reel 1.35x | Line 1.5x" },
-  { name: "Legendary Rod", icon: "__rod__", spriteIndex: 4, price: 1500, desc: "Forged from the anchor of a ghost ship.", stats: "Reel 1.5x | Line 1.8x" },
+  { name: "Bamboo Rod", icon: "/assets/gen-icons/rod-bamboo.png", price: 0, desc: "A simple bamboo rod. Gets the job done.", stats: "Reel 1.0x | Line 1.0x" },
+  { name: "Fiberglass Rod", icon: "/assets/gen-icons/rod-fiberglass.png", price: 150, desc: "Lighter and more responsive.", stats: "Reel 1.1x | Line 1.15x" },
+  { name: "Carbon Rod", icon: "/assets/gen-icons/rod-carbon.png", price: 400, desc: "High-tech carbon fiber build.", stats: "Reel 1.2x | Line 1.3x" },
+  { name: "Titanium Rod", icon: "/assets/gen-icons/rod-titanium.png", price: 800, desc: "Ultra-strong titanium alloy.", stats: "Reel 1.35x | Line 1.5x" },
+  { name: "Legendary Rod", icon: "/assets/gen-icons/rod-legendary.png", price: 1500, desc: "Forged from the anchor of a ghost ship.", stats: "Reel 1.5x | Line 1.8x" },
 ];
 
 const arsenalBaits = [
@@ -92,67 +91,67 @@ const arsenalLures = [
 ];
 
 const arsenalChum = [
-  { name: "Fish Scraps", icon: "/assets/icons/Icons_01.png", price: 15, desc: "Basic chum.", stats: "1.2x attract" },
-  { name: "Bread Crumbs", icon: "/assets/icons/Icons_02.png", price: 20, desc: "Attracts small fish.", stats: "1.4x attract | +10% bites" },
-  { name: "Corn Mash", icon: "/assets/icons/Icons_03.png", price: 25, desc: "Bottom feeder chum.", stats: "1.5x attract" },
-  { name: "Blood Meal", icon: "/assets/icons/Icons_04.png", price: 40, desc: "Attracts predators.", stats: "+15% rarity | 1.6x attract" },
-  { name: "Shrimp Paste", icon: "/assets/icons/Icons_05.png", price: 50, desc: "Good all-around chum.", stats: "1.7x attract | +15% bites" },
-  { name: "Squid Ink", icon: "/assets/icons/Icons_06.png", price: 60, desc: "Attracts deep fish.", stats: "+20% rarity | 1.5x attract" },
-  { name: "Fish Oil Slick", icon: "/assets/icons/Icons_08.png", price: 75, desc: "Wide area attract.", stats: "2.0x attract | +10% bites" },
-  { name: "Sardine Chunks", icon: "/assets/icons/Icons_09.png", price: 45, desc: "Fast bite speed boost.", stats: "+50% bites | 1.3x attract" },
-  { name: "Crab Guts", icon: "/assets/icons/Icons_10.png", price: 55, desc: "Attracts rare fish.", stats: "+30% rarity | 1.4x attract" },
-  { name: "Mussel Mix", icon: "/assets/icons/Icons_11.png", price: 35, desc: "Steady and reliable.", stats: "1.5x attract | Long duration" },
-  { name: "Fermented Brine", icon: "/assets/icons/Icons_12.png", price: 80, desc: "Strong rarity boost.", stats: "+50% rarity | 1.6x attract" },
-  { name: "Whale Blubber", icon: "/assets/icons/Icons_13.png", price: 100, desc: "Attracts legendary fish.", stats: "+70% rarity | 1.8x attract" },
-  { name: "Phosphor Dust", icon: "/assets/icons/Icons_14.png", price: 120, desc: "Glowing ultra rare boost.", stats: "+100% rarity | 1.5x attract" },
-  { name: "Coral Powder", icon: "/assets/icons/Icons_15.png", price: 90, desc: "Attracts reef fish.", stats: "+30% rarity | 1.7x attract" },
-  { name: "Deep Sea Extract", icon: "/assets/icons/Icons_16.png", price: 150, desc: "Deep water mega boost.", stats: "+80% rarity | 2.0x attract" },
-  { name: "Thunder Chum", icon: "/assets/icons/Icons_17.png", price: 130, desc: "Storm fish attract.", stats: "+60% rarity | +30% bites" },
-  { name: "Moonlight Essence", icon: "/assets/icons/Icons_18.png", price: 200, desc: "Celestial boost.", stats: "+100% rarity | 2.2x attract" },
-  { name: "Kraken Bile", icon: "/assets/icons/Icons_19.png", price: 180, desc: "Massive rarity increase.", stats: "+150% rarity | 1.6x attract" },
-  { name: "Golden Flakes", icon: "/assets/icons/Icons_20.png", price: 250, desc: "Boosts everything.", stats: "+100% rarity | +40% bites | 2.5x attract" },
-  { name: "Abyssal Ooze", icon: "/assets/icons/Icons_01.png", price: 300, desc: "The ultimate chum.", stats: "+150% rarity | +50% bites | 3.0x attract" },
-  { name: "Live Shrimp Cluster", icon: "/assets/icons/Icons_05.png", price: 0, desc: "Caught live shrimp. Good bait.", stats: "+20% rarity | +30% bites | Net catch" },
-  { name: "Glowing Plankton", icon: "/assets/icons/Icons_14.png", price: 0, desc: "Caught glowing plankton.", stats: "+80% rarity | Net catch" },
+  { name: "Fish Scraps", icon: "/assets/gen-icons/chum-fish-guts.png", price: 15, desc: "Basic chum.", stats: "1.2x attract" },
+  { name: "Bread Crumbs", icon: "/assets/gen-icons/chum-bread-crumbs.png", price: 20, desc: "Attracts small fish.", stats: "1.4x attract | +10% bites" },
+  { name: "Corn Mash", icon: "/assets/gen-icons/chum-worm-bait.png", price: 25, desc: "Bottom feeder chum.", stats: "1.5x attract" },
+  { name: "Blood Meal", icon: "/assets/gen-icons/chum-blood-worm-extract.png", price: 40, desc: "Attracts predators.", stats: "+15% rarity | 1.6x attract" },
+  { name: "Shrimp Paste", icon: "/assets/gen-icons/chum-shrimp-paste.png", price: 50, desc: "Good all-around chum.", stats: "1.7x attract | +15% bites" },
+  { name: "Squid Ink", icon: "/assets/gen-icons/chum-squid-ink.png", price: 60, desc: "Attracts deep fish.", stats: "+20% rarity | 1.5x attract" },
+  { name: "Fish Oil Slick", icon: "/assets/gen-icons/chum-sardine-oil.png", price: 75, desc: "Wide area attract.", stats: "2.0x attract | +10% bites" },
+  { name: "Sardine Chunks", icon: "/assets/gen-icons/chum-fish-guts.png", price: 45, desc: "Fast bite speed boost.", stats: "+50% bites | 1.3x attract" },
+  { name: "Crab Guts", icon: "/assets/gen-icons/chum-fish-guts.png", price: 55, desc: "Attracts rare fish.", stats: "+30% rarity | 1.4x attract" },
+  { name: "Mussel Mix", icon: "/assets/gen-icons/chum-live-shrimp.png", price: 35, desc: "Steady and reliable.", stats: "1.5x attract | Long duration" },
+  { name: "Fermented Brine", icon: "/assets/gen-icons/chum-jellyfish-jelly.png", price: 80, desc: "Strong rarity boost.", stats: "+50% rarity | 1.6x attract" },
+  { name: "Whale Blubber", icon: "/assets/gen-icons/chum-whale-blubber.png", price: 100, desc: "Attracts legendary fish.", stats: "+70% rarity | 1.8x attract" },
+  { name: "Phosphor Dust", icon: "/assets/gen-icons/chum-glowing-plankton.png", price: 120, desc: "Glowing ultra rare boost.", stats: "+100% rarity | 1.5x attract" },
+  { name: "Coral Powder", icon: "/assets/gen-icons/chum-coral-dust.png", price: 90, desc: "Attracts reef fish.", stats: "+30% rarity | 1.7x attract" },
+  { name: "Deep Sea Extract", icon: "/assets/gen-icons/chum-deep-pressure.png", price: 150, desc: "Deep water mega boost.", stats: "+80% rarity | 2.0x attract" },
+  { name: "Thunder Chum", icon: "/assets/gen-icons/chum-thunder.png", price: 130, desc: "Storm fish attract.", stats: "+60% rarity | +30% bites" },
+  { name: "Moonlight Essence", icon: "/assets/gen-icons/chum-moonlight-essence.png", price: 200, desc: "Celestial boost.", stats: "+100% rarity | 2.2x attract" },
+  { name: "Kraken Bile", icon: "/assets/gen-icons/chum-kraken-bile.png", price: 180, desc: "Massive rarity increase.", stats: "+150% rarity | 1.6x attract" },
+  { name: "Golden Flakes", icon: "/assets/gen-icons/chum-golden-flakes.png", price: 250, desc: "Boosts everything.", stats: "+100% rarity | +40% bites | 2.5x attract" },
+  { name: "Abyssal Ooze", icon: "/assets/gen-icons/chum-abyssal-ooze.png", price: 300, desc: "The ultimate chum.", stats: "+150% rarity | +50% bites | 3.0x attract" },
+  { name: "Live Shrimp Cluster", icon: "/assets/gen-icons/chum-live-shrimp.png", price: 0, desc: "Caught live shrimp. Good bait.", stats: "+20% rarity | +30% bites | Net catch" },
+  { name: "Glowing Plankton", icon: "/assets/gen-icons/chum-glowing-plankton.png", price: 0, desc: "Caught glowing plankton.", stats: "+80% rarity | Net catch" },
 ];
 
-const allFish: Array<{ name: string; img: string; rarity: string; points: number; desc: string; tint?: string; spriteW?: number; frameW?: number; frameH?: number }> = [
-  { name: "Minnow", img: "/assets/catch/1.png", rarity: "common", points: 10, desc: "A tiny silver fish, common in shallow waters.", spriteW: 24, frameW: 6, frameH: 6 },
-  { name: "Perch", img: "/assets/catch/2.png", rarity: "common", points: 25, desc: "A striped freshwater fish with sharp fins.", spriteW: 32, frameW: 16, frameH: 12 },
-  { name: "Eel", img: "/assets/catch/7.png", rarity: "common", points: 40, desc: "A slippery serpentine fish.", spriteW: 60, frameW: 15, frameH: 12 },
-  { name: "Red Crab", img: "/assets/icons/Icons_10.png", rarity: "common", points: 8, desc: "A small red crab that scuttles along the beach." },
-  { name: "Blue Crab", img: "/assets/icons/Icons_10.png", rarity: "common", points: 10, desc: "A bright blue crab found near tidal pools." },
-  { name: "Green Crab", img: "/assets/icons/Icons_10.png", rarity: "common", points: 8, desc: "A mossy green crab hiding in the seaweed." },
-  { name: "Cyan Crab", img: "/assets/icons/Icons_10.png", rarity: "common", points: 8, desc: "A pale cyan crab on sandy shores." },
-  { name: "Pink Crab", img: "/assets/icons/Icons_10.png", rarity: "common", points: 12, desc: "A cute pink crab that loves warm shallow waters." },
-  { name: "Bass", img: "/assets/catch/3.png", rarity: "uncommon", points: 50, desc: "A strong fighter popular with anglers.", spriteW: 40, frameW: 20, frameH: 12 },
-  { name: "Salmon", img: "/assets/catch/8.png", rarity: "uncommon", points: 60, desc: "A prized pink-fleshed fish.", spriteW: 60, frameW: 15, frameH: 12 },
-  { name: "Catfish", img: "/assets/catch/4.png", rarity: "uncommon", points: 75, desc: "A bottom-dweller with long whiskers.", spriteW: 52, frameW: 13, frameH: 12 },
-  { name: "Purple Crab", img: "/assets/icons/Icons_10.png", rarity: "uncommon", points: 15, desc: "An uncommon purple crab with iridescent shell." },
-  { name: "Gold Crab", img: "/assets/icons/Icons_10.png", rarity: "uncommon", points: 25, desc: "A rare golden crab. Prized for its shimmering shell." },
-  { name: "Dark Crab", img: "/assets/icons/Icons_10.png", rarity: "uncommon", points: 20, desc: "A dark-shelled crab with powerful pincers." },
-  { name: "Swordfish", img: "/assets/catch/5.png", rarity: "rare", points: 150, desc: "A powerful ocean predator with a sharp bill.", spriteW: 56, frameW: 28, frameH: 24 },
-  { name: "Shark", img: "/assets/predators/1/Idle.png", rarity: "rare", points: 400, desc: "A fearsome shark prowling the deep waters.", spriteW: 384, frameW: 96, frameH: 96 },
-  { name: "Sea Devil", img: "/assets/predators/3/Idle.png", rarity: "rare", points: 600, desc: "A monstrous crab creature from the deep trenches.", spriteW: 384, frameW: 96, frameH: 96 },
-  { name: "Whale", img: "/assets/catch/6.png", rarity: "legendary", points: 300, desc: "The king of the deep. Incredibly rare!", spriteW: 108, frameW: 27, frameH: 22 },
-  { name: "Kraken", img: "/assets/predators/2/Idle.png", rarity: "legendary", points: 800, desc: "A massive squid from the abyss, feared by all.", spriteW: 384, frameW: 96, frameH: 96 },
-  { name: "Phantom Minnow", img: "/assets/catch/1.png", rarity: "ultra_rare", points: 500, desc: "A ghostly minnow wreathed in spectral flame.", tint: "rgba(0,255,200,0.35)", spriteW: 24, frameW: 6, frameH: 6 },
-  { name: "Volcanic Perch", img: "/assets/catch/2.png", rarity: "ultra_rare", points: 600, desc: "Scales glow molten orange from deep-sea vents.", tint: "rgba(255,80,0,0.4)", spriteW: 32, frameW: 16, frameH: 12 },
-  { name: "Abyssal Bass", img: "/assets/catch/3.png", rarity: "ultra_rare", points: 750, desc: "A colossal bass radiating dark energy.", tint: "rgba(120,0,255,0.35)", spriteW: 40, frameW: 20, frameH: 12 },
-  { name: "Frost Catfish", img: "/assets/catch/4.png", rarity: "ultra_rare", points: 800, desc: "Encased in living ice. Freezes the water.", tint: "rgba(100,200,255,0.4)", spriteW: 52, frameW: 13, frameH: 12 },
-  { name: "Storm Swordfish", img: "/assets/catch/5.png", rarity: "ultra_rare", points: 1000, desc: "Rides lightning bolts with electric fury.", tint: "rgba(255,255,0,0.35)", spriteW: 56, frameW: 28, frameH: 24 },
-  { name: "Celestial Whale", img: "/assets/catch/6.png", rarity: "ultra_rare", points: 2000, desc: "A cosmic whale that swallowed a dying star.", tint: "rgba(255,180,255,0.3)", spriteW: 108, frameW: 27, frameH: 22 },
-  { name: "Neon Eel", img: "/assets/catch/7.png", rarity: "ultra_rare", points: 650, desc: "Bioluminescent eel pulsing with neon colors.", tint: "rgba(0,255,100,0.4)", spriteW: 60, frameW: 15, frameH: 12 },
-  { name: "Golden Salmon", img: "/assets/catch/8.png", rarity: "ultra_rare", points: 700, desc: "Solid gold scales. Worth a fortune.", tint: "rgba(255,200,0,0.45)", spriteW: 60, frameW: 15, frameH: 12 },
-  { name: "Shadow Leviathan", img: "/assets/catch/6.png", rarity: "ultra_rare", points: 1500, desc: "A titanic shadow beast from beyond the abyss.", tint: "rgba(180,0,50,0.35)", spriteW: 108, frameW: 27, frameH: 22 },
+const allFish: Array<{ name: string; img: string; rarity: string; points: number; desc: string; tint?: string }> = [
+  { name: "Minnow", img: "/assets/gen-icons/fish-minnow.png", rarity: "common", points: 10, desc: "A tiny silver fish, common in shallow waters." },
+  { name: "Perch", img: "/assets/gen-icons/fish-perch.png", rarity: "common", points: 25, desc: "A striped freshwater fish with sharp fins." },
+  { name: "Eel", img: "/assets/gen-icons/fish-eel.png", rarity: "common", points: 40, desc: "A slippery serpentine fish." },
+  { name: "Red Crab", img: "/assets/gen-icons/fish-red-crab.png", rarity: "common", points: 8, desc: "A small red crab that scuttles along the beach." },
+  { name: "Blue Crab", img: "/assets/gen-icons/fish-blue-crab.png", rarity: "common", points: 10, desc: "A bright blue crab found near tidal pools." },
+  { name: "Green Crab", img: "/assets/gen-icons/fish-green-crab.png", rarity: "common", points: 8, desc: "A mossy green crab hiding in the seaweed." },
+  { name: "Cyan Crab", img: "/assets/gen-icons/fish-cyan-crab.png", rarity: "common", points: 8, desc: "A pale cyan crab on sandy shores." },
+  { name: "Pink Crab", img: "/assets/gen-icons/fish-pink-crab.png", rarity: "common", points: 12, desc: "A cute pink crab that loves warm shallow waters." },
+  { name: "Bass", img: "/assets/gen-icons/fish-bass.png", rarity: "uncommon", points: 50, desc: "A strong fighter popular with anglers." },
+  { name: "Salmon", img: "/assets/gen-icons/fish-salmon.png", rarity: "uncommon", points: 60, desc: "A prized pink-fleshed fish." },
+  { name: "Catfish", img: "/assets/gen-icons/fish-catfish.png", rarity: "uncommon", points: 75, desc: "A bottom-dweller with long whiskers." },
+  { name: "Purple Crab", img: "/assets/gen-icons/fish-purple-crab.png", rarity: "uncommon", points: 15, desc: "An uncommon purple crab with iridescent shell." },
+  { name: "Gold Crab", img: "/assets/gen-icons/fish-gold-crab.png", rarity: "uncommon", points: 25, desc: "A rare golden crab. Prized for its shimmering shell." },
+  { name: "Dark Crab", img: "/assets/gen-icons/fish-dark-crab.png", rarity: "uncommon", points: 20, desc: "A dark-shelled crab with powerful pincers." },
+  { name: "Swordfish", img: "/assets/gen-icons/fish-swordfish.png", rarity: "rare", points: 150, desc: "A powerful ocean predator with a sharp bill." },
+  { name: "Shark", img: "/assets/gen-icons/fish-shark.png", rarity: "rare", points: 400, desc: "A fearsome shark prowling the deep waters." },
+  { name: "Sea Devil", img: "/assets/gen-icons/fish-sea-devil.png", rarity: "rare", points: 600, desc: "A monstrous crab creature from the deep trenches." },
+  { name: "Whale", img: "/assets/gen-icons/fish-whale.png", rarity: "legendary", points: 300, desc: "The king of the deep. Incredibly rare!" },
+  { name: "Kraken", img: "/assets/gen-icons/fish-kraken.png", rarity: "legendary", points: 800, desc: "A massive squid from the abyss, feared by all." },
+  { name: "Phantom Minnow", img: "/assets/gen-icons/fish-phantom-minnow.png", rarity: "ultra_rare", points: 500, desc: "A ghostly minnow wreathed in spectral flame.", tint: "rgba(0,255,200,0.35)" },
+  { name: "Volcanic Perch", img: "/assets/gen-icons/fish-volcanic-perch.png", rarity: "ultra_rare", points: 600, desc: "Scales glow molten orange from deep-sea vents.", tint: "rgba(255,80,0,0.4)" },
+  { name: "Abyssal Bass", img: "/assets/gen-icons/fish-abyssal-bass.png", rarity: "ultra_rare", points: 750, desc: "A colossal bass radiating dark energy.", tint: "rgba(120,0,255,0.35)" },
+  { name: "Frost Catfish", img: "/assets/gen-icons/fish-frost-catfish.png", rarity: "ultra_rare", points: 800, desc: "Encased in living ice. Freezes the water.", tint: "rgba(100,200,255,0.4)" },
+  { name: "Storm Swordfish", img: "/assets/gen-icons/fish-storm-swordfish.png", rarity: "ultra_rare", points: 1000, desc: "Rides lightning bolts with electric fury.", tint: "rgba(255,255,0,0.35)" },
+  { name: "Celestial Whale", img: "/assets/gen-icons/fish-celestial-whale.png", rarity: "ultra_rare", points: 2000, desc: "A cosmic whale that swallowed a dying star.", tint: "rgba(255,180,255,0.3)" },
+  { name: "Neon Eel", img: "/assets/gen-icons/fish-neon-eel.png", rarity: "ultra_rare", points: 650, desc: "Bioluminescent eel pulsing with neon colors.", tint: "rgba(0,255,100,0.4)" },
+  { name: "Golden Salmon", img: "/assets/gen-icons/fish-golden-salmon.png", rarity: "ultra_rare", points: 700, desc: "Solid gold scales. Worth a fortune.", tint: "rgba(255,200,0,0.45)" },
+  { name: "Shadow Leviathan", img: "/assets/gen-icons/fish-shadow-leviathan.png", rarity: "ultra_rare", points: 1500, desc: "A titanic shadow beast from beyond the abyss.", tint: "rgba(180,0,50,0.35)" },
 ];
 
 const fishAchievements = [
   { name: "First Catch", desc: "Catch your first fish", icon: "/assets/icons/Icons_07.png", color: "#a0a0a0" },
-  { name: "Common Collector", desc: "Catch all common species", icon: "/assets/catch/1.png", color: "#a0a0a0", spriteW: 24, frameW: 6, frameH: 6 },
-  { name: "Uncommon Hunter", desc: "Catch all uncommon species", icon: "/assets/catch/3.png", color: "#4fc3f7", spriteW: 40, frameW: 20, frameH: 12 },
-  { name: "Rare Trophy", desc: "Catch all rare species", icon: "/assets/catch/5.png", color: "#ffd54f", spriteW: 56, frameW: 28, frameH: 24 },
-  { name: "Legendary Angler", desc: "Catch all legendary species", icon: "/assets/catch/6.png", color: "#ff8a65", spriteW: 108, frameW: 27, frameH: 22 },
+  { name: "Common Collector", desc: "Catch all common species", icon: "/assets/gen-icons/fish-minnow.png", color: "#a0a0a0" },
+  { name: "Uncommon Hunter", desc: "Catch all uncommon species", icon: "/assets/gen-icons/fish-bass.png", color: "#4fc3f7" },
+  { name: "Rare Trophy", desc: "Catch all rare species", icon: "/assets/gen-icons/fish-swordfish.png", color: "#ffd54f" },
+  { name: "Legendary Angler", desc: "Catch all legendary species", icon: "/assets/gen-icons/fish-whale.png", color: "#ff8a65" },
   { name: "Mythic Master", desc: "Catch all ultra-rare species", icon: "/assets/lures/prismatic_lure.png", color: "#e040fb" },
   { name: "Ocean Completionist", desc: "Catch every species in the game", icon: "/assets/lures/golden_fly.png", color: "#ffd700" },
   { name: "100 Catch Club", desc: "Catch 100 fish total", icon: "/assets/icons/Icons_09.png", color: "#4fc3f7" },
@@ -775,20 +774,9 @@ export default function Landing() {
                     }}
                   >
                     <ArsenalTooltip item={item} visible={hoveredArsenal === key} />
-                    {item.icon === "__rod__" ? (
-                      <div style={{
-                        width: 36, height: 44,
-                        backgroundImage: `url(${rodsSpriteImg})`,
-                        backgroundSize: "500% 100%",
-                        backgroundPosition: `${((item as any).spriteIndex / 4) * 100}% 0%`,
-                        backgroundRepeat: "no-repeat",
-                        imageRendering: "pixelated",
-                      }} />
-                    ) : (
-                      <img src={item.icon} alt={item.name} style={{
-                        width: 36, height: 36, imageRendering: "pixelated", objectFit: "contain",
-                      }} />
-                    )}
+                    <img src={item.icon} alt={item.name} style={{
+                      width: 36, height: 36, imageRendering: "pixelated", objectFit: "contain",
+                    }} />
                   </div>
                 );
               })}
@@ -873,32 +861,13 @@ export default function Landing() {
                           pointerEvents: "none",
                         }} />
                       )}
-                      {fish.spriteW && fish.frameW && fish.frameH ? (
-                        <div style={{
-                          width: 48,
-                          height: 48 * (fish.frameH / fish.frameW),
-                          overflow: "hidden",
-                          position: "relative", zIndex: 1,
-                          filter: isUltra && fish.tint
-                            ? `drop-shadow(0 0 6px ${fish.tint})`
-                            : undefined,
-                        }}>
-                          <img src={fish.img} alt={fish.name} style={{
-                            width: 48 * (fish.spriteW / fish.frameW),
-                            height: 48 * (fish.frameH / fish.frameW),
-                            imageRendering: "pixelated",
-                            display: "block",
-                          }} />
-                        </div>
-                      ) : (
-                        <img src={fish.img} alt={fish.name} style={{
-                          width: 48, height: 48, imageRendering: "pixelated", objectFit: "contain",
-                          position: "relative", zIndex: 1,
-                          filter: isUltra && fish.tint
-                            ? `drop-shadow(0 0 6px ${fish.tint})`
-                            : undefined,
-                        }} />
-                      )}
+                      <img src={fish.img} alt={fish.name} style={{
+                        width: 48, height: 48, imageRendering: "pixelated", objectFit: "contain",
+                        position: "relative", zIndex: 1,
+                        filter: isUltra && fish.tint
+                          ? `drop-shadow(0 0 6px ${fish.tint})`
+                          : undefined,
+                      }} />
                     </div>
                   );
                 })}
@@ -939,25 +908,10 @@ export default function Landing() {
                   transition: "all 0.2s",
                 }}
               >
-                {(ach as any).spriteW && (ach as any).frameW && (ach as any).frameH ? (
-                  <div style={{
-                    width: 24,
-                    height: 24 * ((ach as any).frameH / (ach as any).frameW),
-                    overflow: "hidden",
-                    flexShrink: 0,
-                  }}>
-                    <img src={ach.icon} alt="" style={{
-                      width: 24 * ((ach as any).spriteW / (ach as any).frameW),
-                      height: 24 * ((ach as any).frameH / (ach as any).frameW),
-                      imageRendering: "pixelated",
-                      display: "block",
-                    }} />
-                  </div>
-                ) : (
-                  <img src={ach.icon} alt="" style={{
-                    width: 24, height: 24, imageRendering: "pixelated", objectFit: "contain",
-                  }} />
-                )}
+                <img src={ach.icon} alt="" style={{
+                  width: 24, height: 24, imageRendering: "pixelated", objectFit: "contain",
+                  flexShrink: 0,
+                }} />
                 <div>
                   <div style={{ fontSize: 8, color: ach.color, letterSpacing: 1, marginBottom: 2 }}>{ach.name}</div>
                   <div style={{ fontSize: 6, color: "#556680", letterSpacing: 0.5 }}>{ach.desc}</div>
