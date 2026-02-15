@@ -4735,6 +4735,21 @@ export default function FishingGame() {
             }
           }
 
+          const fishLength = Math.round(sizeBonus * (s.currentCatch?.points || 5) * 0.15 * 10) / 10;
+          fetch("/api/discord-catch", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              fishName: name,
+              weight: fishWeight,
+              length: fishLength,
+              rarity: s.currentCatch?.rarity || "common",
+              username: s.playerName || "Anonymous",
+              earnings: sellPrice,
+              icon: s.currentCatch?.icon || "",
+            }),
+          }).catch(() => {});
+
           const bountyIdx = s.bounties.findIndex(b => b.fishName === name && sizeBonus >= b.minSize);
           if (bountyIdx >= 0) {
             const bountyTacticsBonus = 1 + s.attributes.Tactics * 0.01;
