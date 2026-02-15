@@ -1103,6 +1103,7 @@ export default function FishingGame() {
       "/assets/objects/Pier_Tiles.png",
       "/assets/objects/Fishing_hut.png",
       "/assets/objects/Stay.png",
+      "/assets/dock_front.png",
       "/assets/dock_structure_full.png",
       "/assets/dock_legs_waterline.png",
       "/assets/dock_legs_underwater.png",
@@ -2734,18 +2735,13 @@ export default function FishingGame() {
       }
 
       // LAYER 4: 3D deck front face (the visible thickness/edge of the deck)
-      ctx.fillStyle = "#8B6B4A";
-      ctx.fillRect(pierStartX, deckEdgeY, pierRight - pierStartX, deckFrontH);
-      ctx.fillStyle = "#7A5C3A";
-      ctx.fillRect(pierStartX, deckEdgeY, pierRight - pierStartX, 3);
-      ctx.fillStyle = "#6B4E30";
-      ctx.fillRect(pierStartX, deckEdgeY + deckFrontH - 3, pierRight - pierStartX, 3);
-      const frontPlankW = 28;
-      for (let fx = pierStartX; fx < pierRight; fx += frontPlankW) {
-        ctx.fillStyle = (Math.floor((fx - pierStartX) / frontPlankW) % 2 === 0) ? "rgba(0,0,0,0.05)" : "rgba(255,255,255,0.04)";
-        ctx.fillRect(fx, deckEdgeY, Math.min(frontPlankW, pierRight - fx), deckFrontH);
-        ctx.fillStyle = "rgba(0,0,0,0.1)";
-        ctx.fillRect(fx, deckEdgeY, 1, deckFrontH);
+      const dockFrontImg = getImg("/assets/dock_front.png");
+      if (dockFrontImg && dockFrontImg.complete) {
+        const dockFrontW = pierRight - pierStartX;
+        ctx.drawImage(dockFrontImg, 0, 0, dockFrontImg.width, dockFrontImg.height, pierStartX, deckEdgeY, dockFrontW, deckFrontH);
+      } else {
+        ctx.fillStyle = "#8B6B4A";
+        ctx.fillRect(pierStartX, deckEdgeY, pierRight - pierStartX, deckFrontH);
       }
 
       // LAYER 5: Dock structure panel in front of fishing hut (3D understructure)
