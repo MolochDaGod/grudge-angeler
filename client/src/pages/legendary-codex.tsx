@@ -1,5 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Link } from "wouter";
+import { Link, useParams, useLocation } from "wouter";
+
+function toSlug(name: string) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
 
 import phantomMinnowImg from "../assets/images/legendary-phantom-minnow.png";
 import volcanicPerchImg from "../assets/images/legendary-volcanic-perch.png";
@@ -418,6 +422,8 @@ function FlipbookOverlay({ targetPage, onComplete }: { targetPage: number; onCom
 }
 
 export default function LegendaryCodex() {
+  const params = useParams<{ slug?: string }>();
+  const [, navigate] = useLocation();
   const [currentPage, setCurrentPage] = useState(-1);
   const [fadeState, setFadeState] = useState<"in" | "out" | "visible">("in");
   const containerRef = useRef<HTMLDivElement>(null);
@@ -428,29 +434,40 @@ export default function LegendaryCodex() {
   const totalPages = legendaries.length;
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const fishParam = params.get("fish");
-    const fromParam = params.get("from");
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromParam = urlParams.get("from");
     if (fromParam === "home") setFromHome(true);
-    if (fishParam !== null) {
-      const idx = parseInt(fishParam, 10);
-      if (!isNaN(idx) && idx >= 0 && idx < legendaries.length) {
+
+    if (params.slug) {
+      const idx = legendaries.findIndex(l => toSlug(l.name) === params.slug);
+      if (idx >= 0) {
         setFlipbookTarget(idx);
         setShowFlipbook(true);
       }
+    } else {
+      const fishParam = urlParams.get("fish");
+      if (fishParam !== null) {
+        const idx = parseInt(fishParam, 10);
+        if (!isNaN(idx) && idx >= 0 && idx < legendaries.length) {
+          navigate(`/codex/${toSlug(legendaries[idx].name)}?from=home`, { replace: true });
+        }
+      }
     }
-  }, []);
+  }, [params.slug]);
 
   const handleFlipbookComplete = useCallback(() => {
     if (flipbookTarget !== null) {
       setCurrentPage(flipbookTarget);
       setShowFlipbook(false);
       setFlipbookTarget(null);
+      if (flipbookTarget >= 0 && flipbookTarget < legendaries.length) {
+        navigate(`/codex/${toSlug(legendaries[flipbookTarget].name)}`, { replace: true });
+      }
       if (containerRef.current) {
         containerRef.current.scrollTo({ top: 0, behavior: "instant" });
       }
     }
-  }, [flipbookTarget]);
+  }, [flipbookTarget, navigate]);
 
   useEffect(() => {
     if (!showFlipbook) {
@@ -464,6 +481,9 @@ export default function LegendaryCodex() {
     setFadeState("out");
     setTimeout(() => {
       setCurrentPage(page);
+      if (page >= 0 && page < legendaries.length) {
+        navigate(`/codex/${toSlug(legendaries[page].name)}`, { replace: true });
+      }
       if (containerRef.current) {
         containerRef.current.scrollTo({ top: 0, behavior: "instant" });
       }
@@ -545,7 +565,7 @@ export default function LegendaryCodex() {
         >
           GAME BOARD
         </a>
-        <Link href="/play">
+        <Link href="/game">
           <a
             data-testid="link-play-game"
             style={{

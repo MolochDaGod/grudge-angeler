@@ -1,6 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
 
+function toSlug(name: string) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
 import oceanBgImg from "@assets/19c5a9e200bbc_1771115046741.png";
 import oceanRippleImg from "@assets/19c5a9be75d2a_1771115056616.png";
 
@@ -437,7 +441,7 @@ export default function Landing() {
             fontSize: 6, color: "#8899a8", textDecoration: "none", padding: "6px 10px",
             borderRadius: 4, transition: "color 0.2s",
           }}>FACTIONS</a>
-          <Link href="/legendaries">
+          <Link href="/codex">
             <a data-testid="nav-codex" style={{
               fontSize: 6, color: "#8899a8", textDecoration: "none", padding: "6px 10px",
               borderRadius: 4, transition: "color 0.2s",
@@ -483,7 +487,7 @@ export default function Landing() {
         </p>
 
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
-          <Link href="/play">
+          <Link href="/game">
             <a
               data-testid="button-play"
               className="landing-btn"
@@ -500,7 +504,7 @@ export default function Landing() {
               PLAY NOW
             </a>
           </Link>
-          <Link href="/legendaries">
+          <Link href="/codex">
             <a
               data-testid="button-codex"
               className="landing-btn"
@@ -604,7 +608,7 @@ export default function Landing() {
               data-testid={`legendary-card-${i}`}
               onMouseEnter={() => setHoveredLegendary(i)}
               onMouseLeave={() => setHoveredLegendary(null)}
-              onClick={() => navigate(`/legendaries?fish=${i}&from=home`)}
+              onClick={() => navigate(`/codex/${toSlug(fish.name)}?from=home`)}
               style={{
                 background: "rgba(8,18,35,0.9)",
                 border: `1px solid ${hoveredLegendary === i ? fish.aura : "rgba(79,195,247,0.08)"}`,
@@ -688,7 +692,7 @@ export default function Landing() {
         </div>
 
         <div style={{ textAlign: "center", marginTop: 30 }}>
-          <Link href="/legendaries">
+          <Link href="/codex">
             <a
               data-testid="button-view-codex"
               className="landing-btn"
@@ -1027,7 +1031,7 @@ export default function Landing() {
         }}>
           The ocean awaits. The Legendary 10 are watching.
         </div>
-        <Link href="/play">
+        <Link href="/game">
           <a
             data-testid="button-play-bottom"
             className="landing-btn"
@@ -1053,10 +1057,10 @@ export default function Landing() {
         padding: "30px 20px", textAlign: "center",
       }}>
         <div style={{ display: "flex", justifyContent: "center", gap: 16, marginBottom: 16, flexWrap: "wrap" }}>
-          <Link href="/play">
+          <Link href="/game">
             <a style={{ fontSize: 6, color: "#4a6070", textDecoration: "none", letterSpacing: 1 }}>PLAY</a>
           </Link>
-          <Link href="/legendaries">
+          <Link href="/codex">
             <a style={{ fontSize: 6, color: "#4a6070", textDecoration: "none", letterSpacing: 1 }}>CODEX</a>
           </Link>
           <a href="/gameboard.html" style={{ fontSize: 6, color: "#4a6070", textDecoration: "none", letterSpacing: 1 }}>GAME BOARD</a>
