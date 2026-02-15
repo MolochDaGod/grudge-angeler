@@ -376,75 +376,74 @@ interface CatchHistoryEntry {
 
 const FISHING_ATTR_DEFS: Record<keyof FishingAttributes, { description: string; color: string; gains: Record<string, { label: string; perPoint: number; unit: string }> }> = {
   Strength: {
-    description: "Raw reeling power. Increases reel speed, catch zone, and Force Pool.",
+    description: "Raw reeling power. Bigger catch zone, stronger drag, and Force Pool.",
     color: "#ef4444",
     gains: {
-      reelPower: { label: "Reel Power", perPoint: 1.5, unit: "%" },
+      dragForce: { label: "Drag Force", perPoint: 3.0, unit: "%" },
       forcePool: { label: "Force Pool", perPoint: 1, unit: "" },
-      catchZone: { label: "Catch Zone", perPoint: 0.3, unit: "%" },
+      catchZone: { label: "Catch Zone", perPoint: 0.6, unit: "%" },
     }
   },
   Intellect: {
-    description: "Fishing knowledge. Improves sell prices and reduces Force cost.",
+    description: "Fishing knowledge. Better sell prices, cheaper Force, and more XP.",
     color: "#8b5cf6",
     gains: {
-      sellBonus: { label: "Sell Price Bonus", perPoint: 1.2, unit: "%" },
-      forceCostReduce: { label: "Force Cost", perPoint: 2, unit: "% off" },
-      xpBonus: { label: "XP Gain", perPoint: 0.8, unit: "%" },
+      sellBonus: { label: "Sell Price", perPoint: 2.5, unit: "%" },
+      forceCostReduce: { label: "Force Cost", perPoint: 4, unit: "% off" },
+      xpBonus: { label: "XP Gain", perPoint: 1.6, unit: "%" },
     }
   },
   Vitality: {
-    description: "Stamina and persistence. Longer bite windows and faster Force regen.",
+    description: "Stamina and endurance. Longer bite windows, faster Force regen, faster wait.",
     color: "#22c55e",
     gains: {
-      biteWindow: { label: "Bite Window", perPoint: 1.0, unit: "%" },
-      forceRegen: { label: "Force Regen", perPoint: 0.1, unit: "/s" },
-      comboKeep: { label: "Combo Sustain", perPoint: 0.4, unit: "%" },
+      biteWindow: { label: "Bite Window", perPoint: 2.0, unit: "%" },
+      forceRegen: { label: "Force Regen", perPoint: 0.15, unit: "/s" },
+      waitReduce: { label: "Wait Reduce", perPoint: 1.2, unit: "%" },
     }
   },
   Dexterity: {
-    description: "Precision and finesse. Better casting accuracy and hook control.",
+    description: "Precision and finesse. Tames fish direction changes and steadier reeling.",
     color: "#f59e0b",
     gains: {
-      castAccuracy: { label: "Cast Accuracy", perPoint: 1.0, unit: "%" },
-      hookControl: { label: "Hook Control", perPoint: 0.7, unit: "%" },
-      critCatch: { label: "Perfect Catch", perPoint: 0.5, unit: "%" },
+      fishControl: { label: "Fish Control", perPoint: 3.0, unit: "%" },
+      reelDrift: { label: "Reel Drift", perPoint: 1.5, unit: "% less" },
+      netSize: { label: "Net Width", perPoint: 2, unit: "px" },
     }
   },
   Endurance: {
-    description: "Physical resilience. Resist line breaks and fight longer.",
+    description: "Physical resilience. More resilience charges, stronger line, wider nets.",
     color: "#78716c",
     gains: {
-      lineResist: { label: "Break Resist", perPoint: 1.2, unit: "%" },
-      fightDuration: { label: "Fight Stamina", perPoint: 0.8, unit: "%" },
-      rodDurability: { label: "Rod Durability", perPoint: 0.5, unit: "%" },
+      lineStrength: { label: "Line Strength", perPoint: 2.5, unit: "%" },
+      resilience: { label: "Resilience", perPoint: 0.2, unit: "" },
+      netDepth: { label: "Net Depth", perPoint: 2, unit: "px" },
     }
   },
   Wisdom: {
-    description: "Deep ocean knowledge. Better rare fish attraction and lowers Force cost multiplier.",
+    description: "Deep ocean knowledge. Better rare fish spawns and lower Force cost.",
     color: "#06b6d4",
     gains: {
-      rarityBoost: { label: "Rarity Boost", perPoint: 1.0, unit: "%" },
-      forceMult: { label: "Force Mult", perPoint: -0.1, unit: "" },
-      weatherRead: { label: "Spawn Insight", perPoint: 0.4, unit: "%" },
+      rarityBoost: { label: "Rarity Boost", perPoint: 2.0, unit: "%" },
+      forceMult: { label: "Force Cost", perPoint: -0.2, unit: "" },
     }
   },
   Agility: {
-    description: "Speed and reflexes. Faster reeling, quicker reactions, and Force Pool.",
+    description: "Speed and reflexes. Faster reeling, quicker movement, and Force Pool.",
     color: "#a3e635",
     gains: {
-      reelSpeed: { label: "Reel Speed", perPoint: 0.8, unit: "%" },
+      reelSpeed: { label: "Reel Speed", perPoint: 1.6, unit: "%" },
       forcePool: { label: "Force Pool", perPoint: 1, unit: "" },
-      moveSpeed: { label: "Move Speed", perPoint: 0.5, unit: "%" },
+      moveSpeed: { label: "Move Speed", perPoint: 1.0, unit: "%" },
     }
   },
   Tactics: {
-    description: "Strategic mastery. Boosts all other stats and improves bounty rewards.",
+    description: "Strategic mastery. Amplifies ALL other attributes and bounty rewards.",
     color: "#ec4899",
     gains: {
-      allStatsBonus: { label: "All Stats Boost", perPoint: 0.5, unit: "%" },
-      bountyBonus: { label: "Bounty Bonus", perPoint: 1.0, unit: "%" },
-      comboMulti: { label: "Combo Multiplier", perPoint: 0.3, unit: "%" },
+      allStatsAmp: { label: "All Stats Amp", perPoint: 1.0, unit: "%" },
+      bountyBonus: { label: "Bounty Bonus", perPoint: 2.0, unit: "%" },
+      comboMulti: { label: "Combo Multi", perPoint: 0.6, unit: "%" },
     }
   },
 };
@@ -919,7 +918,7 @@ export default function FishingGame() {
     const rightRatio = Math.min(1, distRight / (canvasW * 4));
 
     const lure = LURES[s.equippedLure];
-    const wisdomBoost = 1 + s.attributes.Wisdom * 0.01 * (1 + s.attributes.Tactics * 0.005);
+    const wisdomBoost = 1 + s.attributes.Wisdom * 0.02 * (1 + s.attributes.Tactics * 0.01);
     const chumRarityBoost = s.chumActiveType >= 0 ? CHUM_ITEMS[s.chumActiveType].rarityBoost : 1;
     const ce = s.celestialEvent;
     const ceFade = s.celestialFade;
@@ -1087,7 +1086,7 @@ export default function FishingGame() {
     if (!fishType && !junk) return 0;
     const basePts = fishType?.points || junk?.points || 5;
     const rarityMult = fishType ? (fishType.rarity === "ultra_rare" ? 10 : fishType.rarity === "legendary" ? 5 : fishType.rarity === "rare" ? 3 : fishType.rarity === "uncommon" ? 1.8 : 1) : 0.5;
-    const intBonus = 1 + s.attributes.Intellect * 0.012 * (1 + s.attributes.Tactics * 0.005);
+    const intBonus = 1 + s.attributes.Intellect * 0.025 * (1 + s.attributes.Tactics * 0.01);
     const basePrice = Math.floor(basePts * rarityMult * size * 0.4 * intBonus);
     const name = fishType?.name || junk?.name || "";
     const market = s.marketPrices.get(name);
@@ -1248,6 +1247,7 @@ export default function FishingGame() {
       equippedChum: s.equippedChum,
       chumActiveTimer: s.chumActiveTimer,
       chumActiveType: s.chumActiveType,
+      chumCooldown: s.chumCooldown,
       toolMode: s.toolMode,
       netActive: s.netActive,
       adminOpen: s.adminOpen,
@@ -1618,8 +1618,8 @@ export default function FishingGame() {
           .catch(() => {});
       }
 
-      const tacticsGlobal = 1 + s.attributes.Tactics * 0.005;
-      const agiSpeedMult = 1 + s.attributes.Agility * 0.005 * tacticsGlobal;
+      const tacticsGlobal = 1 + s.attributes.Tactics * 0.01;
+      const agiSpeedMult = 1 + s.attributes.Agility * 0.01 * tacticsGlobal;
       const WALK_SPEED = 2.5 * agiSpeedMult;
       const SWIM_SPEED = 2.0 * agiSpeedMult;
       const pierLeftBound = defaultFishermanX - 80;
@@ -3377,7 +3377,10 @@ export default function FishingGame() {
 
       // Swimming fish
       if (s.gameState !== "title" && s.gameState !== "charSelect") {
-        if (s.swimmingFish.length < 10 && Math.random() < 0.012 * dt) {
+        const chumAttractMult = s.chumActiveType >= 0 ? CHUM_ITEMS[s.chumActiveType].fishAttract : 1;
+        const baseSpawnRate = 0.012 * chumAttractMult;
+        const maxFish = Math.floor(10 * chumAttractMult);
+        if (s.swimmingFish.length < maxFish && Math.random() < baseSpawnRate * dt) {
           spawnFish(W, waterY, H);
         }
         if (Math.random() < 0.008 * dt) {
@@ -3412,7 +3415,7 @@ export default function FishingGame() {
             fish.direction = dx > 0 ? 1 : -1;
           } else {
             s.gameState = "bite";
-            const vitBonus = 1 + s.attributes.Vitality * 0.01 * (1 + s.attributes.Tactics * 0.005);
+            const vitBonus = 1 + s.attributes.Vitality * 0.02 * (1 + s.attributes.Tactics * 0.01);
             s.biteTimer = (120 + Math.random() * 80) * vitBonus;
             s.exclamationTimer = 0;
             s.currentCatch = fish.type;
@@ -3675,7 +3678,7 @@ export default function FishingGame() {
             const dist = Math.sqrt(dx * dx + dy * dy);
             if (dist < 80 && Math.random() < 0.005 * dt) {
               s.gameState = "bite";
-              const vitBonus = 1 + s.attributes.Vitality * 0.01 * (1 + s.attributes.Tactics * 0.005);
+              const vitBonus = 1 + s.attributes.Vitality * 0.02 * (1 + s.attributes.Tactics * 0.01);
               s.biteTimer = (120 + Math.random() * 80) * vitBonus;
               s.exclamationTimer = 0;
               const predIconMap: Record<string, string> = { "Shark": "/assets/gen-icons/fish-shark.png", "Kraken": "/assets/gen-icons/fish-kraken.png", "Sea Devil": "/assets/gen-icons/fish-sea-devil.png" };
@@ -4462,7 +4465,8 @@ export default function FishingGame() {
         if (s.waitTimer <= 0) {
           const hasApproaching = s.swimmingFish.some(f => f.approachingHook);
           if (!hasApproaching) {
-            const hookRange = 300;
+            const chumAttract = s.chumActiveType >= 0 ? CHUM_ITEMS[s.chumActiveType].fishAttract : 1;
+            const hookRange = 300 * chumAttract;
             const nearbyFish = s.swimmingFish.filter(f =>
               Math.abs(f.x - s.hookX) < hookRange && !f.approachingHook
             );
@@ -4471,7 +4475,7 @@ export default function FishingGame() {
                 Math.abs(a.x - s.hookX) < Math.abs(b.x - s.hookX) ? a : b
               );
               closest.approachingHook = true;
-            } else if (Math.random() < 0.15) {
+            } else if (Math.random() < 0.15 * chumAttract) {
               spawnFish(W, waterY, H);
               const newFish = s.swimmingFish[s.swimmingFish.length - 1];
               if (newFish) {
@@ -4481,7 +4485,7 @@ export default function FishingGame() {
                 newFish.approachingHook = true;
               }
             }
-            const vitWaitReduction = 1 + s.attributes.Vitality * 0.006 * (1 + s.attributes.Tactics * 0.005);
+            const vitWaitReduction = 1 + s.attributes.Vitality * 0.012 * (1 + s.attributes.Tactics * 0.01);
             const chumSpeedBoost = s.chumActiveType >= 0 ? CHUM_ITEMS[s.chumActiveType].biteSpeedBoost : 1;
             s.waitTimer = (30 + Math.random() * 50) / (LURES[s.equippedLure].speedBoost * vitWaitReduction * chumSpeedBoost);
           }
@@ -4570,12 +4574,12 @@ export default function FishingGame() {
 
       if (s.gameState === "reeling") {
         const a = s.attributes;
-        const tacticsGlobal = 1 + a.Tactics * 0.005;
+        const tacticsGlobal = 1 + a.Tactics * 0.01;
 
-        const strMod = 1 + (a.Strength * 0.015 * tacticsGlobal);
-        const agiMod = 1 + (a.Agility * 0.008 * tacticsGlobal);
-        const dexMod = 1 + (a.Dexterity * 0.010 * tacticsGlobal);
-        const endMod = 1 + (a.Endurance * 0.012 * tacticsGlobal);
+        const strMod = 1 + (a.Strength * 0.03 * tacticsGlobal);
+        const agiMod = 1 + (a.Agility * 0.016 * tacticsGlobal);
+        const dexMod = 1 + (a.Dexterity * 0.02 * tacticsGlobal);
+        const endMod = 1 + (a.Endurance * 0.025 * tacticsGlobal);
 
         const rarityDiff = s.currentCatch
           ? (s.currentCatch.rarity === "ultra_rare" ? 2.2 : s.currentCatch.rarity === "legendary" ? 1.8 : s.currentCatch.rarity === "rare" ? 1.4 : s.currentCatch.rarity === "uncommon" ? 1.15 : 1)
@@ -4601,7 +4605,7 @@ export default function FishingGame() {
           s.hookedFishFrame = (s.hookedFishFrame + 1) % (s.currentCatch?.walkFrames || 4);
         }
         s.hookedFishDiveTimer -= dt;
-        const dirChangeChance = (0.012 * difficultyMult) / (1 + a.Dexterity * 0.03 * tacticsGlobal);
+        const dirChangeChance = (0.012 * difficultyMult) / (1 + a.Dexterity * 0.06 * tacticsGlobal);
         if (Math.random() < dirChangeChance * dt) {
           const burstForce = fishMoveSpeed * (0.5 + Math.random() * 0.8);
           const roll = Math.random();
@@ -4646,7 +4650,7 @@ export default function FishingGame() {
         const maxDist = W * 4;
         const distRatio = Math.min(1, distFromDock / maxDist);
         const distanceMult = 0.5 + distRatio * 0.5;
-        const fishSpeed = (0.004 + s.rodLevel * 0.0005) * difficultyMult * (1.0 / alignmentBonus) * distanceMult / (1 + a.Dexterity * 0.007 * tacticsGlobal);
+        const fishSpeed = (0.004 + s.rodLevel * 0.0005) * difficultyMult * (1.0 / alignmentBonus) * distanceMult / (1 + a.Dexterity * 0.015 * tacticsGlobal);
         s.reelTarget += s.reelDirection * fishSpeed * dt;
         if (Math.random() < (0.008 * difficultyMult) * dt) s.reelDirection *= -1;
         if (s.reelTarget >= 0.88) { s.reelTarget = 0.88; s.reelDirection = -1; }
@@ -4660,20 +4664,20 @@ export default function FishingGame() {
         } else if (s.isRightMouseDown) {
           s.reelProgress = Math.max(0.05, s.reelProgress - reelMoveSpeed * dtSec);
         } else {
-          const driftRight = 0.05 * (1.0 / alignmentBonus) * dtSec / dexMod;
+          const driftRight = 0.04 * (1.0 / alignmentBonus) * dtSec / dexMod;
           s.reelProgress = Math.min(0.95, s.reelProgress + driftRight);
         }
 
         const rod = RODS[s.equippedRod];
-        const catchZoneHalf = (0.08 + s.rodLevel * 0.015 + rod.catchZoneBonus + a.Strength * 0.003 * tacticsGlobal);
+        const catchZoneHalf = (0.08 + s.rodLevel * 0.015 + rod.catchZoneBonus + a.Strength * 0.006 * tacticsGlobal);
         const fishInZone = s.reelTarget >= (s.reelProgress - catchZoneHalf) && s.reelTarget <= (s.reelProgress + catchZoneHalf);
 
         let gaugeGainRate = 0.003 * alignmentBonus * rod.reelSpeedMult * strMod;
         if (fishInZone) {
           if (s.activeReelHeld && s.forceBar > 0) {
-            const wisdomReduction = Math.max(0.5, 5 - a.Wisdom * 0.1);
+            const wisdomReduction = Math.max(0.5, 5 - a.Wisdom * 0.2);
             const baseForceCost = s.playerLevel * wisdomReduction;
-            const intReduction = 1 - Math.min(0.9, a.Intellect * 0.02);
+            const intReduction = 1 - Math.min(0.9, a.Intellect * 0.04);
             const forceCostPerSec = baseForceCost * intReduction;
             const dtSec2 = dt / 60;
             s.forceBar = Math.max(0, s.forceBar - forceCostPerSec * dtSec2);
@@ -4693,7 +4697,7 @@ export default function FishingGame() {
           s.hookedFishY += sinkForce * dt;
         }
         if (!s.activeReelHeld || !fishInZone) {
-          const forceRegenPerSec = 0.1 + 0.1 * a.Vitality;
+          const forceRegenPerSec = 0.1 + 0.15 * a.Vitality;
           const dtSec3 = dt / 60;
           s.forceBar = Math.min(s.forceBarMax, s.forceBar + forceRegenPerSec * dtSec3);
         }
@@ -4713,7 +4717,7 @@ export default function FishingGame() {
           if (s.combo > s.bestCombo) s.bestCombo = s.combo;
           s.totalCaught++;
           const sizeBonus = s.hookedFishSize;
-          const comboTacticsMult = 1 + s.attributes.Tactics * 0.003;
+          const comboTacticsMult = 1 + s.attributes.Tactics * 0.006;
           const pts = (s.currentCatch?.points || s.currentJunk?.points || 10) * sizeBonus * (1 + (s.combo - 1) * 0.15 * comboTacticsMult);
           s.score += Math.floor(pts);
 
@@ -4822,7 +4826,7 @@ export default function FishingGame() {
 
           const bountyIdx = s.bounties.findIndex(b => b.fishName === name && sizeBonus >= b.minSize);
           if (bountyIdx >= 0) {
-            const bountyTacticsBonus = 1 + s.attributes.Tactics * 0.01;
+            const bountyTacticsBonus = 1 + s.attributes.Tactics * 0.02;
             s.money += Math.floor(s.bounties[bountyIdx].reward * bountyTacticsBonus);
             s.bounties.splice(bountyIdx, 1);
             if (s.bounties.length === 0) generateBounties();
@@ -4848,7 +4852,7 @@ export default function FishingGame() {
           if (s.totalCaught % 5 === 0 && s.rodLevel < 5) s.rodLevel++;
 
           const rarityXP: Record<string, number> = { common: 10, uncommon: 25, rare: 50, legendary: 100, ultra_rare: 200 };
-          const intXPBonus = 1 + s.attributes.Intellect * 0.008 * (1 + s.attributes.Tactics * 0.005);
+          const intXPBonus = 1 + s.attributes.Intellect * 0.016 * (1 + s.attributes.Tactics * 0.01);
           const xpGain = Math.floor((rarityXP[s.currentCatch?.rarity || "common"] || 10) * sizeBonus * intXPBonus);
           s.playerXP += xpGain;
           while (s.playerXP >= s.playerXPToNext) {
@@ -4916,8 +4920,13 @@ export default function FishingGame() {
 
       if (s.chumActiveTimer > 0) {
         s.chumActiveTimer -= dt;
-        if (Math.random() < 0.05 * dt) {
-          addParticles(s.playerX + (Math.random() - 0.5) * 40, waterY + 5, 1, "#88ffcc", 1, "bubble");
+        const chumItem = CHUM_ITEMS[s.chumActiveType];
+        if (Math.random() < 0.12 * dt) {
+          addParticles(s.playerX + (Math.random() - 0.5) * 60, waterY + 5, 2, "#88ffcc", 1.5, "bubble");
+        }
+        if (s.castLineLanded && Math.random() < 0.15 * chumItem.fishAttract * dt) {
+          const colors = ["#f59e0b", "#88ffcc", "#fbbf24", "#22c55e"];
+          addParticles(s.hookX + (Math.random() - 0.5) * 80, s.hookY + (Math.random() - 0.5) * 40, 3, colors[Math.floor(Math.random() * colors.length)], 2, "sparkle");
         }
         if (s.chumActiveTimer <= 0) {
           s.chumActiveType = -1;
@@ -5990,8 +5999,8 @@ export default function FishingGame() {
           {uiState.gameState === "reeling" && (() => {
             const barW = Math.min(340, window.innerWidth * 0.75);
             const eqRod = RODS[uiState.equippedRod];
-            const tacticsG = 1 + uiState.attributes.Tactics * 0.005;
-            const strZoneBonus = uiState.attributes.Strength * 0.003 * tacticsG;
+            const tacticsG = 1 + uiState.attributes.Tactics * 0.01;
+            const strZoneBonus = uiState.attributes.Strength * 0.006 * tacticsG;
             const catchZoneHalf = 0.08 + uiState.rodLevel * 0.015 + eqRod.catchZoneBonus + strZoneBonus;
             const catchZoneW = catchZoneHalf * 2 * 100;
             const catchZoneLeft = Math.max(0, Math.min(100 - catchZoneW, (uiState.reelProgress - catchZoneHalf) * 100));
@@ -6101,6 +6110,29 @@ export default function FishingGame() {
             <div className="absolute left-1/2 -translate-x-1/2 text-center px-4 py-2 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8, pointerEvents: "none", bottom: 'ontouchstart' in window ? 90 : 24 }} data-testid="boat-idle-prompt">
               <span style={{ color: "#b0bec5", fontSize: 13, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "Tap CAST" : "Click to cast"}  |  {'ontouchstart' in window ? "D-pad" : "A/D"} to row</span>
               <span style={{ color: "#f1c40f", fontSize: 11, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "E btn" : "E"} near pier to exit  |  1-5 hotbar</span>
+            </div>
+          )}
+
+          {/* Active Chum HUD */}
+          {uiState.chumActiveType >= 0 && uiState.chumActiveTimer > 0 && (
+            <div className="absolute flex items-center gap-2" style={{ left: 12, bottom: 'ontouchstart' in window ? 140 : 60, zIndex: 30, background: "rgba(8,15,25,0.9)", borderRadius: 8, border: "1px solid rgba(245,158,11,0.4)", padding: "5px 10px", minWidth: 140 }} data-testid="chum-hud">
+              <img src={CHUM_ITEMS[uiState.chumActiveType].icon} alt="" style={{ width: 20, height: 20, imageRendering: "pixelated" }} />
+              <div className="flex flex-col gap-0.5 flex-1">
+                <span style={{ color: "#f59e0b", fontSize: 9, fontFamily: "'Press Start 2P', monospace" }}>{CHUM_ITEMS[uiState.chumActiveType].name}</span>
+                <div style={{ width: "100%", height: 4, background: "rgba(255,255,255,0.1)", borderRadius: 2, overflow: "hidden" }}>
+                  <div style={{ width: `${(uiState.chumActiveTimer / CHUM_ITEMS[uiState.chumActiveType].duration) * 100}%`, height: "100%", background: uiState.chumActiveTimer < 60 ? "#ef4444" : "#f59e0b", borderRadius: 2, transition: "width 0.3s" }} />
+                </div>
+                <div className="flex justify-between">
+                  <span style={{ color: "#78909c", fontSize: 7 }}>{Math.ceil(uiState.chumActiveTimer / 60)}s left</span>
+                  <span style={{ color: "#22c55e", fontSize: 7 }}>x{CHUM_ITEMS[uiState.chumActiveType].fishAttract.toFixed(1)} attract</span>
+                </div>
+              </div>
+            </div>
+          )}
+          {uiState.chumCooldown > 0 && uiState.chumActiveType < 0 && (
+            <div className="absolute flex items-center gap-2" style={{ left: 12, bottom: 'ontouchstart' in window ? 140 : 60, zIndex: 30, background: "rgba(8,15,25,0.8)", borderRadius: 8, border: "1px solid rgba(255,255,255,0.1)", padding: "5px 10px" }} data-testid="chum-cooldown-hud">
+              <span style={{ color: "#607d8b", fontSize: 9, fontFamily: "'Press Start 2P', monospace" }}>CHUM CD</span>
+              <span style={{ color: "#78909c", fontSize: 9 }}>{Math.ceil(uiState.chumCooldown / 60)}s</span>
             </div>
           )}
 
@@ -6531,6 +6563,10 @@ export default function FishingGame() {
                             {chum.rarityBoost > 1 && <span style={{ color: "#a855f7", fontSize: 9 }}>Rarity x{chum.rarityBoost.toFixed(1)}</span>}
                             {chum.biteSpeedBoost > 1 && <span style={{ color: "#5dade2", fontSize: 9 }}>Bite x{chum.biteSpeedBoost.toFixed(1)}</span>}
                             <span style={{ color: "#22c55e", fontSize: 9 }}>Attract x{chum.fishAttract.toFixed(1)}</span>
+                          </div>
+                          <div className="flex flex-wrap gap-x-3 gap-y-0.5">
+                            <span style={{ color: "#78909c", fontSize: 8 }}>Duration: {Math.round(chum.duration / 60)}s</span>
+                            <span style={{ color: "#78909c", fontSize: 8 }}>Cooldown: {Math.round(chum.cooldown / 60)}s</span>
                           </div>
                         </div>
                         <div className="flex flex-col items-end gap-1">
@@ -7025,24 +7061,24 @@ export default function FishingGame() {
                     <div style={{ color: "#6ee7b7", fontSize: 11, marginBottom: 8 }}>DERIVED STATS</div>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6 }}>
                       {(() => {
-                        const tG = 1 + uiState.attributes.Tactics * 0.005;
+                        const tG = 1 + uiState.attributes.Tactics * 0.01;
                         const forcePool = 10 + Math.max(uiState.attributes.Strength, uiState.attributes.Agility);
-                        const wisdomReduce = Math.max(0.5, 5 - uiState.attributes.Wisdom * 0.1);
+                        const wisdomReduce = Math.max(0.5, 5 - uiState.attributes.Wisdom * 0.2);
                         const forceCostBase = uiState.playerLevel * wisdomReduce;
-                        const intReduce = 1 - Math.min(0.9, uiState.attributes.Intellect * 0.02);
+                        const intReduce = 1 - Math.min(0.9, uiState.attributes.Intellect * 0.04);
                         const forceCost = forceCostBase * intReduce;
-                        const forceRegen = 0.1 + 0.1 * uiState.attributes.Vitality;
+                        const forceRegen = 0.1 + 0.15 * uiState.attributes.Vitality;
                         return [
-                          { label: "Drag Force", value: `+${(uiState.attributes.Strength * 1.5 * tG).toFixed(0)}%`, color: "#ef4444" },
+                          { label: "Drag Force", value: `+${(uiState.attributes.Strength * 3.0 * tG).toFixed(0)}%`, color: "#ef4444" },
                           { label: "Force Pool", value: `${forcePool}`, color: "#3b82f6" },
                           { label: "Force Cost/s", value: `${forceCost.toFixed(1)}`, color: "#f87171" },
                           { label: "Force Regen/s", value: `${forceRegen.toFixed(1)}`, color: "#60a5fa" },
-                          { label: "Sell Bonus", value: `+${(uiState.attributes.Intellect * 1.2 * tG).toFixed(0)}%`, color: "#8b5cf6" },
-                          { label: "Bite Window", value: `+${(uiState.attributes.Vitality * 1.0 * tG).toFixed(0)}%`, color: "#22c55e" },
-                          { label: "Hook Control", value: `+${(uiState.attributes.Dexterity * 1.0 * tG).toFixed(0)}%`, color: "#f59e0b" },
-                          { label: "Break Resist", value: `+${(uiState.attributes.Endurance * 1.2 * tG).toFixed(0)}%`, color: "#78716c" },
-                          { label: "Rarity Boost", value: `+${(uiState.attributes.Wisdom * 1.0 * tG).toFixed(0)}%`, color: "#06b6d4" },
-                          { label: "Reel Speed", value: `+${(uiState.attributes.Agility * 0.8 * tG).toFixed(0)}%`, color: "#a3e635" },
+                          { label: "Sell Bonus", value: `+${(uiState.attributes.Intellect * 2.5 * tG).toFixed(0)}%`, color: "#8b5cf6" },
+                          { label: "Bite Window", value: `+${(uiState.attributes.Vitality * 2.0 * tG).toFixed(0)}%`, color: "#22c55e" },
+                          { label: "Fish Control", value: `+${(uiState.attributes.Dexterity * 3.0 * tG).toFixed(0)}%`, color: "#f59e0b" },
+                          { label: "Line Strength", value: `+${(uiState.attributes.Endurance * 2.5 * tG).toFixed(0)}%`, color: "#78716c" },
+                          { label: "Rarity Boost", value: `+${(uiState.attributes.Wisdom * 2.0 * tG).toFixed(0)}%`, color: "#06b6d4" },
+                          { label: "Reel Speed", value: `+${(uiState.attributes.Agility * 1.6 * tG).toFixed(0)}%`, color: "#a3e635" },
                           { label: "Tactics Amp", value: `x${tG.toFixed(2)}`, color: "#ec4899" },
                           { label: "Total Attrs", value: `${Object.values(uiState.attributes).reduce((a, b) => a + b, 0)}`, color: "#ffd54f" },
                         ];
