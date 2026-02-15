@@ -7,6 +7,9 @@ Grudge Angeler is a pixel art fishing game developed with HTML5 Canvas and React
 I want to prioritize iterative development. I prefer detailed explanations for complex features. Ask before making major changes to the core game loop or architectural decisions. Do not make changes to files in the `client/public/assets/` folder.
 
 ## Recent Changes
+- **2026-02-15:** Production-ready leaderboard: atomic upsert (INSERT ON CONFLICT) for biggest_catch and session_catches, partial unique index on (player_name, category), session timer UI with 20-min countdown
+- **2026-02-15:** Fixed isMobile undefined variable bug in boat prompt
+- **2026-02-15:** Camera control system for gameboard.html (auto-scroll, mouse-follow, manual drag modes)
 - **2026-02-15:** Added landing page website at / with Play button, legendaries preview, faction showcase, equipment gallery
 - **2026-02-15:** Updated routing: / = Landing, /play = FishingGame, /legendaries = LegendaryCodex
 - **2026-02-15:** Fixed GitHub username in grudge-sdk.ts (molochdagod)
