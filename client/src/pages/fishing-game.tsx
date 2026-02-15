@@ -1622,6 +1622,7 @@ export default function FishingGame() {
       const agiSpeedMult = 1 + s.attributes.Agility * 0.01 * tacticsGlobal;
       const WALK_SPEED = 2.5 * agiSpeedMult;
       const SWIM_SPEED = 2.0 * agiSpeedMult;
+      const diveSinkMult = RODS[s.equippedRod].sinkSpeed * (1 + LURES[s.equippedLure].depthBoost);
       const pierLeftBound = defaultFishermanX - 80;
 
       if ((s.gameState === "idle" || s.gameState === "casting") && !s.inBoat && !s.binoculars) {
@@ -1714,7 +1715,10 @@ export default function FishingGame() {
           if (s.keysDown.has("a")) { s.swimX -= SWIM_SPEED * dt; s.facingLeft = true; }
           if (s.keysDown.has("d")) { s.swimX += SWIM_SPEED * dt; s.facingLeft = false; }
           if (s.keysDown.has("w")) { s.swimY -= SWIM_SPEED * 0.7 * dt; }
-          if (s.keysDown.has("s")) { s.swimY += SWIM_SPEED * 0.7 * dt; }
+          if (s.keysDown.has("s")) { s.swimY += SWIM_SPEED * 0.7 * diveSinkMult * dt; }
+          if (!s.keysDown.has("w") && !s.keysDown.has("s")) {
+            s.swimY += 0.15 * diveSinkMult * dt;
+          }
 
           s.swimX = Math.max(-(W * 3), Math.min(W * 5, s.swimX));
           s.swimY = Math.max(waterY + 5, Math.min(H - 30, s.swimY));
@@ -6506,7 +6510,7 @@ export default function FishingGame() {
                                   {lure.rarityBoost > 1 && <span style={{ color: "#a855f7", fontSize: 9 }}>Rare x{lure.rarityBoost.toFixed(1)}</span>}
                                   {lure.sizeBoost > 0 && <span style={{ color: "#e74c3c", fontSize: 9 }}>Size +{lure.sizeBoost.toFixed(1)}</span>}
                                   {lure.speedBoost > 1 && <span style={{ color: "#5dade2", fontSize: 9 }}>Bite x{lure.speedBoost.toFixed(1)}</span>}
-                                  {lure.depthBoost > 0 && <span style={{ color: "#e67e22", fontSize: 9 }}>Depth +{lure.depthBoost.toFixed(1)}</span>}
+                                  {lure.depthBoost > 0 && <span style={{ color: "#e67e22", fontSize: 9 }}>Dive +{lure.depthBoost.toFixed(1)}</span>}
                                 </div>
                               </div>
                               <div className="flex flex-col items-end gap-1">
@@ -6913,10 +6917,21 @@ export default function FishingGame() {
 
           {/* Swimming Prompt */}
           {uiState.gameState === "swimming" && (
-            <div className="absolute left-1/2 -translate-x-1/2 text-center px-4 py-2 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8, pointerEvents: "none", bottom: 'ontouchstart' in window ? 90 : 24 }} data-testid="swim-prompt">
-              <span style={{ color: "#5dade2", fontSize: 13, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "D-pad to swim" : "W/A/S/D to swim"}</span>
-              <span style={{ color: "#78909c", fontSize: 11, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "DIVE btn near dock to climb out" : "SPACE near dock to climb out"}</span>
-            </div>
+            <>
+              <div className="absolute left-1/2 -translate-x-1/2 text-center px-4 py-2 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8, pointerEvents: "none", bottom: 'ontouchstart' in window ? 90 : 24 }} data-testid="swim-prompt">
+                <span style={{ color: "#5dade2", fontSize: 13, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "D-pad to swim" : "W/A/S/D to swim"}</span>
+                <span style={{ color: "#78909c", fontSize: 11, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "DIVE btn near dock to climb out" : "SPACE near dock to climb out"}</span>
+              </div>
+              {(() => {
+                const dsm = RODS[uiState.equippedRod].sinkSpeed * (1 + LURES[uiState.equippedLure].depthBoost);
+                return dsm > 1.05 ? (
+                  <div className="absolute flex items-center gap-1.5" style={{ right: 12, top: 12, zIndex: 30, background: "rgba(8,15,25,0.85)", borderRadius: 6, border: "1px solid rgba(52,152,219,0.3)", padding: "4px 8px", pointerEvents: "none" }} data-testid="dive-speed-hud">
+                    <span style={{ color: "#3b82f6", fontSize: 8, fontFamily: "'Press Start 2P', monospace" }}>DIVE</span>
+                    <span style={{ color: "#22d3ee", fontSize: 9, fontFamily: "'Press Start 2P', monospace" }}>x{dsm.toFixed(1)}</span>
+                  </div>
+                ) : null;
+              })()}
+            </>
           )}
         </>
       )}
@@ -7121,7 +7136,7 @@ export default function FishingGame() {
                         <span style={{ fontSize: 8, color: "#a855f7" }}>Rarity: x{LURES[uiState.equippedLure].rarityBoost}</span>
                         <span style={{ fontSize: 8, color: "#f59e0b" }}>Size: +{LURES[uiState.equippedLure].sizeBoost}</span>
                         <span style={{ fontSize: 8, color: "#5dade2" }}>Speed: x{LURES[uiState.equippedLure].speedBoost}</span>
-                        {LURES[uiState.equippedLure].depthBoost > 0 && <span style={{ fontSize: 8, color: "#9b59b6" }}>Depth: +{LURES[uiState.equippedLure].depthBoost}</span>}
+                        {LURES[uiState.equippedLure].depthBoost > 0 && <span style={{ fontSize: 8, color: "#9b59b6" }}>Dive: +{LURES[uiState.equippedLure].depthBoost}</span>}
                       </div>
                       {LURES[uiState.equippedLure].targetFish.length > 0 && (
                         <span style={{ fontSize: 8, color: "#78909c", marginTop: 2 }}>Targets: {LURES[uiState.equippedLure].targetFish.join(", ")}</span>
