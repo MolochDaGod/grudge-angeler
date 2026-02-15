@@ -765,6 +765,8 @@ export default function FishingGame() {
     headOfLegendsNotifTimer: 0,
     showPromo: false,
     promoShown: false,
+    showTutorial: false,
+    tutorialStep: 0,
     underwaterPlants: [] as UnderwaterPlant[],
     plantsInitialized: false,
   });
@@ -866,6 +868,8 @@ export default function FishingGame() {
     showInstallPrompt: false,
     showPromo: false,
     promoShown: false,
+    showTutorial: false,
+    tutorialStep: 0,
     underwaterPlants: [] as UnderwaterPlant[],
     plantsInitialized: false,
   });
@@ -1241,6 +1245,8 @@ export default function FishingGame() {
       billboardLeaderboard: s.billboardLeaderboard,
       billboardLeaderboardTimer: s.billboardLeaderboardTimer,
       promoShown: s.promoShown,
+      showTutorial: s.showTutorial || false,
+      tutorialStep: s.tutorialStep || 0,
       underwaterPlants: s.underwaterPlants,
       plantsInitialized: s.plantsInitialized,
     });
@@ -5680,11 +5686,16 @@ export default function FishingGame() {
                     s.gameState = "idle";
                     const canvas = canvasRef.current;
                     if (canvas) {
-                      const W = canvas.width;
-                      const waterY = canvas.height * 0.42;
-                      const H = canvas.height;
+                      const cdpr = window.devicePixelRatio || 1;
+                      const W = canvas.width / cdpr;
+                      const waterY = (canvas.height / cdpr) * 0.42;
+                      const H = canvas.height / cdpr;
                       s.playerX = W * 0.45;
                       for (let i = 0; i < 6; i++) spawnFish(W, waterY, H);
+                    }
+                    if (!localStorage.getItem("ga_tutorial_done")) {
+                      s.showTutorial = true;
+                      s.tutorialStep = 0;
                     }
                     syncUI();
                   }
@@ -5715,15 +5726,20 @@ export default function FishingGame() {
                 s.gameState = "idle";
                 const canvas = canvasRef.current;
                 if (canvas) {
-                  const W = canvas.width;
-                  const waterY = canvas.height * 0.42;
-                  const H = canvas.height;
+                  const cdpr = window.devicePixelRatio || 1;
+                  const W = canvas.width / cdpr;
+                  const waterY = (canvas.height / cdpr) * 0.42;
+                  const H = canvas.height / cdpr;
                   s.playerX = W * 0.45;
                   for (let i = 0; i < 6; i++) spawnFish(W, waterY, H);
                 }
                 if (!s.promoShown) {
                   s.showPromo = true;
                   s.promoShown = true;
+                }
+                if (!localStorage.getItem("ga_tutorial_done")) {
+                  s.showTutorial = true;
+                  s.tutorialStep = 0;
                 }
                 syncUI();
               }}
@@ -7656,6 +7672,127 @@ export default function FishingGame() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Tutorial Overlay */}
+      {uiState.showTutorial && (
+        <div style={{
+          position: "absolute", inset: 0, zIndex: 70,
+          background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center",
+          fontFamily: "'Press Start 2P', monospace", pointerEvents: "auto",
+        }} data-testid="tutorial-overlay">
+          {(() => {
+            const isMob = 'ontouchstart' in window;
+            const steps = [
+              {
+                title: "CASTING",
+                desc: isMob
+                  ? "Tap the CAST button to throw your line into the water. Aim where the fish are swimming!"
+                  : "Click to cast your line into the water. Right-click to cancel. Aim where the fish are swimming!",
+                icon: "/assets/icons/Icons_07.png",
+              },
+              {
+                title: "REELING",
+                desc: isMob
+                  ? "When a fish bites, tap REEL to start the minigame. Keep the green catch zone over the fish marker on the bar!"
+                  : "When a fish bites, click and hold to reel. Keep the green catch zone over the fish marker on the bar!",
+                icon: "/assets/icons/Icons_07.png",
+              },
+              {
+                title: "FORCE BAR",
+                desc: isMob
+                  ? "Tap the FORCE button during reeling to power-reel. Uses stamina but fills the catch gauge faster. Use it in bursts!"
+                  : "Hold SPACEBAR during reeling to power-reel. Uses stamina but fills the catch gauge faster. Use it in bursts!",
+                icon: "/assets/icons/Icons_04.png",
+              },
+              {
+                title: "RESILIENCE",
+                desc: isMob
+                  ? "Tap RES during reeling to let line out, preventing breaks on tough fish. Slows progress but saves your catch!"
+                  : "Hold S during reeling to let line out, preventing breaks on tough fish. Slows progress but saves your catch!",
+                icon: "/assets/icons/Icons_05.png",
+              },
+              {
+                title: "EXPLORE & SELL",
+                desc: isMob
+                  ? "Use the D-pad to walk. Visit the shop (tap E near hut) to sell fish and buy better gear. Go deeper for rarer fish!"
+                  : "Use A/D to walk. Visit the shop (press E near hut) to sell fish and buy better gear. Go deeper for rarer fish!",
+                icon: "/assets/icons/Icons_01.png",
+              },
+            ];
+            const step = steps[uiState.tutorialStep] || steps[0];
+            return (
+              <div style={{
+                background: "rgba(8,15,25,0.95)", border: "2px solid rgba(79,195,247,0.5)",
+                borderRadius: 14, padding: "24px 28px", maxWidth: 380, width: "90%", textAlign: "center",
+              }}>
+                <div style={{ fontSize: 9, color: "#607d8b", marginBottom: 8 }}>
+                  {uiState.tutorialStep + 1} / {steps.length}
+                </div>
+                <img src={step.icon} alt="" style={{ width: 32, height: 32, imageRendering: "pixelated", margin: "0 auto 10px" }} />
+                <div style={{ fontSize: 12, color: "#4fc3f7", marginBottom: 12, textShadow: "1px 1px 0 #000" }}>
+                  {step.title}
+                </div>
+                <div style={{ fontSize: 8, color: "#b0bec5", lineHeight: 1.8, marginBottom: 20 }}>
+                  {step.desc}
+                </div>
+                <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
+                  {uiState.tutorialStep > 0 && (
+                    <button
+                      onClick={() => {
+                        stateRef.current.tutorialStep--;
+                        syncUI();
+                      }}
+                      style={{
+                        background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)",
+                        borderRadius: 6, padding: "8px 16px", color: "#90a4ae", fontSize: 8,
+                        fontFamily: "'Press Start 2P', monospace", cursor: "pointer",
+                      }}
+                      data-testid="button-tutorial-back"
+                    >
+                      BACK
+                    </button>
+                  )}
+                  <button
+                    onClick={() => {
+                      if (uiState.tutorialStep < steps.length - 1) {
+                        stateRef.current.tutorialStep++;
+                        syncUI();
+                      } else {
+                        stateRef.current.showTutorial = false;
+                        localStorage.setItem("ga_tutorial_done", "1");
+                        syncUI();
+                      }
+                    }}
+                    style={{
+                      background: "linear-gradient(135deg, rgba(79,195,247,0.3), rgba(241,196,15,0.2))",
+                      border: "2px solid rgba(241,196,15,0.5)", borderRadius: 6,
+                      padding: "8px 20px", color: "#f1c40f", fontSize: 8,
+                      fontFamily: "'Press Start 2P', monospace", cursor: "pointer",
+                    }}
+                    data-testid="button-tutorial-next"
+                  >
+                    {uiState.tutorialStep < steps.length - 1 ? "NEXT" : "START FISHING!"}
+                  </button>
+                </div>
+                <button
+                  onClick={() => {
+                    stateRef.current.showTutorial = false;
+                    localStorage.setItem("ga_tutorial_done", "1");
+                    syncUI();
+                  }}
+                  style={{
+                    background: "none", border: "none", color: "#546e7a", fontSize: 7,
+                    fontFamily: "'Press Start 2P', monospace", cursor: "pointer", marginTop: 14,
+                  }}
+                  data-testid="button-tutorial-skip"
+                >
+                  SKIP TUTORIAL
+                </button>
+              </div>
+            );
+          })()}
         </div>
       )}
 
