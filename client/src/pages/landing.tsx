@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
 
+import oceanBgImg from "@assets/19c5a9e200bbc_1771115046741.png";
+import oceanRippleImg from "@assets/19c5a9be75d2a_1771115056616.png";
+
 import phantomMinnowImg from "../assets/images/legendary-phantom-minnow.png";
 import volcanicPerchImg from "../assets/images/legendary-volcanic-perch.png";
 import abyssalBassImg from "../assets/images/legendary-abyssal-bass.png";
@@ -77,6 +80,7 @@ export default function Landing() {
         @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
         @keyframes bubble-rise { 0%{transform:translateY(0) scale(1);opacity:0.4} 100%{transform:translateY(-100vh) scale(0.5);opacity:0} }
         @keyframes wave { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+        @keyframes ripple-drift { 0%{transform:translate(0,0)} 25%{transform:translate(-8px,3px)} 50%{transform:translate(0,6px)} 75%{transform:translate(8px,3px)} 100%{transform:translate(0,0)} }
         @keyframes legendaryRotate { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
         @keyframes fadeInUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
         @keyframes play-pulse { 0%,100%{box-shadow:0 0 20px rgba(79,195,247,0.3),0 0 40px rgba(79,195,247,0.1)} 50%{box-shadow:0 0 30px rgba(79,195,247,0.5),0 0 60px rgba(79,195,247,0.2)} }
@@ -85,22 +89,38 @@ export default function Landing() {
         .feature-card:hover { border-color: rgba(79,195,247,0.4) !important; background: rgba(15,35,60,0.9) !important; }
       `}</style>
 
-      {/* Ocean Background */}
+      {/* Ocean Background - Layered base + ripple overlay */}
       <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden" }}>
+        {/* Base ocean image */}
         <img
-          src="/assets/underwater_scene.png"
+          src={oceanBgImg}
           alt=""
           style={{
             position: "absolute", inset: 0, width: "100%", height: "100%",
-            objectFit: "cover", opacity: 0.15,
-            filter: "blur(2px) saturate(0.6) hue-rotate(-10deg)",
+            objectFit: "cover", opacity: 0.25,
+            filter: "saturate(0.7) hue-rotate(-10deg)",
             transform: `translateY(${parallaxOffset}px)`,
           }}
         />
+        {/* Ripple/wave overlay - aligned on top of base, animated for water effect */}
+        <img
+          src={oceanRippleImg}
+          alt=""
+          style={{
+            position: "absolute", inset: 0, width: "100%", height: "100%",
+            objectFit: "cover", opacity: 0.3,
+            filter: "saturate(0.8)",
+            animation: "ripple-drift 6s ease-in-out infinite",
+            mixBlendMode: "screen",
+            transform: `translateY(${parallaxOffset}px)`,
+          }}
+        />
+        {/* Dark gradient overlay for readability */}
         <div style={{
           position: "absolute", inset: 0,
-          background: "linear-gradient(180deg, rgba(3,10,24,0.7) 0%, rgba(5,20,40,0.5) 40%, rgba(3,10,24,0.85) 100%)",
+          background: "linear-gradient(180deg, rgba(3,10,24,0.65) 0%, rgba(5,20,40,0.45) 40%, rgba(3,10,24,0.8) 100%)",
         }} />
+        {/* Bubbles */}
         {[...Array(6)].map((_, i) => (
           <div key={i} style={{
             position: "absolute",
@@ -115,6 +135,7 @@ export default function Landing() {
             animationDelay: `${i * 2}s`,
           }} />
         ))}
+        {/* God rays */}
         <div style={{
           position: "absolute", top: -100, left: "15%", width: 180, height: "120%",
           background: "linear-gradient(180deg, rgba(79,195,247,0.06) 0%, transparent 60%)",
