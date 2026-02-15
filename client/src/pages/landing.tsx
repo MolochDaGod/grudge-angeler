@@ -30,7 +30,7 @@ const legendaryFish = [
 ];
 
 const features = [
-  { icon: "/assets/lures/golden_fly.png", title: "17 Fish Species", desc: "Across 5 rarity tiers from common to the legendary ultra-rares" },
+  { icon: "/assets/lures/golden_fly.png", title: "28 Species", desc: "Fish, crabs, and predators across 5 rarity tiers" },
   { icon: "/assets/icons/gbux.png", title: "Gbux Economy", desc: "Dynamic market, sell fish, complete bounties, build your fortune" },
   { icon: "/assets/lures/prismatic_lure.png", title: "Equipment System", desc: "5 rods, 5 baits, 11 lures, 22 chum items - each with unique stats" },
   { icon: "/assets/rarity_crown.png", title: "The Legendary 10", desc: "Ultra-rare mythic fish with complete lore and unique visual effects" },
@@ -44,9 +44,174 @@ const factionData = [
   { name: "Crusade", img: "/assets/icons/faction_crusade.png", color: "#ffd54f" },
 ];
 
+const RARITY_COLORS: Record<string, string> = {
+  common: "#a0a0a0",
+  uncommon: "#4fc3f7",
+  rare: "#ffd54f",
+  legendary: "#ff8a65",
+  ultra_rare: "#e040fb",
+};
+
+const RARITY_LABELS: Record<string, string> = {
+  common: "Common",
+  uncommon: "Uncommon",
+  rare: "Rare",
+  legendary: "Legendary",
+  ultra_rare: "Ultra Rare",
+};
+
+const arsenalRods = [
+  { name: "Bamboo Rod", icon: "/assets/icons/Icons_07.png", price: 0, desc: "A simple bamboo rod. Gets the job done.", stats: "Reel 1.0x | Line 1.0x" },
+  { name: "Fiberglass Rod", icon: "/assets/icons/Icons_07.png", price: 150, desc: "Lighter and more responsive.", stats: "Reel 1.1x | Line 1.15x" },
+  { name: "Carbon Rod", icon: "/assets/icons/Icons_07.png", price: 400, desc: "High-tech carbon fiber build.", stats: "Reel 1.2x | Line 1.3x" },
+  { name: "Titanium Rod", icon: "/assets/icons/Icons_07.png", price: 800, desc: "Ultra-strong titanium alloy.", stats: "Reel 1.35x | Line 1.5x" },
+  { name: "Legendary Rod", icon: "/assets/icons/Icons_07.png", price: 1500, desc: "Forged from the anchor of a ghost ship.", stats: "Reel 1.5x | Line 1.8x" },
+];
+
+const arsenalBaits = [
+  { name: "Basic Worm", icon: "/assets/lures/worm.png", price: 0, desc: "A plain earthworm. The classic bait.", stats: "No bonuses", type: "live" },
+  { name: "Nightcrawler", icon: "/assets/lures/nightcrawler.png", price: 40, desc: "Fish can't resist the wriggle.", stats: "+40% bite speed | Catfish, Bass", type: "live" },
+  { name: "Leech", icon: "/assets/lures/leech.png", price: 90, desc: "Bottom dwellers love it.", stats: "+20% rarity | Catfish, Eel", type: "live" },
+  { name: "Maggots", icon: "/assets/lures/maggots.png", price: 60, desc: "Small fish go crazy.", stats: "+100% bite speed | Minnow, Perch", type: "live" },
+  { name: "Minnow Bait", icon: "/assets/lures/minnow_bait.png", price: 150, desc: "Big predators can't resist.", stats: "+50% rarity | +40% size", type: "live" },
+];
+
+const arsenalLures = [
+  { name: "Beginner Lure", icon: "/assets/lures/beginner_lure.png", price: 50, desc: "Better than bare hooks.", stats: "+20% speed" },
+  { name: "Crankbait", icon: "/assets/lures/crankbait.png", price: 120, desc: "Fat-bodied diving lure.", stats: "+10% rarity | Perch, Bass" },
+  { name: "Silver Spoon", icon: "/assets/lures/spoon.png", price: 100, desc: "Hammered metal flash.", stats: "+50% speed | Salmon" },
+  { name: "Grub Worm", icon: "/assets/lures/grub_worm.png", price: 80, desc: "Works on everything.", stats: "+10% rarity | Versatile" },
+  { name: "Spinnerbait", icon: "/assets/lures/spinnerbait.png", price: 200, desc: "Spinning blade flash.", stats: "+30% rarity | Bass, Perch" },
+  { name: "Deep Diver", icon: "/assets/lures/deep_diver.png", price: 180, desc: "Dives deep for bottom dwellers.", stats: "+20% rarity | +30% size" },
+  { name: "Golden Fly", icon: "/assets/lures/golden_fly.png", price: 250, desc: "Rare fish can't resist.", stats: "+100% rarity | Swordfish" },
+  { name: "Glow Jig", icon: "/assets/lures/glow_jig.png", price: 350, desc: "Bioluminescent attraction.", stats: "+30% rarity | +80% size" },
+  { name: "Storm Shad", icon: "/assets/lures/storm_shad.png", price: 300, desc: "Mimics injured baitfish.", stats: "+100% speed | Bass, Salmon" },
+  { name: "Kraken Bait", icon: "/assets/lures/kraken_bait.png", price: 500, desc: "From the ocean depths.", stats: "+200% rarity | Whale" },
+  { name: "Prismatic Lure", icon: "/assets/lures/prismatic_lure.png", price: 750, desc: "Rainbow-shifting. Boosts everything.", stats: "+80% rarity | +50% size | +50% speed" },
+];
+
+const arsenalChum = [
+  { name: "Fish Scraps", icon: "/assets/icons/Icons_01.png", price: 15, desc: "Basic chum.", stats: "1.2x attract" },
+  { name: "Bread Crumbs", icon: "/assets/icons/Icons_02.png", price: 20, desc: "Attracts small fish.", stats: "1.4x attract | +10% bites" },
+  { name: "Corn Mash", icon: "/assets/icons/Icons_03.png", price: 25, desc: "Bottom feeder chum.", stats: "1.5x attract" },
+  { name: "Blood Meal", icon: "/assets/icons/Icons_04.png", price: 40, desc: "Attracts predators.", stats: "+15% rarity | 1.6x attract" },
+  { name: "Shrimp Paste", icon: "/assets/icons/Icons_05.png", price: 50, desc: "Good all-around chum.", stats: "1.7x attract | +15% bites" },
+  { name: "Squid Ink", icon: "/assets/icons/Icons_06.png", price: 60, desc: "Attracts deep fish.", stats: "+20% rarity | 1.5x attract" },
+  { name: "Fish Oil Slick", icon: "/assets/icons/Icons_08.png", price: 75, desc: "Wide area attract.", stats: "2.0x attract | +10% bites" },
+  { name: "Sardine Chunks", icon: "/assets/icons/Icons_09.png", price: 45, desc: "Fast bite speed boost.", stats: "+50% bites | 1.3x attract" },
+  { name: "Crab Guts", icon: "/assets/icons/Icons_10.png", price: 55, desc: "Attracts rare fish.", stats: "+30% rarity | 1.4x attract" },
+  { name: "Mussel Mix", icon: "/assets/icons/Icons_11.png", price: 35, desc: "Steady and reliable.", stats: "1.5x attract | Long duration" },
+  { name: "Fermented Brine", icon: "/assets/icons/Icons_12.png", price: 80, desc: "Strong rarity boost.", stats: "+50% rarity | 1.6x attract" },
+  { name: "Whale Blubber", icon: "/assets/icons/Icons_13.png", price: 100, desc: "Attracts legendary fish.", stats: "+70% rarity | 1.8x attract" },
+  { name: "Phosphor Dust", icon: "/assets/icons/Icons_14.png", price: 120, desc: "Glowing ultra rare boost.", stats: "+100% rarity | 1.5x attract" },
+  { name: "Coral Powder", icon: "/assets/icons/Icons_15.png", price: 90, desc: "Attracts reef fish.", stats: "+30% rarity | 1.7x attract" },
+  { name: "Deep Sea Extract", icon: "/assets/icons/Icons_16.png", price: 150, desc: "Deep water mega boost.", stats: "+80% rarity | 2.0x attract" },
+  { name: "Thunder Chum", icon: "/assets/icons/Icons_17.png", price: 130, desc: "Storm fish attract.", stats: "+60% rarity | +30% bites" },
+  { name: "Moonlight Essence", icon: "/assets/icons/Icons_18.png", price: 200, desc: "Celestial boost.", stats: "+100% rarity | 2.2x attract" },
+  { name: "Kraken Bile", icon: "/assets/icons/Icons_19.png", price: 180, desc: "Massive rarity increase.", stats: "+150% rarity | 1.6x attract" },
+  { name: "Golden Flakes", icon: "/assets/icons/Icons_20.png", price: 250, desc: "Boosts everything.", stats: "+100% rarity | +40% bites | 2.5x attract" },
+  { name: "Abyssal Ooze", icon: "/assets/icons/Icons_01.png", price: 300, desc: "The ultimate chum.", stats: "+150% rarity | +50% bites | 3.0x attract" },
+  { name: "Live Shrimp Cluster", icon: "/assets/icons/Icons_05.png", price: 0, desc: "Caught live shrimp. Good bait.", stats: "+20% rarity | +30% bites | Net catch" },
+  { name: "Glowing Plankton", icon: "/assets/icons/Icons_14.png", price: 0, desc: "Caught glowing plankton.", stats: "+80% rarity | Net catch" },
+];
+
+const allFish = [
+  { name: "Minnow", img: "/assets/catch/1.png", rarity: "common", points: 10, desc: "A tiny silver fish, common in shallow waters." },
+  { name: "Perch", img: "/assets/catch/2.png", rarity: "common", points: 25, desc: "A striped freshwater fish with sharp fins." },
+  { name: "Eel", img: "/assets/catch/7.png", rarity: "common", points: 40, desc: "A slippery serpentine fish." },
+  { name: "Red Crab", img: "/assets/icons/Icons_10.png", rarity: "common", points: 8, desc: "A small red crab that scuttles along the beach." },
+  { name: "Blue Crab", img: "/assets/icons/Icons_10.png", rarity: "common", points: 10, desc: "A bright blue crab found near tidal pools." },
+  { name: "Green Crab", img: "/assets/icons/Icons_10.png", rarity: "common", points: 8, desc: "A mossy green crab hiding in the seaweed." },
+  { name: "Cyan Crab", img: "/assets/icons/Icons_10.png", rarity: "common", points: 8, desc: "A pale cyan crab on sandy shores." },
+  { name: "Pink Crab", img: "/assets/icons/Icons_10.png", rarity: "common", points: 12, desc: "A cute pink crab that loves warm shallow waters." },
+  { name: "Bass", img: "/assets/catch/3.png", rarity: "uncommon", points: 50, desc: "A strong fighter popular with anglers." },
+  { name: "Salmon", img: "/assets/catch/8.png", rarity: "uncommon", points: 60, desc: "A prized pink-fleshed fish." },
+  { name: "Catfish", img: "/assets/catch/4.png", rarity: "uncommon", points: 75, desc: "A bottom-dweller with long whiskers." },
+  { name: "Purple Crab", img: "/assets/icons/Icons_10.png", rarity: "uncommon", points: 15, desc: "An uncommon purple crab with iridescent shell." },
+  { name: "Gold Crab", img: "/assets/icons/Icons_10.png", rarity: "uncommon", points: 25, desc: "A rare golden crab. Prized for its shimmering shell." },
+  { name: "Dark Crab", img: "/assets/icons/Icons_10.png", rarity: "uncommon", points: 20, desc: "A dark-shelled crab with powerful pincers." },
+  { name: "Swordfish", img: "/assets/catch/5.png", rarity: "rare", points: 150, desc: "A powerful ocean predator with a sharp bill." },
+  { name: "Shark", img: "/assets/predators/1/Idle.png", rarity: "rare", points: 400, desc: "A fearsome shark prowling the deep waters." },
+  { name: "Sea Devil", img: "/assets/predators/3/Idle.png", rarity: "rare", points: 600, desc: "A monstrous crab creature from the deep trenches." },
+  { name: "Whale", img: "/assets/catch/6.png", rarity: "legendary", points: 300, desc: "The king of the deep. Incredibly rare!" },
+  { name: "Kraken", img: "/assets/predators/2/Idle.png", rarity: "legendary", points: 800, desc: "A massive squid from the abyss, feared by all." },
+  { name: "Phantom Minnow", img: "/assets/catch/1.png", rarity: "ultra_rare", points: 500, desc: "A ghostly minnow wreathed in spectral flame.", tint: "rgba(0,255,200,0.35)" },
+  { name: "Volcanic Perch", img: "/assets/catch/2.png", rarity: "ultra_rare", points: 600, desc: "Scales glow molten orange from deep-sea vents.", tint: "rgba(255,80,0,0.4)" },
+  { name: "Abyssal Bass", img: "/assets/catch/3.png", rarity: "ultra_rare", points: 750, desc: "A colossal bass radiating dark energy.", tint: "rgba(120,0,255,0.35)" },
+  { name: "Frost Catfish", img: "/assets/catch/4.png", rarity: "ultra_rare", points: 800, desc: "Encased in living ice. Freezes the water.", tint: "rgba(100,200,255,0.4)" },
+  { name: "Storm Swordfish", img: "/assets/catch/5.png", rarity: "ultra_rare", points: 1000, desc: "Rides lightning bolts with electric fury.", tint: "rgba(255,255,0,0.35)" },
+  { name: "Celestial Whale", img: "/assets/catch/6.png", rarity: "ultra_rare", points: 2000, desc: "A cosmic whale that swallowed a dying star.", tint: "rgba(255,180,255,0.3)" },
+  { name: "Neon Eel", img: "/assets/catch/7.png", rarity: "ultra_rare", points: 650, desc: "Bioluminescent eel pulsing with neon colors.", tint: "rgba(0,255,100,0.4)" },
+  { name: "Golden Salmon", img: "/assets/catch/8.png", rarity: "ultra_rare", points: 700, desc: "Solid gold scales. Worth a fortune.", tint: "rgba(255,200,0,0.45)" },
+  { name: "Shadow Leviathan", img: "/assets/catch/6.png", rarity: "ultra_rare", points: 1500, desc: "A titanic shadow beast from beyond the abyss.", tint: "rgba(180,0,50,0.35)" },
+];
+
+const fishAchievements = [
+  { name: "First Catch", desc: "Catch your first fish", icon: "/assets/icons/Icons_07.png", color: "#a0a0a0" },
+  { name: "Common Collector", desc: "Catch all common species", icon: "/assets/catch/1.png", color: "#a0a0a0" },
+  { name: "Uncommon Hunter", desc: "Catch all uncommon species", icon: "/assets/catch/3.png", color: "#4fc3f7" },
+  { name: "Rare Trophy", desc: "Catch all rare species", icon: "/assets/catch/5.png", color: "#ffd54f" },
+  { name: "Legendary Angler", desc: "Catch all legendary species", icon: "/assets/catch/6.png", color: "#ff8a65" },
+  { name: "Mythic Master", desc: "Catch all ultra-rare species", icon: "/assets/lures/prismatic_lure.png", color: "#e040fb" },
+  { name: "Ocean Completionist", desc: "Catch every species in the game", icon: "/assets/lures/golden_fly.png", color: "#ffd700" },
+  { name: "100 Catch Club", desc: "Catch 100 fish total", icon: "/assets/icons/Icons_09.png", color: "#4fc3f7" },
+  { name: "Big Game Fisher", desc: "Catch a fish over 50 lbs", icon: "/assets/icons/Icons_13.png", color: "#ff8a65" },
+  { name: "Grudge Legend", desc: "Reach the top of the leaderboard", icon: "/assets/icons/gbux.png", color: "#ffd700" },
+];
+
+function ArsenalTooltip({ item, visible }: { item: { name: string; desc: string; price?: number; stats: string }; visible: boolean }) {
+  return (
+    <div style={{
+      position: "absolute", bottom: "calc(100% + 8px)", left: "50%",
+      transform: "translateX(-50%)",
+      background: "rgba(5,10,25,0.96)",
+      border: "1px solid rgba(79,195,247,0.25)",
+      borderRadius: 8, padding: "10px 14px",
+      minWidth: 180, maxWidth: 240,
+      opacity: visible ? 1 : 0,
+      pointerEvents: visible ? "auto" : "none",
+      transition: "opacity 0.2s",
+      zIndex: 60,
+      textAlign: "left",
+    }}>
+      <div style={{ fontSize: 9, color: "#e8edf2", letterSpacing: 1, marginBottom: 4, fontWeight: 700 }}>{item.name}</div>
+      <div style={{ fontSize: 7, color: "#7888a8", lineHeight: 1.6, marginBottom: 6 }}>{item.desc}</div>
+      <div style={{ fontSize: 7, color: "#4fc3f7", letterSpacing: 0.5 }}>{item.stats}</div>
+      {item.price !== undefined && item.price > 0 && (
+        <div style={{ fontSize: 7, color: "#ffd54f", marginTop: 4 }}>{item.price} gbux</div>
+      )}
+    </div>
+  );
+}
+
+function FishTooltip({ fish, visible }: { fish: typeof allFish[0]; visible: boolean }) {
+  return (
+    <div style={{
+      position: "absolute", bottom: "calc(100% + 8px)", left: "50%",
+      transform: "translateX(-50%)",
+      background: "rgba(5,10,25,0.96)",
+      border: `1px solid ${RARITY_COLORS[fish.rarity]}44`,
+      borderRadius: 8, padding: "10px 14px",
+      minWidth: 180, maxWidth: 240,
+      opacity: visible ? 1 : 0,
+      pointerEvents: visible ? "auto" : "none",
+      transition: "opacity 0.2s",
+      zIndex: 60,
+      textAlign: "left",
+    }}>
+      <div style={{ fontSize: 9, color: "#e8edf2", letterSpacing: 1, marginBottom: 2, fontWeight: 700 }}>{fish.name}</div>
+      <div style={{ fontSize: 7, color: RARITY_COLORS[fish.rarity], letterSpacing: 1, marginBottom: 4 }}>{RARITY_LABELS[fish.rarity]}</div>
+      <div style={{ fontSize: 7, color: "#7888a8", lineHeight: 1.6, marginBottom: 4 }}>{fish.desc}</div>
+      <div style={{ fontSize: 7, color: "#ffd54f" }}>{fish.points} pts</div>
+    </div>
+  );
+}
+
 export default function Landing() {
   const [scrollY, setScrollY] = useState(0);
   const [hoveredLegendary, setHoveredLegendary] = useState<number | null>(null);
+  const [hoveredArsenal, setHoveredArsenal] = useState<string | null>(null);
+  const [hoveredFish, setHoveredFish] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [, navigate] = useLocation();
 
@@ -554,71 +719,202 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Equipment Preview */}
+      {/* Equipment Arsenal */}
       <section style={{
         position: "relative", zIndex: 1, padding: "60px 20px",
         maxWidth: 1000, margin: "0 auto",
       }}>
         <h2 style={{
           textAlign: "center", fontSize: "clamp(10px, 2vw, 16px)",
-          letterSpacing: 4, marginBottom: 40,
+          letterSpacing: 4, marginBottom: 8,
           color: "#e8edf2",
         }}>YOUR ARSENAL</h2>
-        <div style={{
-          display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap",
+        <p style={{
+          textAlign: "center", fontSize: 7, color: "#4a6070",
+          letterSpacing: 1, marginBottom: 32, lineHeight: 2,
         }}>
-          {[
-            "/assets/lures/golden_fly.png", "/assets/lures/prismatic_lure.png",
-            "/assets/lures/crankbait.png", "/assets/lures/silver_spinner.png",
-            "/assets/lures/glow_jig.png", "/assets/lures/deep_diver.png",
-            "/assets/lures/spinnerbait.png", "/assets/lures/spoon.png",
-            "/assets/lures/storm_shad.png", "/assets/lures/kraken_bait.png",
-            "/assets/lures/nightcrawler.png", "/assets/lures/worm.png",
-            "/assets/lures/minnow_bait.png", "/assets/lures/leech.png",
-            "/assets/lures/maggots.png", "/assets/lures/grub_worm.png",
-          ].map((lure, i) => (
-            <div key={i} style={{
-              width: 52, height: 52,
-              background: "rgba(10,20,40,0.7)",
-              border: "1px solid rgba(79,195,247,0.1)",
-              borderRadius: 8, display: "flex",
-              alignItems: "center", justifyContent: "center",
-              transition: "all 0.3s",
+          5 rods, 5 live baits, 11 artificial lures, and 22 chum items to master the ocean.
+        </p>
+
+        {[
+          { label: "RODS", items: arsenalRods, accent: "#ffd54f" },
+          { label: "LIVE BAIT", items: arsenalBaits, accent: "#66bb6a" },
+          { label: "LURES", items: arsenalLures, accent: "#4fc3f7" },
+          { label: "CHUM", items: arsenalChum, accent: "#ff8a65" },
+        ].map((category) => (
+          <div key={category.label} style={{ marginBottom: 28 }}>
+            <div style={{
+              fontSize: 7, color: category.accent, letterSpacing: 3,
+              marginBottom: 12, textAlign: "center",
+              opacity: 0.8,
+            }}>{category.label}</div>
+            <div style={{
+              display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap",
             }}>
-              <img src={lure} alt="" style={{
-                width: 36, height: 36, imageRendering: "pixelated", objectFit: "contain",
-              }} />
+              {category.items.map((item) => {
+                const key = `${category.label}-${item.name}`;
+                return (
+                  <div
+                    key={key}
+                    data-testid={`arsenal-item-${item.name.toLowerCase().replace(/\s+/g, "-")}`}
+                    onMouseEnter={() => setHoveredArsenal(key)}
+                    onMouseLeave={() => setHoveredArsenal(null)}
+                    style={{
+                      width: 52, height: 52,
+                      background: hoveredArsenal === key ? "rgba(15,30,60,0.9)" : "rgba(10,20,40,0.7)",
+                      border: `1px solid ${hoveredArsenal === key ? category.accent + "55" : "rgba(79,195,247,0.08)"}`,
+                      borderRadius: 8, display: "flex",
+                      alignItems: "center", justifyContent: "center",
+                      transition: "all 0.2s",
+                      cursor: "pointer",
+                      position: "relative",
+                    }}
+                  >
+                    <ArsenalTooltip item={item} visible={hoveredArsenal === key} />
+                    <img src={item.icon} alt={item.name} style={{
+                      width: 36, height: 36, imageRendering: "pixelated", objectFit: "contain",
+                    }} />
+                  </div>
+                );
+              })}
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </section>
 
-      {/* Catch Preview */}
+      {/* Fish Collection */}
       <section style={{
-        position: "relative", zIndex: 1, padding: "40px 20px",
-        maxWidth: 900, margin: "0 auto",
+        position: "relative", zIndex: 1, padding: "40px 20px 60px",
+        maxWidth: 1000, margin: "0 auto",
       }}>
         <h2 style={{
-          textAlign: "center", fontSize: "clamp(8px, 1.5vw, 12px)",
-          letterSpacing: 4, marginBottom: 30,
-          color: "#8899a8",
+          textAlign: "center", fontSize: "clamp(10px, 2vw, 16px)",
+          letterSpacing: 4, marginBottom: 8,
+          color: "#e8edf2",
         }}>FISH COLLECTION</h2>
-        <div style={{
-          display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap",
+        <p style={{
+          textAlign: "center", fontSize: 7, color: "#4a6070",
+          letterSpacing: 1, marginBottom: 32, lineHeight: 2,
         }}>
-          {[1,2,3,4,5,6,7,8].map(n => (
-            <div key={n} style={{
-              width: 64, height: 64,
-              background: "rgba(10,20,40,0.6)",
-              border: "1px solid rgba(79,195,247,0.08)",
-              borderRadius: 8, display: "flex",
-              alignItems: "center", justifyContent: "center",
-            }}>
-              <img src={`/assets/catch/${n}.png`} alt="" style={{
-                width: 48, height: 48, imageRendering: "pixelated", objectFit: "contain",
-              }} />
+          28 species across 5 rarity tiers. Can you catch them all?
+        </p>
+
+        {(["common", "uncommon", "rare", "legendary", "ultra_rare"] as const).map((rarity) => {
+          const fishInTier = allFish.filter(f => f.rarity === rarity);
+          return (
+            <div key={rarity} style={{ marginBottom: 28 }}>
+              <div style={{
+                display: "flex", alignItems: "center", justifyContent: "center",
+                gap: 8, marginBottom: 12,
+              }}>
+                <div style={{
+                  height: 1, flex: 1, maxWidth: 80,
+                  background: `linear-gradient(90deg, transparent, ${RARITY_COLORS[rarity]}40)`,
+                }} />
+                <div style={{
+                  fontSize: 7, color: RARITY_COLORS[rarity], letterSpacing: 3,
+                  opacity: 0.9,
+                }}>
+                  {RARITY_LABELS[rarity].toUpperCase()}
+                  <span style={{ color: "#556680", marginLeft: 8, fontSize: 6 }}>
+                    ({fishInTier.length})
+                  </span>
+                </div>
+                <div style={{
+                  height: 1, flex: 1, maxWidth: 80,
+                  background: `linear-gradient(90deg, ${RARITY_COLORS[rarity]}40, transparent)`,
+                }} />
+              </div>
+              <div style={{
+                display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap",
+              }}>
+                {fishInTier.map((fish) => {
+                  const idx = allFish.indexOf(fish);
+                  const isUltra = fish.rarity === "ultra_rare";
+                  return (
+                    <div
+                      key={fish.name}
+                      data-testid={`fish-card-${fish.name.toLowerCase().replace(/\s+/g, "-")}`}
+                      onMouseEnter={() => setHoveredFish(idx)}
+                      onMouseLeave={() => setHoveredFish(null)}
+                      style={{
+                        width: 64, height: 64,
+                        background: hoveredFish === idx
+                          ? `rgba(${isUltra ? "30,10,50" : "15,25,50"},0.9)`
+                          : "rgba(10,20,40,0.6)",
+                        border: `1px solid ${hoveredFish === idx ? RARITY_COLORS[rarity] + "55" : RARITY_COLORS[rarity] + "15"}`,
+                        borderRadius: 8, display: "flex",
+                        alignItems: "center", justifyContent: "center",
+                        transition: "all 0.2s",
+                        cursor: "pointer",
+                        position: "relative",
+                      }}
+                    >
+                      <FishTooltip fish={fish} visible={hoveredFish === idx} />
+                      {isUltra && fish.tint && (
+                        <div style={{
+                          position: "absolute", inset: 0, borderRadius: 7,
+                          background: `radial-gradient(circle, ${fish.tint}, transparent 70%)`,
+                          pointerEvents: "none",
+                        }} />
+                      )}
+                      <img src={fish.img} alt={fish.name} style={{
+                        width: 48, height: 48, imageRendering: "pixelated", objectFit: "contain",
+                        position: "relative", zIndex: 1,
+                        filter: isUltra && fish.tint
+                          ? `drop-shadow(0 0 6px ${fish.tint})`
+                          : undefined,
+                      }} />
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          ))}
+          );
+        })}
+
+        <div style={{ marginTop: 40 }}>
+          <div style={{
+            display: "flex", alignItems: "center", justifyContent: "center",
+            gap: 8, marginBottom: 16,
+          }}>
+            <div style={{
+              height: 1, flex: 1, maxWidth: 100,
+              background: "linear-gradient(90deg, transparent, rgba(255,215,0,0.3))",
+            }} />
+            <div style={{
+              fontSize: 8, color: "#c4a050", letterSpacing: 3,
+            }}>ACHIEVEMENTS</div>
+            <div style={{
+              height: 1, flex: 1, maxWidth: 100,
+              background: "linear-gradient(90deg, rgba(255,215,0,0.3), transparent)",
+            }} />
+          </div>
+          <div style={{
+            display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap",
+          }}>
+            {fishAchievements.map((ach) => (
+              <div
+                key={ach.name}
+                data-testid={`achievement-${ach.name.toLowerCase().replace(/\s+/g, "-")}`}
+                style={{
+                  display: "flex", alignItems: "center", gap: 8,
+                  background: "rgba(10,20,40,0.7)",
+                  border: `1px solid ${ach.color}22`,
+                  borderRadius: 8, padding: "8px 14px",
+                  transition: "all 0.2s",
+                }}
+              >
+                <img src={ach.icon} alt="" style={{
+                  width: 24, height: 24, imageRendering: "pixelated", objectFit: "contain",
+                }} />
+                <div>
+                  <div style={{ fontSize: 8, color: ach.color, letterSpacing: 1, marginBottom: 2 }}>{ach.name}</div>
+                  <div style={{ fontSize: 6, color: "#556680", letterSpacing: 0.5 }}>{ach.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
