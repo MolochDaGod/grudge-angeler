@@ -11,7 +11,7 @@ import neonEelImg from "../assets/images/legendary-neon-eel.png";
 import goldenSalmonImg from "../assets/images/legendary-golden-salmon.png";
 import shadowLeviathanImg from "../assets/images/legendary-shadow-leviathan.png";
 
-const sealAtTheSeamImg = "/assets/grudge_logo.png";
+import sealAtTheSeamImg from "@assets/b76a7441-d8a5-49d9-aa5e-8271fc3e3022_1771118262487.png";
 
 function UnderwaterBackground() {
   return (
