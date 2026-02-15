@@ -1253,8 +1253,13 @@ export default function FishingGame() {
     if (!ctx) return;
 
     const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + "px";
+      canvas.style.height = window.innerHeight + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.imageSmoothingEnabled = false;
     };
     resize();
     window.addEventListener("resize", resize);
@@ -1526,8 +1531,9 @@ export default function FishingGame() {
         }
       }
 
-      const W = canvas.width;
-      const H = canvas.height;
+      const dpr = window.devicePixelRatio || 1;
+      const W = canvas.width / dpr;
+      const H = canvas.height / dpr;
       const pierY = H * PIER_Y_RATIO;
       const waterY = H * WATER_START_RATIO;
       const defaultFishermanX = W * FISHERMAN_X_RATIO;
@@ -1577,8 +1583,10 @@ export default function FishingGame() {
           .catch(() => {});
       }
 
-      const WALK_SPEED = 2.5;
-      const SWIM_SPEED = 2.0;
+      const tacticsGlobal = 1 + s.attributes.Tactics * 0.005;
+      const agiSpeedMult = 1 + s.attributes.Agility * 0.005 * tacticsGlobal;
+      const WALK_SPEED = 2.5 * agiSpeedMult;
+      const SWIM_SPEED = 2.0 * agiSpeedMult;
       const pierLeftBound = defaultFishermanX - 80;
 
       if ((s.gameState === "idle" || s.gameState === "casting") && !s.inBoat && !s.binoculars) {
@@ -1627,7 +1635,7 @@ export default function FishingGame() {
       }
 
       if (s.gameState === "reeling" && !s.inBoat) {
-        const REEL_WALK_SPEED = 1.8;
+        const REEL_WALK_SPEED = 1.8 * agiSpeedMult;
         if (s.keysDown.has("a")) {
           s.playerX -= REEL_WALK_SPEED * dt;
         }
@@ -4613,7 +4621,8 @@ export default function FishingGame() {
           if (s.combo > s.bestCombo) s.bestCombo = s.combo;
           s.totalCaught++;
           const sizeBonus = s.hookedFishSize;
-          const pts = (s.currentCatch?.points || s.currentJunk?.points || 10) * sizeBonus * (1 + (s.combo - 1) * 0.15);
+          const comboTacticsMult = 1 + s.attributes.Tactics * 0.003;
+          const pts = (s.currentCatch?.points || s.currentJunk?.points || 10) * sizeBonus * (1 + (s.combo - 1) * 0.15 * comboTacticsMult);
           s.score += Math.floor(pts);
 
           const fishWeight = Math.round(sizeBonus * (s.currentCatch?.points || 5) * 0.3 * 10) / 10;
@@ -5808,7 +5817,7 @@ export default function FishingGame() {
           {uiState.gameState === "bite" && (
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center px-5 py-3" style={{ background: "rgba(241,196,15,0.15)", borderRadius: 10, border: "2px solid rgba(241,196,15,0.5)", pointerEvents: "none" }} data-testid="bite-alert">
               <span style={{ color: "#f1c40f", fontSize: 14, textShadow: "2px 2px 0 #000", animation: "pulse 0.5s infinite" }}>
-                FISH ON! CLICK NOW!
+                {'ontouchstart' in window ? "FISH ON! TAP REEL!" : "FISH ON! CLICK NOW!"}
               </span>
             </div>
           )}
@@ -5931,7 +5940,7 @@ export default function FishingGame() {
           {uiState.gameState === "missed" && (
             <div className="absolute left-1/2 -translate-x-1/2 text-center px-5 py-3 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 10, border: "1px solid rgba(231,76,60,0.3)", pointerEvents: "none", bottom: 'ontouchstart' in window ? 90 : 64 }} data-testid="missed-display">
               <span style={{ color: "#e74c3c", fontSize: 11, textShadow: "1px 1px 0 #000" }}>{uiState.missReason}</span>
-              <span style={{ color: "#607d8b", fontSize: 8 }}>Click to try again</span>
+              <span style={{ color: "#607d8b", fontSize: 8 }}>{'ontouchstart' in window ? "Tap CAST to try again" : "Click to try again"}</span>
             </div>
           )}
 
@@ -6167,7 +6176,7 @@ export default function FishingGame() {
           {/* Hut/Shop Hint */}
           {uiState.nearHut && !uiState.showStorePrompt && uiState.gameState === "idle" && (
             <div className="absolute bottom-24 left-1/2 -translate-x-1/2 text-center px-5 py-3 flex flex-col items-center gap-2" style={{ background: "rgba(8,15,25,0.9)", borderRadius: 10, border: "1px solid rgba(46,204,113,0.4)", zIndex: 50 }} data-testid="hut-hint">
-              <span style={{ color: "#2ecc71", fontSize: 10, textShadow: "1px 1px 0 #000" }}>Press E to enter shop</span>
+              <span style={{ color: "#2ecc71", fontSize: 10, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "Tap E to enter shop" : "Press E to enter shop"}</span>
             </div>
           )}
 
