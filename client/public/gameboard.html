@@ -245,6 +245,67 @@
       border-radius: 2px;
     }
 
+    #viewport {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      overflow: hidden;
+      border: 2px solid rgba(79,195,247,0.0);
+      transition: border-color 0.3s;
+    }
+    #viewport.auto-cam {
+      border-color: rgba(79,195,247,0.15);
+      box-shadow: inset 0 0 40px rgba(79,195,247,0.05);
+    }
+    #viewport-label {
+      position: fixed;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 110;
+      background: rgba(8,20,40,0.95);
+      border: 1px solid var(--border-accent);
+      border-radius: 6px;
+      padding: 6px 14px;
+      color: var(--text-secondary);
+      font-family: 'Press Start 2P', monospace;
+      font-size: 5px;
+      letter-spacing: 1px;
+      backdrop-filter: blur(10px);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    #viewport-label.visible { opacity: 1; }
+
+    #cam-controls {
+      position: fixed;
+      bottom: 12px;
+      left: 12px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    #cam-controls button {
+      background: rgba(8,20,40,0.95);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: var(--text-secondary);
+      font-family: 'Press Start 2P', monospace;
+      font-size: 6px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    #cam-controls button:hover { background: rgba(15,40,70,0.95); color: var(--accent); border-color: var(--border-accent); }
+    #cam-controls button.active { border-color: var(--accent); color: var(--accent); background: rgba(10,30,60,0.95); }
+
     #board-container {
       position: absolute;
       transform-origin: 0 0;
@@ -819,8 +880,22 @@
 
   <input type="file" id="img-upload" accept="image/*" />
 
-  <div id="board-container">
-    <div id="board">
+  <div id="cam-controls">
+    <button id="cam-auto" data-testid="button-cam-auto">
+      <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="3"/><path d="M8 0v3M8 13v3M0 8h3M13 8h3M2.3 2.3l2.1 2.1M11.6 11.6l2.1 2.1M2.3 13.7l2.1-2.1M11.6 4.4l2.1-2.1" stroke="currentColor" stroke-width="1.2"/></svg>
+      AUTO CAM
+    </button>
+    <button id="cam-follow" data-testid="button-cam-follow">
+      <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2"/></svg>
+      FOLLOW MOUSE
+    </button>
+  </div>
+
+  <div id="viewport-label">AUTO CAMERA ACTIVE - MOVE MOUSE TO PAN</div>
+
+  <div id="viewport">
+    <div id="board-container">
+      <div id="board">
 
       <div class="logo-area">
         <img src="/assets/grudge_logo.png" alt="Grudge Angeler" onerror="this.style.display='none'" style="max-width:120px;margin-bottom:16px;">
@@ -1112,6 +1187,7 @@
         <div style="font-size:6px;color:var(--text-dim);margin-top:6px;">Click any fish image to upload a custom sprite &mdash; Drag to pan, scroll to zoom</div>
       </div>
     </div>
+  </div>
   </div>
 
 <script>
@@ -1647,7 +1723,20 @@ var dragStartY = 0;
 var startPanX = 0;
 var startPanY = 0;
 
+var camMode = "manual";
+var mouseX = window.innerWidth / 2;
+var mouseY = window.innerHeight / 2;
+var targetPanX = 0;
+var targetPanY = 0;
+var autoScrollSpeed = 0.5;
+var followLerp = 0.04;
+var autoCamRAF = null;
+
 var container = document.getElementById("board-container");
+var viewport = document.getElementById("viewport");
+var viewportLabel = document.getElementById("viewport-label");
+var camAutoBtn = document.getElementById("cam-auto");
+var camFollowBtn = document.getElementById("cam-follow");
 
 function applyTransform() {
   container.style.transform = 'translate(' + panX + 'px, ' + panY + 'px) scale(' + scale + ')';
@@ -1679,8 +1768,91 @@ function updateMinimap() {
   vp.style.height = vpH + 'px';
 }
 
+function clampPan() {
+  var board = document.getElementById("board");
+  var bw = board.offsetWidth * scale;
+  var bh = board.offsetHeight * scale;
+  var maxPanX = 100;
+  var maxPanY = 100;
+  var minPanX = -(bw - window.innerWidth + 100);
+  var minPanY = -(bh - window.innerHeight + 100);
+  panX = Math.max(minPanX, Math.min(maxPanX, panX));
+  panY = Math.max(minPanY, Math.min(maxPanY, panY));
+}
+
+function setCamMode(mode) {
+  camMode = mode;
+  camAutoBtn.classList.toggle("active", mode === "auto");
+  camFollowBtn.classList.toggle("active", mode === "follow");
+  viewport.classList.toggle("auto-cam", mode !== "manual");
+
+  if (mode === "auto") {
+    viewportLabel.textContent = "AUTO CAMERA - SCROLLING DOWN AUTOMATICALLY";
+    viewportLabel.classList.add("visible");
+    startAutoCam();
+  } else if (mode === "follow") {
+    viewportLabel.textContent = "FOLLOW MOUSE - MOVE CURSOR TO PAN";
+    viewportLabel.classList.add("visible");
+    startFollowCam();
+  } else {
+    viewportLabel.classList.remove("visible");
+    stopCamLoop();
+  }
+}
+
+function stopCamLoop() {
+  if (autoCamRAF) {
+    cancelAnimationFrame(autoCamRAF);
+    autoCamRAF = null;
+  }
+}
+
+function startAutoCam() {
+  stopCamLoop();
+  function tick() {
+    if (camMode !== "auto") return;
+    panY -= autoScrollSpeed;
+    clampPan();
+    applyTransform();
+    autoCamRAF = requestAnimationFrame(tick);
+  }
+  autoCamRAF = requestAnimationFrame(tick);
+}
+
+function startFollowCam() {
+  stopCamLoop();
+  function tick() {
+    if (camMode !== "follow") return;
+    var board = document.getElementById("board");
+    var bw = board.offsetWidth * scale;
+    var bh = board.offsetHeight * scale;
+
+    var normX = mouseX / window.innerWidth;
+    var normY = mouseY / window.innerHeight;
+
+    targetPanX = -(normX * (bw - window.innerWidth));
+    targetPanY = -(normY * (bh - window.innerHeight));
+
+    panX += (targetPanX - panX) * followLerp;
+    panY += (targetPanY - panY) * followLerp;
+    clampPan();
+    applyTransform();
+    autoCamRAF = requestAnimationFrame(tick);
+  }
+  autoCamRAF = requestAnimationFrame(tick);
+}
+
+camAutoBtn.addEventListener("click", function() {
+  setCamMode(camMode === "auto" ? "manual" : "auto");
+});
+
+camFollowBtn.addEventListener("click", function() {
+  setCamMode(camMode === "follow" ? "manual" : "follow");
+});
+
 window.addEventListener("wheel", function(e) {
   e.preventDefault();
+  if (camMode !== "manual") setCamMode("manual");
   var mx = e.clientX;
   var my = e.clientY;
   var worldX = (mx - panX) / scale;
@@ -1693,7 +1865,8 @@ window.addEventListener("wheel", function(e) {
 }, { passive: false });
 
 document.addEventListener("mousedown", function(e) {
-  if (e.target.closest("#zoom-controls") || e.target.closest("#back-link") || e.target.closest("#nav-links") || e.target.closest(".fish-img-wrap")) return;
+  if (e.target.closest("#zoom-controls") || e.target.closest("#back-link") || e.target.closest("#nav-links") || e.target.closest("#cam-controls") || e.target.closest(".fish-img-wrap")) return;
+  if (camMode !== "manual") setCamMode("manual");
   isDragging = true;
   dragStartX = e.clientX;
   dragStartY = e.clientY;
@@ -1703,6 +1876,8 @@ document.addEventListener("mousedown", function(e) {
 });
 
 document.addEventListener("mousemove", function(e) {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
   if (!isDragging) return;
   panX = startPanX + (e.clientX - dragStartX);
   panY = startPanY + (e.clientY - dragStartY);
@@ -1737,6 +1912,7 @@ document.getElementById("zoom-out").addEventListener("click", function() {
 });
 
 document.getElementById("zoom-reset").addEventListener("click", function() {
+  if (camMode !== "manual") setCamMode("manual");
   scale = 1;
   panX = 0;
   panY = 0;
@@ -1745,6 +1921,7 @@ document.getElementById("zoom-reset").addEventListener("click", function() {
 
 document.addEventListener("touchstart", function(e) {
   if (e.touches.length === 1) {
+    if (camMode !== "manual") setCamMode("manual");
     isDragging = true;
     dragStartX = e.touches[0].clientX;
     dragStartY = e.touches[0].clientY;
