@@ -5581,7 +5581,7 @@ export default function FishingGame() {
           />
           <div style={{
             position: "absolute", bottom: 24, right: 24,
-            color: "rgba(255,255,255,0.4)", fontSize: 8,
+            color: "rgba(255,255,255,0.4)", fontSize: 11,
             fontFamily: "'Press Start 2P', monospace",
           }}>CLICK TO SKIP</div>
         </div>
@@ -5593,7 +5593,7 @@ export default function FishingGame() {
           <div className="flex flex-col items-center gap-6" style={{ background: "rgba(5,12,30,0.92)", borderRadius: 16, border: "2px solid rgba(79,195,247,0.3)", padding: "32px 40px", maxWidth: 520, width: "90%" }}>
             <div className="text-center">
               <div style={{ color: "#4fc3f7", fontSize: 20, marginBottom: 4, textShadow: "0 0 20px rgba(79,195,247,0.5)" }}>GRUDGE ANGELER</div>
-              <div style={{ color: "#607d8b", fontSize: 8 }}>Choose your character</div>
+              <div style={{ color: "#607d8b", fontSize: 11 }}>Choose your character</div>
             </div>
 
             <div className="flex items-end justify-center" style={{ gap: 0 }}>
@@ -5667,7 +5667,7 @@ export default function FishingGame() {
             </div>
 
             <div className="flex flex-col items-center gap-2" style={{ width: "100%" }}>
-              <label style={{ color: "#90a4ae", fontSize: 8 }}>ENTER YOUR NAME</label>
+              <label style={{ color: "#90a4ae", fontSize: 11 }}>ENTER YOUR NAME</label>
               <input
                 type="text"
                 maxLength={16}
@@ -5706,7 +5706,7 @@ export default function FishingGame() {
                   borderRadius: 8,
                   padding: "8px 14px",
                   color: "#ecf0f1",
-                  fontSize: 12,
+                  fontSize: 15,
                   fontFamily: "'Press Start 2P', monospace",
                   width: "100%",
                   maxWidth: 260,
@@ -5749,7 +5749,7 @@ export default function FishingGame() {
                 borderRadius: 10,
                 padding: "10px 32px",
                 color: "#ffd54f",
-                fontSize: 12,
+                fontSize: 15,
                 fontFamily: "'Press Start 2P', monospace",
                 cursor: "pointer",
                 transition: "all 0.2s",
@@ -5769,20 +5769,20 @@ export default function FishingGame() {
           <div className="absolute top-3 left-3 flex flex-col gap-1.5" style={{ pointerEvents: "none" }} data-testid="hud-score">
             <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(241,196,15,0.3)" }}>
               <img src="/assets/icons/Icons_01.png" alt="" className="w-6 h-6" style={{ imageRendering: "pixelated" }} />
-              <span style={{ color: "#f1c40f", fontSize: 11 }}>{uiState.score}</span>
+              <span style={{ color: "#f1c40f", fontSize: 14 }}>{uiState.score}</span>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(52,152,219,0.3)" }}>
               <img src="/assets/icons/Icons_03.png" alt="" className="w-6 h-6" style={{ imageRendering: "pixelated" }} />
-              <span style={{ color: "#3498db", fontSize: 11 }}>{uiState.totalCaught}</span>
+              <span style={{ color: "#3498db", fontSize: 14 }}>{uiState.totalCaught}</span>
             </div>
             {uiState.combo > 1 && (
               <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(231,76,60,0.15)", borderRadius: 8, border: "1px solid rgba(231,76,60,0.4)", animation: "pulse 1s infinite" }}>
-                <span style={{ color: "#e74c3c", fontSize: 10 }}>x{uiState.combo} COMBO</span>
+                <span style={{ color: "#e74c3c", fontSize: 13 }}>x{uiState.combo} COMBO</span>
               </div>
             )}
             <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(46,204,113,0.3)" }}>
               <img src="/assets/icons/gbux.png" alt="gbux" style={{ width: 14, height: 14 }} />
-              <span style={{ color: "#2ecc71", fontSize: 11 }}>{uiState.money}</span>
+              <span style={{ color: "#2ecc71", fontSize: 14 }}>{uiState.money}</span>
             </div>
           </div>
 
@@ -5790,15 +5790,15 @@ export default function FishingGame() {
           <div className="absolute top-3 right-3 flex flex-col gap-1.5" style={{ pointerEvents: "none" }} data-testid="hud-rod">
             <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(155,89,182,0.3)" }}>
               <img src="/assets/icons/Icons_07.png" alt="" className="w-6 h-6" style={{ imageRendering: "pixelated" }} />
-              <span style={{ color: "#9b59b6", fontSize: 10 }}>Lv.{uiState.rodLevel}</span>
+              <span style={{ color: "#9b59b6", fontSize: 13 }}>Lv.{uiState.rodLevel}</span>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(46,204,113,0.3)" }}>
               <img src="/assets/icons/Icons_07.png" alt="" className="w-4 h-4" style={{ imageRendering: "pixelated" }} />
-              <span style={{ color: "#2ecc71", fontSize: 7 }}>{RODS[uiState.equippedRod].name}</span>
+              <span style={{ color: "#2ecc71", fontSize: 10 }}>{RODS[uiState.equippedRod].name}</span>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(52,152,219,0.3)" }}>
               <img src="/assets/icons/Icons_09.png" alt="" className="w-4 h-4" style={{ imageRendering: "pixelated" }} />
-              <span style={{ color: "#5dade2", fontSize: 7 }}>{LURES[uiState.equippedLure].name}</span>
+              <span style={{ color: "#5dade2", fontSize: 10 }}>{LURES[uiState.equippedLure].name}</span>
             </div>
             <button
               className="flex items-center gap-2 px-3 py-1.5 cursor-pointer"
@@ -5807,22 +5807,22 @@ export default function FishingGame() {
               data-testid="button-collection"
             >
               <img src="/assets/icons/Icons_05.png" alt="" className="w-6 h-6" style={{ imageRendering: "pixelated" }} />
-              <span style={{ color: "#2ecc71", fontSize: 9 }}>Fish Log</span>
+              <span style={{ color: "#2ecc71", fontSize: 12 }}>Fish Log</span>
             </button>
           </div>
 
           {/* Casting Aim Prompt */}
           {uiState.gameState === "casting" && (
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1" style={{ pointerEvents: "none" }} data-testid="cast-aim-prompt">
-              <span style={{ color: "#f1c40f", fontSize: 12, textShadow: "1px 1px 0 #000" }}>AIM YOUR CAST</span>
-              <span style={{ color: "#b0bec5", fontSize: 8, textShadow: "1px 1px 0 #000" }}>Move mouse to aim, click to cast!</span>
+              <span style={{ color: "#f1c40f", fontSize: 15, textShadow: "1px 1px 0 #000" }}>AIM YOUR CAST</span>
+              <span style={{ color: "#b0bec5", fontSize: 11, textShadow: "1px 1px 0 #000" }}>Move mouse to aim, click to cast!</span>
             </div>
           )}
 
           {/* Waiting */}
           {uiState.gameState === "waiting" && (
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center px-4 py-2" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8, pointerEvents: "none" }} data-testid="waiting-indicator">
-              <span style={{ color: "#5dade2", fontSize: 10, textShadow: "1px 1px 0 #000" }}>
+              <span style={{ color: "#5dade2", fontSize: 13, textShadow: "1px 1px 0 #000" }}>
                 Waiting for a bite
                 <span style={{ animation: "pulse 1.5s infinite" }}>...</span>
               </span>
@@ -5832,7 +5832,7 @@ export default function FishingGame() {
           {/* Bite Alert */}
           {uiState.gameState === "bite" && (
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center px-5 py-3" style={{ background: "rgba(241,196,15,0.15)", borderRadius: 10, border: "2px solid rgba(241,196,15,0.5)", pointerEvents: "none" }} data-testid="bite-alert">
-              <span style={{ color: "#f1c40f", fontSize: 14, textShadow: "2px 2px 0 #000", animation: "pulse 0.5s infinite" }}>
+              <span style={{ color: "#f1c40f", fontSize: 17, textShadow: "2px 2px 0 #000", animation: "pulse 0.5s infinite" }}>
                 {'ontouchstart' in window ? "FISH ON! TAP REEL!" : "FISH ON! CLICK NOW!"}
               </span>
             </div>
@@ -5859,9 +5859,9 @@ export default function FishingGame() {
                 <div style={{ width: barW, height: 10, background: "rgba(8,15,25,0.85)", borderRadius: 5, border: "1px solid rgba(59,130,246,0.3)", overflow: "hidden", marginBottom: 4 }} data-testid="force-bar">
                   <div style={{ width: `${forceBarPercent}%`, height: "100%", background: forceBarPercent > 30 ? "linear-gradient(90deg, #3b82f6, #60a5fa)" : "linear-gradient(90deg, #ef4444, #f87171)", borderRadius: 5, transition: "width 0.1s" }} />
                 </div>
-                <span style={{ color: "#60a5fa", fontSize: 6 }}>FORCE {Math.floor(uiState.forceBar)}/{Math.floor(uiState.forceBarMax)} [SPACE]</span>
+                <span style={{ color: "#60a5fa", fontSize: 9 }}>FORCE {Math.floor(uiState.forceBar)}/{Math.floor(uiState.forceBarMax)} [SPACE]</span>
                 <div className="flex items-center gap-1" style={{ marginBottom: 4 }} data-testid="resilience-bar">
-                  <span style={{ color: "#f59e0b", fontSize: 6, marginRight: 4 }}>RES [S]</span>
+                  <span style={{ color: "#f59e0b", fontSize: 9, marginRight: 4 }}>RES [S]</span>
                   {Array.from({length: resilienceMax}, (_, i) => (
                     <div key={i} style={{ width: 12, height: 12, borderRadius: 3, background: i < resilience ? "rgba(245,158,11,0.8)" : "rgba(245,158,11,0.15)", border: "1px solid rgba(245,158,11,0.4)", transition: "background 0.2s" }} />
                   ))}
@@ -5931,7 +5931,7 @@ export default function FishingGame() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2" style={{ marginTop: 2 }}>
-                  <span style={{ color: "#78909c", fontSize: 7 }}>ALIGN</span>
+                  <span style={{ color: "#78909c", fontSize: 10 }}>ALIGN</span>
                   <div style={{ width: 60, height: 6, background: "rgba(255,255,255,0.1)", borderRadius: 3, overflow: "hidden" }}>
                     <div style={{
                       width: `${uiState.alignment * 100}%`,
@@ -5941,11 +5941,11 @@ export default function FishingGame() {
                       transition: "width 0.1s",
                     }} />
                   </div>
-                  <span style={{ color: uiState.alignment > 0.7 ? "#2ecc71" : "#78909c", fontSize: 7 }}>
+                  <span style={{ color: uiState.alignment > 0.7 ? "#2ecc71" : "#78909c", fontSize: 10 }}>
                     {uiState.alignment > 0.7 ? "GREAT" : uiState.alignment > 0.4 ? "OK" : "FAR"}
                   </span>
                 </div>
-                <span style={{ color: "#b0bec5", fontSize: 8, textShadow: "1px 1px 0 #000" }}>
+                <span style={{ color: "#b0bec5", fontSize: 11, textShadow: "1px 1px 0 #000" }}>
                   {'ontouchstart' in window ? "REEL to catch | FORCE for power | RES to recover" : "Click to reel | Hold right-click for steady reel | A/D to align"}
                 </span>
               </div>
@@ -5955,22 +5955,22 @@ export default function FishingGame() {
           {/* Missed */}
           {uiState.gameState === "missed" && (
             <div className="absolute left-1/2 -translate-x-1/2 text-center px-5 py-3 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 10, border: "1px solid rgba(231,76,60,0.3)", pointerEvents: "none", bottom: 'ontouchstart' in window ? 90 : 64 }} data-testid="missed-display">
-              <span style={{ color: "#e74c3c", fontSize: 11, textShadow: "1px 1px 0 #000" }}>{uiState.missReason}</span>
-              <span style={{ color: "#607d8b", fontSize: 8 }}>{'ontouchstart' in window ? "Tap CAST to try again" : "Click to try again"}</span>
+              <span style={{ color: "#e74c3c", fontSize: 14, textShadow: "1px 1px 0 #000" }}>{uiState.missReason}</span>
+              <span style={{ color: "#607d8b", fontSize: 11 }}>{'ontouchstart' in window ? "Tap CAST to try again" : "Click to try again"}</span>
             </div>
           )}
 
           {/* Idle Prompt */}
           {uiState.gameState === "idle" && !uiState.inBoat && (
             <div className="absolute left-1/2 -translate-x-1/2 text-center px-4 py-2 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8, pointerEvents: "none", bottom: 'ontouchstart' in window ? 90 : 24 }} data-testid="idle-prompt">
-              <span style={{ color: "#b0bec5", fontSize: 10, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "Tap CAST" : "Click to cast"}  |  {'ontouchstart' in window ? "D-pad" : "A/D"} to walk</span>
-              <span style={{ color: "#5dade2", fontSize: 8, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "DIVE btn" : "SPACE"} to dive in  |  1-5 hotbar</span>
+              <span style={{ color: "#b0bec5", fontSize: 13, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "Tap CAST" : "Click to cast"}  |  {'ontouchstart' in window ? "D-pad" : "A/D"} to walk</span>
+              <span style={{ color: "#5dade2", fontSize: 11, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "DIVE btn" : "SPACE"} to dive in  |  1-5 hotbar</span>
             </div>
           )}
           {uiState.gameState === "idle" && uiState.inBoat && (
             <div className="absolute left-1/2 -translate-x-1/2 text-center px-4 py-2 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8, pointerEvents: "none", bottom: 'ontouchstart' in window ? 90 : 24 }} data-testid="boat-idle-prompt">
-              <span style={{ color: "#b0bec5", fontSize: 10, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "Tap CAST" : "Click to cast"}  |  {'ontouchstart' in window ? "D-pad" : "A/D"} to row</span>
-              <span style={{ color: "#f1c40f", fontSize: 8, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "E btn" : "E"} near pier to exit  |  1-5 hotbar</span>
+              <span style={{ color: "#b0bec5", fontSize: 13, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "Tap CAST" : "Click to cast"}  |  {'ontouchstart' in window ? "D-pad" : "A/D"} to row</span>
+              <span style={{ color: "#f1c40f", fontSize: 11, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "E btn" : "E"} near pier to exit  |  1-5 hotbar</span>
             </div>
           )}
 
@@ -5981,7 +5981,7 @@ export default function FishingGame() {
                 style={{ padding: "4px 6px", borderRadius: 6, background: uiState.selectedHotbar === 1 ? "rgba(46,204,113,0.25)" : "rgba(8,15,25,0.75)", border: uiState.selectedHotbar === 1 ? "1px solid rgba(46,204,113,0.5)" : "1px solid rgba(255,255,255,0.1)", transition: "all 0.15s" }}
                 data-testid="hotbar-slot-1">
                 <img src={RODS[uiState.equippedRod].icon} alt="" style={{ width: 24, height: 24, imageRendering: "pixelated" }} />
-                <span style={{ fontSize: 5, color: uiState.selectedHotbar === 1 ? "#2ecc71" : "#607d8b" }}>1</span>
+                <span style={{ fontSize: 8, color: uiState.selectedHotbar === 1 ? "#2ecc71" : "#607d8b" }}>1</span>
               </div>
 
               <div style={{ position: "relative" }}>
@@ -5993,8 +5993,8 @@ export default function FishingGame() {
                         style={{ padding: "3px 4px", borderRadius: 4, background: uiState.equippedLure === i ? "rgba(52,152,219,0.2)" : "transparent", marginBottom: 2 }}
                         data-testid={`lure-popup-item-${i}`}>
                         <img src={lure.icon} alt="" style={{ width: 16, height: 16, imageRendering: "pixelated" }} />
-                        <span style={{ color: uiState.equippedLure === i ? "#5dade2" : "#b0bec5", fontSize: 6, flex: 1 }}>{lure.name}</span>
-                        {uiState.equippedLure === i && <span style={{ color: "#5dade2", fontSize: 5 }}>EQ</span>}
+                        <span style={{ color: uiState.equippedLure === i ? "#5dade2" : "#b0bec5", fontSize: 9, flex: 1 }}>{lure.name}</span>
+                        {uiState.equippedLure === i && <span style={{ color: "#5dade2", fontSize: 8 }}>EQ</span>}
                       </div>
                     ))}
                   </div>
@@ -6004,7 +6004,7 @@ export default function FishingGame() {
                   style={{ padding: "4px 6px", borderRadius: 6, background: uiState.selectedHotbar === 2 ? "rgba(52,152,219,0.25)" : "rgba(8,15,25,0.75)", border: uiState.selectedHotbar === 2 ? "1px solid rgba(52,152,219,0.5)" : "1px solid rgba(255,255,255,0.1)", transition: "all 0.15s" }}
                   data-testid="hotbar-slot-2">
                   <img src={LURES[uiState.equippedLure].icon} alt="" style={{ width: 24, height: 24, imageRendering: "pixelated" }} />
-                  <span style={{ fontSize: 5, color: uiState.selectedHotbar === 2 ? "#5dade2" : "#607d8b" }}>2</span>
+                  <span style={{ fontSize: 8, color: uiState.selectedHotbar === 2 ? "#5dade2" : "#607d8b" }}>2</span>
                 </div>
               </div>
 
@@ -6028,12 +6028,12 @@ export default function FishingGame() {
                         style={{ padding: "3px 4px", borderRadius: 4, background: uiState.chumActiveType === i ? "rgba(245,158,11,0.2)" : "transparent", marginBottom: 2, opacity: stateRef.current.chumCooldown > 0 ? 0.5 : 1 }}
                         data-testid={`chum-popup-item-${i}`}>
                         <img src={chum.icon} alt="" style={{ width: 16, height: 16, imageRendering: "pixelated" }} />
-                        <span style={{ color: "#f59e0b", fontSize: 6, flex: 1 }}>{chum.name}</span>
-                        <span style={{ color: "#78909c", fontSize: 5 }}>x{uiState.ownedChum[i]}</span>
+                        <span style={{ color: "#f59e0b", fontSize: 9, flex: 1 }}>{chum.name}</span>
+                        <span style={{ color: "#78909c", fontSize: 8 }}>x{uiState.ownedChum[i]}</span>
                       </div>
                     ))}
                     {uiState.ownedChum.every(c => c === 0) && (
-                      <span style={{ color: "#455a64", fontSize: 6, padding: 4 }}>No chum owned</span>
+                      <span style={{ color: "#455a64", fontSize: 9, padding: 4 }}>No chum owned</span>
                     )}
                   </div>
                 )}
@@ -6042,7 +6042,7 @@ export default function FishingGame() {
                   style={{ padding: "4px 6px", borderRadius: 6, background: uiState.selectedHotbar === 3 ? "rgba(245,158,11,0.25)" : "rgba(8,15,25,0.75)", border: uiState.selectedHotbar === 3 ? "1px solid rgba(245,158,11,0.5)" : "1px solid rgba(255,255,255,0.1)", transition: "all 0.15s" }}
                   data-testid="hotbar-slot-3">
                   <img src="/assets/icons/Icons_09.png" alt="" style={{ width: 24, height: 24, imageRendering: "pixelated" }} />
-                  <span style={{ fontSize: 5, color: uiState.selectedHotbar === 3 ? "#f59e0b" : "#607d8b" }}>3</span>
+                  <span style={{ fontSize: 8, color: uiState.selectedHotbar === 3 ? "#f59e0b" : "#607d8b" }}>3</span>
                 </div>
               </div>
 
@@ -6051,7 +6051,7 @@ export default function FishingGame() {
                 style={{ padding: "4px 6px", borderRadius: 6, background: uiState.selectedHotbar === 4 ? "rgba(168,85,247,0.25)" : "rgba(8,15,25,0.75)", border: uiState.selectedHotbar === 4 ? "1px solid rgba(168,85,247,0.5)" : "1px solid rgba(255,255,255,0.1)", transition: "all 0.15s" }}
                 data-testid="hotbar-slot-4">
                 <img src="/assets/icons/Icons_11.png" alt="" style={{ width: 24, height: 24, imageRendering: "pixelated" }} />
-                <span style={{ fontSize: 5, color: uiState.selectedHotbar === 4 ? "#a855f7" : "#607d8b" }}>4</span>
+                <span style={{ fontSize: 8, color: uiState.selectedHotbar === 4 ? "#a855f7" : "#607d8b" }}>4</span>
               </div>
 
               <div onClick={(e) => {
@@ -6083,7 +6083,7 @@ export default function FishingGame() {
                     <line x1="11" y1="10" x2="9" y2="10" stroke={uiState.binoculars ? "#22d3ee" : "#607d8b"} strokeWidth="1.5" />
                   </svg>
                 </div>
-                <span style={{ fontSize: 5, color: uiState.binoculars ? "#22d3ee" : "#607d8b" }}>5</span>
+                <span style={{ fontSize: 8, color: uiState.binoculars ? "#22d3ee" : "#607d8b" }}>5</span>
               </div>
             </div>
           )}
@@ -6091,7 +6091,7 @@ export default function FishingGame() {
           {/* Boat Prompt */}
           {uiState.nearBoat && !uiState.showBoatPrompt && (
             <div className="absolute bottom-24 left-1/2 -translate-x-1/2 text-center px-5 py-3 flex flex-col items-center gap-2" style={{ background: "rgba(8,15,25,0.9)", borderRadius: 10, border: "1px solid rgba(241,196,15,0.4)", zIndex: 50 }} data-testid="boat-hint">
-              <span style={{ color: "#f1c40f", fontSize: 10, textShadow: "1px 1px 0 #000" }}>
+              <span style={{ color: "#f1c40f", fontSize: 13, textShadow: "1px 1px 0 #000" }}>
                 {'ontouchstart' in window ? "Tap E to " : "Press E to "}{uiState.boatOwned ? "enter boat" : "inspect boat"}
               </span>
             </div>
@@ -6103,11 +6103,11 @@ export default function FishingGame() {
                 <img src="/assets/objects/Boat.png" alt="" style={{ width: 80, imageRendering: "pixelated" }} />
                 {uiState.boatOwned ? (
                   <>
-                    <span style={{ color: "#f1c40f", fontSize: 12, textShadow: "1px 1px 0 #000" }}>Enter Boat?</span>
+                    <span style={{ color: "#f1c40f", fontSize: 15, textShadow: "1px 1px 0 #000" }}>Enter Boat?</span>
                     <div className="flex gap-4">
                       <button
                         className="cursor-pointer px-5 py-2"
-                        style={{ background: "rgba(46,204,113,0.25)", borderRadius: 8, border: "1px solid rgba(46,204,113,0.5)", fontFamily: "'Press Start 2P', monospace", color: "#2ecc71", fontSize: 10 }}
+                        style={{ background: "rgba(46,204,113,0.25)", borderRadius: 8, border: "1px solid rgba(46,204,113,0.5)", fontFamily: "'Press Start 2P', monospace", color: "#2ecc71", fontSize: 13 }}
                         onClick={(e) => {
                           e.stopPropagation();
                           const s = stateRef.current;
@@ -6130,7 +6130,7 @@ export default function FishingGame() {
                       </button>
                       <button
                         className="cursor-pointer px-5 py-2"
-                        style={{ background: "rgba(231,76,60,0.25)", borderRadius: 8, border: "1px solid rgba(231,76,60,0.5)", fontFamily: "'Press Start 2P', monospace", color: "#e74c3c", fontSize: 10 }}
+                        style={{ background: "rgba(231,76,60,0.25)", borderRadius: 8, border: "1px solid rgba(231,76,60,0.5)", fontFamily: "'Press Start 2P', monospace", color: "#e74c3c", fontSize: 13 }}
                         onClick={(e) => { e.stopPropagation(); stateRef.current.showBoatPrompt = false; syncUI(); }}
                         data-testid="button-boat-no"
                       >
@@ -6140,12 +6140,12 @@ export default function FishingGame() {
                   </>
                 ) : (
                   <>
-                    <span style={{ color: "#f1c40f", fontSize: 11, textShadow: "1px 1px 0 #000" }}>Buy this boat?</span>
+                    <span style={{ color: "#f1c40f", fontSize: 14, textShadow: "1px 1px 0 #000" }}>Buy this boat?</span>
                     <div className="flex items-center gap-2" style={{ marginTop: -4 }}>
                       <img src="/assets/icons/gbux.png" alt="gbux" style={{ width: 14, height: 14 }} />
-                      <span style={{ color: "#2ecc71", fontSize: 14, fontFamily: "'Press Start 2P', monospace" }}>400</span>
+                      <span style={{ color: "#2ecc71", fontSize: 17, fontFamily: "'Press Start 2P', monospace" }}>400</span>
                     </div>
-                    <span style={{ color: "#78909c", fontSize: 8, textShadow: "1px 1px 0 #000" }}>
+                    <span style={{ color: "#78909c", fontSize: 11, textShadow: "1px 1px 0 #000" }}>
                       You have: {uiState.money} gbux
                     </span>
                     <div className="flex gap-4">
@@ -6157,7 +6157,7 @@ export default function FishingGame() {
                           border: uiState.money >= 400 ? "1px solid rgba(46,204,113,0.5)" : "1px solid rgba(120,120,120,0.4)",
                           fontFamily: "'Press Start 2P', monospace",
                           color: uiState.money >= 400 ? "#2ecc71" : "#78909c",
-                          fontSize: 10,
+                          fontSize: 13,
                           opacity: uiState.money >= 400 ? 1 : 0.6,
                         }}
                         onClick={(e) => {
@@ -6176,7 +6176,7 @@ export default function FishingGame() {
                       </button>
                       <button
                         className="cursor-pointer px-5 py-2"
-                        style={{ background: "rgba(231,76,60,0.25)", borderRadius: 8, border: "1px solid rgba(231,76,60,0.5)", fontFamily: "'Press Start 2P', monospace", color: "#e74c3c", fontSize: 10 }}
+                        style={{ background: "rgba(231,76,60,0.25)", borderRadius: 8, border: "1px solid rgba(231,76,60,0.5)", fontFamily: "'Press Start 2P', monospace", color: "#e74c3c", fontSize: 13 }}
                         onClick={(e) => { e.stopPropagation(); stateRef.current.showBoatPrompt = false; syncUI(); }}
                         data-testid="button-boat-no"
                       >
@@ -6192,7 +6192,7 @@ export default function FishingGame() {
           {/* Hut/Shop Hint */}
           {uiState.nearHut && !uiState.showStorePrompt && uiState.gameState === "idle" && (
             <div className="absolute bottom-24 left-1/2 -translate-x-1/2 text-center px-5 py-3 flex flex-col items-center gap-2" style={{ background: "rgba(8,15,25,0.9)", borderRadius: 10, border: "1px solid rgba(46,204,113,0.4)", zIndex: 50 }} data-testid="hut-hint">
-              <span style={{ color: "#2ecc71", fontSize: 10, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "Tap E to enter shop" : "Press E to enter shop"}</span>
+              <span style={{ color: "#2ecc71", fontSize: 13, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "Tap E to enter shop" : "Press E to enter shop"}</span>
             </div>
           )}
 
@@ -6203,15 +6203,15 @@ export default function FishingGame() {
                 {/* Store Header */}
                 <div className="flex items-center justify-between p-3" style={{ borderBottom: "1px solid rgba(46,204,113,0.2)" }}>
                   <div className="flex items-center gap-2">
-                    <span style={{ color: "#2ecc71", fontSize: 12 }}>FISHING SHOP</span>
+                    <span style={{ color: "#2ecc71", fontSize: 15 }}>FISHING SHOP</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <img src="/assets/icons/gbux.png" alt="gbux" style={{ width: 12, height: 12 }} />
-                    <span style={{ color: "#2ecc71", fontSize: 10 }}>{uiState.money}</span>
-                    <span style={{ color: "#a855f7", fontSize: 8, background: "rgba(168,85,247,0.15)", padding: "2px 5px", borderRadius: 4 }} data-testid="text-head-of-legends">{uiState.headOfLegends} HEAD</span>
+                    <span style={{ color: "#2ecc71", fontSize: 13 }}>{uiState.money}</span>
+                    <span style={{ color: "#a855f7", fontSize: 11, background: "rgba(168,85,247,0.15)", padding: "2px 5px", borderRadius: 4 }} data-testid="text-head-of-legends">{uiState.headOfLegends} HEAD</span>
                     <button
                       className="cursor-pointer px-2 py-1"
-                      style={{ background: "rgba(255,255,255,0.08)", borderRadius: 4, border: "1px solid rgba(255,255,255,0.15)", fontFamily: "'Press Start 2P', monospace", color: "#78909c", fontSize: 10 }}
+                      style={{ background: "rgba(255,255,255,0.08)", borderRadius: 4, border: "1px solid rgba(255,255,255,0.15)", fontFamily: "'Press Start 2P', monospace", color: "#78909c", fontSize: 13 }}
                       onClick={(e) => { e.stopPropagation(); stateRef.current.gameState = "idle"; syncUI(); }}
                       data-testid="button-close-store"
                     >
@@ -6223,7 +6223,7 @@ export default function FishingGame() {
                 <div className="flex" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                   <button
                     className="flex-1 px-3 py-2 cursor-pointer"
-                    style={{ background: uiState.storeTab === "rod" ? "rgba(46,204,113,0.15)" : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.storeTab === "rod" ? "#2ecc71" : "#607d8b", fontSize: 9, borderBottom: uiState.storeTab === "rod" ? "2px solid #2ecc71" : "2px solid transparent" }}
+                    style={{ background: uiState.storeTab === "rod" ? "rgba(46,204,113,0.15)" : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.storeTab === "rod" ? "#2ecc71" : "#607d8b", fontSize: 12, borderBottom: uiState.storeTab === "rod" ? "2px solid #2ecc71" : "2px solid transparent" }}
                     onClick={(e) => { e.stopPropagation(); stateRef.current.storeTab = "rod"; syncUI(); }}
                     data-testid="button-tab-rod"
                   >
@@ -6231,7 +6231,7 @@ export default function FishingGame() {
                   </button>
                   <button
                     className="flex-1 px-3 py-2 cursor-pointer"
-                    style={{ background: uiState.storeTab === "lure" ? "rgba(46,204,113,0.15)" : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.storeTab === "lure" ? "#2ecc71" : "#607d8b", fontSize: 9, borderBottom: uiState.storeTab === "lure" ? "2px solid #2ecc71" : "2px solid transparent" }}
+                    style={{ background: uiState.storeTab === "lure" ? "rgba(46,204,113,0.15)" : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.storeTab === "lure" ? "#2ecc71" : "#607d8b", fontSize: 12, borderBottom: uiState.storeTab === "lure" ? "2px solid #2ecc71" : "2px solid transparent" }}
                     onClick={(e) => { e.stopPropagation(); stateRef.current.storeTab = "lure"; syncUI(); }}
                     data-testid="button-tab-lure"
                   >
@@ -6239,7 +6239,7 @@ export default function FishingGame() {
                   </button>
                   <button
                     className="flex-1 px-3 py-2 cursor-pointer"
-                    style={{ background: uiState.storeTab === "chum" ? "rgba(245,158,11,0.15)" : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.storeTab === "chum" ? "#f59e0b" : "#607d8b", fontSize: 9, borderBottom: uiState.storeTab === "chum" ? "2px solid #f59e0b" : "2px solid transparent" }}
+                    style={{ background: uiState.storeTab === "chum" ? "rgba(245,158,11,0.15)" : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.storeTab === "chum" ? "#f59e0b" : "#607d8b", fontSize: 12, borderBottom: uiState.storeTab === "chum" ? "2px solid #f59e0b" : "2px solid transparent" }}
                     onClick={(e) => { e.stopPropagation(); stateRef.current.storeTab = "chum"; syncUI(); }}
                     data-testid="button-tab-chum"
                   >
@@ -6247,7 +6247,7 @@ export default function FishingGame() {
                   </button>
                   <button
                     className="flex-1 px-3 py-2 cursor-pointer"
-                    style={{ background: uiState.storeTab === "eggs" ? "rgba(168,85,247,0.15)" : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.storeTab === "eggs" ? "#a855f7" : "#607d8b", fontSize: 9, borderBottom: uiState.storeTab === "eggs" ? "2px solid #a855f7" : "2px solid transparent" }}
+                    style={{ background: uiState.storeTab === "eggs" ? "rgba(168,85,247,0.15)" : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.storeTab === "eggs" ? "#a855f7" : "#607d8b", fontSize: 12, borderBottom: uiState.storeTab === "eggs" ? "2px solid #a855f7" : "2px solid transparent" }}
                     onClick={(e) => { e.stopPropagation(); stateRef.current.storeTab = "eggs"; syncUI(); }}
                     data-testid="button-tab-eggs"
                   >
@@ -6267,21 +6267,21 @@ export default function FishingGame() {
                         </div>
                         <div className="flex-1 min-w-0 flex flex-col gap-1">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span style={{ color: equipped ? "#2ecc71" : "#e0e0e0", fontSize: 9 }}>{rod.name}</span>
-                            {equipped && <span style={{ color: "#2ecc71", fontSize: 6, background: "rgba(46,204,113,0.2)", padding: "1px 4px", borderRadius: 3 }}>EQUIPPED</span>}
+                            <span style={{ color: equipped ? "#2ecc71" : "#e0e0e0", fontSize: 12 }}>{rod.name}</span>
+                            {equipped && <span style={{ color: "#2ecc71", fontSize: 9, background: "rgba(46,204,113,0.2)", padding: "1px 4px", borderRadius: 3 }}>EQUIPPED</span>}
                           </div>
-                          <span style={{ color: "#78909c", fontSize: 7, lineHeight: "1.5" }}>{rod.description}</span>
+                          <span style={{ color: "#78909c", fontSize: 10, lineHeight: "1.5" }}>{rod.description}</span>
                           <div className="flex flex-wrap gap-x-3 gap-y-0.5">
-                            <span style={{ color: "#5dade2", fontSize: 6 }}>Zone +{(rod.catchZoneBonus * 100).toFixed(0)}%</span>
-                            <span style={{ color: "#f1c40f", fontSize: 6 }}>Speed x{rod.reelSpeedMult.toFixed(1)}</span>
-                            <span style={{ color: "#9b59b6", fontSize: 6 }}>Str x{rod.lineStrength.toFixed(1)}</span>
+                            <span style={{ color: "#5dade2", fontSize: 9 }}>Zone +{(rod.catchZoneBonus * 100).toFixed(0)}%</span>
+                            <span style={{ color: "#f1c40f", fontSize: 9 }}>Speed x{rod.reelSpeedMult.toFixed(1)}</span>
+                            <span style={{ color: "#9b59b6", fontSize: 9 }}>Str x{rod.lineStrength.toFixed(1)}</span>
                           </div>
                         </div>
                         <div className="flex flex-col items-end gap-1">
                           {!owned ? (
                             <button
                               className="cursor-pointer px-3 py-1.5"
-                              style={{ background: canAfford ? "rgba(46,204,113,0.25)" : "rgba(255,255,255,0.05)", borderRadius: 6, border: canAfford ? "1px solid rgba(46,204,113,0.5)" : "1px solid rgba(255,255,255,0.1)", fontFamily: "'Press Start 2P', monospace", color: canAfford ? "#2ecc71" : "#455a64", fontSize: 8, opacity: canAfford ? 1 : 0.5 }}
+                              style={{ background: canAfford ? "rgba(46,204,113,0.25)" : "rgba(255,255,255,0.05)", borderRadius: 6, border: canAfford ? "1px solid rgba(46,204,113,0.5)" : "1px solid rgba(255,255,255,0.1)", fontFamily: "'Press Start 2P', monospace", color: canAfford ? "#2ecc71" : "#455a64", fontSize: 11, opacity: canAfford ? 1 : 0.5 }}
                               onClick={(e) => {
                                 e.stopPropagation();
                                 if (!canAfford) return;
@@ -6298,7 +6298,7 @@ export default function FishingGame() {
                           ) : !equipped ? (
                             <button
                               className="cursor-pointer px-3 py-1.5"
-                              style={{ background: "rgba(52,152,219,0.2)", borderRadius: 6, border: "1px solid rgba(52,152,219,0.4)", fontFamily: "'Press Start 2P', monospace", color: "#5dade2", fontSize: 8 }}
+                              style={{ background: "rgba(52,152,219,0.2)", borderRadius: 6, border: "1px solid rgba(52,152,219,0.4)", fontFamily: "'Press Start 2P', monospace", color: "#5dade2", fontSize: 11 }}
                               onClick={(e) => { e.stopPropagation(); stateRef.current.equippedRod = i; syncUI(); }}
                               data-testid={`button-equip-rod-${i}`}
                             >
@@ -6314,7 +6314,7 @@ export default function FishingGame() {
                     return (
                       <div key={baitType} className="flex flex-col gap-1.5">
                         <div className="flex items-center gap-2 px-1 pt-1">
-                          <span style={{ color: baitType === "live" ? "#e67e22" : "#3498db", fontSize: 8, fontFamily: "'Press Start 2P', monospace", letterSpacing: 1 }}>
+                          <span style={{ color: baitType === "live" ? "#e67e22" : "#3498db", fontSize: 11, fontFamily: "'Press Start 2P', monospace", letterSpacing: 1 }}>
                             {baitType === "live" ? "LIVE BAIT" : "LURES"}
                           </span>
                           <div style={{ flex: 1, height: 1, background: baitType === "live" ? "rgba(230,126,34,0.3)" : "rgba(52,152,219,0.3)" }} />
@@ -6330,25 +6330,25 @@ export default function FishingGame() {
                               </div>
                               <div className="flex-1 min-w-0 flex flex-col gap-1">
                                 <div className="flex items-center gap-2 flex-wrap">
-                                  <span style={{ color: equipped ? "#2ecc71" : "#e0e0e0", fontSize: 9 }}>{lure.name}</span>
-                                  <span style={{ color: lure.type === "live" ? "#e67e22" : "#3498db", fontSize: 5, background: lure.type === "live" ? "rgba(230,126,34,0.15)" : "rgba(52,152,219,0.15)", padding: "1px 3px", borderRadius: 2 }}>{lure.type === "live" ? "LIVE" : "LURE"}</span>
-                                  {equipped && <span style={{ color: "#2ecc71", fontSize: 6, background: "rgba(46,204,113,0.2)", padding: "1px 4px", borderRadius: 3 }}>EQUIPPED</span>}
+                                  <span style={{ color: equipped ? "#2ecc71" : "#e0e0e0", fontSize: 12 }}>{lure.name}</span>
+                                  <span style={{ color: lure.type === "live" ? "#e67e22" : "#3498db", fontSize: 8, background: lure.type === "live" ? "rgba(230,126,34,0.15)" : "rgba(52,152,219,0.15)", padding: "1px 3px", borderRadius: 2 }}>{lure.type === "live" ? "LIVE" : "LURE"}</span>
+                                  {equipped && <span style={{ color: "#2ecc71", fontSize: 9, background: "rgba(46,204,113,0.2)", padding: "1px 4px", borderRadius: 3 }}>EQUIPPED</span>}
                                 </div>
-                                <span style={{ color: "#78909c", fontSize: 7, lineHeight: "1.5" }}>{lure.description}</span>
+                                <span style={{ color: "#78909c", fontSize: 10, lineHeight: "1.5" }}>{lure.description}</span>
                                 <div className="flex flex-wrap gap-x-3 gap-y-0.5">
-                                  <span style={{ color: "#f1c40f", fontSize: 6 }}>Effect: {lure.effect}</span>
+                                  <span style={{ color: "#f1c40f", fontSize: 9 }}>Effect: {lure.effect}</span>
                                 </div>
                                 <div className="flex flex-wrap gap-x-3 gap-y-0.5">
-                                  {lure.rarityBoost > 1 && <span style={{ color: "#a855f7", fontSize: 6 }}>Rare x{lure.rarityBoost.toFixed(1)}</span>}
-                                  {lure.sizeBoost > 0 && <span style={{ color: "#e74c3c", fontSize: 6 }}>Size +{lure.sizeBoost.toFixed(1)}</span>}
-                                  {lure.speedBoost > 1 && <span style={{ color: "#5dade2", fontSize: 6 }}>Bite x{lure.speedBoost.toFixed(1)}</span>}
+                                  {lure.rarityBoost > 1 && <span style={{ color: "#a855f7", fontSize: 9 }}>Rare x{lure.rarityBoost.toFixed(1)}</span>}
+                                  {lure.sizeBoost > 0 && <span style={{ color: "#e74c3c", fontSize: 9 }}>Size +{lure.sizeBoost.toFixed(1)}</span>}
+                                  {lure.speedBoost > 1 && <span style={{ color: "#5dade2", fontSize: 9 }}>Bite x{lure.speedBoost.toFixed(1)}</span>}
                                 </div>
                               </div>
                               <div className="flex flex-col items-end gap-1">
                                 {!owned ? (
                                   <button
                                     className="cursor-pointer px-3 py-1.5"
-                                    style={{ background: canAfford ? "rgba(46,204,113,0.25)" : "rgba(255,255,255,0.05)", borderRadius: 6, border: canAfford ? "1px solid rgba(46,204,113,0.5)" : "1px solid rgba(255,255,255,0.1)", fontFamily: "'Press Start 2P', monospace", color: canAfford ? "#2ecc71" : "#455a64", fontSize: 8, opacity: canAfford ? 1 : 0.5 }}
+                                    style={{ background: canAfford ? "rgba(46,204,113,0.25)" : "rgba(255,255,255,0.05)", borderRadius: 6, border: canAfford ? "1px solid rgba(46,204,113,0.5)" : "1px solid rgba(255,255,255,0.1)", fontFamily: "'Press Start 2P', monospace", color: canAfford ? "#2ecc71" : "#455a64", fontSize: 11, opacity: canAfford ? 1 : 0.5 }}
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       if (!canAfford) return;
@@ -6365,7 +6365,7 @@ export default function FishingGame() {
                                 ) : !equipped ? (
                                   <button
                                     className="cursor-pointer px-3 py-1.5"
-                                    style={{ background: "rgba(52,152,219,0.2)", borderRadius: 6, border: "1px solid rgba(52,152,219,0.4)", fontFamily: "'Press Start 2P', monospace", color: "#5dade2", fontSize: 8 }}
+                                    style={{ background: "rgba(52,152,219,0.2)", borderRadius: 6, border: "1px solid rgba(52,152,219,0.4)", fontFamily: "'Press Start 2P', monospace", color: "#5dade2", fontSize: 11 }}
                                     onClick={(e) => { e.stopPropagation(); stateRef.current.equippedLure = i; syncUI(); }}
                                     data-testid={`button-equip-lure-${i}`}
                                   >
@@ -6389,21 +6389,21 @@ export default function FishingGame() {
                         </div>
                         <div className="flex-1 min-w-0 flex flex-col gap-1">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span style={{ color: "#e0e0e0", fontSize: 9 }}>{chum.name}</span>
-                            {owned > 0 && <span style={{ color: "#f59e0b", fontSize: 6, background: "rgba(245,158,11,0.2)", padding: "1px 4px", borderRadius: 3 }}>x{owned}</span>}
+                            <span style={{ color: "#e0e0e0", fontSize: 12 }}>{chum.name}</span>
+                            {owned > 0 && <span style={{ color: "#f59e0b", fontSize: 9, background: "rgba(245,158,11,0.2)", padding: "1px 4px", borderRadius: 3 }}>x{owned}</span>}
                           </div>
-                          <span style={{ color: "#78909c", fontSize: 7, lineHeight: "1.5" }}>{chum.description}</span>
+                          <span style={{ color: "#78909c", fontSize: 10, lineHeight: "1.5" }}>{chum.description}</span>
                           <div className="flex flex-wrap gap-x-3 gap-y-0.5">
-                            <span style={{ color: "#f59e0b", fontSize: 6 }}>Effect: {chum.effect}</span>
-                            {chum.rarityBoost > 1 && <span style={{ color: "#a855f7", fontSize: 6 }}>Rarity x{chum.rarityBoost.toFixed(1)}</span>}
-                            {chum.biteSpeedBoost > 1 && <span style={{ color: "#5dade2", fontSize: 6 }}>Bite x{chum.biteSpeedBoost.toFixed(1)}</span>}
-                            <span style={{ color: "#22c55e", fontSize: 6 }}>Attract x{chum.fishAttract.toFixed(1)}</span>
+                            <span style={{ color: "#f59e0b", fontSize: 9 }}>Effect: {chum.effect}</span>
+                            {chum.rarityBoost > 1 && <span style={{ color: "#a855f7", fontSize: 9 }}>Rarity x{chum.rarityBoost.toFixed(1)}</span>}
+                            {chum.biteSpeedBoost > 1 && <span style={{ color: "#5dade2", fontSize: 9 }}>Bite x{chum.biteSpeedBoost.toFixed(1)}</span>}
+                            <span style={{ color: "#22c55e", fontSize: 9 }}>Attract x{chum.fishAttract.toFixed(1)}</span>
                           </div>
                         </div>
                         <div className="flex flex-col items-end gap-1">
                           <button
                             className="cursor-pointer px-3 py-1.5"
-                            style={{ background: canAfford ? "rgba(245,158,11,0.25)" : "rgba(255,255,255,0.05)", borderRadius: 6, border: canAfford ? "1px solid rgba(245,158,11,0.5)" : "1px solid rgba(255,255,255,0.1)", fontFamily: "'Press Start 2P', monospace", color: canAfford ? "#f59e0b" : "#455a64", fontSize: 8, opacity: canAfford ? 1 : 0.5 }}
+                            style={{ background: canAfford ? "rgba(245,158,11,0.25)" : "rgba(255,255,255,0.05)", borderRadius: 6, border: canAfford ? "1px solid rgba(245,158,11,0.5)" : "1px solid rgba(255,255,255,0.1)", fontFamily: "'Press Start 2P', monospace", color: canAfford ? "#f59e0b" : "#455a64", fontSize: 11, opacity: canAfford ? 1 : 0.5 }}
                             onClick={(e) => {
                               e.stopPropagation();
                               if (!canAfford) return;
@@ -6424,21 +6424,21 @@ export default function FishingGame() {
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center justify-between px-1 py-1.5" style={{ background: "rgba(168,85,247,0.08)", borderRadius: 6, border: "1px solid rgba(168,85,247,0.2)" }}>
                         <div className="flex items-center gap-2">
-                          <span style={{ color: "#a855f7", fontSize: 8 }}>HEAD OF LEGENDS</span>
+                          <span style={{ color: "#a855f7", fontSize: 11 }}>HEAD OF LEGENDS</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <span style={{ color: "#fbbf24", fontSize: 10 }}>{uiState.headOfLegends}</span>
+                          <span style={{ color: "#fbbf24", fontSize: 13 }}>{uiState.headOfLegends}</span>
                         </div>
                       </div>
-                      <span style={{ color: "#78909c", fontSize: 6, lineHeight: "1.6", padding: "0 2px" }}>
+                      <span style={{ color: "#78909c", fontSize: 9, lineHeight: "1.6", padding: "0 2px" }}>
                         Earn Head of Legends by catching each Legendary 9 fish for the first time. Spend them on rare BetaXGruda Eggs.
                       </span>
                       <div className="flex items-center justify-between px-1 pt-1">
                         <div className="flex items-center gap-2">
-                          <span style={{ color: "#ec4899", fontSize: 8, fontFamily: "'Press Start 2P', monospace", letterSpacing: 1 }}>BETA FISH EGGS</span>
+                          <span style={{ color: "#ec4899", fontSize: 11, fontFamily: "'Press Start 2P', monospace", letterSpacing: 1 }}>BETA FISH EGGS</span>
                           <div style={{ flex: 1, height: 1, background: "rgba(236,72,153,0.3)" }} />
                         </div>
-                        <span style={{ color: "#f59e0b", fontSize: 6, fontFamily: "'Press Start 2P', monospace", background: "rgba(245,158,11,0.15)", padding: "2px 6px", borderRadius: 4, border: "1px solid rgba(245,158,11,0.3)" }} data-testid="text-beta-stock">LIMITED: {BETA_EGG_MAX_STOCK} TOTAL</span>
+                        <span style={{ color: "#f59e0b", fontSize: 9, fontFamily: "'Press Start 2P', monospace", background: "rgba(245,158,11,0.15)", padding: "2px 6px", borderRadius: 4, border: "1px solid rgba(245,158,11,0.3)" }} data-testid="text-beta-stock">LIMITED: {BETA_EGG_MAX_STOCK} TOTAL</span>
                       </div>
                       {BETAXGRUDA_EGGS.filter(e => e.type === "beta").map((egg, i) => {
                         const eggIdx = BETAXGRUDA_EGGS.indexOf(egg);
@@ -6453,18 +6453,18 @@ export default function FishingGame() {
                             </div>
                             <div className="flex-1 min-w-0 flex flex-col gap-1">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <span style={{ color: owned ? "#a855f7" : "#e0e0e0", fontSize: 8 }}>{egg.name}</span>
-                                {owned && <span style={{ color: "#a855f7", fontSize: 6, background: "rgba(168,85,247,0.2)", padding: "1px 4px", borderRadius: 3 }}>OWNED</span>}
-                                {soldOut && <span style={{ color: "#ef4444", fontSize: 6, background: "rgba(239,68,68,0.2)", padding: "1px 4px", borderRadius: 3 }}>SOLD OUT</span>}
+                                <span style={{ color: owned ? "#a855f7" : "#e0e0e0", fontSize: 11 }}>{egg.name}</span>
+                                {owned && <span style={{ color: "#a855f7", fontSize: 9, background: "rgba(168,85,247,0.2)", padding: "1px 4px", borderRadius: 3 }}>OWNED</span>}
+                                {soldOut && <span style={{ color: "#ef4444", fontSize: 9, background: "rgba(239,68,68,0.2)", padding: "1px 4px", borderRadius: 3 }}>SOLD OUT</span>}
                               </div>
-                              <span style={{ color: "#78909c", fontSize: 7, lineHeight: "1.5" }}>{egg.description}</span>
-                              {!owned && !soldOut && <span style={{ color: "#f59e0b", fontSize: 6 }}>{stock} of {egg.maxStock} remaining</span>}
+                              <span style={{ color: "#78909c", fontSize: 10, lineHeight: "1.5" }}>{egg.description}</span>
+                              {!owned && !soldOut && <span style={{ color: "#f59e0b", fontSize: 9 }}>{stock} of {egg.maxStock} remaining</span>}
                             </div>
                             <div className="flex flex-col items-end gap-1">
                               {!owned && !soldOut ? (
                                 <button
                                   className="cursor-pointer px-3 py-1.5"
-                                  style={{ background: canAfford ? "rgba(168,85,247,0.25)" : "rgba(255,255,255,0.05)", borderRadius: 6, border: canAfford ? "1px solid rgba(168,85,247,0.5)" : "1px solid rgba(255,255,255,0.1)", fontFamily: "'Press Start 2P', monospace", color: canAfford ? "#a855f7" : "#455a64", fontSize: 7, opacity: canAfford ? 1 : 0.5 }}
+                                  style={{ background: canAfford ? "rgba(168,85,247,0.25)" : "rgba(255,255,255,0.05)", borderRadius: 6, border: canAfford ? "1px solid rgba(168,85,247,0.5)" : "1px solid rgba(255,255,255,0.1)", fontFamily: "'Press Start 2P', monospace", color: canAfford ? "#a855f7" : "#455a64", fontSize: 10, opacity: canAfford ? 1 : 0.5 }}
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     if (!canAfford) return;
@@ -6485,10 +6485,10 @@ export default function FishingGame() {
                       })}
                       <div className="flex items-center justify-between px-1 pt-2">
                         <div className="flex items-center gap-2">
-                          <span style={{ color: "#ef4444", fontSize: 8, fontFamily: "'Press Start 2P', monospace", letterSpacing: 1 }}>WARLORD EGGS</span>
+                          <span style={{ color: "#ef4444", fontSize: 11, fontFamily: "'Press Start 2P', monospace", letterSpacing: 1 }}>WARLORD EGGS</span>
                           <div style={{ flex: 1, height: 1, background: "rgba(239,68,68,0.3)" }} />
                         </div>
-                        <span style={{ color: "#ef4444", fontSize: 6, fontFamily: "'Press Start 2P', monospace", background: "rgba(239,68,68,0.15)", padding: "2px 6px", borderRadius: 4, border: "1px solid rgba(239,68,68,0.3)" }} data-testid="text-warlord-stock">LIMITED: {WARLORD_EGG_MAX_STOCK} TOTAL</span>
+                        <span style={{ color: "#ef4444", fontSize: 9, fontFamily: "'Press Start 2P', monospace", background: "rgba(239,68,68,0.15)", padding: "2px 6px", borderRadius: 4, border: "1px solid rgba(239,68,68,0.3)" }} data-testid="text-warlord-stock">LIMITED: {WARLORD_EGG_MAX_STOCK} TOTAL</span>
                       </div>
                       {BETAXGRUDA_EGGS.filter(e => e.type === "warlord").map((egg) => {
                         const eggIdx = BETAXGRUDA_EGGS.indexOf(egg);
@@ -6503,19 +6503,19 @@ export default function FishingGame() {
                             </div>
                             <div className="flex-1 min-w-0 flex flex-col gap-1">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <span style={{ color: owned ? "#ef4444" : "#e0e0e0", fontSize: 8 }}>{egg.name}</span>
-                                {owned && <span style={{ color: "#ef4444", fontSize: 6, background: "rgba(239,68,68,0.2)", padding: "1px 4px", borderRadius: 3 }}>OWNED</span>}
-                                {soldOut && <span style={{ color: "#ef4444", fontSize: 6, background: "rgba(239,68,68,0.2)", padding: "1px 4px", borderRadius: 3 }}>SOLD OUT</span>}
+                                <span style={{ color: owned ? "#ef4444" : "#e0e0e0", fontSize: 11 }}>{egg.name}</span>
+                                {owned && <span style={{ color: "#ef4444", fontSize: 9, background: "rgba(239,68,68,0.2)", padding: "1px 4px", borderRadius: 3 }}>OWNED</span>}
+                                {soldOut && <span style={{ color: "#ef4444", fontSize: 9, background: "rgba(239,68,68,0.2)", padding: "1px 4px", borderRadius: 3 }}>SOLD OUT</span>}
                               </div>
-                              <span style={{ color: "#78909c", fontSize: 7, lineHeight: "1.5" }}>{egg.description}</span>
-                              {!owned && !soldOut && <span style={{ color: "#f59e0b", fontSize: 6 }}>{stock} of {egg.maxStock} remaining</span>}
-                              {!owned && !soldOut && <span style={{ color: "#f59e0b", fontSize: 6 }}>Requires 2 Heads of Legends</span>}
+                              <span style={{ color: "#78909c", fontSize: 10, lineHeight: "1.5" }}>{egg.description}</span>
+                              {!owned && !soldOut && <span style={{ color: "#f59e0b", fontSize: 9 }}>{stock} of {egg.maxStock} remaining</span>}
+                              {!owned && !soldOut && <span style={{ color: "#f59e0b", fontSize: 9 }}>Requires 2 Heads of Legends</span>}
                             </div>
                             <div className="flex flex-col items-end gap-1">
                               {!owned && !soldOut ? (
                                 <button
                                   className="cursor-pointer px-3 py-1.5"
-                                  style={{ background: canAfford ? "rgba(239,68,68,0.25)" : "rgba(255,255,255,0.05)", borderRadius: 6, border: canAfford ? "1px solid rgba(239,68,68,0.5)" : "1px solid rgba(255,255,255,0.1)", fontFamily: "'Press Start 2P', monospace", color: canAfford ? "#ef4444" : "#455a64", fontSize: 7, opacity: canAfford ? 1 : 0.5 }}
+                                  style={{ background: canAfford ? "rgba(239,68,68,0.25)" : "rgba(255,255,255,0.05)", borderRadius: 6, border: canAfford ? "1px solid rgba(239,68,68,0.5)" : "1px solid rgba(255,255,255,0.1)", fontFamily: "'Press Start 2P', monospace", color: canAfford ? "#ef4444" : "#455a64", fontSize: 10, opacity: canAfford ? 1 : 0.5 }}
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     if (!canAfford) return;
@@ -6540,8 +6540,8 @@ export default function FishingGame() {
                 {/* Current Equipment Summary */}
                 <div className="flex items-center justify-between px-3 py-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.02)" }}>
                   <div className="flex flex-col gap-0.5">
-                    <span style={{ color: "#78909c", fontSize: 6 }}>EQUIPPED</span>
-                    <span style={{ color: "#e0e0e0", fontSize: 7 }}>{RODS[uiState.equippedRod].name} + {LURES[uiState.equippedLure].name}</span>
+                    <span style={{ color: "#78909c", fontSize: 9 }}>EQUIPPED</span>
+                    <span style={{ color: "#e0e0e0", fontSize: 10 }}>{RODS[uiState.equippedRod].name} + {LURES[uiState.equippedLure].name}</span>
                   </div>
                 </div>
               </div>
@@ -6563,13 +6563,13 @@ export default function FishingGame() {
                         <img src={`/assets/npcs/${npc.spriteFolder}/Idle.png`} alt="" style={{ width: 40, height: 40, objectFit: "cover", objectPosition: "0 0", imageRendering: "pixelated" }} />
                       </div>
                       <div>
-                        <span style={{ color: roleColor, fontSize: 11, fontFamily: "'Press Start 2P', monospace" }}>{npc.name}</span>
-                        <div style={{ color: "#78909c", fontSize: 7, fontFamily: "'Press Start 2P', monospace", marginTop: 2 }}>{roleLabels[npc.role]}</div>
+                        <span style={{ color: roleColor, fontSize: 14, fontFamily: "'Press Start 2P', monospace" }}>{npc.name}</span>
+                        <div style={{ color: "#78909c", fontSize: 10, fontFamily: "'Press Start 2P', monospace", marginTop: 2 }}>{roleLabels[npc.role]}</div>
                       </div>
                     </div>
                     <button
                       className="cursor-pointer px-2 py-1"
-                      style={{ background: "rgba(255,255,255,0.08)", borderRadius: 4, border: "1px solid rgba(255,255,255,0.15)", fontFamily: "'Press Start 2P', monospace", color: "#78909c", fontSize: 10 }}
+                      style={{ background: "rgba(255,255,255,0.08)", borderRadius: 4, border: "1px solid rgba(255,255,255,0.15)", fontFamily: "'Press Start 2P', monospace", color: "#78909c", fontSize: 13 }}
                       onClick={(e) => { e.stopPropagation(); stateRef.current.gameState = "idle"; stateRef.current.activeNpc = -1; syncUI(); }}
                       data-testid="button-close-npc"
                     >
@@ -6580,7 +6580,7 @@ export default function FishingGame() {
                   <div className="flex" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                     <button
                       className="flex-1 px-3 py-2 cursor-pointer"
-                      style={{ background: uiState.npcTab === "talk" ? `${roleColor}22` : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.npcTab === "talk" ? roleColor : "#607d8b", fontSize: 8, borderBottom: uiState.npcTab === "talk" ? `2px solid ${roleColor}` : "2px solid transparent" }}
+                      style={{ background: uiState.npcTab === "talk" ? `${roleColor}22` : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.npcTab === "talk" ? roleColor : "#607d8b", fontSize: 11, borderBottom: uiState.npcTab === "talk" ? `2px solid ${roleColor}` : "2px solid transparent" }}
                       onClick={(e) => { e.stopPropagation(); stateRef.current.npcTab = "talk"; syncUI(); }}
                       data-testid="button-npc-talk"
                     >
@@ -6589,7 +6589,7 @@ export default function FishingGame() {
                     {npc.role === "shopkeeper" && (
                       <button
                         className="flex-1 px-3 py-2 cursor-pointer"
-                        style={{ background: uiState.npcTab === "shop" ? `${roleColor}22` : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.npcTab === "shop" ? roleColor : "#607d8b", fontSize: 8, borderBottom: uiState.npcTab === "shop" ? `2px solid ${roleColor}` : "2px solid transparent" }}
+                        style={{ background: uiState.npcTab === "shop" ? `${roleColor}22` : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.npcTab === "shop" ? roleColor : "#607d8b", fontSize: 11, borderBottom: uiState.npcTab === "shop" ? `2px solid ${roleColor}` : "2px solid transparent" }}
                         onClick={(e) => { e.stopPropagation(); stateRef.current.npcTab = "shop"; syncUI(); }}
                         data-testid="button-npc-shop"
                       >
@@ -6599,7 +6599,7 @@ export default function FishingGame() {
                     {npc.role === "requester" && (
                       <button
                         className="flex-1 px-3 py-2 cursor-pointer"
-                        style={{ background: uiState.npcTab === "request" ? `${roleColor}22` : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.npcTab === "request" ? roleColor : "#607d8b", fontSize: 8, borderBottom: uiState.npcTab === "request" ? `2px solid ${roleColor}` : "2px solid transparent" }}
+                        style={{ background: uiState.npcTab === "request" ? `${roleColor}22` : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.npcTab === "request" ? roleColor : "#607d8b", fontSize: 11, borderBottom: uiState.npcTab === "request" ? `2px solid ${roleColor}` : "2px solid transparent" }}
                         onClick={(e) => { e.stopPropagation(); stateRef.current.npcTab = "request"; syncUI(); }}
                         data-testid="button-npc-request"
                       >
@@ -6609,7 +6609,7 @@ export default function FishingGame() {
                     {npc.role === "mission_giver" && (
                       <button
                         className="flex-1 px-3 py-2 cursor-pointer"
-                        style={{ background: uiState.npcTab === "mission" ? `${roleColor}22` : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.npcTab === "mission" ? roleColor : "#607d8b", fontSize: 8, borderBottom: uiState.npcTab === "mission" ? `2px solid ${roleColor}` : "2px solid transparent" }}
+                        style={{ background: uiState.npcTab === "mission" ? `${roleColor}22` : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.npcTab === "mission" ? roleColor : "#607d8b", fontSize: 11, borderBottom: uiState.npcTab === "mission" ? `2px solid ${roleColor}` : "2px solid transparent" }}
                         onClick={(e) => { e.stopPropagation(); stateRef.current.npcTab = "mission"; syncUI(); }}
                         data-testid="button-npc-mission"
                       >
@@ -6622,11 +6622,11 @@ export default function FishingGame() {
                     {uiState.npcTab === "talk" && (
                       <div className="flex flex-col gap-3">
                         <div style={{ background: `${roleColor}11`, borderRadius: 8, padding: "10px 12px", border: `1px solid ${roleColor}22` }}>
-                          <span style={{ color: "#e0e0e0", fontSize: 9, fontFamily: "'Press Start 2P', monospace", lineHeight: "18px" }}>{npc.greeting}</span>
+                          <span style={{ color: "#e0e0e0", fontSize: 12, fontFamily: "'Press Start 2P', monospace", lineHeight: "18px" }}>{npc.greeting}</span>
                         </div>
                         {npc.dialogueLines.map((line, di) => (
                           <div key={di} style={{ background: "rgba(255,255,255,0.03)", borderRadius: 6, padding: "8px 10px" }}>
-                            <span style={{ color: "#b0bec5", fontSize: 8, fontFamily: "'Press Start 2P', monospace", lineHeight: "16px" }}>{line}</span>
+                            <span style={{ color: "#b0bec5", fontSize: 11, fontFamily: "'Press Start 2P', monospace", lineHeight: "16px" }}>{line}</span>
                           </div>
                         ))}
                       </div>
@@ -6636,14 +6636,14 @@ export default function FishingGame() {
                       <div className="flex flex-col gap-2">
                         <div className="flex items-center gap-2 mb-1">
                           <img src="/assets/icons/gbux.png" alt="gbux" style={{ width: 12, height: 12 }} />
-                          <span style={{ color: "#2ecc71", fontSize: 9, fontFamily: "'Press Start 2P', monospace" }}>{uiState.money} gbux</span>
+                          <span style={{ color: "#2ecc71", fontSize: 12, fontFamily: "'Press Start 2P', monospace" }}>{uiState.money} gbux</span>
                         </div>
                         {npc.shopItems.map((item, si) => (
                           <div key={si} className="flex items-center gap-3 p-2" style={{ background: "rgba(255,255,255,0.03)", borderRadius: 6, border: "1px solid rgba(255,255,255,0.06)" }}>
                             <img src={item.icon} alt="" style={{ width: 28, height: 28, imageRendering: "pixelated" }} />
                             <div className="flex-1">
-                              <div style={{ color: "#e0e0e0", fontSize: 8, fontFamily: "'Press Start 2P', monospace" }}>{item.name}</div>
-                              <div style={{ color: "#78909c", fontSize: 7, fontFamily: "'Press Start 2P', monospace", marginTop: 2 }}>{item.description}</div>
+                              <div style={{ color: "#e0e0e0", fontSize: 11, fontFamily: "'Press Start 2P', monospace" }}>{item.name}</div>
+                              <div style={{ color: "#78909c", fontSize: 10, fontFamily: "'Press Start 2P', monospace", marginTop: 2 }}>{item.description}</div>
                             </div>
                             <button
                               className="cursor-pointer px-3 py-1"
@@ -6653,7 +6653,7 @@ export default function FishingGame() {
                                 border: `1px solid ${uiState.money >= item.price ? "rgba(46,204,113,0.4)" : "rgba(255,255,255,0.1)"}`,
                                 fontFamily: "'Press Start 2P', monospace",
                                 color: uiState.money >= item.price ? "#2ecc71" : "#607d8b",
-                                fontSize: 8,
+                                fontSize: 11,
                                 opacity: uiState.money >= item.price ? 1 : 0.5,
                               }}
                               onClick={(e) => {
@@ -6680,27 +6680,27 @@ export default function FishingGame() {
                     {uiState.npcTab === "request" && npc.request && (
                       <div className="flex flex-col gap-3">
                         <div style={{ background: "rgba(243,156,18,0.1)", borderRadius: 8, padding: "12px", border: "1px solid rgba(243,156,18,0.2)" }}>
-                          <div style={{ color: "#f39c12", fontSize: 9, fontFamily: "'Press Start 2P', monospace", marginBottom: 6 }}>REQUEST</div>
-                          <div style={{ color: "#e0e0e0", fontSize: 8, fontFamily: "'Press Start 2P', monospace", lineHeight: "16px" }}>{npc.request.description}</div>
+                          <div style={{ color: "#f39c12", fontSize: 12, fontFamily: "'Press Start 2P', monospace", marginBottom: 6 }}>REQUEST</div>
+                          <div style={{ color: "#e0e0e0", fontSize: 11, fontFamily: "'Press Start 2P', monospace", lineHeight: "16px" }}>{npc.request.description}</div>
                         </div>
                         <div className="flex items-center justify-between p-2" style={{ background: "rgba(255,255,255,0.03)", borderRadius: 6 }}>
                           <div>
-                            <span style={{ color: "#b0bec5", fontSize: 8, fontFamily: "'Press Start 2P', monospace" }}>Progress: </span>
-                            <span style={{ color: npc.request.completed ? "#2ecc71" : "#f39c12", fontSize: 9, fontFamily: "'Press Start 2P', monospace" }}>
+                            <span style={{ color: "#b0bec5", fontSize: 11, fontFamily: "'Press Start 2P', monospace" }}>Progress: </span>
+                            <span style={{ color: npc.request.completed ? "#2ecc71" : "#f39c12", fontSize: 12, fontFamily: "'Press Start 2P', monospace" }}>
                               {npc.request.fulfilled}/{npc.request.count}
                             </span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <span style={{ color: "#78909c", fontSize: 7, fontFamily: "'Press Start 2P', monospace" }}>Reward:</span>
+                            <span style={{ color: "#78909c", fontSize: 10, fontFamily: "'Press Start 2P', monospace" }}>Reward:</span>
                             <img src="/assets/icons/gbux.png" alt="gbux" style={{ width: 10, height: 10 }} />
-                            <span style={{ color: "#2ecc71", fontSize: 8, fontFamily: "'Press Start 2P', monospace" }}>{npc.request.reward}</span>
+                            <span style={{ color: "#2ecc71", fontSize: 11, fontFamily: "'Press Start 2P', monospace" }}>{npc.request.reward}</span>
                           </div>
                         </div>
                         <div style={{ width: "100%", height: 8, background: "rgba(255,255,255,0.1)", borderRadius: 4, overflow: "hidden" }}>
                           <div style={{ width: `${(npc.request.fulfilled / npc.request.count) * 100}%`, height: "100%", background: npc.request.completed ? "#2ecc71" : "#f39c12", borderRadius: 4, transition: "width 0.3s" }} />
                         </div>
                         {npc.request.completed && (
-                          <div style={{ color: "#2ecc71", fontSize: 9, fontFamily: "'Press Start 2P', monospace", textAlign: "center", marginTop: 4 }}>
+                          <div style={{ color: "#2ecc71", fontSize: 12, fontFamily: "'Press Start 2P', monospace", textAlign: "center", marginTop: 4 }}>
                             COMPLETED! Reward collected!
                           </div>
                         )}
@@ -6710,27 +6710,27 @@ export default function FishingGame() {
                     {uiState.npcTab === "mission" && npc.mission && (
                       <div className="flex flex-col gap-3">
                         <div style={{ background: "rgba(231,76,60,0.1)", borderRadius: 8, padding: "12px", border: "1px solid rgba(231,76,60,0.2)" }}>
-                          <div style={{ color: "#e74c3c", fontSize: 9, fontFamily: "'Press Start 2P', monospace", marginBottom: 6 }}>MISSION</div>
-                          <div style={{ color: "#e0e0e0", fontSize: 8, fontFamily: "'Press Start 2P', monospace", lineHeight: "16px" }}>{npc.mission.description}</div>
+                          <div style={{ color: "#e74c3c", fontSize: 12, fontFamily: "'Press Start 2P', monospace", marginBottom: 6 }}>MISSION</div>
+                          <div style={{ color: "#e0e0e0", fontSize: 11, fontFamily: "'Press Start 2P', monospace", lineHeight: "16px" }}>{npc.mission.description}</div>
                         </div>
                         <div className="flex items-center justify-between p-2" style={{ background: "rgba(255,255,255,0.03)", borderRadius: 6 }}>
                           <div>
-                            <span style={{ color: "#b0bec5", fontSize: 8, fontFamily: "'Press Start 2P', monospace" }}>Progress: </span>
-                            <span style={{ color: npc.mission.completed ? "#2ecc71" : "#e74c3c", fontSize: 9, fontFamily: "'Press Start 2P', monospace" }}>
+                            <span style={{ color: "#b0bec5", fontSize: 11, fontFamily: "'Press Start 2P', monospace" }}>Progress: </span>
+                            <span style={{ color: npc.mission.completed ? "#2ecc71" : "#e74c3c", fontSize: 12, fontFamily: "'Press Start 2P', monospace" }}>
                               {npc.mission.caught}/{npc.mission.count}
                             </span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <span style={{ color: "#78909c", fontSize: 7, fontFamily: "'Press Start 2P', monospace" }}>Reward:</span>
+                            <span style={{ color: "#78909c", fontSize: 10, fontFamily: "'Press Start 2P', monospace" }}>Reward:</span>
                             <img src="/assets/icons/gbux.png" alt="gbux" style={{ width: 10, height: 10 }} />
-                            <span style={{ color: "#2ecc71", fontSize: 8, fontFamily: "'Press Start 2P', monospace" }}>{npc.mission.reward}</span>
+                            <span style={{ color: "#2ecc71", fontSize: 11, fontFamily: "'Press Start 2P', monospace" }}>{npc.mission.reward}</span>
                           </div>
                         </div>
                         <div style={{ width: "100%", height: 8, background: "rgba(255,255,255,0.1)", borderRadius: 4, overflow: "hidden" }}>
                           <div style={{ width: `${(npc.mission.caught / npc.mission.count) * 100}%`, height: "100%", background: npc.mission.completed ? "#2ecc71" : "#e74c3c", borderRadius: 4, transition: "width 0.3s" }} />
                         </div>
                         {npc.mission.completed && (
-                          <div style={{ color: "#2ecc71", fontSize: 9, fontFamily: "'Press Start 2P', monospace", textAlign: "center", marginTop: 4 }}>
+                          <div style={{ color: "#2ecc71", fontSize: 12, fontFamily: "'Press Start 2P', monospace", textAlign: "center", marginTop: 4 }}>
                             MISSION COMPLETE! Reward collected!
                           </div>
                         )}
@@ -6745,8 +6745,8 @@ export default function FishingGame() {
           {/* Swimming Prompt */}
           {uiState.gameState === "swimming" && (
             <div className="absolute left-1/2 -translate-x-1/2 text-center px-4 py-2 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8, pointerEvents: "none", bottom: 'ontouchstart' in window ? 90 : 24 }} data-testid="swim-prompt">
-              <span style={{ color: "#5dade2", fontSize: 10, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "D-pad to swim" : "W/A/S/D to swim"}</span>
-              <span style={{ color: "#78909c", fontSize: 8, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "DIVE btn near dock to climb out" : "SPACE near dock to climb out"}</span>
+              <span style={{ color: "#5dade2", fontSize: 13, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "D-pad to swim" : "W/A/S/D to swim"}</span>
+              <span style={{ color: "#78909c", fontSize: 11, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "DIVE btn near dock to climb out" : "SPACE near dock to climb out"}</span>
             </div>
           )}
         </>
@@ -6780,25 +6780,25 @@ export default function FishingGame() {
               <div className="flex flex-col gap-1 flex-1">
                 <div className="flex items-center gap-2">
                   <img src={CHARACTER_VARIANTS[uiState.selectedCharacter].factionIcon} alt="" style={{ width: 18, height: 18 }} />
-                  <span style={{ color: CHARACTER_VARIANTS[uiState.selectedCharacter].color, fontSize: 12, fontWeight: "bold" }}>{uiState.playerName || "Angler"}</span>
-                  <span style={{ color: "#607d8b", fontSize: 7 }}>Lv.{uiState.playerLevel}</span>
+                  <span style={{ color: CHARACTER_VARIANTS[uiState.selectedCharacter].color, fontSize: 15, fontWeight: "bold" }}>{uiState.playerName || "Angler"}</span>
+                  <span style={{ color: "#607d8b", fontSize: 10 }}>Lv.{uiState.playerLevel}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span style={{ color: "#455a64", fontSize: 6 }}>{CHARACTER_VARIANTS[uiState.selectedCharacter].name} Faction</span>
+                  <span style={{ color: "#455a64", fontSize: 9 }}>{CHARACTER_VARIANTS[uiState.selectedCharacter].name} Faction</span>
                   <div className="flex items-center gap-1">
                     <img src="/assets/icons/gbux.png" alt="" style={{ width: 10, height: 10, imageRendering: "pixelated" }} />
-                    <span style={{ color: "#f1c40f", fontSize: 7 }}>{uiState.money}</span>
+                    <span style={{ color: "#f1c40f", fontSize: 10 }}>{uiState.money}</span>
                   </div>
                 </div>
                 {/* XP Bar */}
                 <div style={{ width: "100%", height: 6, background: "rgba(255,255,255,0.06)", borderRadius: 3, overflow: "hidden" }}>
                   <div style={{ width: `${(uiState.playerXP / uiState.playerXPToNext) * 100}%`, height: "100%", background: `linear-gradient(90deg, ${CHARACTER_VARIANTS[uiState.selectedCharacter].color}, ${CHARACTER_VARIANTS[uiState.selectedCharacter].color}80)`, borderRadius: 3, transition: "width 0.3s" }} />
                 </div>
-                <span style={{ color: "#455a64", fontSize: 5 }}>XP: {uiState.playerXP}/{uiState.playerXPToNext}</span>
+                <span style={{ color: "#455a64", fontSize: 8 }}>XP: {uiState.playerXP}/{uiState.playerXPToNext}</span>
               </div>
               <button
                 className="cursor-pointer px-2 py-1"
-                style={{ background: "rgba(255,255,255,0.08)", borderRadius: 4, border: "1px solid rgba(255,255,255,0.15)", color: "#78909c", fontSize: 10, fontFamily: "'Press Start 2P', monospace" }}
+                style={{ background: "rgba(255,255,255,0.08)", borderRadius: 4, border: "1px solid rgba(255,255,255,0.15)", color: "#78909c", fontSize: 13, fontFamily: "'Press Start 2P', monospace" }}
                 onClick={() => setShowCharPanel(false)}
                 data-testid="button-close-char-panel"
               >X</button>
@@ -6814,7 +6814,7 @@ export default function FishingGame() {
                     background: charPanelTab === tab ? `${CHARACTER_VARIANTS[uiState.selectedCharacter].color}15` : "transparent",
                     borderBottom: charPanelTab === tab ? `2px solid ${CHARACTER_VARIANTS[uiState.selectedCharacter].color}` : "2px solid transparent",
                     color: charPanelTab === tab ? CHARACTER_VARIANTS[uiState.selectedCharacter].color : "#455a64",
-                    fontSize: 7,
+                    fontSize: 10,
                     fontFamily: "'Press Start 2P', monospace",
                     border: "none",
                     borderBottomWidth: 2,
@@ -6836,8 +6836,8 @@ export default function FishingGame() {
                 <div className="flex flex-col gap-3">
                   {uiState.attributePoints > 0 && (
                     <div className="flex items-center gap-2 p-2" style={{ background: "rgba(110,231,183,0.08)", borderRadius: 8, border: "1px solid rgba(110,231,183,0.2)" }}>
-                      <span style={{ color: "#6ee7b7", fontSize: 8 }}>Attribute Points Available:</span>
-                      <span style={{ color: "#6ee7b7", fontSize: 14, fontWeight: "bold" }}>{uiState.attributePoints}</span>
+                      <span style={{ color: "#6ee7b7", fontSize: 11 }}>Attribute Points Available:</span>
+                      <span style={{ color: "#6ee7b7", fontSize: 17, fontWeight: "bold" }}>{uiState.attributePoints}</span>
                     </div>
                   )}
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
@@ -6847,13 +6847,13 @@ export default function FishingGame() {
                       return (
                         <div key={attrKey} className="flex flex-col gap-1.5" style={{ background: "rgba(255,255,255,0.03)", borderRadius: 8, padding: 10, border: `1px solid ${def.color}18` }}>
                           <div className="flex items-center justify-between">
-                            <span style={{ color: def.color, fontSize: 8, fontWeight: "bold" }}>{attrKey}</span>
-                            <span style={{ color: "#e8eaf6", fontSize: 12, fontWeight: "bold" }}>{val}</span>
+                            <span style={{ color: def.color, fontSize: 11, fontWeight: "bold" }}>{attrKey}</span>
+                            <span style={{ color: "#e8eaf6", fontSize: 15, fontWeight: "bold" }}>{val}</span>
                           </div>
-                          <div style={{ color: "#607d8b", fontSize: 5, lineHeight: "1.6" }}>{def.description}</div>
+                          <div style={{ color: "#607d8b", fontSize: 8, lineHeight: "1.6" }}>{def.description}</div>
                           <div className="flex flex-col gap-0.5" style={{ marginTop: 2 }}>
                             {Object.values(def.gains).map(g => (
-                              <div key={g.label} className="flex justify-between" style={{ fontSize: 5, color: "#78909c" }}>
+                              <div key={g.label} className="flex justify-between" style={{ fontSize: 8, color: "#78909c" }}>
                                 <span>{g.label}</span>
                                 <span style={{ color: def.color }}>+{(g.perPoint * val).toFixed(1)}{g.unit}</span>
                               </div>
@@ -6867,7 +6867,7 @@ export default function FishingGame() {
                                 border: `1px solid ${def.color}40`,
                                 borderRadius: 4,
                                 color: def.color,
-                                fontSize: 6,
+                                fontSize: 9,
                                 padding: "3px 0",
                                 fontFamily: "'Press Start 2P', monospace",
                                 transition: "all 0.2s",
@@ -6889,7 +6889,7 @@ export default function FishingGame() {
                   </div>
                   {/* Derived Stats Summary */}
                   <div style={{ background: "rgba(0,0,0,0.2)", borderRadius: 8, padding: 10, border: "1px solid rgba(255,255,255,0.06)" }}>
-                    <div style={{ color: "#6ee7b7", fontSize: 8, marginBottom: 8 }}>DERIVED STATS</div>
+                    <div style={{ color: "#6ee7b7", fontSize: 11, marginBottom: 8 }}>DERIVED STATS</div>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6 }}>
                       {(() => {
                         const tG = 1 + uiState.attributes.Tactics * 0.005;
@@ -6915,8 +6915,8 @@ export default function FishingGame() {
                         ];
                       })().map(stat => (
                         <div key={stat.label} className="flex flex-col items-center gap-0.5" style={{ background: "rgba(255,255,255,0.02)", borderRadius: 4, padding: "4px 2px" }}>
-                          <span style={{ color: "#607d8b", fontSize: 5 }}>{stat.label}</span>
-                          <span style={{ color: stat.color, fontSize: 8, fontWeight: "bold" }}>{stat.value}</span>
+                          <span style={{ color: "#607d8b", fontSize: 8 }}>{stat.label}</span>
+                          <span style={{ color: stat.color, fontSize: 11, fontWeight: "bold" }}>{stat.value}</span>
                         </div>
                       ))}
                     </div>
@@ -6927,36 +6927,36 @@ export default function FishingGame() {
               {/* EQUIPMENT TAB */}
               {charPanelTab === "equipment" && (
                 <div className="flex flex-col gap-3">
-                  <div style={{ color: "#6ee7b7", fontSize: 8, marginBottom: 4 }}>EQUIPPED ROD</div>
+                  <div style={{ color: "#6ee7b7", fontSize: 11, marginBottom: 4 }}>EQUIPPED ROD</div>
                   <div className="flex items-center gap-3 p-3" style={{ background: "rgba(255,255,255,0.03)", borderRadius: 8, border: "1px solid rgba(46,204,113,0.15)" }}>
                     <img src={RODS[uiState.equippedRod].icon} alt="" style={{ width: 36, height: 36, imageRendering: "pixelated" }} />
                     <div className="flex flex-col gap-1 flex-1">
-                      <span style={{ color: "#2ecc71", fontSize: 9, fontWeight: "bold" }}>{RODS[uiState.equippedRod].name}</span>
-                      <span style={{ color: "#607d8b", fontSize: 6 }}>{RODS[uiState.equippedRod].description}</span>
+                      <span style={{ color: "#2ecc71", fontSize: 12, fontWeight: "bold" }}>{RODS[uiState.equippedRod].name}</span>
+                      <span style={{ color: "#607d8b", fontSize: 9 }}>{RODS[uiState.equippedRod].description}</span>
                       <div className="flex flex-wrap gap-x-3 gap-y-0.5" style={{ marginTop: 2 }}>
-                        <span style={{ fontSize: 5, color: "#5dade2" }}>Catch Zone: +{(RODS[uiState.equippedRod].catchZoneBonus * 100).toFixed(1)}%</span>
-                        <span style={{ fontSize: 5, color: "#f1c40f" }}>Reel Speed: x{RODS[uiState.equippedRod].reelSpeedMult}</span>
-                        <span style={{ fontSize: 5, color: "#e74c3c" }}>Line Str: x{RODS[uiState.equippedRod].lineStrength}</span>
+                        <span style={{ fontSize: 8, color: "#5dade2" }}>Catch Zone: +{(RODS[uiState.equippedRod].catchZoneBonus * 100).toFixed(1)}%</span>
+                        <span style={{ fontSize: 8, color: "#f1c40f" }}>Reel Speed: x{RODS[uiState.equippedRod].reelSpeedMult}</span>
+                        <span style={{ fontSize: 8, color: "#e74c3c" }}>Line Str: x{RODS[uiState.equippedRod].lineStrength}</span>
                       </div>
                     </div>
                   </div>
-                  <div style={{ color: "#6ee7b7", fontSize: 8, marginTop: 8, marginBottom: 4 }}>EQUIPPED BAIT / LURE</div>
+                  <div style={{ color: "#6ee7b7", fontSize: 11, marginTop: 8, marginBottom: 4 }}>EQUIPPED BAIT / LURE</div>
                   <div className="flex items-center gap-3 p-3" style={{ background: "rgba(255,255,255,0.03)", borderRadius: 8, border: "1px solid rgba(46,204,113,0.15)" }}>
                     <img src={LURES[uiState.equippedLure].icon} alt="" style={{ width: 36, height: 36, imageRendering: "pixelated" }} />
                     <div className="flex flex-col gap-1 flex-1">
-                      <span style={{ color: "#2ecc71", fontSize: 9, fontWeight: "bold" }}>{LURES[uiState.equippedLure].name}</span>
-                      <span style={{ color: "#607d8b", fontSize: 6 }}>{LURES[uiState.equippedLure].description}</span>
+                      <span style={{ color: "#2ecc71", fontSize: 12, fontWeight: "bold" }}>{LURES[uiState.equippedLure].name}</span>
+                      <span style={{ color: "#607d8b", fontSize: 9 }}>{LURES[uiState.equippedLure].description}</span>
                       <div className="flex flex-wrap gap-x-3 gap-y-0.5" style={{ marginTop: 2 }}>
-                        <span style={{ fontSize: 5, color: "#a855f7" }}>Rarity: x{LURES[uiState.equippedLure].rarityBoost}</span>
-                        <span style={{ fontSize: 5, color: "#f59e0b" }}>Size: +{LURES[uiState.equippedLure].sizeBoost}</span>
-                        <span style={{ fontSize: 5, color: "#5dade2" }}>Speed: x{LURES[uiState.equippedLure].speedBoost}</span>
+                        <span style={{ fontSize: 8, color: "#a855f7" }}>Rarity: x{LURES[uiState.equippedLure].rarityBoost}</span>
+                        <span style={{ fontSize: 8, color: "#f59e0b" }}>Size: +{LURES[uiState.equippedLure].sizeBoost}</span>
+                        <span style={{ fontSize: 8, color: "#5dade2" }}>Speed: x{LURES[uiState.equippedLure].speedBoost}</span>
                       </div>
                       {LURES[uiState.equippedLure].targetFish.length > 0 && (
-                        <span style={{ fontSize: 5, color: "#78909c", marginTop: 2 }}>Targets: {LURES[uiState.equippedLure].targetFish.join(", ")}</span>
+                        <span style={{ fontSize: 8, color: "#78909c", marginTop: 2 }}>Targets: {LURES[uiState.equippedLure].targetFish.join(", ")}</span>
                       )}
                     </div>
                   </div>
-                  <div style={{ color: "#6ee7b7", fontSize: 8, marginTop: 8, marginBottom: 4 }}>OWNED RODS</div>
+                  <div style={{ color: "#6ee7b7", fontSize: 11, marginTop: 8, marginBottom: 4 }}>OWNED RODS</div>
                   <div className="flex flex-col gap-1.5">
                     {RODS.map((rod, i) => (
                       <div key={rod.name} className="flex items-center gap-2 px-2 py-1.5" style={{
@@ -6966,9 +6966,9 @@ export default function FishingGame() {
                         opacity: uiState.ownedRods[i] ? 1 : 0.4,
                       }}>
                         <img src={rod.icon} alt="" style={{ width: 20, height: 20, imageRendering: "pixelated" }} />
-                        <span style={{ color: uiState.ownedRods[i] ? "#b0bec5" : "#37474f", fontSize: 7, flex: 1 }}>{rod.name}</span>
-                        {i === uiState.equippedRod && <span style={{ color: "#2ecc71", fontSize: 5 }}>EQUIPPED</span>}
-                        {!uiState.ownedRods[i] && <span style={{ color: "#455a64", fontSize: 5 }}>LOCKED</span>}
+                        <span style={{ color: uiState.ownedRods[i] ? "#b0bec5" : "#37474f", fontSize: 10, flex: 1 }}>{rod.name}</span>
+                        {i === uiState.equippedRod && <span style={{ color: "#2ecc71", fontSize: 8 }}>EQUIPPED</span>}
+                        {!uiState.ownedRods[i] && <span style={{ color: "#455a64", fontSize: 8 }}>LOCKED</span>}
                       </div>
                     ))}
                   </div>
@@ -6978,11 +6978,11 @@ export default function FishingGame() {
               {/* HISTORY TAB */}
               {charPanelTab === "history" && (
                 <div className="flex flex-col gap-2">
-                  <div style={{ color: "#6ee7b7", fontSize: 8, marginBottom: 4 }}>RECENT CATCHES</div>
+                  <div style={{ color: "#6ee7b7", fontSize: 11, marginBottom: 4 }}>RECENT CATCHES</div>
                   {uiState.catchHistory.length === 0 && (
                     <div className="flex flex-col items-center justify-center mt-6 gap-2">
                       <img src="/assets/icons/Icons_03.png" alt="" className="w-8 h-8 opacity-30" style={{ imageRendering: "pixelated" }} />
-                      <span style={{ color: "#455a64", fontSize: 7 }}>No catches yet</span>
+                      <span style={{ color: "#455a64", fontSize: 10 }}>No catches yet</span>
                     </div>
                   )}
                   {uiState.catchHistory.map((entry, idx) => (
@@ -6992,21 +6992,21 @@ export default function FishingGame() {
                       border: `1px solid ${rarityColor(entry.rarity)}18`,
                     }}>
                       <div className="flex flex-col items-center" style={{ minWidth: 20 }}>
-                        <span style={{ color: "#455a64", fontSize: 5 }}>#{idx + 1}</span>
+                        <span style={{ color: "#455a64", fontSize: 8 }}>#{idx + 1}</span>
                       </div>
                       <div className="flex-1 flex flex-col gap-0.5">
-                        <span style={{ color: rarityColor(entry.rarity), fontSize: 8, fontWeight: "bold" }}>{entry.name}</span>
+                        <span style={{ color: rarityColor(entry.rarity), fontSize: 11, fontWeight: "bold" }}>{entry.name}</span>
                         <div className="flex flex-wrap gap-x-3 gap-y-0">
-                          <span style={{ color: "#78909c", fontSize: 5 }}>Size: {entry.size.toFixed(1)}x</span>
-                          <span style={{ color: "#78909c", fontSize: 5 }}>Weight: {entry.weight.toFixed(1)} lbs</span>
-                          <span className="flex items-center gap-0.5" style={{ fontSize: 5 }}>
+                          <span style={{ color: "#78909c", fontSize: 8 }}>Size: {entry.size.toFixed(1)}x</span>
+                          <span style={{ color: "#78909c", fontSize: 8 }}>Weight: {entry.weight.toFixed(1)} lbs</span>
+                          <span className="flex items-center gap-0.5" style={{ fontSize: 8 }}>
                             <img src="/assets/icons/gbux.png" alt="" style={{ width: 8, height: 8, imageRendering: "pixelated" }} />
                             <span style={{ color: "#f1c40f" }}>{entry.sellPrice}</span>
                           </span>
                         </div>
                       </div>
                       <span style={{
-                        fontSize: 5, color: "#0a0f1a", fontWeight: "bold",
+                        fontSize: 8, color: "#0a0f1a", fontWeight: "bold",
                         background: rarityColor(entry.rarity), borderRadius: 3,
                         padding: "1px 4px", textTransform: "uppercase",
                       }}>{entry.rarity === "ultra_rare" ? "ULTRA" : entry.rarity}</span>
@@ -7019,21 +7019,21 @@ export default function FishingGame() {
               {charPanelTab === "collection" && (
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-between mb-2">
-                    <div style={{ color: "#6ee7b7", fontSize: 8 }}>FISH COLLECTION</div>
-                    <span style={{ color: "#455a64", fontSize: 6 }}>{uiState.caughtCollection.filter(([,e]) => e.type).length}/{FISH_TYPES.length}</span>
+                    <div style={{ color: "#6ee7b7", fontSize: 11 }}>FISH COLLECTION</div>
+                    <span style={{ color: "#455a64", fontSize: 9 }}>{uiState.caughtCollection.filter(([,e]) => e.type).length}/{FISH_TYPES.length}</span>
                   </div>
                   <div className="flex flex-wrap gap-3 mb-3" style={{ background: "rgba(255,255,255,0.02)", borderRadius: 8, padding: 8 }}>
                     <div className="flex flex-col items-center gap-0.5" style={{ minWidth: 50 }}>
-                      <span style={{ color: "#78909c", fontSize: 5 }}>TOTAL CAUGHT</span>
-                      <span style={{ color: "#5dade2", fontSize: 10 }}>{uiState.totalCaught}</span>
+                      <span style={{ color: "#78909c", fontSize: 8 }}>TOTAL CAUGHT</span>
+                      <span style={{ color: "#5dade2", fontSize: 13 }}>{uiState.totalCaught}</span>
                     </div>
                     <div className="flex flex-col items-center gap-0.5" style={{ minWidth: 50 }}>
-                      <span style={{ color: "#78909c", fontSize: 5 }}>BEST COMBO</span>
-                      <span style={{ color: "#f5b7b1", fontSize: 10 }}>x{uiState.bestCombo}</span>
+                      <span style={{ color: "#78909c", fontSize: 8 }}>BEST COMBO</span>
+                      <span style={{ color: "#f5b7b1", fontSize: 13 }}>x{uiState.bestCombo}</span>
                     </div>
                     <div className="flex flex-col items-center gap-0.5" style={{ minWidth: 60 }}>
-                      <span style={{ color: "#78909c", fontSize: 5 }}>TOTAL WEIGHT</span>
-                      <span style={{ color: "#78909c", fontSize: 10 }}>{Math.round(uiState.caughtCollection.reduce((sum, [,e]) => sum + e.totalWeight, 0) * 10) / 10} lbs</span>
+                      <span style={{ color: "#78909c", fontSize: 8 }}>TOTAL WEIGHT</span>
+                      <span style={{ color: "#78909c", fontSize: 13 }}>{Math.round(uiState.caughtCollection.reduce((sum, [,e]) => sum + e.totalWeight, 0) * 10) / 10} lbs</span>
                     </div>
                   </div>
                   {uiState.caughtCollection.map(([name, entry]) => {
@@ -7044,16 +7044,16 @@ export default function FishingGame() {
                           <div className="flex items-center justify-center" style={{ width: 40, height: 40, background: "rgba(0,0,0,0.3)", borderRadius: 6, overflow: "hidden" }}>
                             <img src={entry.type?.catchAsset || entry.junk?.asset || ""} alt={name} style={{ imageRendering: "pixelated", width: entry.type?.catchW ? entry.type.catchW * 2 : 36, height: entry.type?.catchH ? entry.type.catchH * 2 : 36, objectFit: "none", objectPosition: "left center" }} />
                           </div>
-                          <span style={{ fontSize: 5, color: "#0a0f1a", fontWeight: "bold", background: rarityColor(rarity), borderRadius: 3, padding: "1px 3px", textTransform: "uppercase" }}>
+                          <span style={{ fontSize: 8, color: "#0a0f1a", fontWeight: "bold", background: rarityColor(rarity), borderRadius: 3, padding: "1px 3px", textTransform: "uppercase" }}>
                             {rarity === "ultra_rare" ? "ULTRA" : rarity}
                           </span>
                         </div>
                         <div className="flex-1 min-w-0 flex flex-col gap-0.5">
-                          <span className="truncate" style={{ color: rarityColor(rarity), fontSize: 8, fontWeight: "bold" }}>{name}</span>
+                          <span className="truncate" style={{ color: rarityColor(rarity), fontSize: 11, fontWeight: "bold" }}>{name}</span>
                           <div className="flex flex-wrap gap-x-3 gap-y-0">
-                            <span style={{ color: "#5dade2", fontSize: 5 }}>x{entry.count}</span>
-                            <span style={{ color: "#9b59b6", fontSize: 5 }}>Best: {entry.biggestSize.toFixed(1)}x</span>
-                            <span style={{ color: "#78909c", fontSize: 5 }}>{Math.round(entry.totalWeight * 10) / 10} lbs</span>
+                            <span style={{ color: "#5dade2", fontSize: 8 }}>x{entry.count}</span>
+                            <span style={{ color: "#9b59b6", fontSize: 8 }}>Best: {entry.biggestSize.toFixed(1)}x</span>
+                            <span style={{ color: "#78909c", fontSize: 8 }}>{Math.round(entry.totalWeight * 10) / 10} lbs</span>
                           </div>
                         </div>
                       </div>
@@ -7065,8 +7065,8 @@ export default function FishingGame() {
                         <span style={{ fontSize: 16, color: "#2a3a4a" }}>?</span>
                       </div>
                       <div className="flex-1 min-w-0 flex flex-col gap-0.5">
-                        <span style={{ color: "#37474f", fontSize: 7 }}>???</span>
-                        <span style={{ color: rarityColor(ft.rarity), fontSize: 5, textTransform: "uppercase" }}>{ft.rarity === "ultra_rare" ? "ULTRA RARE" : ft.rarity}</span>
+                        <span style={{ color: "#37474f", fontSize: 10 }}>???</span>
+                        <span style={{ color: rarityColor(ft.rarity), fontSize: 8, textTransform: "uppercase" }}>{ft.rarity === "ultra_rare" ? "ULTRA RARE" : ft.rarity}</span>
                       </div>
                     </div>
                   ))}
@@ -7076,7 +7076,7 @@ export default function FishingGame() {
 
             {/* Footer hint */}
             <div className="flex items-center justify-center py-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)", background: "rgba(0,0,0,0.15)" }}>
-              <span style={{ color: "#37474f", fontSize: 5 }}>Press TAB to close</span>
+              <span style={{ color: "#37474f", fontSize: 8 }}>Press TAB to close</span>
             </div>
           </div>
         </div>
@@ -7099,14 +7099,14 @@ export default function FishingGame() {
           <div className="flex items-center justify-between p-3" style={{ borderBottom: "1px solid rgba(52,152,219,0.2)" }}>
             <div className="flex items-center gap-2">
               <img src="/assets/icons/Icons_05.png" alt="" className="w-5 h-5" style={{ imageRendering: "pixelated" }} />
-              <span style={{ color: "#3498db", fontSize: 10 }}>FISH LOG</span>
-              <span style={{ color: "#455a64", fontSize: 7 }}>
+              <span style={{ color: "#3498db", fontSize: 13 }}>FISH LOG</span>
+              <span style={{ color: "#455a64", fontSize: 10 }}>
                 {uiState.caughtCollection.filter(([,e]) => e.type).length}/{FISH_TYPES.length} species
               </span>
             </div>
             <button
               className="cursor-pointer px-2 py-1"
-              style={{ background: "rgba(255,255,255,0.08)", borderRadius: 4, border: "1px solid rgba(255,255,255,0.15)", fontFamily: "'Press Start 2P', monospace", color: "#78909c", fontSize: 10 }}
+              style={{ background: "rgba(255,255,255,0.08)", borderRadius: 4, border: "1px solid rgba(255,255,255,0.15)", fontFamily: "'Press Start 2P', monospace", color: "#78909c", fontSize: 13 }}
               onClick={() => setShowCollection(false)}
               data-testid="button-close-collection"
             >
@@ -7117,24 +7117,24 @@ export default function FishingGame() {
           {/* Player Stats */}
           <div className="flex flex-wrap gap-3 px-3 py-2.5" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.02)" }}>
             <div className="flex flex-col items-center gap-0.5" style={{ minWidth: 60 }}>
-              <span style={{ color: "#78909c", fontSize: 6 }}>SCORE</span>
-              <span style={{ color: "#ffd54f", fontSize: 10 }}>{uiState.score}</span>
+              <span style={{ color: "#78909c", fontSize: 9 }}>SCORE</span>
+              <span style={{ color: "#ffd54f", fontSize: 13 }}>{uiState.score}</span>
             </div>
             <div className="flex flex-col items-center gap-0.5" style={{ minWidth: 50 }}>
-              <span style={{ color: "#78909c", fontSize: 6 }}>CAUGHT</span>
-              <span style={{ color: "#5dade2", fontSize: 10 }}>{uiState.totalCaught}</span>
+              <span style={{ color: "#78909c", fontSize: 9 }}>CAUGHT</span>
+              <span style={{ color: "#5dade2", fontSize: 13 }}>{uiState.totalCaught}</span>
             </div>
             <div className="flex flex-col items-center gap-0.5" style={{ minWidth: 50 }}>
-              <span style={{ color: "#78909c", fontSize: 6 }}>BEST COMBO</span>
-              <span style={{ color: "#f5b7b1", fontSize: 10 }}>x{uiState.bestCombo}</span>
+              <span style={{ color: "#78909c", fontSize: 9 }}>BEST COMBO</span>
+              <span style={{ color: "#f5b7b1", fontSize: 13 }}>x{uiState.bestCombo}</span>
             </div>
             <div className="flex flex-col items-center gap-0.5" style={{ minWidth: 50 }}>
-              <span style={{ color: "#78909c", fontSize: 6 }}>ROD LV</span>
-              <span style={{ color: "#9b59b6", fontSize: 10 }}>{uiState.rodLevel}</span>
+              <span style={{ color: "#78909c", fontSize: 9 }}>ROD LV</span>
+              <span style={{ color: "#9b59b6", fontSize: 13 }}>{uiState.rodLevel}</span>
             </div>
             <div className="flex flex-col items-center gap-0.5" style={{ minWidth: 60 }}>
-              <span style={{ color: "#78909c", fontSize: 6 }}>TOTAL WEIGHT</span>
-              <span style={{ color: "#78909c", fontSize: 10 }}>
+              <span style={{ color: "#78909c", fontSize: 9 }}>TOTAL WEIGHT</span>
+              <span style={{ color: "#78909c", fontSize: 13 }}>
                 {Math.round(uiState.caughtCollection.reduce((sum, [,e]) => sum + e.totalWeight, 0) * 10) / 10} lbs
               </span>
             </div>
@@ -7144,7 +7144,7 @@ export default function FishingGame() {
             {uiState.caughtCollection.length === 0 && (
               <div className="flex flex-col items-center justify-center mt-8 gap-3">
                 <img src="/assets/icons/Icons_03.png" alt="" className="w-10 h-10 opacity-30" style={{ imageRendering: "pixelated" }} />
-                <span style={{ color: "#455a64", fontSize: 8, textAlign: "center", lineHeight: "1.5" }}>
+                <span style={{ color: "#455a64", fontSize: 11, textAlign: "center", lineHeight: "1.5" }}>
                   No fish caught yet!<br />Start fishing to fill<br />your collection.
                 </span>
               </div>
@@ -7172,7 +7172,7 @@ export default function FishingGame() {
                     </div>
                     {entry.type && (
                       <span style={{
-                        fontSize: 6, color: "#0a0f1a", fontWeight: "bold",
+                        fontSize: 9, color: "#0a0f1a", fontWeight: "bold",
                         background: rarityColor(rarity), borderRadius: 3,
                         padding: "1px 4px", textTransform: "uppercase",
                       }}>
@@ -7181,20 +7181,20 @@ export default function FishingGame() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0 flex flex-col gap-1">
-                    <div className="truncate" style={{ color: rarityColor(rarity), fontSize: 10, fontWeight: "bold" }}>{name}</div>
+                    <div className="truncate" style={{ color: rarityColor(rarity), fontSize: 13, fontWeight: "bold" }}>{name}</div>
                     {entry.type && (
-                      <div style={{ color: "#607d8b", fontSize: 7, lineHeight: "1.6" }}>
+                      <div style={{ color: "#607d8b", fontSize: 10, lineHeight: "1.6" }}>
                         {entry.type.description}
                       </div>
                     )}
                     <div className="flex flex-wrap gap-x-3 gap-y-0.5" style={{ marginTop: 2 }}>
-                      <span style={{ color: "#5dade2", fontSize: 7 }}>Caught: {entry.count}</span>
-                      <span style={{ color: "#f1c40f", fontSize: 7 }}>Pts: {entry.type?.points || 0}</span>
-                      <span style={{ color: "#e74c3c", fontSize: 7 }}>Combo: x{entry.bestCombo}</span>
+                      <span style={{ color: "#5dade2", fontSize: 10 }}>Caught: {entry.count}</span>
+                      <span style={{ color: "#f1c40f", fontSize: 10 }}>Pts: {entry.type?.points || 0}</span>
+                      <span style={{ color: "#e74c3c", fontSize: 10 }}>Combo: x{entry.bestCombo}</span>
                     </div>
                     <div className="flex flex-wrap gap-x-3 gap-y-0.5">
-                      <span style={{ color: "#9b59b6", fontSize: 7 }}>Biggest: {sizeLabel} ({entry.biggestSize.toFixed(1)}x)</span>
-                      <span style={{ color: "#78909c", fontSize: 7 }}>Total: {Math.round(entry.totalWeight * 10) / 10} lbs</span>
+                      <span style={{ color: "#9b59b6", fontSize: 10 }}>Biggest: {sizeLabel} ({entry.biggestSize.toFixed(1)}x)</span>
+                      <span style={{ color: "#78909c", fontSize: 10 }}>Total: {Math.round(entry.totalWeight * 10) / 10} lbs</span>
                     </div>
                   </div>
                 </div>
@@ -7216,9 +7216,9 @@ export default function FishingGame() {
                   <span style={{ fontSize: 18, color: "#2a3a4a" }}>?</span>
                 </div>
                 <div className="flex-1 min-w-0 flex flex-col gap-0.5">
-                  <div style={{ color: "#37474f", fontSize: 9 }}>???</div>
-                  <div style={{ color: rarityColor(ft.rarity), fontSize: 6, textTransform: "uppercase" }}>{ft.rarity === "ultra_rare" ? "ULTRA RARE" : ft.rarity}</div>
-                  <div style={{ color: "#2a3a4a", fontSize: 7 }}>Not yet discovered</div>
+                  <div style={{ color: "#37474f", fontSize: 12 }}>???</div>
+                  <div style={{ color: rarityColor(ft.rarity), fontSize: 9, textTransform: "uppercase" }}>{ft.rarity === "ultra_rare" ? "ULTRA RARE" : ft.rarity}</div>
+                  <div style={{ color: "#2a3a4a", fontSize: 10 }}>Not yet discovered</div>
                 </div>
               </div>
             ))}
@@ -7524,12 +7524,12 @@ export default function FishingGame() {
             background: "rgba(8,15,25,0.9)",
             border: `1px solid ${active ? "rgba(46,204,113,0.4)" : "rgba(231,76,60,0.4)"}`,
             borderRadius: 8, padding: "6px 12px",
-            color: active ? "#2ecc71" : "#e74c3c", fontSize: 7,
+            color: active ? "#2ecc71" : "#e74c3c", fontSize: 10,
             fontFamily: "'Press Start 2P', monospace", pointerEvents: "none",
           }}>
-            <div style={{ opacity: 0.7, fontSize: 5, marginBottom: 2 }}>SESSION</div>
+            <div style={{ opacity: 0.7, fontSize: 8, marginBottom: 2 }}>SESSION</div>
             <div>{active ? `${mins}:${secs.toString().padStart(2, "0")}` : "ENDED"}</div>
-            <div style={{ opacity: 0.6, fontSize: 5, marginTop: 2 }}>{stateRef.current.sessionCatches} CATCHES</div>
+            <div style={{ opacity: 0.6, fontSize: 8, marginTop: 2 }}>{stateRef.current.sessionCatches} CATCHES</div>
           </div>
         );
       })()}
@@ -7555,7 +7555,7 @@ export default function FishingGame() {
             position: "absolute", bottom: 14, left: 14, zIndex: 55,
             background: "rgba(8,15,25,0.9)", border: "1px solid rgba(79,195,247,0.4)",
             borderRadius: 8, padding: "8px 14px", cursor: "pointer",
-            color: "#4fc3f7", fontSize: 9, fontFamily: "'Press Start 2P', monospace",
+            color: "#4fc3f7", fontSize: 12, fontFamily: "'Press Start 2P', monospace",
             display: "flex", alignItems: "center", gap: 8, pointerEvents: "auto",
           }}
         >
@@ -7582,7 +7582,7 @@ export default function FishingGame() {
             position: "absolute", bottom: 14, left: 170, zIndex: 55,
             background: "rgba(8,15,25,0.9)", border: "1px solid rgba(46,204,113,0.4)",
             borderRadius: 8, padding: "8px 14px", cursor: "pointer",
-            color: "#2ecc71", fontSize: 9, fontFamily: "'Press Start 2P', monospace",
+            color: "#2ecc71", fontSize: 12, fontFamily: "'Press Start 2P', monospace",
             display: "flex", alignItems: "center", gap: 8, pointerEvents: "auto",
           }}
         >
@@ -7607,40 +7607,40 @@ export default function FishingGame() {
             <div style={{ background: "linear-gradient(90deg, rgba(168,85,247,0.2), rgba(239,68,68,0.2))", padding: "16px 24px", borderBottom: "1px solid rgba(168,85,247,0.3)" }}>
               <div style={{ textAlign: "center" }}>
                 <div style={{ color: "#a855f7", fontSize: 18, letterSpacing: 3, marginBottom: 6 }}>LIMITED EDITION</div>
-                <div style={{ color: "#f59e0b", fontSize: 13, letterSpacing: 2 }}>BetaXGruda Eggs & Warlords</div>
+                <div style={{ color: "#f59e0b", fontSize: 16, letterSpacing: 2 }}>BetaXGruda Eggs & Warlords</div>
               </div>
             </div>
 
             <div style={{ padding: "20px 24px", overflowY: "auto" }}>
               <div style={{ display: "flex", gap: 16, marginBottom: 20 }}>
                 <div style={{ flex: 1, background: "rgba(168,85,247,0.08)", borderRadius: 10, border: "1px solid rgba(168,85,247,0.25)", padding: 14, textAlign: "center" }}>
-                  <div style={{ color: "#ec4899", fontSize: 14, marginBottom: 6 }}>BETA EGGS</div>
+                  <div style={{ color: "#ec4899", fontSize: 17, marginBottom: 6 }}>BETA EGGS</div>
                   <div style={{ color: "#f59e0b", fontSize: 22, marginBottom: 4 }}>{BETA_EGG_MAX_STOCK}</div>
-                  <div style={{ color: "#78909c", fontSize: 10, lineHeight: "1.8" }}>Only {BETA_EGG_MAX_STOCK} of each<br />beta fish egg exist</div>
+                  <div style={{ color: "#78909c", fontSize: 13, lineHeight: "1.8" }}>Only {BETA_EGG_MAX_STOCK} of each<br />beta fish egg exist</div>
                   <div style={{ marginTop: 8, display: "flex", justifyContent: "center", gap: 6 }}>
                     <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#ef4444" }} />
                     <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#22c55e" }} />
                     <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#3b82f6" }} />
                     <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#e0e0e0" }} />
                   </div>
-                  <div style={{ color: "#78909c", fontSize: 8, marginTop: 6 }}>Crimson / Emerald / Sapphire / Ivory</div>
+                  <div style={{ color: "#78909c", fontSize: 11, marginTop: 6 }}>Crimson / Emerald / Sapphire / Ivory</div>
                 </div>
                 <div style={{ flex: 1, background: "rgba(239,68,68,0.08)", borderRadius: 10, border: "1px solid rgba(239,68,68,0.25)", padding: 14, textAlign: "center" }}>
-                  <div style={{ color: "#ef4444", fontSize: 14, marginBottom: 6 }}>WARLORDS</div>
+                  <div style={{ color: "#ef4444", fontSize: 17, marginBottom: 6 }}>WARLORDS</div>
                   <div style={{ color: "#f59e0b", fontSize: 22, marginBottom: 4 }}>{WARLORD_EGG_MAX_STOCK}</div>
-                  <div style={{ color: "#78909c", fontSize: 10, lineHeight: "1.8" }}>Only {WARLORD_EGG_MAX_STOCK} of each<br />warlord egg exist</div>
+                  <div style={{ color: "#78909c", fontSize: 13, lineHeight: "1.8" }}>Only {WARLORD_EGG_MAX_STOCK} of each<br />warlord egg exist</div>
                   <div style={{ marginTop: 8, display: "flex", justifyContent: "center", gap: 6 }}>
                     <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#a855f7" }} />
                     <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#94a3b8" }} />
                     <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#16a34a" }} />
                   </div>
-                  <div style={{ color: "#78909c", fontSize: 8, marginTop: 6 }}>Dusk Tyrant / Iron Sovereign / Venom King</div>
+                  <div style={{ color: "#78909c", fontSize: 11, marginTop: 6 }}>Dusk Tyrant / Iron Sovereign / Venom King</div>
                 </div>
               </div>
 
               <div style={{ background: "rgba(245,158,11,0.08)", borderRadius: 8, border: "1px solid rgba(245,158,11,0.25)", padding: 12, marginBottom: 16 }}>
-                <div style={{ color: "#f59e0b", fontSize: 12, marginBottom: 6, textAlign: "center" }}>HOW TO EARN</div>
-                <div style={{ color: "#b0bec5", fontSize: 10, lineHeight: "2", textAlign: "center" }}>
+                <div style={{ color: "#f59e0b", fontSize: 15, marginBottom: 6, textAlign: "center" }}>HOW TO EARN</div>
+                <div style={{ color: "#b0bec5", fontSize: 13, lineHeight: "2", textAlign: "center" }}>
                   Catch each of the <span style={{ color: "#ff4060" }}>Legendary 9</span> fish species for the first time to earn
                   <span style={{ color: "#a855f7" }}> Head of Legends</span> currency.<br />
                   Spend them in the <span style={{ color: "#f1c40f" }}>SHOP</span> under the EGGS tab.
@@ -7648,7 +7648,7 @@ export default function FishingGame() {
               </div>
 
               <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: 8, border: "1px solid rgba(255,255,255,0.06)", padding: 12, marginBottom: 16 }}>
-                <div style={{ color: "#78909c", fontSize: 10, lineHeight: "1.8", textAlign: "center" }}>
+                <div style={{ color: "#78909c", fontSize: 13, lineHeight: "1.8", textAlign: "center" }}>
                   Beta eggs cost <span style={{ color: "#a855f7" }}>1 Head</span> each.<br />
                   Warlord eggs cost <span style={{ color: "#ef4444" }}>2 Heads</span> each.<br />
                   Once sold out, they are <span style={{ color: "#f59e0b" }}>gone forever</span>.
@@ -7663,7 +7663,7 @@ export default function FishingGame() {
                 style={{
                   background: "linear-gradient(135deg, rgba(168,85,247,0.3), rgba(239,68,68,0.3))",
                   border: "2px solid rgba(168,85,247,0.5)", borderRadius: 10,
-                  padding: "10px 40px", color: "#e0e0e0", fontSize: 12,
+                  padding: "10px 40px", color: "#e0e0e0", fontSize: 15,
                   fontFamily: "'Press Start 2P', monospace", letterSpacing: 2,
                 }}
                 data-testid="button-close-promo"
@@ -7727,14 +7727,14 @@ export default function FishingGame() {
                 background: "rgba(8,15,25,0.95)", border: "2px solid rgba(79,195,247,0.5)",
                 borderRadius: 14, padding: "24px 28px", maxWidth: 380, width: "90%", textAlign: "center",
               }}>
-                <div style={{ fontSize: 9, color: "#607d8b", marginBottom: 8 }}>
+                <div style={{ fontSize: 12, color: "#607d8b", marginBottom: 8 }}>
                   {uiState.tutorialStep + 1} / {steps.length}
                 </div>
                 <img src={step.icon} alt="" style={{ width: 32, height: 32, imageRendering: "pixelated", margin: "0 auto 10px" }} />
-                <div style={{ fontSize: 12, color: "#4fc3f7", marginBottom: 12, textShadow: "1px 1px 0 #000" }}>
+                <div style={{ fontSize: 15, color: "#4fc3f7", marginBottom: 12, textShadow: "1px 1px 0 #000" }}>
                   {step.title}
                 </div>
-                <div style={{ fontSize: 8, color: "#b0bec5", lineHeight: 1.8, marginBottom: 20 }}>
+                <div style={{ fontSize: 11, color: "#b0bec5", lineHeight: 1.8, marginBottom: 20 }}>
                   {step.desc}
                 </div>
                 <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
@@ -7746,7 +7746,7 @@ export default function FishingGame() {
                       }}
                       style={{
                         background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)",
-                        borderRadius: 6, padding: "8px 16px", color: "#90a4ae", fontSize: 8,
+                        borderRadius: 6, padding: "8px 16px", color: "#90a4ae", fontSize: 11,
                         fontFamily: "'Press Start 2P', monospace", cursor: "pointer",
                       }}
                       data-testid="button-tutorial-back"
@@ -7768,7 +7768,7 @@ export default function FishingGame() {
                     style={{
                       background: "linear-gradient(135deg, rgba(79,195,247,0.3), rgba(241,196,15,0.2))",
                       border: "2px solid rgba(241,196,15,0.5)", borderRadius: 6,
-                      padding: "8px 20px", color: "#f1c40f", fontSize: 8,
+                      padding: "8px 20px", color: "#f1c40f", fontSize: 11,
                       fontFamily: "'Press Start 2P', monospace", cursor: "pointer",
                     }}
                     data-testid="button-tutorial-next"
@@ -7783,7 +7783,7 @@ export default function FishingGame() {
                     syncUI();
                   }}
                   style={{
-                    background: "none", border: "none", color: "#546e7a", fontSize: 7,
+                    background: "none", border: "none", color: "#546e7a", fontSize: 10,
                     fontFamily: "'Press Start 2P', monospace", cursor: "pointer", marginTop: 14,
                   }}
                   data-testid="button-tutorial-skip"
@@ -7810,7 +7810,7 @@ export default function FishingGame() {
             boxShadow: "0 0 60px rgba(79,195,247,0.1)",
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-              <div style={{ color: "#4fc3f7", fontSize: 14, letterSpacing: 2 }}>LEADERBOARD</div>
+              <div style={{ color: "#4fc3f7", fontSize: 17, letterSpacing: 2 }}>LEADERBOARD</div>
               <div
                 data-testid="button-close-leaderboard"
                 onClick={() => { stateRef.current.showLeaderboard = false; syncUI(); }}
@@ -7834,7 +7834,7 @@ export default function FishingGame() {
                   }}
                   style={{
                     flex: 1, textAlign: "center", padding: "8px 4px", cursor: "pointer",
-                    fontSize: 7, letterSpacing: 1, borderRadius: 6,
+                    fontSize: 10, letterSpacing: 1, borderRadius: 6,
                     background: uiState.leaderboardTab === tab ? "rgba(79,195,247,0.2)" : "rgba(255,255,255,0.03)",
                     border: `1px solid ${uiState.leaderboardTab === tab ? "rgba(79,195,247,0.5)" : "rgba(255,255,255,0.08)"}`,
                     color: uiState.leaderboardTab === tab ? "#4fc3f7" : "#78909c",
@@ -7847,12 +7847,12 @@ export default function FishingGame() {
 
             <div style={{ flex: 1, overflowY: "auto", minHeight: 200 }}>
               {uiState.leaderboardLoading ? (
-                <div style={{ textAlign: "center", color: "#4fc3f7", fontSize: 8, padding: 40 }}>LOADING...</div>
+                <div style={{ textAlign: "center", color: "#4fc3f7", fontSize: 11, padding: 40 }}>LOADING...</div>
               ) : uiState.leaderboardData.length === 0 ? (
-                <div style={{ textAlign: "center", color: "#546e7a", fontSize: 8, padding: 40 }}>NO ENTRIES YET - BE THE FIRST!</div>
+                <div style={{ textAlign: "center", color: "#546e7a", fontSize: 11, padding: 40 }}>NO ENTRIES YET - BE THE FIRST!</div>
               ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                  <div style={{ display: "flex", padding: "6px 10px", color: "#546e7a", fontSize: 6, borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                  <div style={{ display: "flex", padding: "6px 10px", color: "#546e7a", fontSize: 9, borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                     <div style={{ width: 30 }}>#</div>
                     <div style={{ flex: 1 }}>PLAYER</div>
                     {uiState.leaderboardTab !== "session" && <div style={{ width: 100 }}>FISH</div>}
@@ -7871,18 +7871,18 @@ export default function FishingGame() {
                         <div style={{ width: 30, color: isTop3 ? medalColors[i] : "#546e7a", fontSize: isTop3 ? 10 : 7, fontWeight: "bold" }}>
                           {i + 1}
                         </div>
-                        <div style={{ flex: 1, color: isTop3 ? "#e0e0e0" : "#90a4ae", fontSize: 7 }}>
+                        <div style={{ flex: 1, color: isTop3 ? "#e0e0e0" : "#90a4ae", fontSize: 10 }}>
                           {entry.playerName}
                         </div>
                         {uiState.leaderboardTab !== "session" && (
-                          <div style={{ width: 100, fontSize: 6, color: entry.fishRarity === "ultra_rare" ? "#ff4060" : entry.fishRarity === "legendary" ? "#f0a020" : "#78909c" }}>
+                          <div style={{ width: 100, fontSize: 9, color: entry.fishRarity === "ultra_rare" ? "#ff4060" : entry.fishRarity === "legendary" ? "#f0a020" : "#78909c" }}>
                             {entry.fishName || "-"}
                           </div>
                         )}
-                        <div style={{ width: 70, textAlign: "right", color: "#4fc3f7", fontSize: 8 }}>
+                        <div style={{ width: 70, textAlign: "right", color: "#4fc3f7", fontSize: 11 }}>
                           {uiState.leaderboardTab === "session" ? Math.round(entry.value) : entry.value?.toFixed(1)}
                         </div>
-                        <div style={{ width: 70, textAlign: "right", color: "#f1c40f", fontSize: 7 }}>
+                        <div style={{ width: 70, textAlign: "right", color: "#f1c40f", fontSize: 10 }}>
                           {entry.score}
                         </div>
                       </div>
@@ -7982,7 +7982,7 @@ export default function FishingGame() {
               border: `2px solid ${active ? color : "rgba(255,255,255,0.12)"}`,
               background: active ? `${color}25` : "rgba(8,15,25,0.8)",
               color: active ? color : "rgba(255,255,255,0.4)",
-              fontSize: 7, fontFamily: "'Press Start 2P', monospace",
+              fontSize: 10, fontFamily: "'Press Start 2P', monospace",
               display: "flex" as const, flexDirection: "column" as const, alignItems: "center" as const, justifyContent: "center" as const,
               gap: 3, touchAction: "none" as const,
               transition: "all 0.1s",
@@ -8108,7 +8108,7 @@ export default function FishingGame() {
                   disabled={!isReeling || uiState.resilience <= 0}
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                  <span style={{ fontSize: 6 }}>RES {uiState.resilience}/{uiState.resilienceMax}</span>
+                  <span style={{ fontSize: 9 }}>RES {uiState.resilience}/{uiState.resilienceMax}</span>
                 </button>
               </div>
             );
@@ -8149,7 +8149,7 @@ export default function FishingGame() {
                 width: 44, height: 44, borderRadius: 10,
                 border: "1px solid rgba(255,255,255,0.15)",
                 background: "rgba(8,15,25,0.8)", color: "#78909c",
-                fontSize: 7, fontFamily: "'Press Start 2P', monospace",
+                fontSize: 10, fontFamily: "'Press Start 2P', monospace",
                 display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
                 gap: 2, touchAction: "none",
               }}
@@ -8172,7 +8172,7 @@ export default function FishingGame() {
                 width: 44, height: 44, borderRadius: 10,
                 border: "1px solid rgba(93,173,226,0.3)",
                 background: "rgba(93,173,226,0.1)", color: "#5dade2",
-                fontSize: 6, fontFamily: "'Press Start 2P', monospace",
+                fontSize: 9, fontFamily: "'Press Start 2P', monospace",
                 display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
                 gap: 2, touchAction: "none",
               }}
