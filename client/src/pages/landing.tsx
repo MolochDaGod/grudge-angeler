@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 
 import oceanBgImg from "@assets/19c5a9e200bbc_1771115046741.png";
 import oceanRippleImg from "@assets/19c5a9be75d2a_1771115056616.png";
+import rodsSpriteImg from "@assets/image_1771120464498.png";
 
 import phantomMinnowImg from "../assets/images/legendary-phantom-minnow.png";
 import volcanicPerchImg from "../assets/images/legendary-volcanic-perch.png";
@@ -61,11 +62,11 @@ const RARITY_LABELS: Record<string, string> = {
 };
 
 const arsenalRods = [
-  { name: "Bamboo Rod", icon: "/assets/icons/Icons_07.png", price: 0, desc: "A simple bamboo rod. Gets the job done.", stats: "Reel 1.0x | Line 1.0x" },
-  { name: "Fiberglass Rod", icon: "/assets/icons/Icons_07.png", price: 150, desc: "Lighter and more responsive.", stats: "Reel 1.1x | Line 1.15x" },
-  { name: "Carbon Rod", icon: "/assets/icons/Icons_07.png", price: 400, desc: "High-tech carbon fiber build.", stats: "Reel 1.2x | Line 1.3x" },
-  { name: "Titanium Rod", icon: "/assets/icons/Icons_07.png", price: 800, desc: "Ultra-strong titanium alloy.", stats: "Reel 1.35x | Line 1.5x" },
-  { name: "Legendary Rod", icon: "/assets/icons/Icons_07.png", price: 1500, desc: "Forged from the anchor of a ghost ship.", stats: "Reel 1.5x | Line 1.8x" },
+  { name: "Bamboo Rod", icon: "__rod__", spriteIndex: 0, price: 0, desc: "A simple bamboo rod. Gets the job done.", stats: "Reel 1.0x | Line 1.0x" },
+  { name: "Fiberglass Rod", icon: "__rod__", spriteIndex: 1, price: 150, desc: "Lighter and more responsive.", stats: "Reel 1.1x | Line 1.15x" },
+  { name: "Carbon Rod", icon: "__rod__", spriteIndex: 2, price: 400, desc: "High-tech carbon fiber build.", stats: "Reel 1.2x | Line 1.3x" },
+  { name: "Titanium Rod", icon: "__rod__", spriteIndex: 3, price: 800, desc: "Ultra-strong titanium alloy.", stats: "Reel 1.35x | Line 1.5x" },
+  { name: "Legendary Rod", icon: "__rod__", spriteIndex: 4, price: 1500, desc: "Forged from the anchor of a ghost ship.", stats: "Reel 1.5x | Line 1.8x" },
 ];
 
 const arsenalBaits = [
@@ -774,9 +775,20 @@ export default function Landing() {
                     }}
                   >
                     <ArsenalTooltip item={item} visible={hoveredArsenal === key} />
-                    <img src={item.icon} alt={item.name} style={{
-                      width: 36, height: 36, imageRendering: "pixelated", objectFit: "contain",
-                    }} />
+                    {item.icon === "__rod__" ? (
+                      <div style={{
+                        width: 36, height: 44,
+                        backgroundImage: `url(${rodsSpriteImg})`,
+                        backgroundSize: "500% 100%",
+                        backgroundPosition: `${((item as any).spriteIndex / 4) * 100}% 0%`,
+                        backgroundRepeat: "no-repeat",
+                        imageRendering: "pixelated",
+                      }} />
+                    ) : (
+                      <img src={item.icon} alt={item.name} style={{
+                        width: 36, height: 36, imageRendering: "pixelated", objectFit: "contain",
+                      }} />
+                    )}
                   </div>
                 );
               })}
