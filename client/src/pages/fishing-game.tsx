@@ -7016,8 +7016,8 @@ export default function FishingGame() {
                     return (
                       <div key={name} className="flex items-start gap-2.5 p-2.5" style={{ background: rarityBg(rarity), borderRadius: 8, border: `1px solid ${rarityColor(rarity)}25` }}>
                         <div className="flex flex-col items-center gap-1" style={{ minWidth: 44 }}>
-                          <div className="flex items-center justify-center" style={{ width: 40, height: 40, background: "rgba(0,0,0,0.3)", borderRadius: 6 }}>
-                            <img src={entry.type?.catchAsset || entry.junk?.asset || ""} alt={name} style={{ imageRendering: "pixelated", transform: "scale(2)", maxWidth: 36, maxHeight: 36 }} />
+                          <div className="flex items-center justify-center" style={{ width: 40, height: 40, background: "rgba(0,0,0,0.3)", borderRadius: 6, overflow: "hidden" }}>
+                            <img src={entry.type?.catchAsset || entry.junk?.asset || ""} alt={name} style={{ imageRendering: "pixelated", width: entry.type?.catchW ? entry.type.catchW * 2 : 36, height: entry.type?.catchH ? entry.type.catchH * 2 : 36, objectFit: "none", objectPosition: "left center" }} />
                           </div>
                           <span style={{ fontSize: 5, color: "#0a0f1a", fontWeight: "bold", background: rarityColor(rarity), borderRadius: 3, padding: "1px 3px", textTransform: "uppercase" }}>
                             {rarity === "ultra_rare" ? "ULTRA" : rarity}
@@ -7138,11 +7138,11 @@ export default function FishingGame() {
                   }}
                 >
                   <div className="flex flex-col items-center gap-1" style={{ minWidth: 52 }}>
-                    <div className="flex items-center justify-center" style={{ width: 48, height: 48, background: "rgba(0,0,0,0.3)", borderRadius: 6 }}>
+                    <div className="flex items-center justify-center" style={{ width: 48, height: 48, background: "rgba(0,0,0,0.3)", borderRadius: 6, overflow: "hidden" }}>
                       <img
                         src={entry.type?.catchAsset || entry.junk?.asset || ""}
                         alt={name}
-                        style={{ imageRendering: "pixelated", transform: "scale(2.5)", maxWidth: 40, maxHeight: 40 }}
+                        style={{ imageRendering: "pixelated", width: entry.type?.catchW ? entry.type.catchW * 2.5 : 40, height: entry.type?.catchH ? entry.type.catchH * 2.5 : 40, objectFit: "none", objectPosition: "left center" }}
                       />
                     </div>
                     {entry.type && (
