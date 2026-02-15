@@ -494,8 +494,10 @@ export default function Landing() {
 
         <div style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
+          gridTemplateColumns: "repeat(5, 1fr)",
           gap: 14,
+          maxWidth: 900,
+          margin: "0 auto",
         }}>
           {legendaryFish.map((fish, i) => (
             <div
