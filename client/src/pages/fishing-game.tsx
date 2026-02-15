@@ -3460,10 +3460,11 @@ export default function FishingGame() {
             const crownDrawW = crownFW * crownScale;
             const crownDrawH = crownFH * crownScale;
             const fishSpriteW = FRAME_H * creatureScale;
+            const fishSpriteH = (fish.type.spriteFrameH || FRAME_H) * creatureScale;
             const headX = fish.direction < 0
               ? fish.x + fishSpriteW * 0.15 - crownDrawW * 0.5
               : fish.x + fishSpriteW * 0.55 - crownDrawW * 0.5;
-            const headY = fish.y - crownDrawH * 0.5;
+            const headY = fish.y + fishSpriteH * 0.15;
             ctx.drawImage(crownImg, crownSX, crownSY, crownFW, crownFH, headX, headY, crownDrawW, crownDrawH);
           }
         }
@@ -4153,10 +4154,11 @@ export default function FishingGame() {
             const crownDrawW = crownFW * crownScale;
             const crownDrawH = crownFH * crownScale;
             const fishSpriteW = FRAME_H * creatureScale;
+            const fishSpriteH2 = FRAME_H * creatureScale;
             const headX = s.hookedFishDir < 0
               ? s.hookedFishX + fishSpriteW * 0.15 - crownDrawW * 0.5
               : s.hookedFishX + fishSpriteW * 0.55 - crownDrawW * 0.5;
-            const headY = s.hookedFishY - crownDrawH * 0.5;
+            const headY = s.hookedFishY + fishSpriteH2 * 0.15;
             ctx.drawImage(crownImg, crownSX, crownSY, crownFW, crownFH, headX, headY, crownDrawW, crownDrawH);
           }
         }
@@ -4332,7 +4334,7 @@ export default function FishingGame() {
                 const crownScale = raritySizes[s.currentCatch.rarity] || 0.35;
                 const crownDrawW = crownFW * crownScale;
                 const crownDrawH = crownFH * crownScale;
-                ctx.drawImage(crownImg, crownSX, crownSY, crownFW, crownFH, -crownDrawW * 0.5, -catchImg.height * cs * 0.5 - crownDrawH * 0.4, crownDrawW, crownDrawH);
+                ctx.drawImage(crownImg, crownSX, crownSY, crownFW, crownFH, -crownDrawW * 0.5, -catchImg.height * cs * 0.35, crownDrawW, crownDrawH);
               }
             }
             
