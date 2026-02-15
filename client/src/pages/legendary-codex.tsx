@@ -280,6 +280,26 @@ export default function LegendaryCodex() {
           gap: 6,
         }}
       >
+        <Link href="/">
+          <a
+            data-testid="link-home"
+            style={{
+              background: "rgba(10,10,20,0.85)",
+              border: "1px solid rgba(196,160,80,0.2)",
+              borderRadius: 6,
+              padding: "6px 12px",
+              color: "#8888aa",
+              fontFamily: "'Press Start 2P', monospace",
+              fontSize: 6,
+              textDecoration: "none",
+              backdropFilter: "blur(10px)",
+              transition: "all 0.2s",
+              whiteSpace: "nowrap",
+            }}
+          >
+            HOME
+          </a>
+        </Link>
         <a
           href="/gameboard.html"
           data-testid="link-gameboard"
@@ -299,15 +319,15 @@ export default function LegendaryCodex() {
         >
           GAME BOARD
         </a>
-        <Link href="/">
+        <Link href="/play">
           <a
             data-testid="link-play-game"
             style={{
               background: "rgba(10,10,20,0.85)",
-              border: "1px solid rgba(196,160,80,0.2)",
+              border: "1px solid rgba(79,195,247,0.3)",
               borderRadius: 6,
               padding: "6px 12px",
-              color: "#8888aa",
+              color: "#4fc3f7",
               fontFamily: "'Press Start 2P', monospace",
               fontSize: 6,
               textDecoration: "none",

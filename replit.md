@@ -7,6 +7,10 @@ Grudge Angeler is a pixel art fishing game developed with HTML5 Canvas and React
 I want to prioritize iterative development. I prefer detailed explanations for complex features. Ask before making major changes to the core game loop or architectural decisions. Do not make changes to files in the `client/public/assets/` folder.
 
 ## Recent Changes
+- **2026-02-15:** Added landing page website at / with Play button, legendaries preview, faction showcase, equipment gallery
+- **2026-02-15:** Updated routing: / = Landing, /play = FishingGame, /legendaries = LegendaryCodex
+- **2026-02-15:** Fixed GitHub username in grudge-sdk.ts (molochdagod)
+- **2026-02-15:** Updated all HTML nav links (gameboard.html, legendary-codex.tsx) for new route structure
 - **2026-02-14:** Updated Agent skill file with comprehensive project documentation
 - **2026-02-14:** Added faction icon backgrounds on character selection screen
 - **2026-02-14:** Mobile touch controls: bottom action bar, D-pad, Dive/E buttons, onTouchCancel handlers
@@ -20,7 +24,8 @@ The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a f
 ### Key Files
 - `client/src/pages/fishing-game.tsx` - Main game (7700+ lines, all game logic + canvas + UI overlays)
 - `client/src/pages/legendary-codex.tsx` - Legendary 10 lore page (/legendaries route)
-- `client/src/App.tsx` - Router: / = FishingGame, /legendaries = LegendaryCodex
+- `client/src/pages/landing.tsx` - Landing page website (/ route)
+- `client/src/App.tsx` - Router: / = Landing, /play = FishingGame, /legendaries = LegendaryCodex
 - `client/src/lib/grudge-sdk.ts` - GrudgeSDK client for Grudge Studio ObjectStore API
 - `client/public/gameboard.html` - Standalone interactive reference board
 - `server/routes.ts` - Express API routes (leaderboard)
