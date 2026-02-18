@@ -24,7 +24,7 @@ The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a f
 **Technical Implementations & Features:**
 - **Game Flow:** Structured progression from title screen through character selection, idle, casting, biting, reeling, to caught, and shop interactions.
 - **Reeling Minigame:** A Palworld-style minigame with a horizontal bar, moving catch zone, and mechanics affected by rod stats, including Force Bar and Resilience Bar.
-- **Net Tool:** An alternative fishing method with specific casting mechanics, auto-catching, cooldowns, and a chance to catch chum items.
+- **Net Tool:** Alternative fishing method with 7-frame throw animation (NetThrow.png), Netthrown.png sinking sprite, and Net.png rising sprite. Auto-catches common/uncommon fish in area. 49lb max weight capacity — overweight breaks the net (5-minute cooldown, catch lost). Normal cooldown is 10 seconds. Shows caught fish icons bobbing in net during rise with weight counter.
 - **Sprite Orientation:** Standardized sprite conventions for character facing, movement, and mirroring.
 - **Character System:** Three selectable factions (Fabled, Legion, Crusade) with unique recolored sprite sets and faction icons.
 - **Fish Species:** 30 distinct species (fish + crabs) across 5 rarity tiers (common, uncommon, rare, legendary, ultra_rare), including 10 ultra-rare variants (The Legendary 10) and 10 beach crab variants.
@@ -76,3 +76,4 @@ The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a f
 - **2026-02-18:** Added Crimson Crab and Shadow Crab (rare beach crabs). Species count: 30.
 - **2026-02-18:** Shadow Leviathan Predator: 4th predator type with red/black recolored sprites in /assets/predators/leviathan/. Ultra_rare, speed 2.8, size 2.8, 1200 points. Spawns 15% in deepest zone (zone 4). Fixed predator folder references from "1","2","3" to actual directory names.
 - **2026-02-18:** Guardian Defender: Merman sprite in /assets/guardian/. Automatically appears in deep zones (zone 3+) near the player's hook. Once per cast, intercepts predator steal attacks - knocks predator back, deals damage, shows attack animation with blue particles and shield glow. Resets each new cast.
+- **2026-02-18:** Net Tool Overhaul: 7-frame throw animation sprite (NetThrow.png), Netthrown.png sinking phase, Net.png for rising. 49lb weight limit - overweight breaks net (5min cooldown, catch lost). Normal cooldown 10s. Fish icons bob in net during rise. Weight counter display. Hotbar shows cooldown/break status. Rewards only granted on successful retrieval.

@@ -947,6 +947,7 @@ export default function FishingGame() {
     chumCooldown: 0,
     toolMode: "rod" as "rod" | "net",
     netCooldown: 0,
+    netBroken: false,
     netCastX: 0,
     netCastY: 0,
     netWidth: 0,
@@ -957,7 +958,10 @@ export default function FishingGame() {
     netAnimY: 0,
     netAnimStartY: 0,
     netAnimTargetY: 0,
-    netAnimCaughtFish: [] as { name: string; icon: string; isCrab: boolean }[],
+    netThrowFrame: 0,
+    netThrowTimer: 0,
+    netAnimCaughtFish: [] as { name: string; icon: string; isCrab: boolean; weight: number }[],
+    netTotalWeight: 0,
     catchPhase: 0 as number,
     catchPhaseTimer: 0,
     catchFishWorldX: 0,
@@ -1140,6 +1144,8 @@ export default function FishingGame() {
     chumCooldown: 0,
     toolMode: "rod" as "rod" | "net",
     netActive: false,
+    netCooldown: 0,
+    netBroken: false,
     adminOpen: false,
     adminTab: "assets" as "assets" | "gizmo" | "trace" | "map",
     uwLayers: loadUwLayers() as UnderwaterBgLayer[],
@@ -1579,6 +1585,8 @@ export default function FishingGame() {
       chumCooldown: s.chumCooldown,
       toolMode: s.toolMode,
       netActive: s.netActive,
+      netCooldown: s.netCooldown,
+      netBroken: s.netBroken,
       adminOpen: s.adminOpen,
       adminTab: s.adminTab,
       uwLayers: s.uwLayers,
@@ -5070,52 +5078,83 @@ export default function FishingGame() {
         const netX = s.netCastX;
         const netY = s.netAnimY;
         const netScale = 3;
-        const isSinking = s.netAnimPhase === "throwing" || s.netAnimPhase === "sinking";
-        const netImgSrc = isSinking ? "/assets/objects/Netthrown.png" : "/assets/objects/Net.png";
-        const netImg = getImg(netImgSrc);
-        if (netImg && netImg.complete && netImg.naturalWidth > 0) {
-          const nw = netImg.naturalWidth * netScale;
-          const nh = netImg.naturalHeight * netScale;
-          ctx.save();
-          if (s.netAnimPhase === "rising") {
-            const wobble = Math.sin(s.time * 0.3) * 3;
-            ctx.translate(netX - nw / 2 + wobble, netY - nh / 2);
-          } else {
-            ctx.translate(netX - nw / 2, netY - nh / 2);
+
+        if (s.netAnimPhase === "throwing") {
+          const throwImg = getImg("/assets/objects/NetThrow.png");
+          if (throwImg && throwImg.complete && throwImg.naturalWidth > 0) {
+            const throwFrames = 7;
+            const frameW = throwImg.naturalWidth / throwFrames;
+            const frameH = throwImg.naturalHeight;
+            const frame = Math.min(s.netThrowFrame, throwFrames - 1);
+            const drawW = frameW * netScale;
+            const drawH = frameH * netScale;
+            ctx.save();
+            ctx.imageSmoothingEnabled = false;
+            ctx.globalAlpha = 0.95;
+            ctx.drawImage(throwImg, frame * frameW, 0, frameW, frameH, netX - drawW / 2, netY - drawH / 2, drawW, drawH);
+            ctx.restore();
           }
-          ctx.globalAlpha = 0.95;
-          ctx.drawImage(netImg, 0, 0, nw, nh);
-          if (s.netAnimPhase === "rising" && s.netAnimCaughtFish.length > 0) {
-            const fishCount = s.netAnimCaughtFish.length;
-            const iconSize = 16;
-            ctx.font = `bold ${iconSize}px monospace`;
-            ctx.fillStyle = "#fff";
-            ctx.textAlign = "center";
-            ctx.globalAlpha = 0.9;
-            const startX = nw / 2 - (fishCount * (iconSize + 2)) / 2;
-            for (let fi = 0; fi < Math.min(fishCount, 4); fi++) {
-              const caught = s.netAnimCaughtFish[fi];
-              const cIcon = caught.icon ? getImg(caught.icon) : null;
-              const fx = startX + fi * (iconSize + 4);
-              const fy = nh * 0.35;
-              if (cIcon && cIcon.complete && cIcon.naturalWidth > 0) {
-                ctx.drawImage(cIcon, fx, fy, iconSize, iconSize);
-              } else {
-                ctx.fillStyle = caught.isCrab ? "#ff9800" : "#5dade2";
-                ctx.beginPath();
-                ctx.arc(fx + iconSize / 2, fy + iconSize / 2, iconSize / 2 - 1, 0, Math.PI * 2);
-                ctx.fill();
+        } else {
+          const isSinking = s.netAnimPhase === "sinking";
+          const netImgSrc = isSinking ? "/assets/objects/Netthrown.png" : "/assets/objects/Net.png";
+          const netImg = getImg(netImgSrc);
+          if (netImg && netImg.complete && netImg.naturalWidth > 0) {
+            const nScale = isSinking ? 0.12 : 0.12;
+            const nw = netImg.naturalWidth * nScale;
+            const nh = netImg.naturalHeight * nScale;
+            ctx.save();
+            ctx.imageSmoothingEnabled = false;
+            if (s.netAnimPhase === "rising") {
+              const wobble = Math.sin(s.time * 0.3) * 3;
+              ctx.translate(netX - nw / 2 + wobble, netY - nh / 2);
+            } else {
+              ctx.translate(netX - nw / 2, netY - nh / 2);
+            }
+            ctx.globalAlpha = 0.95;
+            ctx.drawImage(netImg, 0, 0, nw, nh);
+            if ((s.netAnimPhase === "rising" || s.netAnimPhase === "scooping") && s.netAnimCaughtFish.length > 0) {
+              const fishCount = s.netAnimCaughtFish.length;
+              const iconSize = 20;
+              ctx.globalAlpha = 0.9;
+              const maxShow = Math.min(fishCount, 5);
+              const startX = nw / 2 - (maxShow * (iconSize + 3)) / 2;
+              for (let fi = 0; fi < maxShow; fi++) {
+                const caught = s.netAnimCaughtFish[fi];
+                const cIcon = caught.icon ? getImg(caught.icon) : null;
+                const bobY = Math.sin(s.time * 0.2 + fi * 1.5) * 3;
+                const fx = startX + fi * (iconSize + 3);
+                const fy = nh * 0.3 + bobY;
+                if (cIcon && cIcon.complete && cIcon.naturalWidth > 0) {
+                  ctx.drawImage(cIcon, fx, fy, iconSize, iconSize);
+                } else {
+                  ctx.fillStyle = caught.isCrab ? "#ff9800" : "#5dade2";
+                  ctx.beginPath();
+                  ctx.arc(fx + iconSize / 2, fy + iconSize / 2, iconSize / 2 - 1, 0, Math.PI * 2);
+                  ctx.fill();
+                }
+              }
+              if (fishCount > maxShow) {
+                ctx.fillStyle = "#f1c40f";
+                ctx.font = "bold 10px monospace";
+                ctx.textAlign = "center";
+                ctx.fillText(`+${fishCount - maxShow}`, nw / 2 + 30, nh * 0.3 + iconSize / 2 + 4);
+              }
+              ctx.fillStyle = "#fff";
+              ctx.font = "bold 9px monospace";
+              ctx.textAlign = "center";
+              const weightText = `${s.netTotalWeight.toFixed(1)}lb / 49lb`;
+              ctx.fillText(weightText, nw / 2, nh * 0.3 + iconSize + 14);
+              if (s.netTotalWeight > 49) {
+                ctx.fillStyle = "rgba(255,60,60,0.8)";
+                ctx.font = "bold 11px monospace";
+                ctx.fillText("BREAKING!", nw / 2, nh * 0.3 - 6);
               }
             }
-            if (fishCount > 4) {
-              ctx.fillStyle = "#f1c40f";
-              ctx.font = "bold 10px monospace";
-              ctx.fillText(`+${fishCount - 4}`, nw / 2 + 20, nh * 0.35 + iconSize / 2 + 4);
-            }
+            ctx.globalAlpha = 1;
+            ctx.restore();
           }
-          ctx.globalAlpha = 1;
-          ctx.restore();
         }
+
         ctx.strokeStyle = "rgba(180,170,150,0.6)";
         ctx.lineWidth = 1.5;
         ctx.setLineDash([3, 3]);
@@ -5126,7 +5165,9 @@ export default function FishingGame() {
         ctx.stroke();
         ctx.setLineDash([]);
 
-        addParticles(netX + (Math.random() - 0.5) * 20, netY, 1, "rgba(93,173,226,0.5)", 1, "bubble");
+        if (s.netAnimPhase !== "throwing") {
+          addParticles(netX + (Math.random() - 0.5) * 20, netY, 1, "rgba(93,173,226,0.5)", 1, "bubble");
+        }
       }
 
       if (s.gameState === "bite" || s.gameState === "reeling") {
@@ -5967,15 +6008,31 @@ export default function FishingGame() {
         }
       }
       if (s.chumCooldown > 0) s.chumCooldown -= dt;
-      if (s.netCooldown > 0) s.netCooldown -= dt;
+      if (s.netCooldown > 0) {
+        s.netCooldown -= dt;
+        if (s.netCooldown <= 0) {
+          s.netCooldown = 0;
+          s.netBroken = false;
+        }
+      }
 
       if (s.netActive) {
         const sinkSpeed = 3;
         const riseSpeed = 2.5;
+        const NET_MAX_WEIGHT = 49;
+        const NET_NORMAL_COOLDOWN = 600;
+        const NET_BREAK_COOLDOWN = 18000;
         if (s.netAnimPhase === "throwing") {
-          s.netAnimY += sinkSpeed * dt;
-          if (s.netAnimY >= s.netAnimStartY + 40) {
+          s.netThrowTimer += dt;
+          if (s.netThrowTimer >= 6) {
+            s.netThrowFrame = Math.min(s.netThrowFrame + 1, 6);
+            s.netThrowTimer = 0;
+          }
+          s.netAnimY += sinkSpeed * 0.5 * dt;
+          if (s.netThrowFrame >= 6) {
             s.netAnimPhase = "sinking";
+            addParticles(s.netCastX, s.netAnimY, 6, "#5dade2", 2, "splash");
+            addRipple(s.netCastX, s.netAnimY);
           }
         } else if (s.netAnimPhase === "sinking") {
           s.netAnimY += sinkSpeed * dt;
@@ -5991,35 +6048,60 @@ export default function FishingGame() {
               (f.type.rarity === "common" || f.type.rarity === "uncommon")
             );
             s.netAnimCaughtFish = [];
+            s.netTotalWeight = 0;
+            const pendingCatch: typeof caughtFish = [];
             for (const fish of caughtFish) {
               const idx = s.swimmingFish.indexOf(fish);
               if (idx >= 0) s.swimmingFish.splice(idx, 1);
               const sz = fish.sizeMultiplier;
-              const halfPrice = Math.floor(getSellPrice(fish.type, null, sz) * 0.5);
-              s.money += halfPrice;
-              s.totalCaught++;
-              s.score += Math.floor(fish.type.points * sz * 0.5);
               const fishWeight = Math.round(sz * fish.type.points * 0.3 * 10) / 10;
-              const existing = s.caughtCollection.get(fish.type.name);
-              if (existing) { existing.count++; existing.totalWeight += fishWeight; }
-              else { s.caughtCollection.set(fish.type.name, { type: fish.type, junk: null, count: 1, bestCombo: 0, biggestSize: sz, totalWeight: fishWeight }); }
+              s.netTotalWeight += fishWeight;
               addParticles(fish.x, fish.y, 5, "#5dade2", 2, "splash");
               const isCrab = fish.type.name.toLowerCase().includes("crab");
-              s.netAnimCaughtFish.push({ name: fish.type.name, icon: fish.type.icon || "", isCrab });
+              s.netAnimCaughtFish.push({ name: fish.type.name, icon: fish.type.icon || "", isCrab, weight: fishWeight });
+              pendingCatch.push(fish);
             }
-            if (Math.random() < 0.10) {
-              const catchableChumIdx = Math.random() < 0.5 ? 20 : 21;
-              s.ownedChum[catchableChumIdx]++;
-            }
+            (s as any)._netPendingCatch = pendingCatch;
           }
         } else if (s.netAnimPhase === "scooping") {
-          s.netAnimPhase = "rising";
+          if (s.netTotalWeight > NET_MAX_WEIGHT) {
+            s.netBroken = true;
+            s.netAnimPhase = "none";
+            s.netActive = false;
+            s.netCooldown = NET_BREAK_COOLDOWN;
+            s.netAnimCaughtFish = [];
+            s.netTotalWeight = 0;
+            (s as any)._netPendingCatch = [];
+            addParticles(s.netCastX, s.netAnimY, 15, "rgba(139,90,43,0.8)", 3, "splash");
+            addParticles(s.netCastX, s.netAnimY, 8, "#ff4444", 2, "sparkle");
+            syncUI();
+          } else {
+            s.netAnimPhase = "rising";
+          }
         } else if (s.netAnimPhase === "rising") {
           s.netAnimY -= riseSpeed * dt;
           if (s.netAnimY <= s.netAnimStartY - 10) {
             s.netAnimPhase = "none";
             s.netActive = false;
-            s.netCooldown = 600;
+            s.netBroken = false;
+            s.netCooldown = NET_NORMAL_COOLDOWN;
+            const pendingCatch = (s as any)._netPendingCatch || [];
+            for (const fish of pendingCatch) {
+              const sz = fish.sizeMultiplier;
+              const fishWeight = Math.round(sz * fish.type.points * 0.3 * 10) / 10;
+              const halfPrice = Math.floor(getSellPrice(fish.type, null, sz) * 0.5);
+              s.money += halfPrice;
+              s.totalCaught++;
+              s.score += Math.floor(fish.type.points * sz * 0.5);
+              const existing = s.caughtCollection.get(fish.type.name);
+              if (existing) { existing.count++; existing.totalWeight += fishWeight; }
+              else { s.caughtCollection.set(fish.type.name, { type: fish.type, junk: null, count: 1, bestCombo: 0, biggestSize: sz, totalWeight: fishWeight }); }
+            }
+            if (pendingCatch.length > 0 && Math.random() < 0.10) {
+              const catchableChumIdx = Math.random() < 0.5 ? 20 : 21;
+              s.ownedChum[catchableChumIdx]++;
+            }
+            (s as any)._netPendingCatch = [];
             addParticles(s.netCastX, waterY, 8, "#5dade2", 2, "splash");
             addRipple(s.netCastX, waterY);
             syncUI();
@@ -6527,18 +6609,20 @@ export default function FishingGame() {
         if (s.netCooldown > 0) return;
         if (s.netAnimPhase !== "none") return;
         s.netActive = true;
+        s.netBroken = false;
         s.netCastX = (s.mouseX - s.cameraX) || (s.playerX - 100);
         s.netCastY = Math.max(waterY + 20, s.mouseY || (waterY + 60));
         s.netWidth = 60 + s.attributes.Strength * 3 + s.attributes.Dexterity * 2;
         s.netDepth = 40 + s.attributes.Endurance * 2;
         s.netTimer = 120;
         s.netAnimPhase = "throwing";
+        s.netThrowFrame = 0;
+        s.netThrowTimer = 0;
         s.netAnimStartY = waterY;
-        s.netAnimY = waterY;
+        s.netAnimY = waterY - 20;
         s.netAnimTargetY = Math.max(waterY + 60, s.netCastY + 100);
         s.netAnimCaughtFish = [];
-        addParticles(s.netCastX, waterY, 10, "#5dade2", 3, "splash");
-        addRipple(s.netCastX, waterY);
+        s.netTotalWeight = 0;
         syncUI();
         return;
       }
@@ -7350,10 +7434,15 @@ export default function FishingGame() {
 
               <div onClick={(e) => { e.stopPropagation(); stateRef.current.selectedHotbar = 4; stateRef.current.toolMode = "net"; stateRef.current.showLurePopup = false; stateRef.current.showChumPopup = false; stateRef.current.binoculars = false; syncUI(); }}
                 className="flex flex-col items-center cursor-pointer"
-                style={{ padding: "4px 6px", borderRadius: 6, background: uiState.selectedHotbar === 4 ? "rgba(168,85,247,0.25)" : "rgba(8,15,25,0.75)", border: uiState.selectedHotbar === 4 ? "1px solid rgba(168,85,247,0.5)" : "1px solid rgba(255,255,255,0.1)", transition: "all 0.15s" }}
+                style={{ padding: "4px 6px", borderRadius: 6, position: "relative", background: uiState.selectedHotbar === 4 ? "rgba(168,85,247,0.25)" : "rgba(8,15,25,0.75)", border: uiState.selectedHotbar === 4 ? "1px solid rgba(168,85,247,0.5)" : "1px solid rgba(255,255,255,0.1)", transition: "all 0.15s", opacity: uiState.netCooldown > 0 ? 0.5 : 1 }}
                 data-testid="hotbar-slot-4">
                 <img src="/assets/icons/Icons_11.png" alt="" style={{ width: 24, height: 24, imageRendering: "pixelated" }} />
                 <span style={{ fontSize: 8, color: uiState.selectedHotbar === 4 ? "#a855f7" : "#607d8b" }}>4</span>
+                {uiState.netCooldown > 0 && (
+                  <span style={{ position: "absolute", top: -4, right: -4, fontSize: 7, background: uiState.netBroken ? "rgba(220,38,38,0.9)" : "rgba(168,85,247,0.9)", color: "#fff", borderRadius: 4, padding: "1px 3px", fontWeight: "bold" }}>
+                    {uiState.netBroken ? "BROKE" : `${Math.ceil(uiState.netCooldown / 60)}s`}
+                  </span>
+                )}
               </div>
 
               <div onClick={(e) => {
