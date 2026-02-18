@@ -289,6 +289,12 @@ interface Lure {
   legendaryBoost?: number;
   crabName?: string;
   crabSpriteSheet?: string;
+  protection?: {
+    noPredatorSteal?: boolean;
+    noTentacleSteal?: boolean;
+    noJunk?: boolean;
+    reducePredatorAggro?: number;
+  };
 }
 
 const LURES: Lure[] = [
@@ -308,16 +314,16 @@ const LURES: Lure[] = [
   { name: "Storm Shad", price: 300, effect: "Faster bites", description: "Mimics injured baitfish. Fish bite faster.", icon: "/assets/icons/lures/storm_shad.png", rarityBoost: 1.0, sizeBoost: 0.2, speedBoost: 2.0, depthBoost: 0, targetFish: ["Bass", "Salmon"], targetBonus: 2.0, type: "lure" },
   { name: "Kraken Bait", price: 500, effect: "Legendary + deep dive", description: "Mysterious bait from the depths. Sinks to the abyss.", icon: "/assets/icons/lures/kraken_bait.png", rarityBoost: 3.0, sizeBoost: 0.5, speedBoost: 0.8, depthBoost: 1.2, targetFish: ["Whale"], targetBonus: 4.0, type: "lure" },
   { name: "Prismatic Lure", price: 750, effect: "All bonuses", description: "A rainbow-shifting lure. Boosts everything.", icon: "/assets/icons/lures/prismatic_lure.png", rarityBoost: 1.8, sizeBoost: 0.5, speedBoost: 1.5, depthBoost: 0.4, targetFish: [], targetBonus: 1.0, type: "lure" },
-  { name: "Red Crab Bait", price: 0, effect: "+50% rarity", description: "A feisty red crab wriggling on the hook. Attracts nearby fish.", icon: "/assets/icons/fish/red-crab-red-common.png", rarityBoost: 1.5, sizeBoost: 0.15, speedBoost: 1.0, depthBoost: 0.1, targetFish: ["Perch", "Minnow"], targetBonus: 1.5, type: "live", legendaryBoost: 1.5, crabName: "Red Crab", crabSpriteSheet: "/assets/crabs/red-crab-red-common.png" },
-  { name: "Blue Crab Bait", price: 0, effect: "+50% speed", description: "A snappy blue crab. Its movement attracts fast swimmers.", icon: "/assets/icons/fish/blue-crab-blue-common.png", rarityBoost: 1.3, sizeBoost: 0.1, speedBoost: 1.5, depthBoost: 0.1, targetFish: ["Salmon", "Bass"], targetBonus: 2.0, type: "live", legendaryBoost: 1.5, crabName: "Blue Crab", crabSpriteSheet: "/assets/crabs/blue-crab-blue-common.png" },
-  { name: "Green Crab Bait", price: 0, effect: "+depth boost", description: "A mossy green crab. Sinks deeper, attracts bottom dwellers.", icon: "/assets/icons/fish/green-crab-green-common.png", rarityBoost: 1.2, sizeBoost: 0.2, speedBoost: 1.0, depthBoost: 0.4, targetFish: ["Catfish", "Eel"], targetBonus: 2.0, type: "live", legendaryBoost: 1.5, crabName: "Green Crab", crabSpriteSheet: "/assets/crabs/green-crab-green-common.png" },
-  { name: "Cyan Crab Bait", price: 0, effect: "+size boost", description: "A pale cyan crab. Attracts bigger specimens.", icon: "/assets/icons/fish/cyan-crab-cyan-common.png", rarityBoost: 1.3, sizeBoost: 0.4, speedBoost: 1.0, depthBoost: 0.1, targetFish: ["Jellyfish", "Octopus"], targetBonus: 1.8, type: "live", legendaryBoost: 1.5, crabName: "Cyan Crab", crabSpriteSheet: "/assets/crabs/cyan-crab-cyan-common.png" },
-  { name: "Pink Crab Bait", price: 0, effect: "+bite speed", description: "A cute pink crab. Fish bite faster when they see it squirm.", icon: "/assets/icons/fish/pink-crab-pink-common.png", rarityBoost: 1.2, sizeBoost: 0.1, speedBoost: 1.8, depthBoost: 0, targetFish: ["Minnow", "Perch", "Jellyfish"], targetBonus: 2.0, type: "live", legendaryBoost: 1.5, crabName: "Pink Crab", crabSpriteSheet: "/assets/crabs/pink-crab-pink-common.png" },
-  { name: "Purple Crab Bait", price: 0, effect: "2.5x rarity", description: "An uncommon purple crab with iridescent shell. Strong legendary attractor.", icon: "/assets/icons/fish/purple-crab-purple-uncommon.png", rarityBoost: 2.5, sizeBoost: 0.3, speedBoost: 1.1, depthBoost: 0.2, targetFish: ["Swordfish", "Stingray"], targetBonus: 2.0, type: "live", legendaryBoost: 3.0, crabName: "Purple Crab", crabSpriteSheet: "/assets/crabs/purple-crab-purple-uncommon.png" },
-  { name: "Gold Crab Bait", price: 0, effect: "+size +rarity", description: "A shimmering gold crab. Attracts bigger, rarer fish.", icon: "/assets/icons/fish/gold-crab-gold-uncommon.png", rarityBoost: 2.0, sizeBoost: 0.5, speedBoost: 1.2, depthBoost: 0.3, targetFish: ["Whale", "Salmon"], targetBonus: 2.5, type: "live", legendaryBoost: 3.0, crabName: "Gold Crab", crabSpriteSheet: "/assets/crabs/gold-crab-gold-uncommon.png" },
-  { name: "Dark Crab Bait", price: 0, effect: "+deep dive", description: "A dark-shelled crab with powerful pincers. Sinks to the abyss.", icon: "/assets/icons/fish/dark-crab-dark-uncommon.png", rarityBoost: 2.2, sizeBoost: 0.4, speedBoost: 1.0, depthBoost: 0.6, targetFish: ["Anglerfish", "Deep Sea Angler", "Moray Eel"], targetBonus: 2.5, type: "live", legendaryBoost: 3.0, crabName: "Dark Crab", crabSpriteSheet: "/assets/crabs/dark-crab-dark-uncommon.png" },
-  { name: "Crimson Crab Bait", price: 0, effect: "4x rarity!", description: "A rare crimson crab. The ultimate legendary attractor.", icon: "/assets/icons/fish/crimson-crab-crimson-rare.png", rarityBoost: 4.0, sizeBoost: 0.6, speedBoost: 1.2, depthBoost: 0.4, targetFish: ["Storm Swordfish", "Volcanic Perch", "Abyssal Bass"], targetBonus: 3.0, type: "live", legendaryBoost: 6.0, crabName: "Crimson Crab", crabSpriteSheet: "/assets/crabs/crimson-crab-crimson-rare.png" },
-  { name: "Shadow Crab Bait", price: 0, effect: "6x legendary!", description: "A phantom shadow crab. Sea Devil kin call to the deep.", icon: "/assets/icons/fish/shadow-crab-shadow-rare.png", rarityBoost: 4.5, sizeBoost: 0.7, speedBoost: 1.3, depthBoost: 0.5, targetFish: ["Shadow Leviathan", "Celestial Whale", "Neon Eel"], targetBonus: 3.5, type: "live", legendaryBoost: 6.0, crabName: "Shadow Crab", crabSpriteSheet: "/assets/crabs/shadow-crab-shadow-rare.png" },
+  { name: "Red Crab Bait", price: 0, effect: "+50% rarity", description: "A feisty red crab wriggling on the hook. Its claws scare off junk.", icon: "/assets/icons/fish/red-crab-red-common.png", rarityBoost: 1.5, sizeBoost: 0.15, speedBoost: 1.0, depthBoost: 0.1, targetFish: ["Perch", "Minnow"], targetBonus: 1.5, type: "live", legendaryBoost: 1.5, crabName: "Red Crab", crabSpriteSheet: "/assets/crabs/red-crab-red-common.png", protection: { noJunk: true } },
+  { name: "Blue Crab Bait", price: 0, effect: "+50% speed", description: "A snappy blue crab. Its erratic movement confuses tentacled fish.", icon: "/assets/icons/fish/blue-crab-blue-common.png", rarityBoost: 1.3, sizeBoost: 0.1, speedBoost: 1.5, depthBoost: 0.1, targetFish: ["Salmon", "Bass"], targetBonus: 2.0, type: "live", legendaryBoost: 1.5, crabName: "Blue Crab", crabSpriteSheet: "/assets/crabs/blue-crab-blue-common.png", protection: { noTentacleSteal: true } },
+  { name: "Green Crab Bait", price: 0, effect: "+depth boost", description: "A mossy green crab. Sinks deeper, its shell deters predators.", icon: "/assets/icons/fish/green-crab-green-common.png", rarityBoost: 1.2, sizeBoost: 0.2, speedBoost: 1.0, depthBoost: 0.4, targetFish: ["Catfish", "Eel"], targetBonus: 2.0, type: "live", legendaryBoost: 1.5, crabName: "Green Crab", crabSpriteSheet: "/assets/crabs/green-crab-green-common.png", protection: { reducePredatorAggro: 0.5 } },
+  { name: "Cyan Crab Bait", price: 0, effect: "+size boost", description: "A pale cyan crab. Its bright color repels tentacled creatures.", icon: "/assets/icons/fish/cyan-crab-cyan-common.png", rarityBoost: 1.3, sizeBoost: 0.4, speedBoost: 1.0, depthBoost: 0.1, targetFish: ["Jellyfish", "Octopus"], targetBonus: 1.8, type: "live", legendaryBoost: 1.5, crabName: "Cyan Crab", crabSpriteSheet: "/assets/crabs/cyan-crab-cyan-common.png", protection: { noTentacleSteal: true, noJunk: true } },
+  { name: "Pink Crab Bait", price: 0, effect: "+bite speed", description: "A cute pink crab. Fish bite faster, no junk will touch it.", icon: "/assets/icons/fish/pink-crab-pink-common.png", rarityBoost: 1.2, sizeBoost: 0.1, speedBoost: 1.8, depthBoost: 0, targetFish: ["Minnow", "Perch", "Jellyfish"], targetBonus: 2.0, type: "live", legendaryBoost: 1.5, crabName: "Pink Crab", crabSpriteSheet: "/assets/crabs/pink-crab-pink-common.png", protection: { noJunk: true } },
+  { name: "Purple Crab Bait", price: 0, effect: "2.5x rarity", description: "An uncommon purple crab. Its toxic shell repels all predators.", icon: "/assets/icons/fish/purple-crab-purple-uncommon.png", rarityBoost: 2.5, sizeBoost: 0.3, speedBoost: 1.1, depthBoost: 0.2, targetFish: ["Swordfish", "Stingray"], targetBonus: 2.0, type: "live", legendaryBoost: 3.0, crabName: "Purple Crab", crabSpriteSheet: "/assets/crabs/purple-crab-purple-uncommon.png", protection: { noPredatorSteal: true, noTentacleSteal: true } },
+  { name: "Gold Crab Bait", price: 0, effect: "+size +rarity", description: "A shimmering gold crab. Predators flee from its golden glow.", icon: "/assets/icons/fish/gold-crab-gold-uncommon.png", rarityBoost: 2.0, sizeBoost: 0.5, speedBoost: 1.2, depthBoost: 0.3, targetFish: ["Whale", "Salmon"], targetBonus: 2.5, type: "live", legendaryBoost: 3.0, crabName: "Gold Crab", crabSpriteSheet: "/assets/crabs/gold-crab-gold-uncommon.png", protection: { noPredatorSteal: true, noJunk: true } },
+  { name: "Dark Crab Bait", price: 0, effect: "+deep dive", description: "A dark-shelled crab. Its pincers ward off tentacled horrors.", icon: "/assets/icons/fish/dark-crab-dark-uncommon.png", rarityBoost: 2.2, sizeBoost: 0.4, speedBoost: 1.0, depthBoost: 0.6, targetFish: ["Anglerfish", "Deep Sea Angler", "Moray Eel"], targetBonus: 2.5, type: "live", legendaryBoost: 3.0, crabName: "Dark Crab", crabSpriteSheet: "/assets/crabs/dark-crab-dark-uncommon.png", protection: { noTentacleSteal: true, reducePredatorAggro: 0.7 } },
+  { name: "Crimson Crab Bait", price: 0, effect: "4x rarity!", description: "A rare crimson crab. Nothing dares approach - no predator, no tentacle.", icon: "/assets/icons/fish/crimson-crab-crimson-rare.png", rarityBoost: 4.0, sizeBoost: 0.6, speedBoost: 1.2, depthBoost: 0.4, targetFish: ["Storm Swordfish", "Volcanic Perch", "Abyssal Bass"], targetBonus: 3.0, type: "live", legendaryBoost: 6.0, crabName: "Crimson Crab", crabSpriteSheet: "/assets/crabs/crimson-crab-crimson-rare.png", protection: { noPredatorSteal: true, noTentacleSteal: true, noJunk: true } },
+  { name: "Shadow Crab Bait", price: 0, effect: "6x legendary!", description: "A phantom shadow crab. Complete protection from all threats.", icon: "/assets/icons/fish/shadow-crab-shadow-rare.png", rarityBoost: 4.5, sizeBoost: 0.7, speedBoost: 1.3, depthBoost: 0.5, targetFish: ["Shadow Leviathan", "Celestial Whale", "Neon Eel"], targetBonus: 3.5, type: "live", legendaryBoost: 6.0, crabName: "Shadow Crab", crabSpriteSheet: "/assets/crabs/shadow-crab-shadow-rare.png", protection: { noPredatorSteal: true, noTentacleSteal: true, noJunk: true, reducePredatorAggro: 1.0 } },
 ];
 
 interface ChumItem {
@@ -333,31 +339,32 @@ interface ChumItem {
   cooldown: number;
   catchable: boolean;
   type: "chum" | "special";
+  depthPull: number;
 }
 
 const CHUM_ITEMS: ChumItem[] = [
-  { name: "Fish Scraps", price: 15, description: "Basic chum. A slight fish attract.", icon: "/assets/icons/chum/chum-fish-guts.png", effect: "Slight attract", duration: 300, rarityBoost: 1.0, biteSpeedBoost: 1.0, fishAttract: 1.2, cooldown: 120, catchable: false, type: "chum" },
-  { name: "Bread Crumbs", price: 20, description: "Attracts small fish nearby.", icon: "/assets/icons/chum/chum-bread-crumbs.png", effect: "Small fish attract", duration: 350, rarityBoost: 1.0, biteSpeedBoost: 1.1, fishAttract: 1.4, cooldown: 120, catchable: false, type: "chum" },
-  { name: "Corn Mash", price: 25, description: "Attracts bottom feeders.", icon: "/assets/icons/chum/chum-worm-bait.png", effect: "Bottom feeder attract", duration: 400, rarityBoost: 1.05, biteSpeedBoost: 1.0, fishAttract: 1.5, cooldown: 140, catchable: false, type: "chum" },
-  { name: "Blood Meal", price: 40, description: "Attracts predators with its scent.", icon: "/assets/icons/chum/chum-blood-worm-extract.png", effect: "Predator attract", duration: 350, rarityBoost: 1.15, biteSpeedBoost: 1.05, fishAttract: 1.6, cooldown: 160, catchable: false, type: "chum" },
-  { name: "Shrimp Paste", price: 50, description: "Good all-around chum.", icon: "/assets/icons/chum/chum-shrimp-paste.png", effect: "All-around attract", duration: 400, rarityBoost: 1.1, biteSpeedBoost: 1.15, fishAttract: 1.7, cooldown: 150, catchable: false, type: "chum" },
-  { name: "Squid Ink", price: 60, description: "Attracts deep fish.", icon: "/assets/icons/chum/chum-squid-ink.png", effect: "Deep fish attract", duration: 350, rarityBoost: 1.2, biteSpeedBoost: 1.0, fishAttract: 1.5, cooldown: 180, catchable: false, type: "chum" },
-  { name: "Fish Oil Slick", price: 75, description: "Wide area attract effect.", icon: "/assets/icons/chum/chum-sardine-oil.png", effect: "Wide area attract", duration: 500, rarityBoost: 1.1, biteSpeedBoost: 1.1, fishAttract: 2.0, cooldown: 200, catchable: false, type: "chum" },
-  { name: "Sardine Chunks", price: 45, description: "Fast bite speed boost.", icon: "/assets/icons/chum/chum-live-shrimp.png", effect: "Fast bites", duration: 300, rarityBoost: 1.0, biteSpeedBoost: 1.5, fishAttract: 1.3, cooldown: 130, catchable: false, type: "chum" },
-  { name: "Crab Guts", price: 55, description: "Attracts rare fish.", icon: "/assets/icons/chum/chum-sea-urchin-spines.png", effect: "Rare fish attract", duration: 350, rarityBoost: 1.3, biteSpeedBoost: 1.0, fishAttract: 1.4, cooldown: 170, catchable: false, type: "chum" },
-  { name: "Mussel Mix", price: 35, description: "Steady and reliable attract.", icon: "/assets/icons/chum/chum-jellyfish-jelly.png", effect: "Steady attract", duration: 450, rarityBoost: 1.05, biteSpeedBoost: 1.05, fishAttract: 1.5, cooldown: 140, catchable: false, type: "chum" },
-  { name: "Fermented Brine", price: 80, description: "Strong rarity boost.", icon: "/assets/icons/chum/chum-deep-pressure.png", effect: "Rarity boost", duration: 400, rarityBoost: 1.5, biteSpeedBoost: 1.0, fishAttract: 1.6, cooldown: 200, catchable: false, type: "chum" },
-  { name: "Whale Blubber", price: 100, description: "Attracts legendary fish.", icon: "/assets/icons/chum/chum-whale-blubber.png", effect: "Legendary attract", duration: 350, rarityBoost: 1.7, biteSpeedBoost: 1.0, fishAttract: 1.8, cooldown: 250, catchable: false, type: "chum" },
-  { name: "Phosphor Dust", price: 120, description: "Glowing effect. Ultra rare boost.", icon: "/assets/icons/chum/chum-glowing-plankton.png", effect: "Glowing ultra rare", duration: 300, rarityBoost: 2.0, biteSpeedBoost: 1.1, fishAttract: 1.5, cooldown: 280, catchable: false, type: "chum" },
-  { name: "Coral Powder", price: 90, description: "Attracts reef fish.", icon: "/assets/icons/chum/chum-coral-dust.png", effect: "Reef fish attract", duration: 400, rarityBoost: 1.3, biteSpeedBoost: 1.1, fishAttract: 1.7, cooldown: 200, catchable: false, type: "chum" },
-  { name: "Deep Sea Extract", price: 150, description: "Deep water mega boost.", icon: "/assets/icons/chum/chum-electric-plankton.png", effect: "Deep mega boost", duration: 350, rarityBoost: 1.8, biteSpeedBoost: 1.2, fishAttract: 2.0, cooldown: 300, catchable: false, type: "chum" },
-  { name: "Thunder Chum", price: 130, description: "Attracts storm fish.", icon: "/assets/icons/chum/chum-thunder.png", effect: "Storm fish attract", duration: 300, rarityBoost: 1.6, biteSpeedBoost: 1.3, fishAttract: 1.8, cooldown: 260, catchable: false, type: "chum" },
-  { name: "Moonlight Essence", price: 200, description: "Celestial boost to all catches.", icon: "/assets/icons/chum/chum-moonlight-essence.png", effect: "Celestial boost", duration: 400, rarityBoost: 2.0, biteSpeedBoost: 1.2, fishAttract: 2.2, cooldown: 350, catchable: false, type: "chum" },
-  { name: "Kraken Bile", price: 180, description: "Massive rarity increase.", icon: "/assets/icons/chum/chum-kraken-bile.png", effect: "Massive rarity", duration: 300, rarityBoost: 2.5, biteSpeedBoost: 1.0, fishAttract: 1.6, cooldown: 320, catchable: false, type: "chum" },
-  { name: "Golden Flakes", price: 250, description: "Boosts everything.", icon: "/assets/icons/chum/chum-golden-flakes.png", effect: "Everything boost", duration: 500, rarityBoost: 2.0, biteSpeedBoost: 1.4, fishAttract: 2.5, cooldown: 400, catchable: false, type: "chum" },
-  { name: "Abyssal Ooze", price: 300, description: "The ultimate chum.", icon: "/assets/icons/chum/chum-abyssal-ooze.png", effect: "Ultimate attract", duration: 600, rarityBoost: 2.5, biteSpeedBoost: 1.5, fishAttract: 3.0, cooldown: 500, catchable: false, type: "chum" },
-  { name: "Live Shrimp Cluster", price: 0, description: "Caught live shrimp. Good bait for medium fish.", icon: "/assets/icons/Icons_05.png", effect: "Medium fish attract", duration: 250, rarityBoost: 1.2, biteSpeedBoost: 1.3, fishAttract: 1.8, cooldown: 100, catchable: true, type: "special" },
-  { name: "Glowing Plankton", price: 0, description: "Caught glowing plankton. Attracts rare fish.", icon: "/assets/icons/Icons_14.png", effect: "Rare glow attract", duration: 200, rarityBoost: 1.8, biteSpeedBoost: 1.1, fishAttract: 1.5, cooldown: 100, catchable: true, type: "special" },
+  { name: "Fish Scraps", price: 15, description: "Basic chum. A slight fish attract.", icon: "/assets/icons/chum/chum-fish-guts.png", effect: "Slight attract", duration: 300, rarityBoost: 1.0, biteSpeedBoost: 1.0, fishAttract: 1.2, cooldown: 120, catchable: false, type: "chum", depthPull: 0 },
+  { name: "Bread Crumbs", price: 20, description: "Attracts small fish nearby.", icon: "/assets/icons/chum/chum-bread-crumbs.png", effect: "Small fish attract", duration: 350, rarityBoost: 1.0, biteSpeedBoost: 1.1, fishAttract: 1.4, cooldown: 120, catchable: false, type: "chum", depthPull: 0 },
+  { name: "Corn Mash", price: 25, description: "Attracts bottom feeders up.", icon: "/assets/icons/chum/chum-worm-bait.png", effect: "Bottom feeder attract", duration: 400, rarityBoost: 1.05, biteSpeedBoost: 1.0, fishAttract: 1.5, cooldown: 140, catchable: false, type: "chum", depthPull: 0.1 },
+  { name: "Blood Meal", price: 40, description: "Attracts predators with its scent.", icon: "/assets/icons/chum/chum-blood-worm-extract.png", effect: "Predator attract", duration: 350, rarityBoost: 1.15, biteSpeedBoost: 1.05, fishAttract: 1.6, cooldown: 160, catchable: false, type: "chum", depthPull: 0.05 },
+  { name: "Shrimp Paste", price: 50, description: "Good all-around chum.", icon: "/assets/icons/chum/chum-shrimp-paste.png", effect: "All-around attract", duration: 400, rarityBoost: 1.1, biteSpeedBoost: 1.15, fishAttract: 1.7, cooldown: 150, catchable: false, type: "chum", depthPull: 0.1 },
+  { name: "Squid Ink", price: 60, description: "Pulls deep fish toward the surface.", icon: "/assets/icons/chum/chum-squid-ink.png", effect: "Deep fish pull up", duration: 350, rarityBoost: 1.2, biteSpeedBoost: 1.0, fishAttract: 1.5, cooldown: 180, catchable: false, type: "chum", depthPull: 0.25 },
+  { name: "Fish Oil Slick", price: 75, description: "Wide area attract effect.", icon: "/assets/icons/chum/chum-sardine-oil.png", effect: "Wide area attract", duration: 500, rarityBoost: 1.1, biteSpeedBoost: 1.1, fishAttract: 2.0, cooldown: 200, catchable: false, type: "chum", depthPull: 0.1 },
+  { name: "Sardine Chunks", price: 45, description: "Fast bite speed boost.", icon: "/assets/icons/chum/chum-live-shrimp.png", effect: "Fast bites", duration: 300, rarityBoost: 1.0, biteSpeedBoost: 1.5, fishAttract: 1.3, cooldown: 130, catchable: false, type: "chum", depthPull: 0 },
+  { name: "Crab Guts", price: 55, description: "Attracts rare fish from below.", icon: "/assets/icons/chum/chum-sea-urchin-spines.png", effect: "Rare fish attract", duration: 350, rarityBoost: 1.3, biteSpeedBoost: 1.0, fishAttract: 1.4, cooldown: 170, catchable: false, type: "chum", depthPull: 0.15 },
+  { name: "Mussel Mix", price: 35, description: "Steady and reliable attract.", icon: "/assets/icons/chum/chum-jellyfish-jelly.png", effect: "Steady attract", duration: 450, rarityBoost: 1.05, biteSpeedBoost: 1.05, fishAttract: 1.5, cooldown: 140, catchable: false, type: "chum", depthPull: 0.05 },
+  { name: "Fermented Brine", price: 80, description: "Strong rarity boost, lures deep fish up.", icon: "/assets/icons/chum/chum-deep-pressure.png", effect: "Rarity + depth pull", duration: 400, rarityBoost: 1.5, biteSpeedBoost: 1.0, fishAttract: 1.6, cooldown: 200, catchable: false, type: "chum", depthPull: 0.2 },
+  { name: "Whale Blubber", price: 100, description: "Pulls legendary fish to shallower depths.", icon: "/assets/icons/chum/chum-whale-blubber.png", effect: "Legendary depth pull", duration: 350, rarityBoost: 1.7, biteSpeedBoost: 1.0, fishAttract: 1.8, cooldown: 250, catchable: false, type: "chum", depthPull: 0.3 },
+  { name: "Phosphor Dust", price: 120, description: "Glowing effect pulls ultra rares up.", icon: "/assets/icons/chum/chum-glowing-plankton.png", effect: "Ultra rare depth pull", duration: 300, rarityBoost: 2.0, biteSpeedBoost: 1.1, fishAttract: 1.5, cooldown: 280, catchable: false, type: "chum", depthPull: 0.25 },
+  { name: "Coral Powder", price: 90, description: "Attracts reef fish.", icon: "/assets/icons/chum/chum-coral-dust.png", effect: "Reef fish attract", duration: 400, rarityBoost: 1.3, biteSpeedBoost: 1.1, fishAttract: 1.7, cooldown: 200, catchable: false, type: "chum", depthPull: 0.1 },
+  { name: "Deep Sea Extract", price: 150, description: "Massive depth pull. Deep fish swim up.", icon: "/assets/icons/chum/chum-electric-plankton.png", effect: "Deep mega pull", duration: 350, rarityBoost: 1.8, biteSpeedBoost: 1.2, fishAttract: 2.0, cooldown: 300, catchable: false, type: "chum", depthPull: 0.35 },
+  { name: "Thunder Chum", price: 130, description: "Attracts storm fish from the depths.", icon: "/assets/icons/chum/chum-thunder.png", effect: "Storm depth pull", duration: 300, rarityBoost: 1.6, biteSpeedBoost: 1.3, fishAttract: 1.8, cooldown: 260, catchable: false, type: "chum", depthPull: 0.2 },
+  { name: "Moonlight Essence", price: 200, description: "Celestial pull. Brings abyss fish to you.", icon: "/assets/icons/chum/chum-moonlight-essence.png", effect: "Celestial depth pull", duration: 400, rarityBoost: 2.0, biteSpeedBoost: 1.2, fishAttract: 2.2, cooldown: 350, catchable: false, type: "chum", depthPull: 0.35 },
+  { name: "Kraken Bile", price: 180, description: "Massive rarity, strong depth pull.", icon: "/assets/icons/chum/chum-kraken-bile.png", effect: "Massive rarity + pull", duration: 300, rarityBoost: 2.5, biteSpeedBoost: 1.0, fishAttract: 1.6, cooldown: 320, catchable: false, type: "chum", depthPull: 0.3 },
+  { name: "Golden Flakes", price: 250, description: "Boosts everything. Strong depth pull.", icon: "/assets/icons/chum/chum-golden-flakes.png", effect: "Everything + depth pull", duration: 500, rarityBoost: 2.0, biteSpeedBoost: 1.4, fishAttract: 2.5, cooldown: 400, catchable: false, type: "chum", depthPull: 0.35 },
+  { name: "Abyssal Ooze", price: 300, description: "The ultimate chum. Pulls abyss fish to surface.", icon: "/assets/icons/chum/chum-abyssal-ooze.png", effect: "Ultimate depth pull", duration: 600, rarityBoost: 2.5, biteSpeedBoost: 1.5, fishAttract: 3.0, cooldown: 500, catchable: false, type: "chum", depthPull: 0.4 },
+  { name: "Live Shrimp Cluster", price: 0, description: "Caught live shrimp. Good bait for medium fish.", icon: "/assets/icons/Icons_05.png", effect: "Medium fish attract", duration: 250, rarityBoost: 1.2, biteSpeedBoost: 1.3, fishAttract: 1.8, cooldown: 100, catchable: true, type: "special", depthPull: 0.1 },
+  { name: "Glowing Plankton", price: 0, description: "Caught glowing plankton. Pulls rare fish up.", icon: "/assets/icons/Icons_14.png", effect: "Rare glow + pull", duration: 200, rarityBoost: 1.8, biteSpeedBoost: 1.1, fishAttract: 1.5, cooldown: 100, catchable: true, type: "special", depthPull: 0.2 },
 ];
 
 const PREDATOR_TYPES = [
@@ -1295,12 +1302,16 @@ export default function FishingGame() {
     const floorY = getOceanFloorY(x, waterStartY, canvasW, canvasH);
     const effectiveMaxY = Math.min(canvasH - 60, floorY);
     const safeRange = Math.max(30, effectiveMaxY - waterStartY);
-    const minY = waterStartY + safeRange * fishType.minDepth;
+    const chumDepthPull = s.chumActiveType >= 0 && CHUM_ITEMS[s.chumActiveType] ? CHUM_ITEMS[s.chumActiveType].depthPull : 0;
+    const pulledMinDepth = Math.max(0.01, fishType.minDepth * (1 - chumDepthPull));
+    const minY = Math.max(waterStartY + 10, waterStartY + safeRange * pulledMinDepth);
     let y: number;
     if (fishType.bottomDweller) {
-      y = Math.max(waterStartY + 40, effectiveMaxY - 10 - Math.random() * 30);
+      const pullUpAmount = chumDepthPull * (effectiveMaxY - waterStartY - 40) * 0.5;
+      y = Math.max(waterStartY + 40, effectiveMaxY - 10 - Math.random() * 30 - pullUpAmount);
     } else {
-      y = minY + Math.random() * Math.max(10, effectiveMaxY - minY);
+      const pulledMaxY = Math.max(minY + 10, effectiveMaxY - chumDepthPull * (effectiveMaxY - minY) * 0.3);
+      y = Math.max(waterStartY + 10, minY + Math.random() * Math.max(10, pulledMaxY - minY));
     }
     const baseSizeMult = 0.5 + Math.random() * Math.random() * 4.5;
     const ultraScale = fishType.baseScale || 1;
@@ -4417,14 +4428,26 @@ export default function FishingGame() {
         const fish = s.swimmingFish[i];
 
         if (fish.approachingHook && (s.gameState === "waiting")) {
+          const interceptY = Math.max(fish.baseY, Math.min(s.hookY, fish.baseY + 40));
           const dx = s.hookX - fish.x;
-          const dy = s.hookY - fish.y;
+          const dy = interceptY - fish.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist > 8) {
-            fish.x += (dx / dist) * fish.speed * 1.5 * dt;
-            fish.y += (dy / dist) * fish.speed * 1.0 * dt;
+          const hookDist = Math.sqrt((s.hookX - fish.x) ** 2 + (s.hookY - fish.y) ** 2);
+          if (hookDist > 12) {
+            fish.x += (dx / Math.max(1, Math.abs(dx))) * fish.speed * 1.5 * dt;
+            fish.y += (dy / Math.max(1, dist)) * fish.speed * 0.8 * dt;
             fish.direction = dx > 0 ? 1 : -1;
           } else {
+            const lure = LURES[s.equippedLure] || LURES[0];
+            const tentacledFish = ["Kraken", "Octopus", "Jellyfish"];
+            if (lure.protection?.noTentacleSteal && tentacledFish.includes(fish.type.name)) {
+              fish.approachingHook = false;
+              fish.direction *= -1;
+              fish.speed = fish.type.speed * 3;
+              fish.dirChangeTimer = 120;
+              addParticles(fish.x, fish.y, 6, "#aa44ff", 2, "sparkle");
+              continue;
+            }
             s.gameState = "bite";
             const vitBonus = 1 + s.attributes.Vitality * 0.02 * (1 + s.attributes.Tactics * 0.01);
             s.biteTimer = (120 + Math.random() * 80) * vitBonus;
@@ -4437,7 +4460,8 @@ export default function FishingGame() {
             s.hookedFishFrameTimer = 0;
             s.hookedFishVX = (Math.random() > 0.5 ? 1 : -1) * fish.speed;
             s.hookedFishSize = fish.sizeMultiplier;
-            if (Math.random() < 0.08) {
+            const junkChance = (lure.protection?.noJunk) ? 0 : 0.08;
+            if (Math.random() < junkChance) {
               s.currentCatch = null;
               s.currentJunk = JUNK_ITEMS[Math.floor(Math.random() * JUNK_ITEMS.length)];
             } else { s.currentJunk = null; }
@@ -4696,7 +4720,23 @@ export default function FishingGame() {
               pred.attackCooldown = 300;
               
               if (s.gameState === "reeling" || s.gameState === "bite") {
-                if (s.guardianActive && !s.guardianUsedThisCast && s.guardianState === "idle") {
+                const activeLure = LURES[s.equippedLure] || LURES[0];
+                const hasCrabProtection = activeLure.protection?.noPredatorSteal;
+                if (hasCrabProtection) {
+                  pred.state = "hurt";
+                  pred.stateTimer = 50;
+                  pred.frame = 0;
+                  pred.health -= 1;
+                  pred.attackCooldown = 500;
+                  const knockDir = pred.direction > 0 ? -1 : 1;
+                  pred.x += knockDir * 60;
+                  pred.y -= 15;
+                  s.predatorAlert = `${activeLure.crabName || "Crab"} bait repels ${pred.type.name}!`;
+                  s.predatorAlertTimer = 180;
+                  s.screenShake = 3;
+                  addParticles(pred.x, pred.y, 12, "#ff8800", 3, "splash");
+                  addParticles(s.hookX, s.hookY, 8, "#ffaa22", 2, "sparkle");
+                } else if (s.guardianActive && !s.guardianUsedThisCast && s.guardianState === "idle") {
                   s.guardianUsedThisCast = true;
                   s.guardianState = "defending";
                   s.guardianDefendTimer = 60;
@@ -4754,12 +4794,14 @@ export default function FishingGame() {
             pred.stateTimer = 120 + Math.random() * 180;
           }
           
-          // Check if should chase hooked fish
           if (pred.attackCooldown <= 0 && (s.gameState === "reeling" || s.gameState === "waiting" || s.gameState === "bite")) {
+            const crabProt = (LURES[s.equippedLure] || LURES[0]).protection;
+            const aggroReduction = crabProt?.reducePredatorAggro || 0;
+            const chaseChance = Math.max(0, 1 - aggroReduction);
             const dx = s.hookX - pred.x;
             const dy = s.hookY - pred.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 350) {
+            if (dist < 350 && Math.random() < chaseChance) {
               pred.state = "chase";
               pred.stateTimer = 300;
             }
@@ -5810,7 +5852,9 @@ export default function FishingGame() {
         s.waitTimer -= dt;
         const rodSink = RODS[s.equippedRod].sinkSpeed;
         const lureSink = 1 + LURES[s.equippedLure].depthBoost;
-        s.hookY = Math.min(s.hookY + 0.4 * rodSink * lureSink * dt, s.hookTargetY);
+        const oceanFloorY = getOceanFloorY(s.hookX, waterY, W, H);
+        const maxSinkY = Math.max(s.hookTargetY, oceanFloorY - 10);
+        s.hookY = Math.min(s.hookY + 0.4 * rodSink * lureSink * dt, maxSinkY);
 
         if (s.waitTimer <= 0) {
           const hasApproaching = s.swimmingFish.some(f => f.approachingHook);
@@ -5838,8 +5882,7 @@ export default function FishingGame() {
               const newFish = s.swimmingFish[s.swimmingFish.length - 1];
               if (newFish) {
                 newFish.x = s.hookX + (Math.random() > 0.5 ? 1 : -1) * (200 + Math.random() * 100);
-                newFish.y = isHookOnBeach ? (waterY + 5 + Math.random() * 30) : (s.hookY + (Math.random() - 0.5) * 60);
-                newFish.baseY = newFish.y;
+                newFish.y = isHookOnBeach ? (waterY + 5 + Math.random() * 30) : (newFish.baseY);
                 newFish.approachingHook = true;
               }
             }
@@ -6728,22 +6771,22 @@ export default function FishingGame() {
 
       // --- MINIMAP ---
       if (s.gameState !== "title" && s.gameState !== "charSelect" && s.gameState !== "intro" && !s.binoculars) {
-        const mmW = 180;
-        const mmH = 60;
+        const mmW = 200;
+        const mmH = 70;
         const mmX = W - mmW - 12;
-        const mmY = 12;
+        const mmY = 14;
         const worldL = -(W * 3) - 200;
         const worldR = W * 5 + 200;
         const worldRange = worldR - worldL;
         const mapWaterY = waterY;
 
         ctx.save();
-        ctx.globalAlpha = 0.75;
-        ctx.fillStyle = "rgba(5,12,30,0.85)";
-        ctx.strokeStyle = "rgba(79,195,247,0.4)";
+        ctx.globalAlpha = 0.8;
+        ctx.fillStyle = "rgba(3,8,22,0.9)";
+        ctx.strokeStyle = "rgba(79,195,247,0.35)";
         ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.roundRect(mmX - 4, mmY - 4, mmW + 8, mmH + 8, 4);
+        ctx.roundRect(mmX - 5, mmY - 5, mmW + 10, mmH + 10, 5);
         ctx.fill();
         ctx.stroke();
         ctx.globalAlpha = 1;
@@ -6754,13 +6797,17 @@ export default function FishingGame() {
 
         const toMmX = (wx: number) => mmX + ((wx - worldL) / worldRange) * mmW;
         const toMmY = (wy: number) => {
-          const waterRatioOnMap = 0.35;
+          const waterRatioOnMap = 0.3;
           if (wy <= mapWaterY) return mmY + (wy / mapWaterY) * mmH * waterRatioOnMap;
           return mmY + mmH * waterRatioOnMap + ((wy - mapWaterY) / (H * 3 - mapWaterY)) * mmH * (1 - waterRatioOnMap);
         };
 
-        ctx.fillStyle = "rgba(20,40,80,0.3)";
+        ctx.fillStyle = "rgba(10,20,50,0.4)";
         ctx.fillRect(mmX, mmY, mmW, mmH);
+
+        const waterLineY = toMmY(mapWaterY);
+        ctx.fillStyle = "rgba(30,80,140,0.2)";
+        ctx.fillRect(mmX, waterLineY, mmW, mmY + mmH - waterLineY);
 
         try {
           const mapRaw = localStorage.getItem(ADMIN_MAP_STORAGE_KEY);
@@ -6779,8 +6826,19 @@ export default function FishingGame() {
                 const zx2 = toMmX(ax + aw);
                 const zy2 = toMmY(ay + ah);
                 ctx.fillStyle = area.color || "rgba(100,150,200,0.15)";
-                ctx.globalAlpha = 0.5;
+                ctx.globalAlpha = 0.4;
                 ctx.fillRect(zx1, zy1, zx2 - zx1, zy2 - zy1);
+                ctx.globalAlpha = 0.6;
+                ctx.strokeStyle = area.color || "rgba(100,150,200,0.3)";
+                ctx.lineWidth = 0.5;
+                ctx.strokeRect(zx1, zy1, zx2 - zx1, zy2 - zy1);
+                if (area.label && (zx2 - zx1) > 15) {
+                  ctx.globalAlpha = 0.5;
+                  ctx.fillStyle = "#ffffff";
+                  ctx.font = "3px monospace";
+                  ctx.textAlign = "center";
+                  ctx.fillText(area.label.substring(0, 8), (zx1 + zx2) / 2, (zy1 + zy2) / 2 + 1);
+                }
                 ctx.globalAlpha = 1;
               }
             }
@@ -6790,14 +6848,14 @@ export default function FishingGame() {
         const pierLmm = toMmX(pierLeftBound);
         const pierRmm = toMmX(W * 3.0);
         ctx.fillStyle = "rgba(141,110,99,0.6)";
-        ctx.fillRect(pierLmm, mmY + mmH * 0.32, pierRmm - pierLmm, 3);
+        ctx.fillRect(pierLmm, waterLineY - 2, pierRmm - pierLmm, 3);
 
         const bchLmm = toMmX(W * 3.0);
         const bchRmm = toMmX(W * 5 + 200);
-        ctx.fillStyle = "rgba(212,167,106,0.5)";
+        ctx.fillStyle = "rgba(212,167,106,0.45)";
         ctx.beginPath();
-        ctx.moveTo(bchLmm, mmY + mmH * 0.34);
-        ctx.lineTo(bchRmm, mmY + mmH * 0.42);
+        ctx.moveTo(bchLmm, waterLineY - 1);
+        ctx.lineTo(bchRmm, waterLineY + 4);
         ctx.lineTo(bchRmm, mmY + mmH);
         ctx.lineTo(bchLmm, mmY + mmH);
         ctx.closePath();
@@ -6806,15 +6864,26 @@ export default function FishingGame() {
         const ds = getDepthSlope();
         const sxScale = W / ADMIN_REF_W;
         const syScale = H / ADMIN_REF_H;
-        const slopeShallowX = ds.shallowX * sxScale;
-        const slopeDeepX = ds.deepX * sxScale;
-        const slopeShallowY = ds.shallowY * syScale;
-        const slopeDeepY = ds.deepY * syScale;
-        ctx.strokeStyle = "rgba(100,180,100,0.5)";
-        ctx.lineWidth = 1;
+        const floorSteps = 30;
+        ctx.strokeStyle = "rgba(80,160,80,0.6)";
+        ctx.lineWidth = 1.5;
         ctx.beginPath();
-        ctx.moveTo(toMmX(slopeShallowX), toMmY(slopeShallowY));
-        ctx.lineTo(toMmX(slopeDeepX), toMmY(slopeDeepY));
+        for (let i = 0; i <= floorSteps; i++) {
+          const frac = i / floorSteps;
+          const wx = worldL + frac * worldRange;
+          const fy = getOceanFloorY(wx, mapWaterY, W, H);
+          const mx = mmX + frac * mmW;
+          const my = toMmY(fy);
+          if (i === 0) ctx.moveTo(mx, my);
+          else ctx.lineTo(mx, my);
+        }
+        ctx.stroke();
+
+        ctx.strokeStyle = "rgba(120,200,255,0.25)";
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(mmX, waterLineY);
+        ctx.lineTo(mmX + mmW, waterLineY);
         ctx.stroke();
 
         const playerWorldX = s.isSwimming ? s.swimX : s.inBoat ? s.boatX : s.playerX;
@@ -6834,23 +6903,35 @@ export default function FishingGame() {
         const pmx = toMmX(playerWorldX);
         const pmy = Math.min(mmY + mmH - 3, Math.max(mmY + 2, toMmY(playerWorldY)));
         ctx.fillStyle = "#4fc3f7";
+        ctx.shadowColor = "#4fc3f7";
+        ctx.shadowBlur = 4;
         ctx.beginPath();
         ctx.arc(pmx, pmy, 3, 0, Math.PI * 2);
         ctx.fill();
+        ctx.shadowBlur = 0;
         ctx.strokeStyle = "#fff";
         ctx.lineWidth = 0.5;
         ctx.stroke();
 
+        if (s.gameState === "casting" || s.gameState === "waiting" || s.gameState === "bite" || s.gameState === "reeling") {
+          const hx = toMmX(s.hookX);
+          const hy = Math.min(mmY + mmH - 2, Math.max(mmY + 2, toMmY(s.hookY)));
+          ctx.fillStyle = "#ffcc00";
+          ctx.beginPath();
+          ctx.arc(hx, hy, 1.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
         const viewLmm = toMmX(-s.cameraX);
         const viewRmm = toMmX(-s.cameraX + W);
-        ctx.strokeStyle = "rgba(255,255,255,0.3)";
+        ctx.strokeStyle = "rgba(255,255,255,0.25)";
         ctx.lineWidth = 0.5;
         ctx.strokeRect(viewLmm, mmY, viewRmm - viewLmm, mmH);
 
-        ctx.fillStyle = "rgba(255,255,255,0.5)";
+        ctx.fillStyle = "rgba(200,220,255,0.5)";
         ctx.font = "bold 5px 'Press Start 2P', monospace";
         ctx.textAlign = "center";
-        ctx.fillText("MAP", mmX + mmW / 2, mmY - 1);
+        ctx.fillText("MAP", mmX + mmW / 2, mmY - 2);
 
         ctx.restore();
       }
