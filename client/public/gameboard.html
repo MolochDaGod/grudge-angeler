@@ -488,7 +488,22 @@
       transition: border-color 0.2s;
     }
     .npc-card:hover { border-color: var(--border-accent); }
-    .npc-img { width: 44px; height: 44px; image-rendering: pixelated; border-radius: 6px; background: rgba(255,255,255,0.04); flex-shrink: 0; }
+    .npc-img-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.04);
+      flex-shrink: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .npc-img-wrap canvas {
+      image-rendering: pixelated;
+      width: 40px;
+      height: 40px;
+    }
 
     .weather-grid {
       display: grid;
@@ -797,11 +812,11 @@ var PREDATORS = [
 ];
 
 var RODS = [
-  { name: "Bamboo Rod", price: 0, catchZoneBonus: 0, reelSpeedMult: 1.0, lineStrength: 1.0, description: "A simple bamboo rod. Short range, slow sink.", icon: "/assets/icons/Icons_07.png", castRange: 350, sinkSpeed: 1.0 },
-  { name: "Fiberglass Rod", price: 150, catchZoneBonus: 0.015, reelSpeedMult: 1.1, lineStrength: 1.15, description: "Lighter and more responsive. Better range.", icon: "/assets/icons/Icons_07.png", castRange: 550, sinkSpeed: 1.3 },
-  { name: "Carbon Rod", price: 400, catchZoneBonus: 0.025, reelSpeedMult: 1.2, lineStrength: 1.3, description: "High-tech carbon fiber. Reaches deep water.", icon: "/assets/icons/Icons_07.png", castRange: 800, sinkSpeed: 1.6 },
-  { name: "Titanium Rod", price: 800, catchZoneBonus: 0.035, reelSpeedMult: 1.35, lineStrength: 1.5, description: "Ultra-strong titanium. Massive cast range.", icon: "/assets/icons/Icons_07.png", castRange: 1100, sinkSpeed: 2.0 },
-  { name: "Legendary Rod", price: 1500, catchZoneBonus: 0.05, reelSpeedMult: 1.5, lineStrength: 1.8, description: "Forged from a ghost ship anchor. No limits.", icon: "/assets/icons/Icons_07.png", castRange: 1500, sinkSpeed: 2.5 },
+  { name: "Bamboo Rod", price: 0, catchZoneBonus: 0, reelSpeedMult: 1.0, lineStrength: 1.0, description: "A simple bamboo rod. Short range, slow sink.", icon: "/assets/icons/rods/rod-bamboo.png", castRange: 350, sinkSpeed: 1.0 },
+  { name: "Fiberglass Rod", price: 150, catchZoneBonus: 0.015, reelSpeedMult: 1.1, lineStrength: 1.15, description: "Lighter and more responsive. Better range.", icon: "/assets/icons/rods/rod-fiberglass.png", castRange: 550, sinkSpeed: 1.3 },
+  { name: "Carbon Rod", price: 400, catchZoneBonus: 0.025, reelSpeedMult: 1.2, lineStrength: 1.3, description: "High-tech carbon fiber. Reaches deep water.", icon: "/assets/icons/rods/rod-carbon.png", castRange: 800, sinkSpeed: 1.6 },
+  { name: "Titanium Rod", price: 800, catchZoneBonus: 0.035, reelSpeedMult: 1.35, lineStrength: 1.5, description: "Ultra-strong titanium. Massive cast range.", icon: "/assets/icons/rods/rod-titanium.png", castRange: 1100, sinkSpeed: 2.0 },
+  { name: "Legendary Rod", price: 1500, catchZoneBonus: 0.05, reelSpeedMult: 1.5, lineStrength: 1.8, description: "Forged from a ghost ship anchor. No limits.", icon: "/assets/icons/rods/rod-legendary.png", castRange: 1500, sinkSpeed: 2.5 },
 ];
 
 var LURES = [
@@ -1054,8 +1069,8 @@ function buildSections() {
         return '<div class="attr-card" style="border-color:' + a.color + '25"><div style="position:absolute;top:0;left:0;right:0;height:3px;background:' + a.color + ';border-radius:8px 8px 0 0;opacity:0.5;"></div><div class="attr-name" style="color:' + a.color + '">' + a.name + '</div><div class="attr-desc">' + a.desc + '</div><div class="attr-effect">' + a.effect + '</div></div>';
       }).join('') + '</div>';
     } else if (cfg.gridType === "npc") {
-      bodyHTML = descHTML + '<div class="npc-grid">' + NPCS.map(function(n) {
-        return '<div class="npc-card" data-name="' + n.name.toLowerCase() + '"><img class="npc-img" src="' + n.img + '" alt="' + n.name + '" onerror="this.style.display=\'none\'"><div style="flex:1;"><div class="equip-name" style="color:#4db6ac">' + n.name + '</div><div style="font-size:10px;color:#80cbc4;margin-bottom:3px;">' + n.role.toUpperCase() + '</div><div class="equip-desc">' + n.desc + '</div><div style="font-size:10px;color:var(--accent);margin-top:3px;opacity:0.7;">' + n.interact + '</div></div></div>';
+      bodyHTML = descHTML + '<div class="npc-grid">' + NPCS.map(function(n, idx) {
+        return '<div class="npc-card" data-name="' + n.name.toLowerCase() + '"><div class="npc-img-wrap"><canvas id="npc-canvas-' + idx + '" width="48" height="48" data-src="' + n.img + '"></canvas></div><div style="flex:1;"><div class="equip-name" style="color:#4db6ac">' + n.name + '</div><div style="font-size:10px;color:#80cbc4;margin-bottom:3px;">' + n.role.toUpperCase() + '</div><div class="equip-desc">' + n.desc + '</div><div style="font-size:10px;color:var(--accent);margin-top:3px;opacity:0.7;">' + n.interact + '</div></div></div>';
       }).join('') + '</div>';
     } else if (cfg.gridType === "mechanic") {
       bodyHTML = '<div class="equip-grid">' + MECHANICS.map(function(m) {
@@ -1126,6 +1141,17 @@ function buildSections() {
 }
 
 buildSections();
+
+// Render first frame of NPC sprite sheets into canvas elements
+document.querySelectorAll('canvas[data-src]').forEach(function(canvas) {
+  var img = new Image();
+  img.onload = function() {
+    var ctx = canvas.getContext('2d');
+    var frameH = img.height;
+    ctx.drawImage(img, 0, 0, frameH, frameH, 0, 0, 48, 48);
+  };
+  img.src = canvas.getAttribute('data-src');
+});
 
 // Collapsible sections
 document.querySelectorAll('.section-header').forEach(function(header) {
