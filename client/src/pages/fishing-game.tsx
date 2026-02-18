@@ -240,8 +240,9 @@ interface Lure {
   targetFish: string[];
   targetBonus: number;
   type: "live" | "lure";
-  crabBaitTier?: number;
   legendaryBoost?: number;
+  crabName?: string;
+  crabSpriteSheet?: string;
 }
 
 const LURES: Lure[] = [
@@ -261,9 +262,16 @@ const LURES: Lure[] = [
   { name: "Storm Shad", price: 300, effect: "Faster bites", description: "Mimics injured baitfish. Fish bite faster.", icon: "/assets/icons/lures/storm_shad.png", rarityBoost: 1.0, sizeBoost: 0.2, speedBoost: 2.0, depthBoost: 0, targetFish: ["Bass", "Salmon"], targetBonus: 2.0, type: "lure" },
   { name: "Kraken Bait", price: 500, effect: "Legendary + deep dive", description: "Mysterious bait from the depths. Sinks to the abyss.", icon: "/assets/icons/lures/kraken_bait.png", rarityBoost: 3.0, sizeBoost: 0.5, speedBoost: 0.8, depthBoost: 1.2, targetFish: ["Whale"], targetBonus: 4.0, type: "lure" },
   { name: "Prismatic Lure", price: 750, effect: "All bonuses", description: "A rainbow-shifting lure. Boosts everything.", icon: "/assets/icons/lures/prismatic_lure.png", rarityBoost: 1.8, sizeBoost: 0.5, speedBoost: 1.5, depthBoost: 0.4, targetFish: [], targetBonus: 1.0, type: "lure" },
-  { name: "Common Crab Bait", price: 0, effect: "Unlocks legendaries", description: "Live crab bait from common beach crabs. Required to attract legendary fish.", icon: "/assets/icons/fish/fish-red-crab.png", rarityBoost: 1.5, sizeBoost: 0.2, speedBoost: 1.0, depthBoost: 0.1, targetFish: [], targetBonus: 1.0, type: "live", crabBaitTier: 1, legendaryBoost: 1.5 },
-  { name: "Uncommon Crab Bait", price: 0, effect: "Boosts legendaries", description: "Live crab bait from uncommon crabs. Legendaries can't resist the scent.", icon: "/assets/icons/fish/fish-purple-crab.png", rarityBoost: 2.5, sizeBoost: 0.4, speedBoost: 1.1, depthBoost: 0.2, targetFish: [], targetBonus: 1.0, type: "live", crabBaitTier: 2, legendaryBoost: 3.0 },
-  { name: "Rare Crab Bait", price: 0, effect: "Maximum legendary boost", description: "Live rare crab bait. The ultimate legendary attractor. Sea Devil kin call to the deep.", icon: "/assets/icons/fish/fish-crimson-crab.png", rarityBoost: 4.0, sizeBoost: 0.6, speedBoost: 1.2, depthBoost: 0.4, targetFish: [], targetBonus: 1.0, type: "live", crabBaitTier: 3, legendaryBoost: 6.0 },
+  { name: "Red Crab Bait", price: 0, effect: "+50% rarity", description: "A feisty red crab wriggling on the hook. Attracts nearby fish.", icon: "/assets/icons/fish/fish-red-crab.png", rarityBoost: 1.5, sizeBoost: 0.15, speedBoost: 1.0, depthBoost: 0.1, targetFish: ["Perch", "Minnow"], targetBonus: 1.5, type: "live", legendaryBoost: 1.5, crabName: "Red Crab", crabSpriteSheet: "/assets/crabs/crab-red-crab.png" },
+  { name: "Blue Crab Bait", price: 0, effect: "+50% speed", description: "A snappy blue crab. Its movement attracts fast swimmers.", icon: "/assets/icons/fish/fish-blue-crab.png", rarityBoost: 1.3, sizeBoost: 0.1, speedBoost: 1.5, depthBoost: 0.1, targetFish: ["Salmon", "Bass"], targetBonus: 2.0, type: "live", legendaryBoost: 1.5, crabName: "Blue Crab", crabSpriteSheet: "/assets/crabs/crab-blue-crab.png" },
+  { name: "Green Crab Bait", price: 0, effect: "+depth boost", description: "A mossy green crab. Sinks deeper, attracts bottom dwellers.", icon: "/assets/icons/fish/fish-green-crab.png", rarityBoost: 1.2, sizeBoost: 0.2, speedBoost: 1.0, depthBoost: 0.4, targetFish: ["Catfish", "Eel"], targetBonus: 2.0, type: "live", legendaryBoost: 1.5, crabName: "Green Crab", crabSpriteSheet: "/assets/crabs/crab-green-crab.png" },
+  { name: "Cyan Crab Bait", price: 0, effect: "+size boost", description: "A pale cyan crab. Attracts bigger specimens.", icon: "/assets/icons/fish/fish-cyan-crab.png", rarityBoost: 1.3, sizeBoost: 0.4, speedBoost: 1.0, depthBoost: 0.1, targetFish: ["Jellyfish", "Octopus"], targetBonus: 1.8, type: "live", legendaryBoost: 1.5, crabName: "Cyan Crab", crabSpriteSheet: "/assets/crabs/crab-cyan-crab.png" },
+  { name: "Pink Crab Bait", price: 0, effect: "+bite speed", description: "A cute pink crab. Fish bite faster when they see it squirm.", icon: "/assets/icons/fish/fish-pink-crab.png", rarityBoost: 1.2, sizeBoost: 0.1, speedBoost: 1.8, depthBoost: 0, targetFish: ["Minnow", "Perch", "Jellyfish"], targetBonus: 2.0, type: "live", legendaryBoost: 1.5, crabName: "Pink Crab", crabSpriteSheet: "/assets/crabs/crab-pink-crab.png" },
+  { name: "Purple Crab Bait", price: 0, effect: "2.5x rarity", description: "An uncommon purple crab with iridescent shell. Strong legendary attractor.", icon: "/assets/icons/fish/fish-purple-crab.png", rarityBoost: 2.5, sizeBoost: 0.3, speedBoost: 1.1, depthBoost: 0.2, targetFish: ["Swordfish", "Stingray"], targetBonus: 2.0, type: "live", legendaryBoost: 3.0, crabName: "Purple Crab", crabSpriteSheet: "/assets/crabs/crab-purple-crab.png" },
+  { name: "Gold Crab Bait", price: 0, effect: "+size +rarity", description: "A shimmering gold crab. Attracts bigger, rarer fish.", icon: "/assets/icons/fish/fish-gold-crab.png", rarityBoost: 2.0, sizeBoost: 0.5, speedBoost: 1.2, depthBoost: 0.3, targetFish: ["Whale", "Salmon"], targetBonus: 2.5, type: "live", legendaryBoost: 3.0, crabName: "Gold Crab", crabSpriteSheet: "/assets/crabs/crab-gold-crab.png" },
+  { name: "Dark Crab Bait", price: 0, effect: "+deep dive", description: "A dark-shelled crab with powerful pincers. Sinks to the abyss.", icon: "/assets/icons/fish/fish-dark-crab.png", rarityBoost: 2.2, sizeBoost: 0.4, speedBoost: 1.0, depthBoost: 0.6, targetFish: ["Anglerfish", "Deep Sea Angler", "Moray Eel"], targetBonus: 2.5, type: "live", legendaryBoost: 3.0, crabName: "Dark Crab", crabSpriteSheet: "/assets/crabs/crab-dark-crab.png" },
+  { name: "Crimson Crab Bait", price: 0, effect: "4x rarity!", description: "A rare crimson crab. The ultimate legendary attractor.", icon: "/assets/icons/fish/fish-crimson-crab.png", rarityBoost: 4.0, sizeBoost: 0.6, speedBoost: 1.2, depthBoost: 0.4, targetFish: ["Storm Swordfish", "Volcanic Perch", "Abyssal Bass"], targetBonus: 3.0, type: "live", legendaryBoost: 6.0, crabName: "Crimson Crab", crabSpriteSheet: "/assets/crabs/crab-crimson-crab.png" },
+  { name: "Shadow Crab Bait", price: 0, effect: "6x legendary!", description: "A phantom shadow crab. Sea Devil kin call to the deep.", icon: "/assets/icons/fish/fish-shadow-crab.png", rarityBoost: 4.5, sizeBoost: 0.7, speedBoost: 1.3, depthBoost: 0.5, targetFish: ["Shadow Leviathan", "Celestial Whale", "Neon Eel"], targetBonus: 3.5, type: "live", legendaryBoost: 6.0, crabName: "Shadow Crab", crabSpriteSheet: "/assets/crabs/crab-shadow-crab.png" },
 ];
 
 interface ChumItem {
@@ -340,6 +348,13 @@ interface NpcRequest {
   completed: boolean;
 }
 
+interface CrabMasterMission {
+  crabName: string;
+  targetFish: string;
+  reward: number;
+  hint: string;
+}
+
 interface NpcDef {
   id: number;
   name: string;
@@ -347,11 +362,12 @@ interface NpcDef {
   idleFrames: number;
   walkFrames: number;
   worldX: number;
-  role: "shopkeeper" | "requester" | "mission_giver";
+  role: "shopkeeper" | "requester" | "mission_giver" | "mission";
   greeting: string;
   shopItems?: NpcShopItem[];
   request?: NpcRequest;
   mission?: NpcMission;
+  missions?: CrabMasterMission[];
   dialogueLines: string[];
   beachNpc?: boolean;
   staticSprite?: string;
@@ -480,6 +496,31 @@ const NPC_DEFS: NpcDef[] = [
       "Crimson and Shadow crabs are rare but their bait is incredible.",
       "The bait shop has cheap supplies to get you started.",
       "I heard there are 30 species out there. Good luck catching them all!",
+    ],
+  },
+  {
+    id: 8, name: "Crab Master", spriteFolder: "10", idleFrames: 4, walkFrames: 6,
+    worldX: 3.8, role: "mission", beachNpc: true,
+    greeting: "I study every crab on this beach. Bring me the right bait and I'll teach you secrets!",
+    missions: [
+      { crabName: "Red Crab", targetFish: "Perch", reward: 30, hint: "Red Crabs attract Perch. Catch one for me!" },
+      { crabName: "Blue Crab", targetFish: "Bass", reward: 40, hint: "Blue Crabs lure Bass. Use one as bait!" },
+      { crabName: "Green Crab", targetFish: "Catfish", reward: 40, hint: "Green Crabs sink deep. Try for a Catfish!" },
+      { crabName: "Cyan Crab", targetFish: "Jellyfish", reward: 50, hint: "Cyan Crabs attract Jellyfish. Bait up!" },
+      { crabName: "Pink Crab", targetFish: "Minnow", reward: 30, hint: "Pink Crabs make fish bite fast. Catch a Minnow!" },
+      { crabName: "Purple Crab", targetFish: "Swordfish", reward: 80, hint: "Purple Crabs call rare fish. Try for a Swordfish!" },
+      { crabName: "Gold Crab", targetFish: "Whale", reward: 100, hint: "Gold Crabs attract big game. Land a Whale!" },
+      { crabName: "Dark Crab", targetFish: "Anglerfish", reward: 100, hint: "Dark Crabs reach the abyss. Catch an Anglerfish!" },
+      { crabName: "Crimson Crab", targetFish: "Storm Swordfish", reward: 200, hint: "Crimson bait is legendary. Catch a Storm Swordfish!" },
+      { crabName: "Shadow Crab", targetFish: "Shadow Leviathan", reward: 500, hint: "Shadow bait calls the deep. Can you catch the Shadow Leviathan?" },
+    ],
+    dialogueLines: [
+      "Each crab species attracts different fish. Learn their secrets!",
+      "Complete my missions and I'll reward you handsomely.",
+      "The rarer the crab, the more powerful its bait properties.",
+      "Crimson and Shadow crabs can attract legendary fish!",
+      "Master all 10 crabs and you'll be a true Crab Master!",
+      "Some missions require deep water fishing. Get your license first!",
     ],
   },
 ];
@@ -826,7 +867,8 @@ export default function FishingGame() {
     jumpPeakReached: false,
     showLurePopup: false,
     showChumPopup: false,
-    crabBaitCounts: [0, 0, 0] as number[],
+    crabBaitCounts: {} as Record<string, number>,
+    crabMasterProgress: {} as Record<string, boolean>,
     ownedChum: Array.from({ length: 22 }, () => 0) as number[],
     equippedChum: -1,
     chumActiveTimer: 0,
@@ -1007,7 +1049,8 @@ export default function FishingGame() {
     jumpPeakReached: false,
     showLurePopup: false,
     showChumPopup: false,
-    crabBaitCounts: [0, 0, 0] as number[],
+    crabBaitCounts: {} as Record<string, number>,
+    crabMasterProgress: {} as Record<string, boolean>,
     ownedChum: Array.from({ length: 22 }, () => 0) as number[],
     equippedChum: -1,
     chumActiveTimer: 0,
@@ -1094,7 +1137,7 @@ export default function FishingGame() {
     const celestialRare = ce === "red_sun" ? 1 + ceFade * 1.5 : 1;
     const celestialLegendary = ce === "green_moon" ? 1 + ceFade * 2.5 : ce === "blood_moon" ? 1 + ceFade * 1.5 : 1;
     const celestialUltra = ce === "tentacle_sun" ? 1 + ceFade * 3.5 : ce === "blood_moon" ? 1 + ceFade * 2 : 1;
-    const crabBaitMult = lure.crabBaitTier ? (lure.legendaryBoost || 1) : 0;
+    const crabBaitMult = lure.crabName ? (lure.legendaryBoost || 1) : 0;
     const hasCrabBait = crabBaitMult > 0;
     const adjustedWeights = FISH_TYPES.map(ft => {
       let w = ft.weight;
@@ -1428,7 +1471,8 @@ export default function FishingGame() {
       jumpPeakReached: s.jumpPeakReached,
       showLurePopup: s.showLurePopup,
       showChumPopup: s.showChumPopup,
-      crabBaitCounts: [...s.crabBaitCounts],
+      crabBaitCounts: { ...s.crabBaitCounts },
+      crabMasterProgress: { ...s.crabMasterProgress },
       ownedChum: [...s.ownedChum],
       equippedChum: s.equippedChum,
       chumActiveTimer: s.chumActiveTimer,
@@ -4705,6 +4749,24 @@ export default function FishingGame() {
         ctx.stroke();
         ctx.fillStyle = "#bbb";
         ctx.fillRect(s.hookX + 2, s.hookY - 4, 1.5, 4);
+
+        const eqLure = LURES[s.equippedLure];
+        if (eqLure.crabSpriteSheet) {
+          const crabSheet = getImg(eqLure.crabSpriteSheet);
+          if (crabSheet && crabSheet.complete && crabSheet.naturalWidth > 0) {
+            const crabFS = 32;
+            const crabFrame = Math.floor(s.time * 0.03) % 2;
+            const crabSX = crabFrame * crabFS;
+            const crabSY = crabFS;
+            const crabDrawSize = 14;
+            ctx.save();
+            ctx.imageSmoothingEnabled = false;
+            const wobble = Math.sin(s.time * 0.15) * 2;
+            ctx.drawImage(crabSheet, crabSX, crabSY, crabFS, crabFS,
+              s.hookX - crabDrawSize / 2 + 2, s.hookY + 1 + wobble, crabDrawSize, crabDrawSize);
+            ctx.restore();
+          }
+        }
       }
 
       if (s.netActive && s.netAnimPhase !== "none") {
@@ -5530,15 +5592,26 @@ export default function FishingGame() {
           s.catchHistory.unshift({ name, rarity: s.currentCatch?.rarity || "junk", size: sizeBonus, weight: fishWeight, sellPrice, timestamp: Date.now() });
           if (s.catchHistory.length > 50) s.catchHistory.length = 50;
 
+          const crabMasterNpc = NPC_DEFS.find(n => n.name === "Crab Master");
+          if (crabMasterNpc?.missions) {
+            const equippedLure = LURES[s.equippedLure];
+            if (equippedLure.crabName) {
+              const matchingMission = crabMasterNpc.missions.find(m => m.crabName === equippedLure.crabName && m.targetFish === name);
+              if (matchingMission && !s.crabMasterProgress[matchingMission.crabName]) {
+                s.crabMasterProgress[matchingMission.crabName] = true;
+                s.money += matchingMission.reward;
+              }
+            }
+          }
+
           if (Math.random() < 0.05) {
             const catchableChumIdx = Math.random() < 0.5 ? 20 : 21;
             s.ownedChum[catchableChumIdx]++;
           }
 
           if (s.currentCatch?.beachCrab) {
-            const crabRarity = s.currentCatch.rarity;
-            const baitTier = crabRarity === "rare" ? 2 : crabRarity === "uncommon" ? 1 : 0;
-            s.crabBaitCounts[baitTier]++;
+            const crabKey = s.currentCatch.name;
+            s.crabBaitCounts[crabKey] = (s.crabBaitCounts[crabKey] || 0) + 1;
             const bonusXP = Math.floor(5 + Math.random() * 10);
             s.playerXP += bonusXP;
             while (s.playerXP >= s.playerXPToNext) {
@@ -6188,15 +6261,15 @@ export default function FishingGame() {
 
     if (s.gameState === "casting") {
       const equippedLure = LURES[s.equippedLure];
-      if (equippedLure.crabBaitTier) {
-        const tierIdx = equippedLure.crabBaitTier - 1;
-        if (s.crabBaitCounts[tierIdx] <= 0) {
+      if (equippedLure.crabName) {
+        const crabKey = equippedLure.crabName;
+        if ((s.crabBaitCounts[crabKey] || 0) <= 0) {
           s.equippedLure = 0;
           syncUI();
           return;
         }
-        s.crabBaitCounts[tierIdx]--;
-        if (s.crabBaitCounts[tierIdx] <= 0) {
+        s.crabBaitCounts[crabKey]--;
+        if ((s.crabBaitCounts[crabKey] || 0) <= 0) {
           s.equippedLure = 0;
         }
       }
@@ -6707,8 +6780,8 @@ export default function FishingGame() {
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(52,152,219,0.3)" }}>
               <img src="/assets/icons/Icons_09.png" alt="" className="w-4 h-4" style={{ imageRendering: "pixelated" }} />
-              <span style={{ color: LURES[uiState.equippedLure].crabBaitTier ? "#ff4060" : "#5dade2", fontSize: 10 }}>{LURES[uiState.equippedLure].name}</span>
-              {LURES[uiState.equippedLure].crabBaitTier && <span style={{ color: "#f59e0b", fontSize: 9 }}>x{uiState.crabBaitCounts[LURES[uiState.equippedLure].crabBaitTier! - 1]}</span>}
+              <span style={{ color: LURES[uiState.equippedLure].crabName ? "#ff4060" : "#5dade2", fontSize: 10 }}>{LURES[uiState.equippedLure].name}</span>
+              {LURES[uiState.equippedLure].crabName && <span style={{ color: "#f59e0b", fontSize: 9 }}>x{uiState.crabBaitCounts[LURES[uiState.equippedLure].crabName!] || 0}</span>}
             </div>
             <button
               className="flex items-center gap-2 px-3 py-1.5 cursor-pointer"
@@ -6903,9 +6976,9 @@ export default function FishingGame() {
                 {uiState.showLurePopup && (
                   <div style={{ position: "absolute", bottom: "100%", left: "50%", transform: "translateX(-50%)", marginBottom: 4, background: "rgba(8,15,25,0.95)", borderRadius: 8, border: "1px solid rgba(52,152,219,0.3)", padding: 6, minWidth: 140, maxHeight: 200, overflowY: "auto", zIndex: 40 }} data-testid="lure-popup">
                     {LURES.map((lure, i) => {
-                      if (!uiState.ownedLures[i] && !lure.crabBaitTier) return null;
-                      const isCrab = lure.crabBaitTier;
-                      const crabCount = isCrab ? (uiState.crabBaitCounts[lure.crabBaitTier! - 1] || 0) : 0;
+                      if (!uiState.ownedLures[i] && !lure.crabName) return null;
+                      const isCrab = !!lure.crabName;
+                      const crabCount = isCrab ? (uiState.crabBaitCounts[lure.crabName!] || 0) : 0;
                       const crabEmpty = isCrab && crabCount <= 0;
                       if (!isCrab && !uiState.ownedLures[i]) return null;
                       return (
@@ -7320,8 +7393,8 @@ export default function FishingGame() {
                   })}
                   {uiState.storeTab === "lure" && (["live", "lure", "crab"] as const).map(baitType => {
                     const items = baitType === "crab"
-                      ? LURES.map((l, i) => ({ lure: l, idx: i })).filter(x => x.lure.crabBaitTier)
-                      : LURES.map((l, i) => ({ lure: l, idx: i })).filter(x => x.lure.type === baitType && !x.lure.crabBaitTier);
+                      ? LURES.map((l, i) => ({ lure: l, idx: i })).filter(x => !!x.lure.crabName)
+                      : LURES.map((l, i) => ({ lure: l, idx: i })).filter(x => x.lure.type === baitType && !x.lure.crabName);
                     return (
                       <div key={baitType} className="flex flex-col gap-1.5">
                         <div className="flex items-center gap-2 px-1 pt-1">
@@ -7342,7 +7415,7 @@ export default function FishingGame() {
                               <div className="flex-1 min-w-0 flex flex-col gap-1">
                                 <div className="flex items-center gap-2 flex-wrap">
                                   <span style={{ color: equipped ? "#2ecc71" : "#e0e0e0", fontSize: 12 }}>{lure.name}</span>
-                                  <span style={{ color: lure.crabBaitTier ? "#ff4060" : lure.type === "live" ? "#e67e22" : "#3498db", fontSize: 8, background: lure.crabBaitTier ? "rgba(255,64,96,0.15)" : lure.type === "live" ? "rgba(230,126,34,0.15)" : "rgba(52,152,219,0.15)", padding: "1px 3px", borderRadius: 2 }}>{lure.crabBaitTier ? "CRAB" : lure.type === "live" ? "LIVE" : "LURE"}</span>
+                                  <span style={{ color: lure.crabName ? "#ff4060" : lure.type === "live" ? "#e67e22" : "#3498db", fontSize: 8, background: lure.crabName ? "rgba(255,64,96,0.15)" : lure.type === "live" ? "rgba(230,126,34,0.15)" : "rgba(52,152,219,0.15)", padding: "1px 3px", borderRadius: 2 }}>{lure.crabName ? "CRAB" : lure.type === "live" ? "LIVE" : "LURE"}</span>
                                   {equipped && <span style={{ color: "#2ecc71", fontSize: 9, background: "rgba(46,204,113,0.2)", padding: "1px 4px", borderRadius: 3 }}>EQUIPPED</span>}
                                 </div>
                                 <span style={{ color: "#78909c", fontSize: 10, lineHeight: "1.5" }}>{lure.description}</span>
@@ -7358,10 +7431,10 @@ export default function FishingGame() {
                                 </div>
                               </div>
                               <div className="flex flex-col items-end gap-1">
-                                {lure.crabBaitTier ? (
+                                {lure.crabName ? (
                                   <>
-                                    <span style={{ color: "#f59e0b", fontSize: 11, fontFamily: "'Press Start 2P', monospace" }}>x{uiState.crabBaitCounts[lure.crabBaitTier - 1]}</span>
-                                    {uiState.crabBaitCounts[lure.crabBaitTier - 1] > 0 && !equipped ? (
+                                    <span style={{ color: "#f59e0b", fontSize: 11, fontFamily: "'Press Start 2P', monospace" }}>x{uiState.crabBaitCounts[lure.crabName] || 0}</span>
+                                    {(uiState.crabBaitCounts[lure.crabName] || 0) > 0 && !equipped ? (
                                       <button
                                         className="cursor-pointer px-3 py-1.5"
                                         style={{ background: "rgba(255,64,96,0.2)", borderRadius: 6, border: "1px solid rgba(255,64,96,0.4)", fontFamily: "'Press Start 2P', monospace", color: "#ff4060", fontSize: 10 }}
@@ -7370,7 +7443,7 @@ export default function FishingGame() {
                                       >
                                         EQUIP
                                       </button>
-                                    ) : uiState.crabBaitCounts[lure.crabBaitTier - 1] <= 0 ? (
+                                    ) : (uiState.crabBaitCounts[lure.crabName] || 0) <= 0 ? (
                                       <span style={{ color: "#607d8b", fontSize: 8 }}>Catch crabs!</span>
                                     ) : null}
                                   </>
@@ -7639,14 +7712,14 @@ export default function FishingGame() {
                         REQUEST
                       </button>
                     )}
-                    {npc.role === "mission_giver" && (
+                    {(npc.role === "mission_giver" || npc.role === "mission") && (
                       <button
                         className="flex-1 px-3 py-2 cursor-pointer"
                         style={{ background: uiState.npcTab === "mission" ? `${roleColor}22` : "transparent", fontFamily: "'Press Start 2P', monospace", color: uiState.npcTab === "mission" ? roleColor : "#607d8b", fontSize: 11, borderBottom: uiState.npcTab === "mission" ? `2px solid ${roleColor}` : "2px solid transparent" }}
                         onClick={(e) => { e.stopPropagation(); stateRef.current.npcTab = "mission"; syncUI(); }}
                         data-testid="button-npc-mission"
                       >
-                        MISSION
+                        MISSIONS
                       </button>
                     )}
                   </div>
@@ -7767,6 +7840,50 @@ export default function FishingGame() {
                             MISSION COMPLETE! Reward collected!
                           </div>
                         )}
+                      </div>
+                    )}
+
+                    {uiState.npcTab === "mission" && npc.missions && (
+                      <div className="flex flex-col gap-2">
+                        <div style={{ color: "#ff4060", fontSize: 11, fontFamily: "'Press Start 2P', monospace", marginBottom: 4 }}>CRAB MASTER MISSIONS</div>
+                        <div style={{ color: "#78909c", fontSize: 10, fontFamily: "'Press Start 2P', monospace", marginBottom: 4, lineHeight: "15px" }}>
+                          Use each crab as bait to catch the target fish!
+                        </div>
+                        {npc.missions.map((mission: CrabMasterMission, mi: number) => {
+                          const done = !!uiState.crabMasterProgress[mission.crabName];
+                          const crabIcon = `/assets/icons/fish/fish-${mission.crabName.toLowerCase().replace(/ /g, '-')}.png`;
+                          return (
+                            <div key={mi} className="flex items-center gap-2 p-2" style={{ background: done ? "rgba(46,204,113,0.1)" : "rgba(255,255,255,0.03)", borderRadius: 6, border: done ? "1px solid rgba(46,204,113,0.3)" : "1px solid rgba(255,255,255,0.06)" }}>
+                              <img src={crabIcon} alt="" style={{ width: 24, height: 24, imageRendering: "pixelated", opacity: done ? 0.5 : 1 }} />
+                              <div className="flex-1 min-w-0">
+                                <div style={{ color: done ? "#2ecc71" : "#e0e0e0", fontSize: 10, fontFamily: "'Press Start 2P', monospace" }}>
+                                  {done ? "DONE" : mission.hint}
+                                </div>
+                                <div style={{ color: "#78909c", fontSize: 9, fontFamily: "'Press Start 2P', monospace", marginTop: 2 }}>
+                                  {mission.crabName} bait: catch {mission.targetFish}
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                {done ? (
+                                  <span style={{ color: "#2ecc71", fontSize: 9, fontFamily: "'Press Start 2P', monospace" }}>+{mission.reward}g</span>
+                                ) : (
+                                  <>
+                                    <img src="/assets/icons/gbux.png" alt="gbux" style={{ width: 10, height: 10 }} />
+                                    <span style={{ color: "#f59e0b", fontSize: 9, fontFamily: "'Press Start 2P', monospace" }}>{mission.reward}</span>
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                        <div className="flex items-center justify-between mt-2 p-2" style={{ background: "rgba(255,64,96,0.1)", borderRadius: 6, border: "1px solid rgba(255,64,96,0.2)" }}>
+                          <span style={{ color: "#ff4060", fontSize: 10, fontFamily: "'Press Start 2P', monospace" }}>
+                            {Object.values(uiState.crabMasterProgress).filter(Boolean).length}/{npc.missions.length} Complete
+                          </span>
+                          <span style={{ color: "#f59e0b", fontSize: 10, fontFamily: "'Press Start 2P', monospace" }}>
+                            Total: {npc.missions.reduce((t: number, m: CrabMasterMission) => t + (uiState.crabMasterProgress[m.crabName] ? m.reward : 0), 0)}g earned
+                          </span>
+                        </div>
                       </div>
                     )}
                   </div>
