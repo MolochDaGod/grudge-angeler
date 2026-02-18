@@ -697,6 +697,7 @@ export default function FishingGame() {
     money: 50,
     marketPrices: new Map<string, MarketEntry>(),
     nearHut: false,
+    nearBaitShop: false,
     showStorePrompt: false,
     storeTab: "rod" as "rod" | "lure" | "chum" | "eggs",
     fishingLicense: false,
@@ -891,6 +892,7 @@ export default function FishingGame() {
     ownedLures: Array.from({ length: LURES.length }, (_, i) => i === 0) as boolean[],
     money: 50,
     nearHut: false,
+    nearBaitShop: false,
     showStorePrompt: false,
     storeTab: "rod" as "rod" | "lure" | "chum" | "eggs",
     fishingLicense: false,
@@ -1311,6 +1313,7 @@ export default function FishingGame() {
       ownedLures: [...s.ownedLures],
       money: s.money,
       nearHut: s.nearHut,
+      nearBaitShop: s.nearBaitShop,
       showStorePrompt: s.showStorePrompt,
       storeTab: s.storeTab,
       fishingLicense: s.fishingLicense,
@@ -1576,6 +1579,10 @@ export default function FishingGame() {
           stateRef.current.gameState = "store";
           stateRef.current.storeTab = "rod";
           syncUI();
+        } else if (stateRef.current.nearBaitShop) {
+          stateRef.current.gameState = "store";
+          stateRef.current.storeTab = "rod";
+          syncUI();
         }
       }
     };
@@ -1787,6 +1794,9 @@ export default function FishingGame() {
 
         const hutCheckX = W * 0.85 + (192 * 2.2) / 2;
         s.nearHut = !s.inBoat && Math.abs(s.playerX - hutCheckX) < 80 && s.gameState === "idle" && s.fishingLicense;
+
+        const baitShopCenterX = W * 2.85 + s.baitShopOffsetX + (192 * s.baitShopScale) / 2;
+        s.nearBaitShop = !s.inBoat && Math.abs(s.playerX - baitShopCenterX) < 80 && s.gameState === "idle";
 
         s.nearNpc = -1;
 
@@ -7094,7 +7104,7 @@ export default function FishingGame() {
           )}
 
           {/* Hut/Shop Hint */}
-          {uiState.nearHut && !uiState.showStorePrompt && uiState.gameState === "idle" && (
+          {(uiState.nearHut || uiState.nearBaitShop) && !uiState.showStorePrompt && uiState.gameState === "idle" && (
             <div className="absolute bottom-24 left-1/2 -translate-x-1/2 text-center px-5 py-3 flex flex-col items-center gap-2" style={{ background: "rgba(8,15,25,0.9)", borderRadius: 10, border: "1px solid rgba(46,204,113,0.4)", zIndex: 50 }} data-testid="hut-hint">
               <span style={{ color: "#2ecc71", fontSize: 13, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "Tap E to enter shop" : "Press E to enter shop"}</span>
             </div>
@@ -9164,6 +9174,10 @@ export default function FishingGame() {
                     st.showLicensePrompt = true;
                     syncUI();
                   } else if (st.nearHut) {
+                    st.gameState = "store";
+                    st.storeTab = "rod";
+                    syncUI();
+                  } else if (st.nearBaitShop) {
                     st.gameState = "store";
                     st.storeTab = "rod";
                     syncUI();
