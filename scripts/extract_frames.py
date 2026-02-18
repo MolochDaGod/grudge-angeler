@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 Extract individual frames from creature sprite sheets and remove backgrounds
-using flood-fill from corners. This preserves dark creature details while
-removing the dark background.
+using enhanced flood-fill from corners/edges. Includes secondary cleanup pass
+for near-black pixels adjacent to background and edge alpha fading.
 """
 from PIL import Image
 import os
@@ -10,8 +10,7 @@ from collections import deque
 
 CREATURES_DIR = "client/public/assets/creatures"
 FRAME_HEIGHT = 48
-
-COLOR_THRESHOLD = 50
+COLOR_THRESHOLD = 55
 
 def color_distance(c1, c2):
     return sum((a - b) ** 2 for a, b in zip(c1[:3], c2[:3])) ** 0.5
@@ -22,52 +21,28 @@ def flood_fill_background(img, threshold=COLOR_THRESHOLD):
     visited = [[False] * height for _ in range(width)]
     bg_pixels = set()
 
-    corners = [
-        (0, 0), (width-1, 0), (0, height-1), (width-1, height-1),
-        (width//4, 0), (width*3//4, 0), (width//4, height-1), (width*3//4, height-1),
-        (0, height//4), (0, height*3//4), (width-1, height//4), (width-1, height*3//4),
-    ]
-
     bg_samples = []
-    for cx, cy in corners:
-        if 0 <= cx < width and 0 <= cy < height:
-            bg_samples.append(pixels[cx, cy][:3] if img.mode == 'RGBA' else pixels[cx, cy])
-
-    if not bg_samples:
-        return img
+    for x in range(width):
+        for y in [0, 1, height-1, height-2]:
+            bg_samples.append(pixels[x, y][:3])
+    for y in range(height):
+        for x in [0, 1, width-1, width-2]:
+            bg_samples.append(pixels[x, y][:3])
 
     avg_bg = tuple(sum(c[i] for c in bg_samples) // len(bg_samples) for i in range(3))
 
     queue = deque()
-    for cx, cy in corners:
-        if 0 <= cx < width and 0 <= cy < height:
-            px = pixels[cx, cy][:3] if img.mode == 'RGBA' else px if isinstance((px := pixels[cx, cy]), tuple) else (px, px, px)
-            if color_distance(px, avg_bg) < threshold:
-                queue.append((cx, cy))
-                visited[cx][cy] = True
-                bg_pixels.add((cx, cy))
-
     for x in range(width):
         for y in [0, height-1]:
-            if not visited[x][y]:
-                px = pixels[x, y]
-                if img.mode == 'RGBA':
-                    px = px[:3]
-                elif not isinstance(px, tuple):
-                    px = (px, px, px)
-                if color_distance(px, avg_bg) < threshold:
-                    queue.append((x, y))
-                    visited[x][y] = True
-                    bg_pixels.add((x, y))
-
+            px = pixels[x, y][:3]
+            if color_distance(px, avg_bg) < threshold:
+                queue.append((x, y))
+                visited[x][y] = True
+                bg_pixels.add((x, y))
     for y in range(height):
         for x in [0, width-1]:
             if not visited[x][y]:
-                px = pixels[x, y]
-                if img.mode == 'RGBA':
-                    px = px[:3]
-                elif not isinstance(px, tuple):
-                    px = (px, px, px)
+                px = pixels[x, y][:3]
                 if color_distance(px, avg_bg) < threshold:
                     queue.append((x, y))
                     visited[x][y] = True
@@ -79,32 +54,56 @@ def flood_fill_background(img, threshold=COLOR_THRESHOLD):
             nx, ny = x + dx, y + dy
             if 0 <= nx < width and 0 <= ny < height and not visited[nx][ny]:
                 visited[nx][ny] = True
-                px = pixels[nx, ny]
-                if img.mode == 'RGBA':
-                    px_rgb = px[:3]
-                elif not isinstance(px, tuple):
-                    px_rgb = (px, px, px)
-                else:
-                    px_rgb = px[:3]
-                if color_distance(px_rgb, avg_bg) < threshold:
+                px = pixels[nx, ny][:3]
+                if color_distance(px, avg_bg) < threshold:
                     bg_pixels.add((nx, ny))
                     queue.append((nx, ny))
 
-    result = img.convert('RGBA')
+    result = img.copy()
     result_pixels = result.load()
+
     for x, y in bg_pixels:
         result_pixels[x, y] = (0, 0, 0, 0)
 
-    edge_pixels = set()
-    for x, y in bg_pixels:
-        for dx, dy in [(-1,0),(1,0),(0,-1),(0,1)]:
-            nx, ny = x + dx, y + dy
-            if 0 <= nx < width and 0 <= ny < height and (nx, ny) not in bg_pixels:
-                edge_pixels.add((nx, ny))
+    for x in range(width):
+        for y in range(height):
+            if (x, y) not in bg_pixels:
+                r, g, b, a = result_pixels[x, y]
+                brightness = r + g + b
+                if brightness < 30:
+                    neighbors_bg = 0
+                    total_neighbors = 0
+                    for dx in range(-1, 2):
+                        for dy in range(-1, 2):
+                            if dx == 0 and dy == 0:
+                                continue
+                            nx, ny = x + dx, y + dy
+                            if 0 <= nx < width and 0 <= ny < height:
+                                total_neighbors += 1
+                                if (nx, ny) in bg_pixels:
+                                    neighbors_bg += 1
+                    if total_neighbors > 0 and neighbors_bg >= total_neighbors * 0.6:
+                        result_pixels[x, y] = (0, 0, 0, 0)
+                        bg_pixels.add((x, y))
 
-    for x, y in edge_pixels:
-        r, g, b, a = result_pixels[x, y]
-        result_pixels[x, y] = (r, g, b, max(0, a - 80))
+    for x in range(width):
+        for y in range(height):
+            if (x, y) not in bg_pixels:
+                r, g, b, a = result_pixels[x, y]
+                if a > 0:
+                    neighbors_bg = 0
+                    total_neighbors = 0
+                    for dx in range(-1, 2):
+                        for dy in range(-1, 2):
+                            if dx == 0 and dy == 0: continue
+                            nx, ny = x + dx, y + dy
+                            if 0 <= nx < width and 0 <= ny < height:
+                                total_neighbors += 1
+                                if (nx, ny) in bg_pixels:
+                                    neighbors_bg += 1
+                    if total_neighbors > 0 and neighbors_bg >= 1:
+                        fade = max(0, a - int(80 * (neighbors_bg / total_neighbors)))
+                        result_pixels[x, y] = (r, g, b, fade)
 
     return result
 
@@ -116,12 +115,7 @@ def process_creature(creature_id):
         print(f"  Creature {creature_id}: Walk.png not found, skipping")
         return
 
-    img = Image.open(walk_path)
-    if img.mode == 'P':
-        img = img.convert('RGBA')
-    elif img.mode == 'RGB':
-        img = img.convert('RGBA')
-
+    img = Image.open(walk_path).convert('RGBA')
     width, height = img.size
     frame_w = FRAME_HEIGHT
     num_frames = width // frame_w
