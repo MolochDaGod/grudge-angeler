@@ -5,7 +5,7 @@ function toSlug(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
-const sealAtTheSeamImg = "/assets/gen-icons/fish-seal-at-the-seam.png";
+const sealAtTheSeamImg = "/assets/icons/fish/fish-seal-at-the-seam.png";
 
 interface SpriteData {
   framesDir: string;
@@ -119,7 +119,7 @@ const legendaries = [
   {
     name: "Phantom Minnow",
     sprite: { framesDir: "/assets/creatures/7/frames", frameCount: 4, frameW: 48, frameH: 48 },
-    artImage: "/assets/gen-icons/fish-phantom-minnow.png",
+    artImage: "/assets/icons/fish/fish-phantom-minnow.png",
     stars: 5,
     pts: 500,
     wt: "0.3%",
@@ -135,7 +135,7 @@ const legendaries = [
   {
     name: "Volcanic Perch",
     sprite: { framesDir: "/assets/creatures/8/frames", frameCount: 4, frameW: 48, frameH: 48 },
-    artImage: "/assets/gen-icons/fish-volcanic-perch.png",
+    artImage: "/assets/icons/fish/fish-volcanic-perch.png",
     stars: 5,
     pts: 600,
     wt: "0.25%",
@@ -151,7 +151,7 @@ const legendaries = [
   {
     name: "Abyssal Bass",
     sprite: { framesDir: "/assets/creatures/9/frames", frameCount: 4, frameW: 48, frameH: 48 },
-    artImage: "/assets/gen-icons/fish-abyssal-bass.png",
+    artImage: "/assets/icons/fish/fish-abyssal-bass.png",
     stars: 5,
     pts: 750,
     wt: "0.2%",
@@ -167,7 +167,7 @@ const legendaries = [
   {
     name: "Frost Catfish",
     sprite: { framesDir: "/assets/creatures/10/frames", frameCount: 4, frameW: 48, frameH: 48 },
-    artImage: "/assets/gen-icons/fish-frost-catfish.png",
+    artImage: "/assets/icons/fish/fish-frost-catfish.png",
     stars: 5,
     pts: 800,
     wt: "0.18%",
@@ -183,7 +183,7 @@ const legendaries = [
   {
     name: "Storm Swordfish",
     sprite: { framesDir: "/assets/creatures/11/frames", frameCount: 4, frameW: 48, frameH: 48 },
-    artImage: "/assets/gen-icons/fish-storm-swordfish.png",
+    artImage: "/assets/icons/fish/fish-storm-swordfish.png",
     stars: 5,
     pts: 1000,
     wt: "0.12%",
@@ -199,7 +199,7 @@ const legendaries = [
   {
     name: "Celestial Whale",
     sprite: { framesDir: "/assets/creatures/12/frames", frameCount: 4, frameW: 48, frameH: 48 },
-    artImage: "/assets/gen-icons/fish-celestial-whale.png",
+    artImage: "/assets/icons/fish/fish-celestial-whale.png",
     stars: 5,
     pts: 2000,
     wt: "0.05%",
@@ -215,7 +215,7 @@ const legendaries = [
   {
     name: "Neon Eel",
     sprite: { framesDir: "/assets/creatures/13/frames", frameCount: 4, frameW: 48, frameH: 48 },
-    artImage: "/assets/gen-icons/fish-neon-eel.png",
+    artImage: "/assets/icons/fish/fish-neon-eel.png",
     stars: 5,
     pts: 650,
     wt: "0.22%",
@@ -231,7 +231,7 @@ const legendaries = [
   {
     name: "Golden Salmon",
     sprite: { framesDir: "/assets/creatures/14/frames", frameCount: 3, frameW: 64, frameH: 48 },
-    artImage: "/assets/gen-icons/fish-golden-salmon.png",
+    artImage: "/assets/icons/fish/fish-golden-salmon.png",
     stars: 5,
     pts: 700,
     wt: "0.2%",
@@ -247,7 +247,7 @@ const legendaries = [
   {
     name: "Shadow Leviathan",
     sprite: { framesDir: "/assets/creatures/15/frames", frameCount: 4, frameW: 48, frameH: 48 },
-    artImage: "/assets/gen-icons/fish-shadow-leviathan.png",
+    artImage: "/assets/icons/fish/fish-shadow-leviathan.png",
     stars: 5,
     pts: 1500,
     wt: "0.08%",
@@ -263,7 +263,7 @@ const legendaries = [
   {
     name: "The Seal at the Seam",
     sprite: { src: sealAtTheSeamImg, framesDir: "", frameCount: 1, frameW: 0, frameH: 0, isSingleImage: true },
-    artImage: "/assets/gen-icons/fish-seal-at-the-seam.png",
+    artImage: "/assets/icons/fish/fish-seal-at-the-seam.png",
     stars: 5,
     pts: 5000,
     wt: "0.01%",

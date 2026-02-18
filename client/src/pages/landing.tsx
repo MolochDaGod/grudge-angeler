@@ -29,16 +29,16 @@ import imgCelestialWhale from "@/assets/images/fish-celestial-whale.png";
 import imgNeonEel from "@/assets/images/fish-neon-eel.png";
 import imgGoldenSalmon from "@/assets/images/fish-golden-salmon.png";
 import imgShadowLeviathan from "@/assets/images/fish-shadow-leviathan.png";
-const imgRedCrab = "/assets/gen-icons/fish-red-crab.png";
-const imgBlueCrab = "/assets/gen-icons/fish-blue-crab.png";
-const imgGreenCrab = "/assets/gen-icons/fish-green-crab.png";
-const imgCyanCrab = "/assets/gen-icons/fish-cyan-crab.png";
-const imgPinkCrab = "/assets/gen-icons/fish-pink-crab.png";
-const imgPurpleCrab = "/assets/gen-icons/fish-purple-crab.png";
-const imgGoldCrab = "/assets/gen-icons/fish-gold-crab.png";
-const imgDarkCrab = "/assets/gen-icons/fish-dark-crab.png";
-const imgCrimsonCrab = "/assets/gen-icons/fish-crimson-crab.png";
-const imgShadowCrab = "/assets/gen-icons/fish-shadow-crab.png";
+const imgRedCrab = "/assets/icons/fish/fish-red-crab.png";
+const imgBlueCrab = "/assets/icons/fish/fish-blue-crab.png";
+const imgGreenCrab = "/assets/icons/fish/fish-green-crab.png";
+const imgCyanCrab = "/assets/icons/fish/fish-cyan-crab.png";
+const imgPinkCrab = "/assets/icons/fish/fish-pink-crab.png";
+const imgPurpleCrab = "/assets/icons/fish/fish-purple-crab.png";
+const imgGoldCrab = "/assets/icons/fish/fish-gold-crab.png";
+const imgDarkCrab = "/assets/icons/fish/fish-dark-crab.png";
+const imgCrimsonCrab = "/assets/icons/fish/fish-crimson-crab.png";
+const imgShadowCrab = "/assets/icons/fish/fish-shadow-crab.png";
 
 function toSlug(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -46,7 +46,7 @@ function toSlug(name: string) {
 
 const oceanBgImg = "/assets/coral_reef_bg.png";
 const oceanRippleImg = "/assets/coral_reef_bg.png";
-const sealAtTheSeamImg = "/assets/gen-icons/fish-seal-at-the-seam.png";
+const sealAtTheSeamImg = "/assets/icons/fish/fish-seal-at-the-seam.png";
 
 const legendaryFish = [
   { name: "Phantom Minnow", chapter: "I", img: imgPhantomMinnow },
@@ -62,10 +62,10 @@ const legendaryFish = [
 ];
 
 const features = [
-  { icon: "/assets/lures/golden_fly.png", title: "30 Species", desc: "Fish, crabs, and predators across 5 rarity tiers" },
+  { icon: "/assets/icons/lures/golden_fly.png", title: "30 Species", desc: "Fish, crabs, and predators across 5 rarity tiers" },
   { icon: "/assets/icons/gbux.png", title: "Gbux Economy", desc: "Dynamic market, sell fish, complete bounties, build your fortune" },
-  { icon: "/assets/lures/prismatic_lure.png", title: "Equipment System", desc: "5 rods, 5 baits, 11 lures, 22 chum items - each with unique stats" },
-  { icon: "/assets/gen-icons/fish-phantom-minnow.png", title: "The Legendary 10", desc: "Ultra-rare mythic fish with complete lore and unique visual effects" },
+  { icon: "/assets/icons/lures/prismatic_lure.png", title: "Equipment System", desc: "5 rods, 5 baits, 11 lures, 22 chum items - each with unique stats" },
+  { icon: "/assets/icons/fish/fish-phantom-minnow.png", title: "The Legendary 10", desc: "Ultra-rare mythic fish with complete lore and unique visual effects" },
   { icon: "/assets/objects/Boat.png", title: "Open Ocean", desc: "8 world scenes from shallow waters to the deepest abyss" },
   { icon: "/assets/icons/Icons_01.png", title: "Leaderboards", desc: "Compete globally with Grudge ID for biggest catch and legendary hauls" },
 ];
@@ -93,58 +93,58 @@ const RARITY_LABELS: Record<string, string> = {
 };
 
 const arsenalRods = [
-  { name: "Bamboo Rod", icon: "/assets/gen-icons/rod-bamboo.png", price: 0, desc: "A simple bamboo rod. Gets the job done.", stats: "Reel 1.0x | Line 1.0x" },
-  { name: "Fiberglass Rod", icon: "/assets/gen-icons/rod-fiberglass.png", price: 150, desc: "Lighter and more responsive.", stats: "Reel 1.1x | Line 1.15x" },
-  { name: "Carbon Rod", icon: "/assets/gen-icons/rod-carbon.png", price: 400, desc: "High-tech carbon fiber build.", stats: "Reel 1.2x | Line 1.3x" },
-  { name: "Titanium Rod", icon: "/assets/gen-icons/rod-titanium.png", price: 800, desc: "Ultra-strong titanium alloy.", stats: "Reel 1.35x | Line 1.5x" },
-  { name: "Legendary Rod", icon: "/assets/gen-icons/rod-legendary.png", price: 1500, desc: "Forged from the anchor of a ghost ship.", stats: "Reel 1.5x | Line 1.8x" },
+  { name: "Bamboo Rod", icon: "/assets/icons/rods/rod-bamboo.png", price: 0, desc: "A simple bamboo rod. Gets the job done.", stats: "Reel 1.0x | Line 1.0x" },
+  { name: "Fiberglass Rod", icon: "/assets/icons/rods/rod-fiberglass.png", price: 150, desc: "Lighter and more responsive.", stats: "Reel 1.1x | Line 1.15x" },
+  { name: "Carbon Rod", icon: "/assets/icons/rods/rod-carbon.png", price: 400, desc: "High-tech carbon fiber build.", stats: "Reel 1.2x | Line 1.3x" },
+  { name: "Titanium Rod", icon: "/assets/icons/rods/rod-titanium.png", price: 800, desc: "Ultra-strong titanium alloy.", stats: "Reel 1.35x | Line 1.5x" },
+  { name: "Legendary Rod", icon: "/assets/icons/rods/rod-legendary.png", price: 1500, desc: "Forged from the anchor of a ghost ship.", stats: "Reel 1.5x | Line 1.8x" },
 ];
 
 const arsenalBaits = [
-  { name: "Basic Worm", icon: "/assets/lures/worm.png", price: 0, desc: "A plain earthworm. The classic bait.", stats: "No bonuses", type: "live" },
-  { name: "Nightcrawler", icon: "/assets/lures/nightcrawler.png", price: 40, desc: "Fish can't resist the wriggle.", stats: "+40% bite speed | Catfish, Bass", type: "live" },
-  { name: "Leech", icon: "/assets/lures/leech.png", price: 90, desc: "Bottom dwellers love it.", stats: "+20% rarity | Catfish, Eel", type: "live" },
-  { name: "Maggots", icon: "/assets/lures/maggots.png", price: 60, desc: "Small fish go crazy.", stats: "+100% bite speed | Minnow, Perch", type: "live" },
-  { name: "Minnow Bait", icon: "/assets/lures/minnow_bait.png", price: 150, desc: "Big predators can't resist.", stats: "+50% rarity | +40% size", type: "live" },
+  { name: "Basic Worm", icon: "/assets/icons/lures/worm.png", price: 0, desc: "A plain earthworm. The classic bait.", stats: "No bonuses", type: "live" },
+  { name: "Nightcrawler", icon: "/assets/icons/lures/nightcrawler.png", price: 40, desc: "Fish can't resist the wriggle.", stats: "+40% bite speed | Catfish, Bass", type: "live" },
+  { name: "Leech", icon: "/assets/icons/lures/leech.png", price: 90, desc: "Bottom dwellers love it.", stats: "+20% rarity | Catfish, Eel", type: "live" },
+  { name: "Maggots", icon: "/assets/icons/lures/maggots.png", price: 60, desc: "Small fish go crazy.", stats: "+100% bite speed | Minnow, Perch", type: "live" },
+  { name: "Minnow Bait", icon: "/assets/icons/lures/minnow_bait.png", price: 150, desc: "Big predators can't resist.", stats: "+50% rarity | +40% size", type: "live" },
 ];
 
 const arsenalLures = [
-  { name: "Beginner Lure", icon: "/assets/lures/beginner_lure.png", price: 50, desc: "Better than bare hooks.", stats: "+20% speed" },
-  { name: "Crankbait", icon: "/assets/lures/crankbait.png", price: 120, desc: "Fat-bodied diving lure.", stats: "+10% rarity | Perch, Bass" },
-  { name: "Silver Spoon", icon: "/assets/lures/spoon.png", price: 100, desc: "Hammered metal flash.", stats: "+50% speed | Salmon" },
-  { name: "Grub Worm", icon: "/assets/lures/grub_worm.png", price: 80, desc: "Works on everything.", stats: "+10% rarity | Versatile" },
-  { name: "Spinnerbait", icon: "/assets/lures/spinnerbait.png", price: 200, desc: "Spinning blade flash.", stats: "+30% rarity | Bass, Perch" },
-  { name: "Deep Diver", icon: "/assets/lures/deep_diver.png", price: 180, desc: "Dives deep for bottom dwellers.", stats: "+20% rarity | +30% size" },
-  { name: "Golden Fly", icon: "/assets/lures/golden_fly.png", price: 250, desc: "Rare fish can't resist.", stats: "+100% rarity | Swordfish" },
-  { name: "Glow Jig", icon: "/assets/lures/glow_jig.png", price: 350, desc: "Bioluminescent attraction.", stats: "+30% rarity | +80% size" },
-  { name: "Storm Shad", icon: "/assets/lures/storm_shad.png", price: 300, desc: "Mimics injured baitfish.", stats: "+100% speed | Bass, Salmon" },
-  { name: "Kraken Bait", icon: "/assets/lures/kraken_bait.png", price: 500, desc: "From the ocean depths.", stats: "+200% rarity | Whale" },
-  { name: "Prismatic Lure", icon: "/assets/lures/prismatic_lure.png", price: 750, desc: "Rainbow-shifting. Boosts everything.", stats: "+80% rarity | +50% size | +50% speed" },
+  { name: "Beginner Lure", icon: "/assets/icons/lures/beginner_lure.png", price: 50, desc: "Better than bare hooks.", stats: "+20% speed" },
+  { name: "Crankbait", icon: "/assets/icons/lures/crankbait.png", price: 120, desc: "Fat-bodied diving lure.", stats: "+10% rarity | Perch, Bass" },
+  { name: "Silver Spoon", icon: "/assets/icons/lures/spoon.png", price: 100, desc: "Hammered metal flash.", stats: "+50% speed | Salmon" },
+  { name: "Grub Worm", icon: "/assets/icons/lures/grub_worm.png", price: 80, desc: "Works on everything.", stats: "+10% rarity | Versatile" },
+  { name: "Spinnerbait", icon: "/assets/icons/lures/spinnerbait.png", price: 200, desc: "Spinning blade flash.", stats: "+30% rarity | Bass, Perch" },
+  { name: "Deep Diver", icon: "/assets/icons/lures/deep_diver.png", price: 180, desc: "Dives deep for bottom dwellers.", stats: "+20% rarity | +30% size" },
+  { name: "Golden Fly", icon: "/assets/icons/lures/golden_fly.png", price: 250, desc: "Rare fish can't resist.", stats: "+100% rarity | Swordfish" },
+  { name: "Glow Jig", icon: "/assets/icons/lures/glow_jig.png", price: 350, desc: "Bioluminescent attraction.", stats: "+30% rarity | +80% size" },
+  { name: "Storm Shad", icon: "/assets/icons/lures/storm_shad.png", price: 300, desc: "Mimics injured baitfish.", stats: "+100% speed | Bass, Salmon" },
+  { name: "Kraken Bait", icon: "/assets/icons/lures/kraken_bait.png", price: 500, desc: "From the ocean depths.", stats: "+200% rarity | Whale" },
+  { name: "Prismatic Lure", icon: "/assets/icons/lures/prismatic_lure.png", price: 750, desc: "Rainbow-shifting. Boosts everything.", stats: "+80% rarity | +50% size | +50% speed" },
 ];
 
 const arsenalChum = [
-  { name: "Fish Scraps", icon: "/assets/gen-icons/chum-fish-guts.png", price: 15, desc: "Basic chum.", stats: "1.2x attract" },
-  { name: "Bread Crumbs", icon: "/assets/gen-icons/chum-bread-crumbs.png", price: 20, desc: "Attracts small fish.", stats: "1.4x attract | +10% bites" },
-  { name: "Corn Mash", icon: "/assets/gen-icons/chum-worm-bait.png", price: 25, desc: "Bottom feeder chum.", stats: "1.5x attract" },
-  { name: "Blood Meal", icon: "/assets/gen-icons/chum-blood-worm-extract.png", price: 40, desc: "Attracts predators.", stats: "+15% rarity | 1.6x attract" },
-  { name: "Shrimp Paste", icon: "/assets/gen-icons/chum-shrimp-paste.png", price: 50, desc: "Good all-around chum.", stats: "1.7x attract | +15% bites" },
-  { name: "Squid Ink", icon: "/assets/gen-icons/chum-squid-ink.png", price: 60, desc: "Attracts deep fish.", stats: "+20% rarity | 1.5x attract" },
-  { name: "Fish Oil Slick", icon: "/assets/gen-icons/chum-sardine-oil.png", price: 75, desc: "Wide area attract.", stats: "2.0x attract | +10% bites" },
-  { name: "Sardine Chunks", icon: "/assets/gen-icons/chum-fish-guts.png", price: 45, desc: "Fast bite speed boost.", stats: "+50% bites | 1.3x attract" },
-  { name: "Crab Guts", icon: "/assets/gen-icons/chum-fish-guts.png", price: 55, desc: "Attracts rare fish.", stats: "+30% rarity | 1.4x attract" },
-  { name: "Mussel Mix", icon: "/assets/gen-icons/chum-live-shrimp.png", price: 35, desc: "Steady and reliable.", stats: "1.5x attract | Long duration" },
-  { name: "Fermented Brine", icon: "/assets/gen-icons/chum-jellyfish-jelly.png", price: 80, desc: "Strong rarity boost.", stats: "+50% rarity | 1.6x attract" },
-  { name: "Whale Blubber", icon: "/assets/gen-icons/chum-whale-blubber.png", price: 100, desc: "Attracts legendary fish.", stats: "+70% rarity | 1.8x attract" },
-  { name: "Phosphor Dust", icon: "/assets/gen-icons/chum-glowing-plankton.png", price: 120, desc: "Glowing ultra rare boost.", stats: "+100% rarity | 1.5x attract" },
-  { name: "Coral Powder", icon: "/assets/gen-icons/chum-coral-dust.png", price: 90, desc: "Attracts reef fish.", stats: "+30% rarity | 1.7x attract" },
-  { name: "Deep Sea Extract", icon: "/assets/gen-icons/chum-deep-pressure.png", price: 150, desc: "Deep water mega boost.", stats: "+80% rarity | 2.0x attract" },
-  { name: "Thunder Chum", icon: "/assets/gen-icons/chum-thunder.png", price: 130, desc: "Storm fish attract.", stats: "+60% rarity | +30% bites" },
-  { name: "Moonlight Essence", icon: "/assets/gen-icons/chum-moonlight-essence.png", price: 200, desc: "Celestial boost.", stats: "+100% rarity | 2.2x attract" },
-  { name: "Kraken Bile", icon: "/assets/gen-icons/chum-kraken-bile.png", price: 180, desc: "Massive rarity increase.", stats: "+150% rarity | 1.6x attract" },
-  { name: "Golden Flakes", icon: "/assets/gen-icons/chum-golden-flakes.png", price: 250, desc: "Boosts everything.", stats: "+100% rarity | +40% bites | 2.5x attract" },
-  { name: "Abyssal Ooze", icon: "/assets/gen-icons/chum-abyssal-ooze.png", price: 300, desc: "The ultimate chum.", stats: "+150% rarity | +50% bites | 3.0x attract" },
-  { name: "Live Shrimp Cluster", icon: "/assets/gen-icons/chum-live-shrimp.png", price: 0, desc: "Caught live shrimp. Good bait.", stats: "+20% rarity | +30% bites | Net catch" },
-  { name: "Glowing Plankton", icon: "/assets/gen-icons/chum-glowing-plankton.png", price: 0, desc: "Caught glowing plankton.", stats: "+80% rarity | Net catch" },
+  { name: "Fish Scraps", icon: "/assets/icons/chum/chum-fish-guts.png", price: 15, desc: "Basic chum.", stats: "1.2x attract" },
+  { name: "Bread Crumbs", icon: "/assets/icons/chum/chum-bread-crumbs.png", price: 20, desc: "Attracts small fish.", stats: "1.4x attract | +10% bites" },
+  { name: "Corn Mash", icon: "/assets/icons/chum/chum-worm-bait.png", price: 25, desc: "Bottom feeder chum.", stats: "1.5x attract" },
+  { name: "Blood Meal", icon: "/assets/icons/chum/chum-blood-worm-extract.png", price: 40, desc: "Attracts predators.", stats: "+15% rarity | 1.6x attract" },
+  { name: "Shrimp Paste", icon: "/assets/icons/chum/chum-shrimp-paste.png", price: 50, desc: "Good all-around chum.", stats: "1.7x attract | +15% bites" },
+  { name: "Squid Ink", icon: "/assets/icons/chum/chum-squid-ink.png", price: 60, desc: "Attracts deep fish.", stats: "+20% rarity | 1.5x attract" },
+  { name: "Fish Oil Slick", icon: "/assets/icons/chum/chum-sardine-oil.png", price: 75, desc: "Wide area attract.", stats: "2.0x attract | +10% bites" },
+  { name: "Sardine Chunks", icon: "/assets/icons/chum/chum-fish-guts.png", price: 45, desc: "Fast bite speed boost.", stats: "+50% bites | 1.3x attract" },
+  { name: "Crab Guts", icon: "/assets/icons/chum/chum-fish-guts.png", price: 55, desc: "Attracts rare fish.", stats: "+30% rarity | 1.4x attract" },
+  { name: "Mussel Mix", icon: "/assets/icons/chum/chum-live-shrimp.png", price: 35, desc: "Steady and reliable.", stats: "1.5x attract | Long duration" },
+  { name: "Fermented Brine", icon: "/assets/icons/chum/chum-jellyfish-jelly.png", price: 80, desc: "Strong rarity boost.", stats: "+50% rarity | 1.6x attract" },
+  { name: "Whale Blubber", icon: "/assets/icons/chum/chum-whale-blubber.png", price: 100, desc: "Attracts legendary fish.", stats: "+70% rarity | 1.8x attract" },
+  { name: "Phosphor Dust", icon: "/assets/icons/chum/chum-glowing-plankton.png", price: 120, desc: "Glowing ultra rare boost.", stats: "+100% rarity | 1.5x attract" },
+  { name: "Coral Powder", icon: "/assets/icons/chum/chum-coral-dust.png", price: 90, desc: "Attracts reef fish.", stats: "+30% rarity | 1.7x attract" },
+  { name: "Deep Sea Extract", icon: "/assets/icons/chum/chum-deep-pressure.png", price: 150, desc: "Deep water mega boost.", stats: "+80% rarity | 2.0x attract" },
+  { name: "Thunder Chum", icon: "/assets/icons/chum/chum-thunder.png", price: 130, desc: "Storm fish attract.", stats: "+60% rarity | +30% bites" },
+  { name: "Moonlight Essence", icon: "/assets/icons/chum/chum-moonlight-essence.png", price: 200, desc: "Celestial boost.", stats: "+100% rarity | 2.2x attract" },
+  { name: "Kraken Bile", icon: "/assets/icons/chum/chum-kraken-bile.png", price: 180, desc: "Massive rarity increase.", stats: "+150% rarity | 1.6x attract" },
+  { name: "Golden Flakes", icon: "/assets/icons/chum/chum-golden-flakes.png", price: 250, desc: "Boosts everything.", stats: "+100% rarity | +40% bites | 2.5x attract" },
+  { name: "Abyssal Ooze", icon: "/assets/icons/chum/chum-abyssal-ooze.png", price: 300, desc: "The ultimate chum.", stats: "+150% rarity | +50% bites | 3.0x attract" },
+  { name: "Live Shrimp Cluster", icon: "/assets/icons/chum/chum-live-shrimp.png", price: 0, desc: "Caught live shrimp. Good bait.", stats: "+20% rarity | +30% bites | Net catch" },
+  { name: "Glowing Plankton", icon: "/assets/icons/chum/chum-glowing-plankton.png", price: 0, desc: "Caught glowing plankton.", stats: "+80% rarity | Net catch" },
 ];
 
 interface LandingFish {
@@ -198,12 +198,12 @@ const allFish: LandingFish[] = [
 
 const fishAchievements = [
   { name: "First Catch", desc: "Catch your first fish", icon: "/assets/icons/Icons_07.png", color: "#a0a0a0" },
-  { name: "Common Collector", desc: "Catch all common species", icon: "/assets/gen-icons/fish-minnow.png", color: "#a0a0a0" },
-  { name: "Uncommon Hunter", desc: "Catch all uncommon species", icon: "/assets/gen-icons/fish-bass.png", color: "#4fc3f7" },
-  { name: "Rare Trophy", desc: "Catch all rare species", icon: "/assets/gen-icons/fish-swordfish.png", color: "#ffd54f" },
-  { name: "Legendary Angler", desc: "Catch all legendary species", icon: "/assets/gen-icons/fish-whale.png", color: "#ff8a65" },
-  { name: "Mythic Master", desc: "Catch all ultra-rare species", icon: "/assets/lures/prismatic_lure.png", color: "#e040fb" },
-  { name: "Ocean Completionist", desc: "Catch every species in the game", icon: "/assets/lures/golden_fly.png", color: "#ffd700" },
+  { name: "Common Collector", desc: "Catch all common species", icon: "/assets/icons/fish/fish-minnow.png", color: "#a0a0a0" },
+  { name: "Uncommon Hunter", desc: "Catch all uncommon species", icon: "/assets/icons/fish/fish-bass.png", color: "#4fc3f7" },
+  { name: "Rare Trophy", desc: "Catch all rare species", icon: "/assets/icons/fish/fish-swordfish.png", color: "#ffd54f" },
+  { name: "Legendary Angler", desc: "Catch all legendary species", icon: "/assets/icons/fish/fish-whale.png", color: "#ff8a65" },
+  { name: "Mythic Master", desc: "Catch all ultra-rare species", icon: "/assets/icons/lures/prismatic_lure.png", color: "#e040fb" },
+  { name: "Ocean Completionist", desc: "Catch every species in the game", icon: "/assets/icons/lures/golden_fly.png", color: "#ffd700" },
   { name: "100 Catch Club", desc: "Catch 100 fish total", icon: "/assets/icons/Icons_09.png", color: "#4fc3f7" },
   { name: "Big Game Fisher", desc: "Catch a fish over 50 lbs", icon: "/assets/icons/Icons_13.png", color: "#ff8a65" },
   { name: "Grudge Legend", desc: "Reach the top of the leaderboard", icon: "/assets/icons/gbux.png", color: "#ffd700" },

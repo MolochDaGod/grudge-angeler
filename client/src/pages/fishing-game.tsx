@@ -140,32 +140,32 @@ interface FishType {
 }
 
 const FISH_TYPES: FishType[] = [
-  { name: "Minnow", icon: "/assets/gen-icons/fish-minnow.png", catchAsset: "/assets/catch/minnow.png", catchW: 45, catchH: 42, creatureFolder: "2", idleFrames: 4, walkFrames: 6, points: 10, rarity: "common", weight: 40, minDepth: 0.15, speed: 1.5, description: "A tiny silver fish, common in shallow waters.", tint: "rgba(200,210,230,0.2)", baseScale: 0.6 },
-  { name: "Jellyfish", icon: "/assets/gen-icons/fish-jellyfish.png", catchAsset: "/assets/catch/jellyfish.png", catchW: 15, catchH: 24, creatureFolder: "1", idleFrames: 4, walkFrames: 4, points: 20, rarity: "common", weight: 25, minDepth: 0.2, speed: 0.7, description: "A translucent jellyfish drifting with the current.", tint: "rgba(120,80,255,0.2)" },
-  { name: "Perch", icon: "/assets/gen-icons/fish-perch.png", catchAsset: "/assets/catch/perch.png", catchW: 45, catchH: 42, creatureFolder: "2", idleFrames: 4, walkFrames: 6, points: 25, rarity: "common", weight: 30, minDepth: 0.25, speed: 1.2, description: "A striped freshwater fish with sharp fins." },
-  { name: "Bass", icon: "/assets/gen-icons/fish-bass.png", catchAsset: "/assets/catch/bass.png", catchW: 27, catchH: 39, creatureFolder: "2", idleFrames: 4, walkFrames: 6, points: 50, rarity: "uncommon", weight: 15, minDepth: 0.35, speed: 1.0, description: "A strong fighter popular with anglers.", tint: "rgba(60,80,40,0.3)" },
-  { name: "Catfish", icon: "/assets/gen-icons/fish-catfish.png", catchAsset: "/assets/catch/catfish.png", catchW: 56, catchH: 36, creatureFolder: "4", idleFrames: 4, walkFrames: 4, points: 75, rarity: "uncommon", weight: 8, minDepth: 0.45, speed: 0.8, description: "A bottom-dweller with long whiskers.", tint: "rgba(160,120,80,0.15)" },
-  { name: "Swordfish", icon: "/assets/gen-icons/fish-swordfish.png", catchAsset: "/assets/catch/swordfish.png", catchW: 44, catchH: 22, creatureFolder: "3", idleFrames: 4, walkFrames: 4, points: 150, rarity: "rare", weight: 4, minDepth: 0.55, speed: 1.8, description: "A powerful ocean predator with a sharp bill." },
-  { name: "Stingray", icon: "/assets/gen-icons/fish-stingray.png", catchAsset: "/assets/catch/stingray.png", catchW: 59, catchH: 11, creatureFolder: "3", idleFrames: 4, walkFrames: 4, points: 100, rarity: "rare", weight: 5, minDepth: 0.45, speed: 1.4, description: "A flat-bodied ray gliding silently along the ocean floor.", tint: "rgba(100,110,130,0.25)", baseScale: 1.2 },
-  { name: "Whale", icon: "/assets/gen-icons/fish-whale.png", catchAsset: "/assets/catch/whale.png", catchW: 84, catchH: 54, creatureFolder: "4", idleFrames: 4, walkFrames: 4, points: 300, rarity: "legendary", weight: 1, minDepth: 0.65, speed: 0.5, description: "The king of the deep. Incredibly rare!", tint: "rgba(40,80,180,0.45)", baseScale: 1.8 },
-  { name: "Eel", icon: "/assets/gen-icons/fish-eel.png", catchAsset: "/assets/catch/eel.png", catchW: 36, catchH: 11, creatureFolder: "5", idleFrames: 4, walkFrames: 6, points: 40, rarity: "common", weight: 20, minDepth: 0.3, speed: 1.3, description: "A slippery serpentine fish.", tint: "rgba(50,60,70,0.15)" },
-  { name: "Octopus", icon: "/assets/gen-icons/fish-octopus.png", catchAsset: "/assets/catch/octopus.png", catchW: 35, catchH: 32, creatureFolder: "6", idleFrames: 4, walkFrames: 6, points: 35, rarity: "common", weight: 15, minDepth: 0.25, speed: 0.9, description: "A clever red octopus with grasping tentacles." },
-  { name: "Salmon", icon: "/assets/gen-icons/fish-salmon.png", catchAsset: "/assets/catch/salmon.png", catchW: 45, catchH: 42, creatureFolder: "2", idleFrames: 4, walkFrames: 6, points: 60, rarity: "uncommon", weight: 12, minDepth: 0.35, speed: 1.1, description: "A prized pink-fleshed fish.", tint: "rgba(220,100,80,0.4)" },
-  { name: "Electric Eel", icon: "/assets/gen-icons/fish-electric-eel.png", catchAsset: "/assets/catch/electric-eel.png", catchW: 36, catchH: 11, creatureFolder: "16", idleFrames: 4, walkFrames: 6, points: 65, rarity: "uncommon", weight: 10, minDepth: 0.4, speed: 1.6, description: "A shocking eel crackling with electric charge." },
-  { name: "Blue Ring Octopus", icon: "/assets/gen-icons/fish-blue-octopus.png", catchAsset: "/assets/catch/blue-ring-octopus.png", catchW: 35, catchH: 32, creatureFolder: "17", idleFrames: 4, walkFrames: 6, points: 55, rarity: "uncommon", weight: 8, minDepth: 0.35, speed: 1.0, description: "A small but deadly octopus with glowing blue rings." },
-  { name: "Moray Eel", icon: "/assets/gen-icons/fish-moray-eel.png", catchAsset: "/assets/catch/moray-eel.png", catchW: 36, catchH: 11, creatureFolder: "18", idleFrames: 4, walkFrames: 6, points: 90, rarity: "rare", weight: 6, minDepth: 0.5, speed: 1.1, description: "A thick-bodied eel lurking in reef crevices." },
-  { name: "Anglerfish", icon: "/assets/gen-icons/fish-anglerfish.png", catchAsset: "/assets/catch/anglerfish.png", catchW: 30, catchH: 20, creatureFolder: "4", idleFrames: 4, walkFrames: 4, points: 120, rarity: "rare", weight: 5, minDepth: 0.55, speed: 0.6, description: "A deep-sea predator with a bioluminescent lure." },
-  { name: "Deep Sea Angler", icon: "/assets/gen-icons/fish-deep-angler.png", catchAsset: "/assets/catch/deep-sea-angler.png", catchW: 30, catchH: 20, creatureFolder: "19", idleFrames: 4, walkFrames: 4, points: 140, rarity: "rare", weight: 3, minDepth: 0.65, speed: 0.5, description: "A pitch-black anglerfish with a sinister yellow glow." },
-  { name: "Phantom Minnow", icon: "/assets/gen-icons/fish-phantom-minnow.png", catchAsset: "/assets/catch/phantom-minnow.png", catchW: 48, catchH: 48, creatureFolder: "7", idleFrames: 4, walkFrames: 4, points: 500, rarity: "ultra_rare", weight: 0.3, minDepth: 0.55, speed: 2.2, description: "A ghostly minnow wreathed in spectral flame. Blinks in and out of reality.", baseScale: 1.8 },
-  { name: "Volcanic Perch", icon: "/assets/gen-icons/fish-volcanic-perch.png", catchAsset: "/assets/catch/volcanic-perch.png", catchW: 33, catchH: 25, creatureFolder: "8", idleFrames: 4, walkFrames: 4, points: 600, rarity: "ultra_rare", weight: 0.25, minDepth: 0.6, speed: 1.6, description: "A perch superheated by deep-sea vents. Its scales glow molten orange.", baseScale: 2.0 },
-  { name: "Abyssal Bass", icon: "/assets/gen-icons/fish-abyssal-bass.png", catchAsset: "/assets/catch/abyssal-bass.png", catchW: 48, catchH: 41, creatureFolder: "9", idleFrames: 4, walkFrames: 4, points: 750, rarity: "ultra_rare", weight: 0.2, minDepth: 0.65, speed: 1.4, description: "A colossal bass from the deepest trenches. Radiates dark energy.", baseScale: 2.2 },
-  { name: "Frost Catfish", icon: "/assets/gen-icons/fish-frost-catfish.png", catchAsset: "/assets/catch/frost-catfish.png", catchW: 40, catchH: 32, creatureFolder: "10", idleFrames: 4, walkFrames: 4, points: 800, rarity: "ultra_rare", weight: 0.18, minDepth: 0.6, speed: 0.9, description: "An ancient catfish encased in living ice. Freezes the water around it.", baseScale: 2.3 },
-  { name: "Storm Swordfish", icon: "/assets/gen-icons/fish-storm-swordfish.png", catchAsset: "/assets/catch/storm-swordfish.png", catchW: 48, catchH: 32, creatureFolder: "11", idleFrames: 4, walkFrames: 4, points: 1000, rarity: "ultra_rare", weight: 0.12, minDepth: 0.7, speed: 2.5, description: "A swordfish that rides lightning bolts. Crackles with electric fury.", baseScale: 2.0 },
-  { name: "Celestial Whale", icon: "/assets/gen-icons/fish-celestial-whale.png", catchAsset: "/assets/catch/celestial-whale.png", catchW: 48, catchH: 32, creatureFolder: "12", idleFrames: 4, walkFrames: 4, points: 2000, rarity: "ultra_rare", weight: 0.05, minDepth: 0.75, speed: 0.4, description: "A cosmic whale that swallowed a dying star. The rarest creature in existence.", baseScale: 2.5 },
-  { name: "Neon Eel", icon: "/assets/gen-icons/fish-neon-eel.png", catchAsset: "/assets/catch/neon-eel.png", catchW: 43, catchH: 27, creatureFolder: "13", idleFrames: 4, walkFrames: 4, points: 650, rarity: "ultra_rare", weight: 0.22, minDepth: 0.55, speed: 1.9, description: "A bioluminescent eel pulsing with neon colors. Mesmerizing.", baseScale: 2.0 },
-  { name: "Golden Salmon", icon: "/assets/gen-icons/fish-golden-salmon.png", catchAsset: "/assets/catch/golden-salmon.png", catchW: 48, catchH: 32, creatureFolder: "14", idleFrames: 4, walkFrames: 4, points: 700, rarity: "ultra_rare", weight: 0.2, minDepth: 0.6, speed: 1.5, description: "A legendary salmon with solid gold scales. Worth a fortune.", baseScale: 2.1 },
-  { name: "Shadow Leviathan", icon: "/assets/gen-icons/fish-shadow-leviathan.png", catchAsset: "/assets/catch/shadow-leviathan.png", catchW: 55, catchH: 59, creatureFolder: "15", idleFrames: 4, walkFrames: 4, points: 1500, rarity: "ultra_rare", weight: 0.08, minDepth: 0.8, speed: 0.6, description: "A titanic shadow beast from beyond the abyss. Feared by all ocean life.", tint: "rgba(140,15,15,0.5)", baseScale: 2.5 },
-  { name: "The Seal at the Seam", icon: "/assets/gen-icons/fish-seal-at-the-seam.png", catchAsset: "/assets/gen-icons/fish-seal-at-the-seam.png", catchW: 64, catchH: 64, creatureFolder: "6", idleFrames: 6, walkFrames: 6, points: 5000, rarity: "ultra_rare", weight: 0.02, minDepth: 0.9, speed: 0.3, description: "A living sigil at the boundary of reality. The 10th Legendary — guardian of the Seam.", tint: "rgba(20,40,120,0.5)", baseScale: 2.8 },
+  { name: "Minnow", icon: "/assets/icons/fish/fish-minnow.png", catchAsset: "/assets/catch/minnow.png", catchW: 45, catchH: 42, creatureFolder: "2", idleFrames: 4, walkFrames: 6, points: 10, rarity: "common", weight: 40, minDepth: 0.15, speed: 1.5, description: "A tiny silver fish, common in shallow waters.", tint: "rgba(200,210,230,0.2)", baseScale: 0.6 },
+  { name: "Jellyfish", icon: "/assets/icons/fish/fish-jellyfish.png", catchAsset: "/assets/catch/jellyfish.png", catchW: 15, catchH: 24, creatureFolder: "1", idleFrames: 4, walkFrames: 4, points: 20, rarity: "common", weight: 25, minDepth: 0.2, speed: 0.7, description: "A translucent jellyfish drifting with the current.", tint: "rgba(120,80,255,0.2)" },
+  { name: "Perch", icon: "/assets/icons/fish/fish-perch.png", catchAsset: "/assets/catch/perch.png", catchW: 45, catchH: 42, creatureFolder: "2", idleFrames: 4, walkFrames: 6, points: 25, rarity: "common", weight: 30, minDepth: 0.25, speed: 1.2, description: "A striped freshwater fish with sharp fins." },
+  { name: "Bass", icon: "/assets/icons/fish/fish-bass.png", catchAsset: "/assets/catch/bass.png", catchW: 27, catchH: 39, creatureFolder: "2", idleFrames: 4, walkFrames: 6, points: 50, rarity: "uncommon", weight: 15, minDepth: 0.35, speed: 1.0, description: "A strong fighter popular with anglers.", tint: "rgba(60,80,40,0.3)" },
+  { name: "Catfish", icon: "/assets/icons/fish/fish-catfish.png", catchAsset: "/assets/catch/catfish.png", catchW: 56, catchH: 36, creatureFolder: "4", idleFrames: 4, walkFrames: 4, points: 75, rarity: "uncommon", weight: 8, minDepth: 0.45, speed: 0.8, description: "A bottom-dweller with long whiskers.", tint: "rgba(160,120,80,0.15)" },
+  { name: "Swordfish", icon: "/assets/icons/fish/fish-swordfish.png", catchAsset: "/assets/catch/swordfish.png", catchW: 44, catchH: 22, creatureFolder: "3", idleFrames: 4, walkFrames: 4, points: 150, rarity: "rare", weight: 4, minDepth: 0.55, speed: 1.8, description: "A powerful ocean predator with a sharp bill." },
+  { name: "Stingray", icon: "/assets/icons/fish/fish-stingray.png", catchAsset: "/assets/catch/stingray.png", catchW: 59, catchH: 11, creatureFolder: "3", idleFrames: 4, walkFrames: 4, points: 100, rarity: "rare", weight: 5, minDepth: 0.45, speed: 1.4, description: "A flat-bodied ray gliding silently along the ocean floor.", tint: "rgba(100,110,130,0.25)", baseScale: 1.2 },
+  { name: "Whale", icon: "/assets/icons/fish/fish-whale.png", catchAsset: "/assets/catch/whale.png", catchW: 84, catchH: 54, creatureFolder: "4", idleFrames: 4, walkFrames: 4, points: 300, rarity: "legendary", weight: 1, minDepth: 0.65, speed: 0.5, description: "The king of the deep. Incredibly rare!", tint: "rgba(40,80,180,0.45)", baseScale: 1.8 },
+  { name: "Eel", icon: "/assets/icons/fish/fish-eel.png", catchAsset: "/assets/catch/eel.png", catchW: 36, catchH: 11, creatureFolder: "5", idleFrames: 4, walkFrames: 6, points: 40, rarity: "common", weight: 20, minDepth: 0.3, speed: 1.3, description: "A slippery serpentine fish.", tint: "rgba(50,60,70,0.15)" },
+  { name: "Octopus", icon: "/assets/icons/fish/fish-octopus.png", catchAsset: "/assets/catch/octopus.png", catchW: 35, catchH: 32, creatureFolder: "6", idleFrames: 4, walkFrames: 6, points: 35, rarity: "common", weight: 15, minDepth: 0.25, speed: 0.9, description: "A clever red octopus with grasping tentacles." },
+  { name: "Salmon", icon: "/assets/icons/fish/fish-salmon.png", catchAsset: "/assets/catch/salmon.png", catchW: 45, catchH: 42, creatureFolder: "2", idleFrames: 4, walkFrames: 6, points: 60, rarity: "uncommon", weight: 12, minDepth: 0.35, speed: 1.1, description: "A prized pink-fleshed fish.", tint: "rgba(220,100,80,0.4)" },
+  { name: "Electric Eel", icon: "/assets/icons/fish/fish-electric-eel.png", catchAsset: "/assets/catch/electric-eel.png", catchW: 36, catchH: 11, creatureFolder: "16", idleFrames: 4, walkFrames: 6, points: 65, rarity: "uncommon", weight: 10, minDepth: 0.4, speed: 1.6, description: "A shocking eel crackling with electric charge." },
+  { name: "Blue Ring Octopus", icon: "/assets/icons/fish/fish-blue-octopus.png", catchAsset: "/assets/catch/blue-ring-octopus.png", catchW: 35, catchH: 32, creatureFolder: "17", idleFrames: 4, walkFrames: 6, points: 55, rarity: "uncommon", weight: 8, minDepth: 0.35, speed: 1.0, description: "A small but deadly octopus with glowing blue rings." },
+  { name: "Moray Eel", icon: "/assets/icons/fish/fish-moray-eel.png", catchAsset: "/assets/catch/moray-eel.png", catchW: 36, catchH: 11, creatureFolder: "18", idleFrames: 4, walkFrames: 6, points: 90, rarity: "rare", weight: 6, minDepth: 0.5, speed: 1.1, description: "A thick-bodied eel lurking in reef crevices." },
+  { name: "Anglerfish", icon: "/assets/icons/fish/fish-anglerfish.png", catchAsset: "/assets/catch/anglerfish.png", catchW: 30, catchH: 20, creatureFolder: "4", idleFrames: 4, walkFrames: 4, points: 120, rarity: "rare", weight: 5, minDepth: 0.55, speed: 0.6, description: "A deep-sea predator with a bioluminescent lure." },
+  { name: "Deep Sea Angler", icon: "/assets/icons/fish/fish-deep-angler.png", catchAsset: "/assets/catch/deep-sea-angler.png", catchW: 30, catchH: 20, creatureFolder: "19", idleFrames: 4, walkFrames: 4, points: 140, rarity: "rare", weight: 3, minDepth: 0.65, speed: 0.5, description: "A pitch-black anglerfish with a sinister yellow glow." },
+  { name: "Phantom Minnow", icon: "/assets/icons/fish/fish-phantom-minnow.png", catchAsset: "/assets/catch/phantom-minnow.png", catchW: 48, catchH: 48, creatureFolder: "7", idleFrames: 4, walkFrames: 4, points: 500, rarity: "ultra_rare", weight: 0.3, minDepth: 0.55, speed: 2.2, description: "A ghostly minnow wreathed in spectral flame. Blinks in and out of reality.", baseScale: 1.8 },
+  { name: "Volcanic Perch", icon: "/assets/icons/fish/fish-volcanic-perch.png", catchAsset: "/assets/catch/volcanic-perch.png", catchW: 33, catchH: 25, creatureFolder: "8", idleFrames: 4, walkFrames: 4, points: 600, rarity: "ultra_rare", weight: 0.25, minDepth: 0.6, speed: 1.6, description: "A perch superheated by deep-sea vents. Its scales glow molten orange.", baseScale: 2.0 },
+  { name: "Abyssal Bass", icon: "/assets/icons/fish/fish-abyssal-bass.png", catchAsset: "/assets/catch/abyssal-bass.png", catchW: 48, catchH: 41, creatureFolder: "9", idleFrames: 4, walkFrames: 4, points: 750, rarity: "ultra_rare", weight: 0.2, minDepth: 0.65, speed: 1.4, description: "A colossal bass from the deepest trenches. Radiates dark energy.", baseScale: 2.2 },
+  { name: "Frost Catfish", icon: "/assets/icons/fish/fish-frost-catfish.png", catchAsset: "/assets/catch/frost-catfish.png", catchW: 40, catchH: 32, creatureFolder: "10", idleFrames: 4, walkFrames: 4, points: 800, rarity: "ultra_rare", weight: 0.18, minDepth: 0.6, speed: 0.9, description: "An ancient catfish encased in living ice. Freezes the water around it.", baseScale: 2.3 },
+  { name: "Storm Swordfish", icon: "/assets/icons/fish/fish-storm-swordfish.png", catchAsset: "/assets/catch/storm-swordfish.png", catchW: 48, catchH: 32, creatureFolder: "11", idleFrames: 4, walkFrames: 4, points: 1000, rarity: "ultra_rare", weight: 0.12, minDepth: 0.7, speed: 2.5, description: "A swordfish that rides lightning bolts. Crackles with electric fury.", baseScale: 2.0 },
+  { name: "Celestial Whale", icon: "/assets/icons/fish/fish-celestial-whale.png", catchAsset: "/assets/catch/celestial-whale.png", catchW: 48, catchH: 32, creatureFolder: "12", idleFrames: 4, walkFrames: 4, points: 2000, rarity: "ultra_rare", weight: 0.05, minDepth: 0.75, speed: 0.4, description: "A cosmic whale that swallowed a dying star. The rarest creature in existence.", baseScale: 2.5 },
+  { name: "Neon Eel", icon: "/assets/icons/fish/fish-neon-eel.png", catchAsset: "/assets/catch/neon-eel.png", catchW: 43, catchH: 27, creatureFolder: "13", idleFrames: 4, walkFrames: 4, points: 650, rarity: "ultra_rare", weight: 0.22, minDepth: 0.55, speed: 1.9, description: "A bioluminescent eel pulsing with neon colors. Mesmerizing.", baseScale: 2.0 },
+  { name: "Golden Salmon", icon: "/assets/icons/fish/fish-golden-salmon.png", catchAsset: "/assets/catch/golden-salmon.png", catchW: 48, catchH: 32, creatureFolder: "14", idleFrames: 4, walkFrames: 4, points: 700, rarity: "ultra_rare", weight: 0.2, minDepth: 0.6, speed: 1.5, description: "A legendary salmon with solid gold scales. Worth a fortune.", baseScale: 2.1 },
+  { name: "Shadow Leviathan", icon: "/assets/icons/fish/fish-shadow-leviathan.png", catchAsset: "/assets/catch/shadow-leviathan.png", catchW: 55, catchH: 59, creatureFolder: "15", idleFrames: 4, walkFrames: 4, points: 1500, rarity: "ultra_rare", weight: 0.08, minDepth: 0.8, speed: 0.6, description: "A titanic shadow beast from beyond the abyss. Feared by all ocean life.", tint: "rgba(140,15,15,0.5)", baseScale: 2.5 },
+  { name: "The Seal at the Seam", icon: "/assets/icons/fish/fish-seal-at-the-seam.png", catchAsset: "/assets/icons/fish/fish-seal-at-the-seam.png", catchW: 64, catchH: 64, creatureFolder: "6", idleFrames: 6, walkFrames: 6, points: 5000, rarity: "ultra_rare", weight: 0.02, minDepth: 0.9, speed: 0.3, description: "A living sigil at the boundary of reality. The 10th Legendary — guardian of the Seam.", tint: "rgba(20,40,120,0.5)", baseScale: 2.8 },
 ];
 
 const BETA_EGG_MAX_STOCK = 50;
@@ -183,16 +183,16 @@ const BETAXGRUDA_EGGS = [
 const CRAB_FRAME = 16;
 
 const BEACH_CRABS: FishType[] = [
-  { name: "Red Crab", icon: "/assets/gen-icons/fish-red-crab.png", catchAsset: "/assets/gen-icons/fish-red-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 8, rarity: "common", weight: 50, minDepth: 0.05, speed: 0.9, description: "A small red crab that scuttles along the beach.", beachCrab: true, spriteSheet: "/assets/crabs/crab-red-crab.png", spriteRow: 1, spriteFrameSize: 32 },
-  { name: "Blue Crab", icon: "/assets/gen-icons/fish-blue-crab.png", catchAsset: "/assets/gen-icons/fish-blue-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 10, rarity: "common", weight: 40, minDepth: 0.05, speed: 1.0, description: "A bright blue crab found near tidal pools.", beachCrab: true, spriteSheet: "/assets/crabs/crab-blue-crab.png", spriteRow: 1, spriteFrameSize: 32 },
-  { name: "Green Crab", icon: "/assets/gen-icons/fish-green-crab.png", catchAsset: "/assets/gen-icons/fish-green-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 8, rarity: "common", weight: 45, minDepth: 0.05, speed: 0.8, description: "A mossy green crab hiding in the seaweed.", beachCrab: true, spriteSheet: "/assets/crabs/crab-green-crab.png", spriteRow: 1, spriteFrameSize: 32 },
-  { name: "Purple Crab", icon: "/assets/gen-icons/fish-purple-crab.png", catchAsset: "/assets/gen-icons/fish-purple-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 15, rarity: "uncommon", weight: 20, minDepth: 0.05, speed: 1.1, description: "An uncommon purple crab with iridescent shell.", beachCrab: true, spriteSheet: "/assets/crabs/crab-purple-crab.png", spriteRow: 1, spriteFrameSize: 32 },
-  { name: "Gold Crab", icon: "/assets/gen-icons/fish-gold-crab.png", catchAsset: "/assets/gen-icons/fish-gold-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 25, rarity: "uncommon", weight: 15, minDepth: 0.05, speed: 1.2, description: "A rare golden crab. Prized for its shimmering shell.", beachCrab: true, spriteSheet: "/assets/crabs/crab-gold-crab.png", spriteRow: 1, spriteFrameSize: 32 },
-  { name: "Cyan Crab", icon: "/assets/gen-icons/fish-cyan-crab.png", catchAsset: "/assets/gen-icons/fish-cyan-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 8, rarity: "common", weight: 45, minDepth: 0.05, speed: 0.85, description: "A pale cyan crab commonly found on sandy shores.", beachCrab: true, spriteSheet: "/assets/crabs/crab-cyan-crab.png", spriteRow: 1, spriteFrameSize: 32 },
-  { name: "Pink Crab", icon: "/assets/gen-icons/fish-pink-crab.png", catchAsset: "/assets/gen-icons/fish-pink-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 12, rarity: "common", weight: 35, minDepth: 0.05, speed: 0.95, description: "A cute pink crab that loves warm shallow waters.", beachCrab: true, spriteSheet: "/assets/crabs/crab-pink-crab.png", spriteRow: 1, spriteFrameSize: 32 },
-  { name: "Dark Crab", icon: "/assets/gen-icons/fish-dark-crab.png", catchAsset: "/assets/gen-icons/fish-dark-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 20, rarity: "uncommon", weight: 18, minDepth: 0.05, speed: 1.15, description: "A dark-shelled crab with powerful pincers.", beachCrab: true, spriteSheet: "/assets/crabs/crab-dark-crab.png", spriteRow: 1, spriteFrameSize: 32 },
-  { name: "Crimson Crab", icon: "/assets/gen-icons/fish-crimson-crab.png", catchAsset: "/assets/gen-icons/fish-crimson-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 40, rarity: "rare", weight: 8, minDepth: 0.05, speed: 1.4, description: "A blood-red crab with Sea Devil markings. Extremely aggressive.", beachCrab: true, spriteSheet: "/assets/crabs/crab-crimson-crab.png", spriteRow: 1, spriteFrameSize: 32 },
-  { name: "Shadow Crab", icon: "/assets/gen-icons/fish-shadow-crab.png", catchAsset: "/assets/gen-icons/fish-shadow-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 55, rarity: "rare", weight: 5, minDepth: 0.05, speed: 1.6, description: "A dark maroon crab that moves like a phantom. Kin of the Sea Devil.", beachCrab: true, spriteSheet: "/assets/crabs/crab-shadow-crab.png", spriteRow: 1, spriteFrameSize: 32 },
+  { name: "Red Crab", icon: "/assets/icons/fish/fish-red-crab.png", catchAsset: "/assets/icons/fish/fish-red-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 8, rarity: "common", weight: 50, minDepth: 0.05, speed: 0.9, description: "A small red crab that scuttles along the beach.", beachCrab: true, spriteSheet: "/assets/crabs/crab-red-crab.png", spriteRow: 1, spriteFrameSize: 32 },
+  { name: "Blue Crab", icon: "/assets/icons/fish/fish-blue-crab.png", catchAsset: "/assets/icons/fish/fish-blue-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 10, rarity: "common", weight: 40, minDepth: 0.05, speed: 1.0, description: "A bright blue crab found near tidal pools.", beachCrab: true, spriteSheet: "/assets/crabs/crab-blue-crab.png", spriteRow: 1, spriteFrameSize: 32 },
+  { name: "Green Crab", icon: "/assets/icons/fish/fish-green-crab.png", catchAsset: "/assets/icons/fish/fish-green-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 8, rarity: "common", weight: 45, minDepth: 0.05, speed: 0.8, description: "A mossy green crab hiding in the seaweed.", beachCrab: true, spriteSheet: "/assets/crabs/crab-green-crab.png", spriteRow: 1, spriteFrameSize: 32 },
+  { name: "Purple Crab", icon: "/assets/icons/fish/fish-purple-crab.png", catchAsset: "/assets/icons/fish/fish-purple-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 15, rarity: "uncommon", weight: 20, minDepth: 0.05, speed: 1.1, description: "An uncommon purple crab with iridescent shell.", beachCrab: true, spriteSheet: "/assets/crabs/crab-purple-crab.png", spriteRow: 1, spriteFrameSize: 32 },
+  { name: "Gold Crab", icon: "/assets/icons/fish/fish-gold-crab.png", catchAsset: "/assets/icons/fish/fish-gold-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 25, rarity: "uncommon", weight: 15, minDepth: 0.05, speed: 1.2, description: "A rare golden crab. Prized for its shimmering shell.", beachCrab: true, spriteSheet: "/assets/crabs/crab-gold-crab.png", spriteRow: 1, spriteFrameSize: 32 },
+  { name: "Cyan Crab", icon: "/assets/icons/fish/fish-cyan-crab.png", catchAsset: "/assets/icons/fish/fish-cyan-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 8, rarity: "common", weight: 45, minDepth: 0.05, speed: 0.85, description: "A pale cyan crab commonly found on sandy shores.", beachCrab: true, spriteSheet: "/assets/crabs/crab-cyan-crab.png", spriteRow: 1, spriteFrameSize: 32 },
+  { name: "Pink Crab", icon: "/assets/icons/fish/fish-pink-crab.png", catchAsset: "/assets/icons/fish/fish-pink-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 12, rarity: "common", weight: 35, minDepth: 0.05, speed: 0.95, description: "A cute pink crab that loves warm shallow waters.", beachCrab: true, spriteSheet: "/assets/crabs/crab-pink-crab.png", spriteRow: 1, spriteFrameSize: 32 },
+  { name: "Dark Crab", icon: "/assets/icons/fish/fish-dark-crab.png", catchAsset: "/assets/icons/fish/fish-dark-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 20, rarity: "uncommon", weight: 18, minDepth: 0.05, speed: 1.15, description: "A dark-shelled crab with powerful pincers.", beachCrab: true, spriteSheet: "/assets/crabs/crab-dark-crab.png", spriteRow: 1, spriteFrameSize: 32 },
+  { name: "Crimson Crab", icon: "/assets/icons/fish/fish-crimson-crab.png", catchAsset: "/assets/icons/fish/fish-crimson-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 40, rarity: "rare", weight: 8, minDepth: 0.05, speed: 1.4, description: "A blood-red crab with Sea Devil markings. Extremely aggressive.", beachCrab: true, spriteSheet: "/assets/crabs/crab-crimson-crab.png", spriteRow: 1, spriteFrameSize: 32 },
+  { name: "Shadow Crab", icon: "/assets/icons/fish/fish-shadow-crab.png", catchAsset: "/assets/icons/fish/fish-shadow-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 55, rarity: "rare", weight: 5, minDepth: 0.05, speed: 1.6, description: "A dark maroon crab that moves like a phantom. Kin of the Sea Devil.", beachCrab: true, spriteSheet: "/assets/crabs/crab-shadow-crab.png", spriteRow: 1, spriteFrameSize: 32 },
 ];
 
 const JUNK_ITEMS = [
@@ -220,11 +220,11 @@ interface Rod {
 }
 
 const RODS: Rod[] = [
-  { name: "Bamboo Rod", price: 0, catchZoneBonus: 0, reelSpeedMult: 1.0, lineStrength: 1.0, castRange: 350, sinkSpeed: 1.0, description: "A simple bamboo rod. Short range, slow sink.", icon: "/assets/gen-icons/rod-bamboo.png" },
-  { name: "Fiberglass Rod", price: 150, catchZoneBonus: 0.015, reelSpeedMult: 1.1, lineStrength: 1.15, castRange: 550, sinkSpeed: 1.3, description: "Lighter and more responsive. Better range.", icon: "/assets/gen-icons/rod-fiberglass.png" },
-  { name: "Carbon Rod", price: 400, catchZoneBonus: 0.025, reelSpeedMult: 1.2, lineStrength: 1.3, castRange: 800, sinkSpeed: 1.6, description: "High-tech carbon fiber. Reaches deep water.", icon: "/assets/gen-icons/rod-carbon.png" },
-  { name: "Titanium Rod", price: 800, catchZoneBonus: 0.035, reelSpeedMult: 1.35, lineStrength: 1.5, castRange: 1100, sinkSpeed: 2.0, description: "Ultra-strong titanium. Massive cast range.", icon: "/assets/gen-icons/rod-titanium.png" },
-  { name: "Legendary Rod", price: 1500, catchZoneBonus: 0.05, reelSpeedMult: 1.5, lineStrength: 1.8, castRange: 1500, sinkSpeed: 2.5, description: "Forged from a ghost ship anchor. No limits.", icon: "/assets/gen-icons/rod-legendary.png" },
+  { name: "Bamboo Rod", price: 0, catchZoneBonus: 0, reelSpeedMult: 1.0, lineStrength: 1.0, castRange: 350, sinkSpeed: 1.0, description: "A simple bamboo rod. Short range, slow sink.", icon: "/assets/icons/rods/rod-bamboo.png" },
+  { name: "Fiberglass Rod", price: 150, catchZoneBonus: 0.015, reelSpeedMult: 1.1, lineStrength: 1.15, castRange: 550, sinkSpeed: 1.3, description: "Lighter and more responsive. Better range.", icon: "/assets/icons/rods/rod-fiberglass.png" },
+  { name: "Carbon Rod", price: 400, catchZoneBonus: 0.025, reelSpeedMult: 1.2, lineStrength: 1.3, castRange: 800, sinkSpeed: 1.6, description: "High-tech carbon fiber. Reaches deep water.", icon: "/assets/icons/rods/rod-carbon.png" },
+  { name: "Titanium Rod", price: 800, catchZoneBonus: 0.035, reelSpeedMult: 1.35, lineStrength: 1.5, castRange: 1100, sinkSpeed: 2.0, description: "Ultra-strong titanium. Massive cast range.", icon: "/assets/icons/rods/rod-titanium.png" },
+  { name: "Legendary Rod", price: 1500, catchZoneBonus: 0.05, reelSpeedMult: 1.5, lineStrength: 1.8, castRange: 1500, sinkSpeed: 2.5, description: "Forged from a ghost ship anchor. No limits.", icon: "/assets/icons/rods/rod-legendary.png" },
 ];
 
 interface Lure {
@@ -245,25 +245,25 @@ interface Lure {
 }
 
 const LURES: Lure[] = [
-  { name: "Basic Worm", price: 0, effect: "None", description: "A plain earthworm. The classic bait.", icon: "/assets/lures/worm.png", rarityBoost: 1.0, sizeBoost: 0, speedBoost: 1.0, depthBoost: 0, targetFish: [], targetBonus: 1.0, type: "live" },
-  { name: "Nightcrawler", price: 40, effect: "Faster bites", description: "A fat, juicy nightcrawler. Fish can't resist the wriggle.", icon: "/assets/lures/nightcrawler.png", rarityBoost: 1.0, sizeBoost: 0.1, speedBoost: 1.4, depthBoost: 0, targetFish: ["Catfish", "Bass"], targetBonus: 1.5, type: "live" },
-  { name: "Leech", price: 90, effect: "Attracts bottom feeders", description: "A slimy leech that bottom dwellers love. Sinks a bit faster.", icon: "/assets/lures/leech.png", rarityBoost: 1.2, sizeBoost: 0.2, speedBoost: 1.1, depthBoost: 0.3, targetFish: ["Catfish", "Eel", "Moray Eel", "Electric Eel"], targetBonus: 2.5, type: "live" },
-  { name: "Maggots", price: 60, effect: "Quick nibbles", description: "A cluster of wriggling maggots. Small fish go crazy.", icon: "/assets/lures/maggots.png", rarityBoost: 1.0, sizeBoost: 0, speedBoost: 2.0, depthBoost: 0, targetFish: ["Minnow", "Perch", "Jellyfish"], targetBonus: 2.0, type: "live" },
-  { name: "Minnow Bait", price: 150, effect: "Attracts predators", description: "A live minnow on the hook. Big predators can't resist.", icon: "/assets/lures/minnow_bait.png", rarityBoost: 1.5, sizeBoost: 0.4, speedBoost: 1.0, depthBoost: 0.2, targetFish: ["Bass", "Salmon", "Swordfish"], targetBonus: 2.0, type: "live" },
-  { name: "Beginner Lure", price: 50, effect: "Slight speed boost", description: "A basic crankbait for beginners. Better than bare hooks.", icon: "/assets/lures/beginner_lure.png", rarityBoost: 1.0, sizeBoost: 0, speedBoost: 1.2, depthBoost: 0, targetFish: [], targetBonus: 1.0, type: "lure" },
-  { name: "Crankbait", price: 120, effect: "Attracts Perch & Bass", description: "A fat-bodied diving lure with a rattling action.", icon: "/assets/lures/crankbait.png", rarityBoost: 1.1, sizeBoost: 0.2, speedBoost: 1.3, depthBoost: 0.1, targetFish: ["Perch", "Bass"], targetBonus: 2.5, type: "lure" },
-  { name: "Silver Spoon", price: 100, effect: "Flash attracts fish", description: "A hammered metal spoon that flashes in the water.", icon: "/assets/lures/spoon.png", rarityBoost: 1.0, sizeBoost: 0.1, speedBoost: 1.5, depthBoost: 0, targetFish: ["Salmon", "Minnow"], targetBonus: 2.0, type: "lure" },
-  { name: "Grub Worm", price: 80, effect: "Versatile soft bait", description: "A soft plastic grub with a curly tail. Works on everything.", icon: "/assets/lures/grub_worm.png", rarityBoost: 1.1, sizeBoost: 0.1, speedBoost: 1.2, depthBoost: 0, targetFish: [], targetBonus: 1.0, type: "lure" },
-  { name: "Spinnerbait", price: 200, effect: "Flash & vibration", description: "Spinning blades create flash and vibration underwater.", icon: "/assets/lures/spinnerbait.png", rarityBoost: 1.3, sizeBoost: 0.3, speedBoost: 1.4, depthBoost: 0, targetFish: ["Bass", "Perch"], targetBonus: 2.5, type: "lure" },
-  { name: "Deep Diver", price: 180, effect: "Dives deep fast", description: "Heavy diving lure. Sinks fast to reach bottom dwellers.", icon: "/assets/lures/deep_diver.png", rarityBoost: 1.2, sizeBoost: 0.3, speedBoost: 1.0, depthBoost: 0.8, targetFish: ["Catfish", "Eel", "Anglerfish", "Deep Sea Angler"], targetBonus: 2.5, type: "lure" },
-  { name: "Golden Fly", price: 250, effect: "Rare fish boost", description: "An iridescent golden fly. Rare fish can't resist.", icon: "/assets/lures/golden_fly.png", rarityBoost: 2.0, sizeBoost: 0, speedBoost: 1.0, depthBoost: 0, targetFish: ["Swordfish"], targetBonus: 2.0, type: "lure" },
-  { name: "Glow Jig", price: 350, effect: "Bigger fish + depth", description: "Bioluminescent lure. Sinks deep, attracts larger specimens.", icon: "/assets/lures/glow_jig.png", rarityBoost: 1.3, sizeBoost: 0.8, speedBoost: 1.1, depthBoost: 0.5, targetFish: [], targetBonus: 1.0, type: "lure" },
-  { name: "Storm Shad", price: 300, effect: "Faster bites", description: "Mimics injured baitfish. Fish bite faster.", icon: "/assets/lures/storm_shad.png", rarityBoost: 1.0, sizeBoost: 0.2, speedBoost: 2.0, depthBoost: 0, targetFish: ["Bass", "Salmon"], targetBonus: 2.0, type: "lure" },
-  { name: "Kraken Bait", price: 500, effect: "Legendary + deep dive", description: "Mysterious bait from the depths. Sinks to the abyss.", icon: "/assets/lures/kraken_bait.png", rarityBoost: 3.0, sizeBoost: 0.5, speedBoost: 0.8, depthBoost: 1.2, targetFish: ["Whale"], targetBonus: 4.0, type: "lure" },
-  { name: "Prismatic Lure", price: 750, effect: "All bonuses", description: "A rainbow-shifting lure. Boosts everything.", icon: "/assets/lures/prismatic_lure.png", rarityBoost: 1.8, sizeBoost: 0.5, speedBoost: 1.5, depthBoost: 0.4, targetFish: [], targetBonus: 1.0, type: "lure" },
-  { name: "Common Crab Bait", price: 0, effect: "Unlocks legendaries", description: "Live crab bait from common beach crabs. Required to attract legendary fish.", icon: "/assets/gen-icons/fish-red-crab.png", rarityBoost: 1.5, sizeBoost: 0.2, speedBoost: 1.0, depthBoost: 0.1, targetFish: [], targetBonus: 1.0, type: "live", crabBaitTier: 1, legendaryBoost: 1.5 },
-  { name: "Uncommon Crab Bait", price: 0, effect: "Boosts legendaries", description: "Live crab bait from uncommon crabs. Legendaries can't resist the scent.", icon: "/assets/gen-icons/fish-purple-crab.png", rarityBoost: 2.5, sizeBoost: 0.4, speedBoost: 1.1, depthBoost: 0.2, targetFish: [], targetBonus: 1.0, type: "live", crabBaitTier: 2, legendaryBoost: 3.0 },
-  { name: "Rare Crab Bait", price: 0, effect: "Maximum legendary boost", description: "Live rare crab bait. The ultimate legendary attractor. Sea Devil kin call to the deep.", icon: "/assets/gen-icons/fish-crimson-crab.png", rarityBoost: 4.0, sizeBoost: 0.6, speedBoost: 1.2, depthBoost: 0.4, targetFish: [], targetBonus: 1.0, type: "live", crabBaitTier: 3, legendaryBoost: 6.0 },
+  { name: "Basic Worm", price: 0, effect: "None", description: "A plain earthworm. The classic bait.", icon: "/assets/icons/lures/worm.png", rarityBoost: 1.0, sizeBoost: 0, speedBoost: 1.0, depthBoost: 0, targetFish: [], targetBonus: 1.0, type: "live" },
+  { name: "Nightcrawler", price: 40, effect: "Faster bites", description: "A fat, juicy nightcrawler. Fish can't resist the wriggle.", icon: "/assets/icons/lures/nightcrawler.png", rarityBoost: 1.0, sizeBoost: 0.1, speedBoost: 1.4, depthBoost: 0, targetFish: ["Catfish", "Bass"], targetBonus: 1.5, type: "live" },
+  { name: "Leech", price: 90, effect: "Attracts bottom feeders", description: "A slimy leech that bottom dwellers love. Sinks a bit faster.", icon: "/assets/icons/lures/leech.png", rarityBoost: 1.2, sizeBoost: 0.2, speedBoost: 1.1, depthBoost: 0.3, targetFish: ["Catfish", "Eel", "Moray Eel", "Electric Eel"], targetBonus: 2.5, type: "live" },
+  { name: "Maggots", price: 60, effect: "Quick nibbles", description: "A cluster of wriggling maggots. Small fish go crazy.", icon: "/assets/icons/lures/maggots.png", rarityBoost: 1.0, sizeBoost: 0, speedBoost: 2.0, depthBoost: 0, targetFish: ["Minnow", "Perch", "Jellyfish"], targetBonus: 2.0, type: "live" },
+  { name: "Minnow Bait", price: 150, effect: "Attracts predators", description: "A live minnow on the hook. Big predators can't resist.", icon: "/assets/icons/lures/minnow_bait.png", rarityBoost: 1.5, sizeBoost: 0.4, speedBoost: 1.0, depthBoost: 0.2, targetFish: ["Bass", "Salmon", "Swordfish"], targetBonus: 2.0, type: "live" },
+  { name: "Beginner Lure", price: 50, effect: "Slight speed boost", description: "A basic crankbait for beginners. Better than bare hooks.", icon: "/assets/icons/lures/beginner_lure.png", rarityBoost: 1.0, sizeBoost: 0, speedBoost: 1.2, depthBoost: 0, targetFish: [], targetBonus: 1.0, type: "lure" },
+  { name: "Crankbait", price: 120, effect: "Attracts Perch & Bass", description: "A fat-bodied diving lure with a rattling action.", icon: "/assets/icons/lures/crankbait.png", rarityBoost: 1.1, sizeBoost: 0.2, speedBoost: 1.3, depthBoost: 0.1, targetFish: ["Perch", "Bass"], targetBonus: 2.5, type: "lure" },
+  { name: "Silver Spoon", price: 100, effect: "Flash attracts fish", description: "A hammered metal spoon that flashes in the water.", icon: "/assets/icons/lures/spoon.png", rarityBoost: 1.0, sizeBoost: 0.1, speedBoost: 1.5, depthBoost: 0, targetFish: ["Salmon", "Minnow"], targetBonus: 2.0, type: "lure" },
+  { name: "Grub Worm", price: 80, effect: "Versatile soft bait", description: "A soft plastic grub with a curly tail. Works on everything.", icon: "/assets/icons/lures/grub_worm.png", rarityBoost: 1.1, sizeBoost: 0.1, speedBoost: 1.2, depthBoost: 0, targetFish: [], targetBonus: 1.0, type: "lure" },
+  { name: "Spinnerbait", price: 200, effect: "Flash & vibration", description: "Spinning blades create flash and vibration underwater.", icon: "/assets/icons/lures/spinnerbait.png", rarityBoost: 1.3, sizeBoost: 0.3, speedBoost: 1.4, depthBoost: 0, targetFish: ["Bass", "Perch"], targetBonus: 2.5, type: "lure" },
+  { name: "Deep Diver", price: 180, effect: "Dives deep fast", description: "Heavy diving lure. Sinks fast to reach bottom dwellers.", icon: "/assets/icons/lures/deep_diver.png", rarityBoost: 1.2, sizeBoost: 0.3, speedBoost: 1.0, depthBoost: 0.8, targetFish: ["Catfish", "Eel", "Anglerfish", "Deep Sea Angler"], targetBonus: 2.5, type: "lure" },
+  { name: "Golden Fly", price: 250, effect: "Rare fish boost", description: "An iridescent golden fly. Rare fish can't resist.", icon: "/assets/icons/lures/golden_fly.png", rarityBoost: 2.0, sizeBoost: 0, speedBoost: 1.0, depthBoost: 0, targetFish: ["Swordfish"], targetBonus: 2.0, type: "lure" },
+  { name: "Glow Jig", price: 350, effect: "Bigger fish + depth", description: "Bioluminescent lure. Sinks deep, attracts larger specimens.", icon: "/assets/icons/lures/glow_jig.png", rarityBoost: 1.3, sizeBoost: 0.8, speedBoost: 1.1, depthBoost: 0.5, targetFish: [], targetBonus: 1.0, type: "lure" },
+  { name: "Storm Shad", price: 300, effect: "Faster bites", description: "Mimics injured baitfish. Fish bite faster.", icon: "/assets/icons/lures/storm_shad.png", rarityBoost: 1.0, sizeBoost: 0.2, speedBoost: 2.0, depthBoost: 0, targetFish: ["Bass", "Salmon"], targetBonus: 2.0, type: "lure" },
+  { name: "Kraken Bait", price: 500, effect: "Legendary + deep dive", description: "Mysterious bait from the depths. Sinks to the abyss.", icon: "/assets/icons/lures/kraken_bait.png", rarityBoost: 3.0, sizeBoost: 0.5, speedBoost: 0.8, depthBoost: 1.2, targetFish: ["Whale"], targetBonus: 4.0, type: "lure" },
+  { name: "Prismatic Lure", price: 750, effect: "All bonuses", description: "A rainbow-shifting lure. Boosts everything.", icon: "/assets/icons/lures/prismatic_lure.png", rarityBoost: 1.8, sizeBoost: 0.5, speedBoost: 1.5, depthBoost: 0.4, targetFish: [], targetBonus: 1.0, type: "lure" },
+  { name: "Common Crab Bait", price: 0, effect: "Unlocks legendaries", description: "Live crab bait from common beach crabs. Required to attract legendary fish.", icon: "/assets/icons/fish/fish-red-crab.png", rarityBoost: 1.5, sizeBoost: 0.2, speedBoost: 1.0, depthBoost: 0.1, targetFish: [], targetBonus: 1.0, type: "live", crabBaitTier: 1, legendaryBoost: 1.5 },
+  { name: "Uncommon Crab Bait", price: 0, effect: "Boosts legendaries", description: "Live crab bait from uncommon crabs. Legendaries can't resist the scent.", icon: "/assets/icons/fish/fish-purple-crab.png", rarityBoost: 2.5, sizeBoost: 0.4, speedBoost: 1.1, depthBoost: 0.2, targetFish: [], targetBonus: 1.0, type: "live", crabBaitTier: 2, legendaryBoost: 3.0 },
+  { name: "Rare Crab Bait", price: 0, effect: "Maximum legendary boost", description: "Live rare crab bait. The ultimate legendary attractor. Sea Devil kin call to the deep.", icon: "/assets/icons/fish/fish-crimson-crab.png", rarityBoost: 4.0, sizeBoost: 0.6, speedBoost: 1.2, depthBoost: 0.4, targetFish: [], targetBonus: 1.0, type: "live", crabBaitTier: 3, legendaryBoost: 6.0 },
 ];
 
 interface ChumItem {
@@ -282,26 +282,26 @@ interface ChumItem {
 }
 
 const CHUM_ITEMS: ChumItem[] = [
-  { name: "Fish Scraps", price: 15, description: "Basic chum. A slight fish attract.", icon: "/assets/gen-icons/chum-fish-guts.png", effect: "Slight attract", duration: 300, rarityBoost: 1.0, biteSpeedBoost: 1.0, fishAttract: 1.2, cooldown: 120, catchable: false, type: "chum" },
-  { name: "Bread Crumbs", price: 20, description: "Attracts small fish nearby.", icon: "/assets/gen-icons/chum-bread-crumbs.png", effect: "Small fish attract", duration: 350, rarityBoost: 1.0, biteSpeedBoost: 1.1, fishAttract: 1.4, cooldown: 120, catchable: false, type: "chum" },
-  { name: "Corn Mash", price: 25, description: "Attracts bottom feeders.", icon: "/assets/gen-icons/chum-worm-bait.png", effect: "Bottom feeder attract", duration: 400, rarityBoost: 1.05, biteSpeedBoost: 1.0, fishAttract: 1.5, cooldown: 140, catchable: false, type: "chum" },
-  { name: "Blood Meal", price: 40, description: "Attracts predators with its scent.", icon: "/assets/gen-icons/chum-blood-worm-extract.png", effect: "Predator attract", duration: 350, rarityBoost: 1.15, biteSpeedBoost: 1.05, fishAttract: 1.6, cooldown: 160, catchable: false, type: "chum" },
-  { name: "Shrimp Paste", price: 50, description: "Good all-around chum.", icon: "/assets/gen-icons/chum-shrimp-paste.png", effect: "All-around attract", duration: 400, rarityBoost: 1.1, biteSpeedBoost: 1.15, fishAttract: 1.7, cooldown: 150, catchable: false, type: "chum" },
-  { name: "Squid Ink", price: 60, description: "Attracts deep fish.", icon: "/assets/gen-icons/chum-squid-ink.png", effect: "Deep fish attract", duration: 350, rarityBoost: 1.2, biteSpeedBoost: 1.0, fishAttract: 1.5, cooldown: 180, catchable: false, type: "chum" },
-  { name: "Fish Oil Slick", price: 75, description: "Wide area attract effect.", icon: "/assets/gen-icons/chum-sardine-oil.png", effect: "Wide area attract", duration: 500, rarityBoost: 1.1, biteSpeedBoost: 1.1, fishAttract: 2.0, cooldown: 200, catchable: false, type: "chum" },
-  { name: "Sardine Chunks", price: 45, description: "Fast bite speed boost.", icon: "/assets/gen-icons/chum-live-shrimp.png", effect: "Fast bites", duration: 300, rarityBoost: 1.0, biteSpeedBoost: 1.5, fishAttract: 1.3, cooldown: 130, catchable: false, type: "chum" },
-  { name: "Crab Guts", price: 55, description: "Attracts rare fish.", icon: "/assets/gen-icons/chum-sea-urchin-spines.png", effect: "Rare fish attract", duration: 350, rarityBoost: 1.3, biteSpeedBoost: 1.0, fishAttract: 1.4, cooldown: 170, catchable: false, type: "chum" },
-  { name: "Mussel Mix", price: 35, description: "Steady and reliable attract.", icon: "/assets/gen-icons/chum-jellyfish-jelly.png", effect: "Steady attract", duration: 450, rarityBoost: 1.05, biteSpeedBoost: 1.05, fishAttract: 1.5, cooldown: 140, catchable: false, type: "chum" },
-  { name: "Fermented Brine", price: 80, description: "Strong rarity boost.", icon: "/assets/gen-icons/chum-deep-pressure.png", effect: "Rarity boost", duration: 400, rarityBoost: 1.5, biteSpeedBoost: 1.0, fishAttract: 1.6, cooldown: 200, catchable: false, type: "chum" },
-  { name: "Whale Blubber", price: 100, description: "Attracts legendary fish.", icon: "/assets/gen-icons/chum-whale-blubber.png", effect: "Legendary attract", duration: 350, rarityBoost: 1.7, biteSpeedBoost: 1.0, fishAttract: 1.8, cooldown: 250, catchable: false, type: "chum" },
-  { name: "Phosphor Dust", price: 120, description: "Glowing effect. Ultra rare boost.", icon: "/assets/gen-icons/chum-glowing-plankton.png", effect: "Glowing ultra rare", duration: 300, rarityBoost: 2.0, biteSpeedBoost: 1.1, fishAttract: 1.5, cooldown: 280, catchable: false, type: "chum" },
-  { name: "Coral Powder", price: 90, description: "Attracts reef fish.", icon: "/assets/gen-icons/chum-coral-dust.png", effect: "Reef fish attract", duration: 400, rarityBoost: 1.3, biteSpeedBoost: 1.1, fishAttract: 1.7, cooldown: 200, catchable: false, type: "chum" },
-  { name: "Deep Sea Extract", price: 150, description: "Deep water mega boost.", icon: "/assets/gen-icons/chum-electric-plankton.png", effect: "Deep mega boost", duration: 350, rarityBoost: 1.8, biteSpeedBoost: 1.2, fishAttract: 2.0, cooldown: 300, catchable: false, type: "chum" },
-  { name: "Thunder Chum", price: 130, description: "Attracts storm fish.", icon: "/assets/gen-icons/chum-thunder.png", effect: "Storm fish attract", duration: 300, rarityBoost: 1.6, biteSpeedBoost: 1.3, fishAttract: 1.8, cooldown: 260, catchable: false, type: "chum" },
-  { name: "Moonlight Essence", price: 200, description: "Celestial boost to all catches.", icon: "/assets/gen-icons/chum-moonlight-essence.png", effect: "Celestial boost", duration: 400, rarityBoost: 2.0, biteSpeedBoost: 1.2, fishAttract: 2.2, cooldown: 350, catchable: false, type: "chum" },
-  { name: "Kraken Bile", price: 180, description: "Massive rarity increase.", icon: "/assets/gen-icons/chum-kraken-bile.png", effect: "Massive rarity", duration: 300, rarityBoost: 2.5, biteSpeedBoost: 1.0, fishAttract: 1.6, cooldown: 320, catchable: false, type: "chum" },
-  { name: "Golden Flakes", price: 250, description: "Boosts everything.", icon: "/assets/gen-icons/chum-golden-flakes.png", effect: "Everything boost", duration: 500, rarityBoost: 2.0, biteSpeedBoost: 1.4, fishAttract: 2.5, cooldown: 400, catchable: false, type: "chum" },
-  { name: "Abyssal Ooze", price: 300, description: "The ultimate chum.", icon: "/assets/gen-icons/chum-abyssal-ooze.png", effect: "Ultimate attract", duration: 600, rarityBoost: 2.5, biteSpeedBoost: 1.5, fishAttract: 3.0, cooldown: 500, catchable: false, type: "chum" },
+  { name: "Fish Scraps", price: 15, description: "Basic chum. A slight fish attract.", icon: "/assets/icons/chum/chum-fish-guts.png", effect: "Slight attract", duration: 300, rarityBoost: 1.0, biteSpeedBoost: 1.0, fishAttract: 1.2, cooldown: 120, catchable: false, type: "chum" },
+  { name: "Bread Crumbs", price: 20, description: "Attracts small fish nearby.", icon: "/assets/icons/chum/chum-bread-crumbs.png", effect: "Small fish attract", duration: 350, rarityBoost: 1.0, biteSpeedBoost: 1.1, fishAttract: 1.4, cooldown: 120, catchable: false, type: "chum" },
+  { name: "Corn Mash", price: 25, description: "Attracts bottom feeders.", icon: "/assets/icons/chum/chum-worm-bait.png", effect: "Bottom feeder attract", duration: 400, rarityBoost: 1.05, biteSpeedBoost: 1.0, fishAttract: 1.5, cooldown: 140, catchable: false, type: "chum" },
+  { name: "Blood Meal", price: 40, description: "Attracts predators with its scent.", icon: "/assets/icons/chum/chum-blood-worm-extract.png", effect: "Predator attract", duration: 350, rarityBoost: 1.15, biteSpeedBoost: 1.05, fishAttract: 1.6, cooldown: 160, catchable: false, type: "chum" },
+  { name: "Shrimp Paste", price: 50, description: "Good all-around chum.", icon: "/assets/icons/chum/chum-shrimp-paste.png", effect: "All-around attract", duration: 400, rarityBoost: 1.1, biteSpeedBoost: 1.15, fishAttract: 1.7, cooldown: 150, catchable: false, type: "chum" },
+  { name: "Squid Ink", price: 60, description: "Attracts deep fish.", icon: "/assets/icons/chum/chum-squid-ink.png", effect: "Deep fish attract", duration: 350, rarityBoost: 1.2, biteSpeedBoost: 1.0, fishAttract: 1.5, cooldown: 180, catchable: false, type: "chum" },
+  { name: "Fish Oil Slick", price: 75, description: "Wide area attract effect.", icon: "/assets/icons/chum/chum-sardine-oil.png", effect: "Wide area attract", duration: 500, rarityBoost: 1.1, biteSpeedBoost: 1.1, fishAttract: 2.0, cooldown: 200, catchable: false, type: "chum" },
+  { name: "Sardine Chunks", price: 45, description: "Fast bite speed boost.", icon: "/assets/icons/chum/chum-live-shrimp.png", effect: "Fast bites", duration: 300, rarityBoost: 1.0, biteSpeedBoost: 1.5, fishAttract: 1.3, cooldown: 130, catchable: false, type: "chum" },
+  { name: "Crab Guts", price: 55, description: "Attracts rare fish.", icon: "/assets/icons/chum/chum-sea-urchin-spines.png", effect: "Rare fish attract", duration: 350, rarityBoost: 1.3, biteSpeedBoost: 1.0, fishAttract: 1.4, cooldown: 170, catchable: false, type: "chum" },
+  { name: "Mussel Mix", price: 35, description: "Steady and reliable attract.", icon: "/assets/icons/chum/chum-jellyfish-jelly.png", effect: "Steady attract", duration: 450, rarityBoost: 1.05, biteSpeedBoost: 1.05, fishAttract: 1.5, cooldown: 140, catchable: false, type: "chum" },
+  { name: "Fermented Brine", price: 80, description: "Strong rarity boost.", icon: "/assets/icons/chum/chum-deep-pressure.png", effect: "Rarity boost", duration: 400, rarityBoost: 1.5, biteSpeedBoost: 1.0, fishAttract: 1.6, cooldown: 200, catchable: false, type: "chum" },
+  { name: "Whale Blubber", price: 100, description: "Attracts legendary fish.", icon: "/assets/icons/chum/chum-whale-blubber.png", effect: "Legendary attract", duration: 350, rarityBoost: 1.7, biteSpeedBoost: 1.0, fishAttract: 1.8, cooldown: 250, catchable: false, type: "chum" },
+  { name: "Phosphor Dust", price: 120, description: "Glowing effect. Ultra rare boost.", icon: "/assets/icons/chum/chum-glowing-plankton.png", effect: "Glowing ultra rare", duration: 300, rarityBoost: 2.0, biteSpeedBoost: 1.1, fishAttract: 1.5, cooldown: 280, catchable: false, type: "chum" },
+  { name: "Coral Powder", price: 90, description: "Attracts reef fish.", icon: "/assets/icons/chum/chum-coral-dust.png", effect: "Reef fish attract", duration: 400, rarityBoost: 1.3, biteSpeedBoost: 1.1, fishAttract: 1.7, cooldown: 200, catchable: false, type: "chum" },
+  { name: "Deep Sea Extract", price: 150, description: "Deep water mega boost.", icon: "/assets/icons/chum/chum-electric-plankton.png", effect: "Deep mega boost", duration: 350, rarityBoost: 1.8, biteSpeedBoost: 1.2, fishAttract: 2.0, cooldown: 300, catchable: false, type: "chum" },
+  { name: "Thunder Chum", price: 130, description: "Attracts storm fish.", icon: "/assets/icons/chum/chum-thunder.png", effect: "Storm fish attract", duration: 300, rarityBoost: 1.6, biteSpeedBoost: 1.3, fishAttract: 1.8, cooldown: 260, catchable: false, type: "chum" },
+  { name: "Moonlight Essence", price: 200, description: "Celestial boost to all catches.", icon: "/assets/icons/chum/chum-moonlight-essence.png", effect: "Celestial boost", duration: 400, rarityBoost: 2.0, biteSpeedBoost: 1.2, fishAttract: 2.2, cooldown: 350, catchable: false, type: "chum" },
+  { name: "Kraken Bile", price: 180, description: "Massive rarity increase.", icon: "/assets/icons/chum/chum-kraken-bile.png", effect: "Massive rarity", duration: 300, rarityBoost: 2.5, biteSpeedBoost: 1.0, fishAttract: 1.6, cooldown: 320, catchable: false, type: "chum" },
+  { name: "Golden Flakes", price: 250, description: "Boosts everything.", icon: "/assets/icons/chum/chum-golden-flakes.png", effect: "Everything boost", duration: 500, rarityBoost: 2.0, biteSpeedBoost: 1.4, fishAttract: 2.5, cooldown: 400, catchable: false, type: "chum" },
+  { name: "Abyssal Ooze", price: 300, description: "The ultimate chum.", icon: "/assets/icons/chum/chum-abyssal-ooze.png", effect: "Ultimate attract", duration: 600, rarityBoost: 2.5, biteSpeedBoost: 1.5, fishAttract: 3.0, cooldown: 500, catchable: false, type: "chum" },
   { name: "Live Shrimp Cluster", price: 0, description: "Caught live shrimp. Good bait for medium fish.", icon: "/assets/icons/Icons_05.png", effect: "Medium fish attract", duration: 250, rarityBoost: 1.2, biteSpeedBoost: 1.3, fishAttract: 1.8, cooldown: 100, catchable: true, type: "special" },
   { name: "Glowing Plankton", price: 0, description: "Caught glowing plankton. Attracts rare fish.", icon: "/assets/icons/Icons_14.png", effect: "Rare glow attract", duration: 200, rarityBoost: 1.8, biteSpeedBoost: 1.1, fishAttract: 1.5, cooldown: 100, catchable: true, type: "special" },
 ];
@@ -353,6 +353,8 @@ interface NpcDef {
   request?: NpcRequest;
   mission?: NpcMission;
   dialogueLines: string[];
+  beachNpc?: boolean;
+  staticSprite?: string;
 }
 
 const NPC_DEFS: NpcDef[] = [
@@ -361,10 +363,10 @@ const NPC_DEFS: NpcDef[] = [
     worldX: 0.52, role: "shopkeeper",
     greeting: "Welcome! I've got supplies for any angler.",
     shopItems: [
-      { name: "Fish Scraps", type: "chum", index: 0, price: 12, description: "Basic chum. Cheap!", icon: "/assets/gen-icons/chum-fish-guts.png" },
-      { name: "Bread Crumbs", type: "chum", index: 1, price: 18, description: "Attracts small fish.", icon: "/assets/gen-icons/chum-bread-crumbs.png" },
-      { name: "Sardine Chunks", type: "chum", index: 7, price: 40, description: "Fast bites!", icon: "/assets/gen-icons/chum-live-shrimp.png" },
-      { name: "Nightcrawler", type: "lure", index: 1, price: 35, description: "Juicy wriggling bait.", icon: "/assets/lures/nightcrawler.png" },
+      { name: "Fish Scraps", type: "chum", index: 0, price: 12, description: "Basic chum. Cheap!", icon: "/assets/icons/chum/chum-fish-guts.png" },
+      { name: "Bread Crumbs", type: "chum", index: 1, price: 18, description: "Attracts small fish.", icon: "/assets/icons/chum/chum-bread-crumbs.png" },
+      { name: "Sardine Chunks", type: "chum", index: 7, price: 40, description: "Fast bites!", icon: "/assets/icons/chum/chum-live-shrimp.png" },
+      { name: "Nightcrawler", type: "lure", index: 1, price: 35, description: "Juicy wriggling bait.", icon: "/assets/icons/lures/nightcrawler.png" },
     ],
     dialogueLines: [
       "Crabs on the beach make powerful bait. Tier 3 crabs give 6x legendary boost!",
@@ -415,10 +417,10 @@ const NPC_DEFS: NpcDef[] = [
     worldX: 0.70, role: "shopkeeper",
     greeting: "Looking for something special?",
     shopItems: [
-      { name: "Blood Meal", type: "chum", index: 3, price: 35, description: "Attracts predators!", icon: "/assets/gen-icons/chum-blood-worm-extract.png" },
-      { name: "Leech", type: "lure", index: 2, price: 80, description: "Bottom dwellers love it.", icon: "/assets/lures/leech.png" },
-      { name: "Crankbait", type: "lure", index: 6, price: 110, description: "Rattling diving lure.", icon: "/assets/lures/crankbait.png" },
-      { name: "Crab Guts", type: "chum", index: 8, price: 50, description: "Attracts rare fish!", icon: "/assets/gen-icons/chum-sea-urchin-spines.png" },
+      { name: "Blood Meal", type: "chum", index: 3, price: 35, description: "Attracts predators!", icon: "/assets/icons/chum/chum-blood-worm-extract.png" },
+      { name: "Leech", type: "lure", index: 2, price: 80, description: "Bottom dwellers love it.", icon: "/assets/icons/lures/leech.png" },
+      { name: "Crankbait", type: "lure", index: 6, price: 110, description: "Rattling diving lure.", icon: "/assets/icons/lures/crankbait.png" },
+      { name: "Crab Guts", type: "chum", index: 8, price: 50, description: "Attracts rare fish!", icon: "/assets/icons/chum/chum-sea-urchin-spines.png" },
     ],
     dialogueLines: [
       "Artificial lures never run out. Live bait gets consumed each cast.",
@@ -445,6 +447,39 @@ const NPC_DEFS: NpcDef[] = [
       "Fiberglass Rod is a great first upgrade. 550 range beats Bamboo's 350.",
       "Each rod level improves your catch zone. Keep using it to level up!",
       "Chum has a cooldown between uses. Time it wisely during fishing runs!",
+    ],
+  },
+  {
+    id: 6, name: "Bait Vendor", spriteFolder: "10", idleFrames: 4, walkFrames: 6,
+    worldX: 3.15, role: "shopkeeper", beachNpc: true,
+    greeting: "Fresh bait, straight from the shore!",
+    shopItems: [
+      { name: "Basic Worm", type: "lure", index: 0, price: 0, description: "Free worm. Gets the job done.", icon: "/assets/icons/lures/worm.png" },
+      { name: "Maggots", type: "lure", index: 3, price: 50, description: "Small fish go crazy for these.", icon: "/assets/icons/lures/maggots.png" },
+      { name: "Fish Scraps", type: "chum", index: 0, price: 10, description: "Cheap chum for beginners.", icon: "/assets/icons/chum/chum-fish-guts.png" },
+      { name: "Bread Crumbs", type: "chum", index: 1, price: 15, description: "Attracts small fish.", icon: "/assets/icons/chum/chum-bread-crumbs.png" },
+    ],
+    dialogueLines: [
+      "Catch crabs on the beach - they make the best live bait!",
+      "Gold Crabs are uncommon but worth the hunt. Great bait tier!",
+      "Buy a Fishing License from the sign to access the main dock.",
+      "The license costs 100 gbux. Sell crabs and small fish to save up!",
+      "Crabs scuttle fast. Time your cast and grab them quick!",
+      "Each crab tier boosts legendary spawns differently. Tier 3 is 6x!",
+    ],
+  },
+  {
+    id: 7, name: "Sandy", spriteFolder: "9", idleFrames: 4, walkFrames: 4,
+    worldX: 3.6, role: "requester", beachNpc: true,
+    greeting: "Hey newcomer! Need some help getting started?",
+    request: { description: "Catch 3 crabs of any kind for me.", fishName: "Red Crab", count: 3, fulfilled: 0, reward: 40, completed: false },
+    dialogueLines: [
+      "The beach is full of crabs. Cast your line near the sand!",
+      "Crabs caught here become live bait. Way better than worms!",
+      "Save up 100 gbux for the Fishing License. That unlocks the real fishing!",
+      "Crimson and Shadow crabs are rare but their bait is incredible.",
+      "The bait shop has cheap supplies to get you started.",
+      "I heard there are 30 species out there. Good luck catching them all!",
     ],
   },
 ];
@@ -1293,9 +1328,9 @@ export default function FishingGame() {
       ...FISH_TYPES.map(f => f.catchAsset),
       ...FISH_TYPES.filter(f => f.icon).map(f => f.icon!),
       ...BEACH_CRABS.filter(f => f.icon).map(f => f.icon!),
-      "/assets/gen-icons/fish-shark.png",
-      "/assets/gen-icons/fish-kraken.png",
-      "/assets/gen-icons/fish-sea-devil.png",
+      "/assets/icons/fish/fish-shark.png",
+      "/assets/icons/fish/fish-kraken.png",
+      "/assets/icons/fish/fish-sea-devil.png",
       ...JUNK_ITEMS.map(j => j.asset),
       ...["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"].flatMap(n => [
         `/assets/creatures/${n}/Idle.png`,
@@ -1628,6 +1663,11 @@ export default function FishingGame() {
           stateRef.current.gameState = "store";
           stateRef.current.storeTab = "rod";
           syncUI();
+        } else if (stateRef.current.nearNpc >= 0) {
+          stateRef.current.gameState = "npcChat";
+          stateRef.current.activeNpc = stateRef.current.nearNpc;
+          stateRef.current.npcTab = "talk";
+          syncUI();
         }
       }
     };
@@ -1897,7 +1937,7 @@ export default function FishingGame() {
             npc.bubbleTimer = 4 + Math.random() * 2;
           }
 
-          if (s.gameState === "idle" && !s.inBoat && s.fishingLicense) {
+          if (s.gameState === "idle" && !s.inBoat && (s.fishingLicense || npc.beachNpc)) {
             const dist = Math.abs(s.playerX - npcWorldX);
             if (dist < 50) {
               s.nearNpc = ni;
@@ -3592,7 +3632,15 @@ export default function FishingGame() {
         const npcBaseX = npc.worldX * W;
         const npcWorldX = npcBaseX + npc.walkX;
         const npcScale = 2.2;
-        const npcY = pierY - NPC_FRAME_SIZE * npcScale + 4;
+        let npcY: number;
+        if (npc.beachNpc) {
+          const beachStartX = W * 3.0;
+          const beachEndX = W * 5 + 200;
+          const beachProg = Math.max(0, (npcWorldX - beachStartX) / (beachEndX - beachStartX));
+          npcY = pierY + 10 + beachProg * 30 - NPC_FRAME_SIZE * npcScale + 4;
+        } else {
+          npcY = pierY - NPC_FRAME_SIZE * npcScale + 4;
+        }
         const spritePath = npc.walkDir !== 0 ? `/assets/npcs/${npc.spriteFolder}/Walk.png` : `/assets/npcs/${npc.spriteFolder}/Idle.png`;
         const img = getImg(spritePath);
         if (img && img.complete && img.naturalWidth > 0) {
@@ -3636,7 +3684,15 @@ export default function FishingGame() {
           ctx.font = "7px 'Press Start 2P', monospace";
           ctx.textAlign = "center";
           const bubbleX = npcWorldX;
-          const bubbleY = pierY - NPC_FRAME_SIZE * 2.2 - 18;
+          let bubbleY: number;
+          if (npc.beachNpc) {
+            const beachStartX2 = W * 3.0;
+            const beachEndX2 = W * 5 + 200;
+            const beachProg2 = Math.max(0, (npcWorldX - beachStartX2) / (beachEndX2 - beachStartX2));
+            bubbleY = pierY + 10 + beachProg2 * 30 - NPC_FRAME_SIZE * 2.2 - 18;
+          } else {
+            bubbleY = pierY - NPC_FRAME_SIZE * 2.2 - 18;
+          }
           const maxBubbleW = 160;
           const words = npc.bubbleText.split(" ");
           const lines: string[] = [];
@@ -4191,7 +4247,7 @@ export default function FishingGame() {
               const vitBonus = 1 + s.attributes.Vitality * 0.02 * (1 + s.attributes.Tactics * 0.01);
               s.biteTimer = (120 + Math.random() * 80) * vitBonus;
               s.exclamationTimer = 0;
-              const predIconMap: Record<string, string> = { "Shark": "/assets/gen-icons/fish-shark.png", "Kraken": "/assets/gen-icons/fish-kraken.png", "Sea Devil": "/assets/gen-icons/fish-sea-devil.png" };
+              const predIconMap: Record<string, string> = { "Shark": "/assets/icons/fish/fish-shark.png", "Kraken": "/assets/icons/fish/fish-kraken.png", "Sea Devil": "/assets/icons/fish/fish-sea-devil.png" };
               s.currentCatch = { 
                 name: pred.type.name, icon: predIconMap[pred.type.name], catchAsset: pred.type.catchAsset, catchW: pred.type.catchW, catchH: pred.type.catchH, 
                 creatureFolder: pred.type.folder, idleFrames: pred.type.idleFrames, walkFrames: pred.type.walkFrames, 
@@ -5436,8 +5492,13 @@ export default function FishingGame() {
             if (s.bounties.length === 0) generateBounties();
           }
 
+          const caughtIsCrab = BEACH_CRABS.some(c => c.name === name);
           for (const npc of s.npcs) {
-            if (npc.request && !npc.request.completed && npc.request.fishName === name) {
+            const requestMatches = npc.request && !npc.request.completed && (
+              npc.request.fishName === name ||
+              (npc.request.fishName === "Red Crab" && npc.beachNpc && caughtIsCrab)
+            );
+            if (requestMatches && npc.request) {
               npc.request.fulfilled = Math.min(npc.request.fulfilled + 1, npc.request.count);
               if (npc.request.fulfilled >= npc.request.count) {
                 npc.request.completed = true;
