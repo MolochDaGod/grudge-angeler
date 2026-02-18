@@ -1497,32 +1497,44 @@ export default function FishingGame() {
 
     const getImg = (src: string) => imagesRef.current.get(src);
 
+    const _tintCanvas = document.createElement("canvas");
+    const _tintCtx = _tintCanvas.getContext("2d")!;
+
     const drawSprite = (src: string, frameIndex: number, totalFrames: number, x: number, y: number, scale: number, flipX = false, tint: string | null = null, frameHeightOverride?: number) => {
       const img = getImg(src);
       if (!img || !img.complete) return;
       const fw = img.width / totalFrames;
       const fh = frameHeightOverride || img.height;
-      ctx.save();
-      if (flipX) {
-        ctx.translate(x + fw * scale, y);
-        ctx.scale(-1, 1);
-        ctx.drawImage(img, frameIndex * fw, 0, fw, fh, 0, 0, fw * scale, fh * scale);
-        if (tint) {
-          ctx.globalCompositeOperation = "source-atop";
-          ctx.fillStyle = tint;
-          ctx.fillRect(0, 0, fw * scale, fh * scale);
-          ctx.globalCompositeOperation = "source-over";
+      const dw = Math.ceil(fw * scale);
+      const dh = Math.ceil(fh * scale);
+
+      if (tint) {
+        if (_tintCanvas.width < dw) _tintCanvas.width = dw;
+        if (_tintCanvas.height < dh) _tintCanvas.height = dh;
+        _tintCtx.clearRect(0, 0, dw, dh);
+        _tintCtx.save();
+        if (flipX) {
+          _tintCtx.translate(dw, 0);
+          _tintCtx.scale(-1, 1);
         }
+        _tintCtx.drawImage(img, frameIndex * fw, 0, fw, fh, 0, 0, dw, dh);
+        _tintCtx.globalCompositeOperation = "source-atop";
+        _tintCtx.fillStyle = tint;
+        _tintCtx.fillRect(0, 0, dw, dh);
+        _tintCtx.globalCompositeOperation = "source-over";
+        _tintCtx.restore();
+        ctx.drawImage(_tintCanvas, 0, 0, dw, dh, x, y, dw, dh);
       } else {
-        ctx.drawImage(img, frameIndex * fw, 0, fw, fh, x, y, fw * scale, fh * scale);
-        if (tint) {
-          ctx.globalCompositeOperation = "source-atop";
-          ctx.fillStyle = tint;
-          ctx.fillRect(x, y, fw * scale, fh * scale);
-          ctx.globalCompositeOperation = "source-over";
+        ctx.save();
+        if (flipX) {
+          ctx.translate(x + dw, y);
+          ctx.scale(-1, 1);
+          ctx.drawImage(img, frameIndex * fw, 0, fw, fh, 0, 0, dw, dh);
+        } else {
+          ctx.drawImage(img, frameIndex * fw, 0, fw, fh, x, y, dw, dh);
         }
+        ctx.restore();
       }
-      ctx.restore();
     };
 
     const drawImage = (src: string, x: number, y: number, scale: number) => {
