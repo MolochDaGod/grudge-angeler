@@ -3515,10 +3515,12 @@ export default function FishingGame() {
         const chumAttractMult = s.chumActiveType >= 0 ? CHUM_ITEMS[s.chumActiveType].fishAttract : 1;
         const baseSpawnRate = 0.012 * chumAttractMult;
         const maxFish = Math.floor(10 * chumAttractMult);
-        if (s.swimmingFish.length < maxFish && Math.random() < baseSpawnRate * dt) {
+        const camCenterX = -s.cameraX + W / 2;
+        const isBeachArea = camCenterX > W * 2.8;
+        if (s.swimmingFish.length < maxFish && Math.random() < baseSpawnRate * dt && !isBeachArea) {
           spawnFish(W, waterY, H);
         }
-        if (Math.random() < 0.008 * dt) {
+        if (Math.random() < (isBeachArea ? 0.016 : 0.008) * dt) {
           spawnBeachCrab(W, waterY, H);
         }
       }
@@ -4643,11 +4645,17 @@ export default function FishingGame() {
               );
               closest.approachingHook = true;
             } else if (Math.random() < 0.15 * chumAttract) {
-              spawnFish(W, waterY, H);
+              const hookWorldX = s.hookX;
+              const isHookOnBeach = hookWorldX > W * 2.8;
+              if (isHookOnBeach) {
+                spawnBeachCrab(W, waterY, H);
+              } else {
+                spawnFish(W, waterY, H);
+              }
               const newFish = s.swimmingFish[s.swimmingFish.length - 1];
               if (newFish) {
                 newFish.x = s.hookX + (Math.random() > 0.5 ? 1 : -1) * (200 + Math.random() * 100);
-                newFish.y = s.hookY + (Math.random() - 0.5) * 60;
+                newFish.y = isHookOnBeach ? (waterY + 5 + Math.random() * 30) : (s.hookY + (Math.random() - 0.5) * 60);
                 newFish.baseY = newFish.y;
                 newFish.approachingHook = true;
               }
@@ -5692,7 +5700,8 @@ export default function FishingGame() {
       s.gameState = "waiting";
       s.hookX = s.aimX;
       s.hookY = waterY + 10;
-      s.hookTargetY = Math.max(waterY + 30, s.aimY);
+      const isBeachCast = s.playerX > W * 2.8;
+      s.hookTargetY = isBeachCast ? (waterY + 25) : Math.max(waterY + 30, s.aimY);
       s.castLineActive = true;
       s.castLineFlying = true;
       s.castLineLanded = false;
