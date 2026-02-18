@@ -1563,6 +1563,20 @@ export default function FishingGame() {
       ...UW_BG_IMAGES.map(img => img.src),
       "/assets/creatures/whale-blue-legendary/whale_frame1.png",
       "/assets/creatures/whale-blue-legendary/whale_frame2.png",
+      "/assets/creatures/minnow-silver-common/frames/1.png",
+      "/assets/creatures/minnow-silver-common/frames/2.png",
+      "/assets/creatures/perch-striped-common/frames/1.png",
+      "/assets/creatures/perch-striped-common/frames/2.png",
+      "/assets/creatures/stingray-gray-rare/frames/1.png",
+      "/assets/creatures/stingray-gray-rare/frames/2.png",
+      "/assets/creatures/anglerfish-dark-rare/frames/1.png",
+      "/assets/creatures/anglerfish-dark-rare/frames/2.png",
+      "/assets/creatures/deep-sea-angler-dark-rare/frames/1.png",
+      "/assets/creatures/deep-sea-angler-dark-rare/frames/2.png",
+      "/assets/creatures/celestial-whale-cosmic-ultra_rare/frames/1.png",
+      "/assets/creatures/celestial-whale-cosmic-ultra_rare/frames/2.png",
+      "/assets/creatures/seal-at-the-seam-cosmic-ultra_rare/frames/1.png",
+      "/assets/creatures/seal-at-the-seam-cosmic-ultra_rare/frames/2.png",
     ];
     Promise.all(assets.map(a => loadImage(a)));
     generateBounties();
@@ -4470,15 +4484,14 @@ export default function FishingGame() {
             }
             ctx.restore();
           }
-        } else if (fish.type.name === "Whale" || fish.type.name === "Stingray") {
+        } else if (fish.type.name === "Whale" || fish.type.name === "Stingray" || fish.type.name === "Minnow" || fish.type.name === "Perch" || fish.type.name === "Anglerfish" || fish.type.name === "Deep Sea Angler" || fish.type.name === "Celestial Whale" || fish.type.name === "The Seal at the Seam") {
+          const frameIdx = Math.floor(s.time / 90) % 2;
           let frameSrc: string;
           if (fish.type.name === "Whale") {
-            const frameIdx = Math.floor(s.time / 90) % 2;
             frameSrc = frameIdx === 0
               ? "/assets/creatures/whale-blue-legendary/whale_frame1.png"
               : "/assets/creatures/whale-blue-legendary/whale_frame2.png";
           } else {
-            const frameIdx = Math.floor(s.time / 90) % 2;
             frameSrc = frameIdx === 0
               ? `/assets/creatures/${fish.type.creatureFolder}/frames/1.png`
               : `/assets/creatures/${fish.type.creatureFolder}/frames/2.png`;
