@@ -2,7 +2,7 @@ import { useRef, useEffect, useState, useCallback } from "react";
 const BGM_URL = "/assets/bgm.mp3";
 
 const ADMIN_MAP_STORAGE_KEY = "grudge-angeler-admin-map";
-interface DepthSlopeData { shallowX: number; shallowY: number; deepX: number; deepY: number; }
+interface DepthSlopeData { shallowX: number; shallowY: number; deepX: number; deepY: number; shoreX?: number; shoreY?: number; }
 const ADMIN_REF_W = 1280;
 const ADMIN_REF_H = 720;
 function loadDepthSlope(): DepthSlopeData {
@@ -21,7 +21,7 @@ function loadDepthSlope(): DepthSlopeData {
       }
     }
   } catch {}
-  return { shallowX: 6600, shallowY: 352, deepX: -4040, deepY: 1902 };
+  return { shallowX: 3200, shallowY: 352, deepX: -4040, deepY: 1902, shoreX: 6600, shoreY: 332 };
 }
 let _depthSlope: DepthSlopeData | null = null;
 function getDepthSlope(): DepthSlopeData {
@@ -37,6 +37,22 @@ function getOceanFloorY(worldX: number, waterY: number, canvasW: number, canvasH
   const sY = ds.shallowY * scaleY;
   const dX = ds.deepX * scaleX;
   const dY = ds.deepY * scaleY;
+  const hasShore = ds.shoreX !== undefined && ds.shoreY !== undefined;
+  if (hasShore) {
+    const shX = ds.shoreX! * scaleX;
+    const shY = ds.shoreY! * scaleY;
+    if (worldX >= sX) {
+      const range = shX - sX;
+      if (Math.abs(range) < 1) return Math.max(waterY + 30, sY);
+      const t = Math.max(0, Math.min(1, (worldX - sX) / range));
+      return Math.max(waterY + 30, sY + t * (shY - sY));
+    } else {
+      const range = dX - sX;
+      if (Math.abs(range) < 1) return Math.max(waterY + 30, sY);
+      const t = Math.max(0, Math.min(1, (worldX - sX) / range));
+      return Math.max(waterY + 30, sY + t * (dY - sY));
+    }
+  }
   const range = dX - sX;
   if (Math.abs(range) < 1) return waterY + 200;
   const t = Math.max(0, Math.min(1, (worldX - sX) / range));

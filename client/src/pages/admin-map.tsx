@@ -36,6 +36,8 @@ interface DepthSlope {
   shallowY: number;
   deepX: number;
   deepY: number;
+  shoreX?: number;
+  shoreY?: number;
 }
 
 interface GameImage {
@@ -55,10 +57,12 @@ interface SavedMapData {
 }
 
 const DEFAULT_DEPTH_SLOPE: DepthSlope = {
-  shallowX: WORLD_RIGHT,
+  shallowX: REF_W * 2.5,
   shallowY: WATER_Y + 50,
   deepX: WORLD_LEFT,
   deepY: WATER_Y + 1600,
+  shoreX: WORLD_RIGHT,
+  shoreY: WATER_Y + 30,
 };
 
 const DEFAULT_AREAS: MapArea[] = [
@@ -138,7 +142,7 @@ export default function AdminMap() {
   const [showImages, setShowImages] = useState(true);
   const [showLabels, setShowLabels] = useState(true);
   const [showDepthSlope, setShowDepthSlope] = useState(true);
-  const [dragMode, setDragMode] = useState<null | "move" | "resize-br" | "resize-bl" | "resize-tr" | "resize-tl" | "resize-r" | "resize-b" | "resize-l" | "resize-t" | "slope-shallow" | "slope-deep">(null);
+  const [dragMode, setDragMode] = useState<null | "move" | "resize-br" | "resize-bl" | "resize-tr" | "resize-tl" | "resize-r" | "resize-b" | "resize-l" | "resize-t" | "slope-shallow" | "slope-deep" | "slope-shore">(null);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0, areaX: 0, areaY: 0, areaW: 0, areaH: 0 });
   const [newAreaColor, setNewAreaColor] = useState(0);
   const [newAreaLabel, setNewAreaLabel] = useState("New Area");
@@ -288,11 +292,18 @@ export default function AdminMap() {
       const ds = depthSlopeRef.current;
       const sShallow = worldToScreen(ds.shallowX, ds.shallowY);
       const sDeep = worldToScreen(ds.deepX, ds.deepY);
+      const hasShore = ds.shoreX !== undefined && ds.shoreY !== undefined;
+      const sShore = hasShore ? worldToScreen(ds.shoreX!, ds.shoreY!) : null;
       const sBottomRight = worldToScreen(WORLD_RIGHT, WORLD_HEIGHT);
       const sBottomLeft = worldToScreen(WORLD_LEFT, WORLD_HEIGHT);
 
       ctx.beginPath();
-      ctx.moveTo(sShallow.x, sShallow.y);
+      if (sShore) {
+        ctx.moveTo(sShore.x, sShore.y);
+        ctx.lineTo(sShallow.x, sShallow.y);
+      } else {
+        ctx.moveTo(sShallow.x, sShallow.y);
+      }
       ctx.lineTo(sDeep.x, sDeep.y);
       ctx.lineTo(sBottomLeft.x, sBottomLeft.y);
       ctx.lineTo(sBottomRight.x, sBottomRight.y);
@@ -301,8 +312,14 @@ export default function AdminMap() {
       ctx.fill();
 
       ctx.beginPath();
-      ctx.moveTo(sShallow.x, sShallow.y);
-      ctx.lineTo(sDeep.x, sDeep.y);
+      if (sShore) {
+        ctx.moveTo(sShore.x, sShore.y);
+        ctx.lineTo(sShallow.x, sShallow.y);
+        ctx.lineTo(sDeep.x, sDeep.y);
+      } else {
+        ctx.moveTo(sShallow.x, sShallow.y);
+        ctx.lineTo(sDeep.x, sDeep.y);
+      }
       ctx.strokeStyle = "#e74c3c";
       ctx.lineWidth = 3;
       ctx.setLineDash([8, 4]);
@@ -326,6 +343,16 @@ export default function AdminMap() {
       ctx.lineWidth = 2;
       ctx.stroke();
 
+      if (sShore) {
+        ctx.beginPath();
+        ctx.arc(sShore.x, sShore.y, handleR, 0, Math.PI * 2);
+        ctx.fillStyle = "#f39c12";
+        ctx.fill();
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+
       if (showLabels) {
         ctx.font = `bold ${Math.max(8, 10 * zoom / 0.12)}px monospace`;
         ctx.textAlign = "center";
@@ -340,6 +367,15 @@ export default function AdminMap() {
         ctx.fillStyle = "rgba(255,255,255,0.4)";
         ctx.font = `${Math.max(6, 8 * zoom / 0.12)}px monospace`;
         ctx.fillText(`y=${Math.round(ds.deepY)}`, sDeep.x, sDeep.y - 4);
+
+        if (sShore) {
+          ctx.font = `bold ${Math.max(8, 10 * zoom / 0.12)}px monospace`;
+          ctx.fillStyle = "#f39c12";
+          ctx.fillText("SHORE", sShore.x, sShore.y - 14);
+          ctx.fillStyle = "rgba(255,255,255,0.4)";
+          ctx.font = `${Math.max(6, 8 * zoom / 0.12)}px monospace`;
+          ctx.fillText(`y=${Math.round(ds.shoreY!)}`, sShore.x, sShore.y - 4);
+        }
 
         const midX = (sShallow.x + sDeep.x) / 2;
         const midY = (sShallow.y + sDeep.y) / 2;
@@ -457,7 +493,7 @@ export default function AdminMap() {
     });
   }, []);
 
-  const getSlopeHandleAt = (sx: number, sy: number): "slope-shallow" | "slope-deep" | null => {
+  const getSlopeHandleAt = (sx: number, sy: number): "slope-shallow" | "slope-deep" | "slope-shore" | null => {
     if (!showDepthSlope) return null;
     const ds = depthSlopeRef.current;
     const sShallow = worldToScreen(ds.shallowX, ds.shallowY);
@@ -465,6 +501,10 @@ export default function AdminMap() {
     const hr = 12;
     if (Math.abs(sx - sShallow.x) < hr && Math.abs(sy - sShallow.y) < hr) return "slope-shallow";
     if (Math.abs(sx - sDeep.x) < hr && Math.abs(sy - sDeep.y) < hr) return "slope-deep";
+    if (ds.shoreX !== undefined && ds.shoreY !== undefined) {
+      const sShore = worldToScreen(ds.shoreX, ds.shoreY);
+      if (Math.abs(sx - sShore.x) < hr && Math.abs(sy - sShore.y) < hr) return "slope-shore";
+    }
     return null;
   };
 
@@ -516,7 +556,9 @@ export default function AdminMap() {
       const ds = depthSlopeRef.current;
       const orig = slopeHandle === "slope-shallow"
         ? { origX: ds.shallowX, origY: ds.shallowY }
-        : { origX: ds.deepX, origY: ds.deepY };
+        : slopeHandle === "slope-deep"
+        ? { origX: ds.deepX, origY: ds.deepY }
+        : { origX: ds.shoreX ?? WORLD_RIGHT, origY: ds.shoreY ?? WATER_Y + 30 };
       slopeDragStart.current = { x: e.clientX, y: e.clientY, ...orig };
       setSelectedArea(null);
       return;
@@ -550,14 +592,16 @@ export default function AdminMap() {
       return;
     }
 
-    if (dragMode === "slope-shallow" || dragMode === "slope-deep") {
+    if (dragMode === "slope-shallow" || dragMode === "slope-deep" || dragMode === "slope-shore") {
       const dx = (e.clientX - slopeDragStart.current.x) / zoom;
       const dy = (e.clientY - slopeDragStart.current.y) / zoom;
       const newX = Math.max(WORLD_LEFT, Math.min(WORLD_RIGHT, slopeDragStart.current.origX + dx));
       const newY = Math.max(WATER_Y, Math.min(WORLD_HEIGHT, slopeDragStart.current.origY + dy));
       setDepthSlope(prev => dragMode === "slope-shallow"
         ? { ...prev, shallowX: newX, shallowY: newY }
-        : { ...prev, deepX: newX, deepY: newY }
+        : dragMode === "slope-deep"
+        ? { ...prev, deepX: newX, deepY: newY }
+        : { ...prev, shoreX: newX, shoreY: newY }
       );
       return;
     }
@@ -704,7 +748,7 @@ export default function AdminMap() {
   const cursorStyle = (() => {
     if (isPanning) return "grabbing";
     if (dragMode === "move") return "move";
-    if (dragMode === "slope-shallow" || dragMode === "slope-deep") return "grab";
+    if (dragMode === "slope-shallow" || dragMode === "slope-deep" || dragMode === "slope-shore") return "grab";
     if (dragMode?.includes("resize")) return "nwse-resize";
     return "crosshair";
   })();
@@ -769,15 +813,15 @@ export default function AdminMap() {
         </div>
 
         <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 8, marginBottom: 8 }}>
-          <div style={{ fontSize: 9, color: "#e74c3c", marginBottom: 4, fontWeight: "bold" }}>DEPTH SLOPE</div>
+          <div style={{ fontSize: 9, color: "#e74c3c", marginBottom: 4, fontWeight: "bold" }}>DEPTH SLOPE (3-POINT)</div>
           <div style={{ fontSize: 8, color: "#778", marginBottom: 4 }}>
-            Drag the green (shallow) and red (deep) handles on the map to set the ocean floor angle.
+            Drag handles: <span style={{ color: "#f39c12" }}>orange</span>=shore, <span style={{ color: "#2ecc71" }}>green</span>=shallow, <span style={{ color: "#e74c3c" }}>red</span>=deep
           </div>
           <div style={{ fontSize: 9, color: "#ccc", marginBottom: 2 }}>
             Angle: <span style={{ color: "#e74c3c", fontWeight: "bold" }}>{angleDeg}deg</span>
           </div>
           <div style={{ fontSize: 8, color: "#667" }}>
-            Shallow Y: {Math.round(depthSlope.shallowY)} | Deep Y: {Math.round(depthSlope.deepY)}
+            <span style={{ color: "#f39c12" }}>Shore</span> Y: {Math.round(depthSlope.shoreY ?? WATER_Y + 30)} | <span style={{ color: "#2ecc71" }}>Shallow</span> Y: {Math.round(depthSlope.shallowY)} | <span style={{ color: "#e74c3c" }}>Deep</span> Y: {Math.round(depthSlope.deepY)}
           </div>
         </div>
 
