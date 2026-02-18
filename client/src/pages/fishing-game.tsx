@@ -179,6 +179,7 @@ interface FishType {
   isPredator?: boolean;
   staticImg?: string;
   bottomDweller?: boolean;
+  treasureChestOnly?: boolean;
 }
 
 const FISH_TYPES: FishType[] = [
@@ -210,7 +211,7 @@ const FISH_TYPES: FishType[] = [
   { name: "Neon Eel", icon: "/assets/icons/fish/neon-eel-neon-ultra_rare.png", catchAsset: "/assets/catch/neon-eel-neon-ultra_rare.png", catchW: 43, catchH: 27, creatureFolder: "neon-eel-neon-ultra_rare", idleFrames: 4, walkFrames: 4, points: 650, rarity: "ultra_rare", weight: 0.22, minDepth: 0.55, speed: 1.9, description: "A bioluminescent eel pulsing with neon colors. Mesmerizing.", baseScale: 2.0 },
   { name: "Golden Salmon", icon: "/assets/icons/fish/golden-salmon-gold-ultra_rare.png", catchAsset: "/assets/catch/golden-salmon-gold-ultra_rare.png", catchW: 48, catchH: 32, creatureFolder: "golden-salmon-gold-ultra_rare", idleFrames: 4, walkFrames: 4, points: 700, rarity: "ultra_rare", weight: 0.2, minDepth: 0.6, speed: 1.5, description: "A legendary salmon with solid gold scales. Worth a fortune.", baseScale: 2.1 },
   { name: "Shadow Leviathan", icon: "/assets/icons/fish/shadow-leviathan-shadow-ultra_rare.png", catchAsset: "/assets/catch/shadow-leviathan-shadow-ultra_rare.png", catchW: 89, catchH: 14, creatureFolder: "shadow-leviathan-shadow-ultra_rare", idleFrames: 2, walkFrames: 2, points: 1500, rarity: "ultra_rare", weight: 0.08, minDepth: 0.8, speed: 0.6, description: "A titanic shadow beast from beyond the abyss. Feared by all ocean life.", tint: "rgba(140,15,15,0.5)", baseScale: 2.5 },
-  { name: "The Seal at the Seam", icon: "/assets/icons/fish/seal-at-the-seam-cosmic-ultra_rare.png", catchAsset: "/assets/icons/fish/seal-at-the-seam-cosmic-ultra_rare.png", catchW: 64, catchH: 64, creatureFolder: "seal-at-the-seam-cosmic-ultra_rare", idleFrames: 6, walkFrames: 6, points: 5000, rarity: "ultra_rare", weight: 0.02, minDepth: 0.9, speed: 0.3, description: "A living sigil at the boundary of reality. The 10th Legendary — guardian of the Seam.", tint: "rgba(20,40,120,0.5)", baseScale: 2.8 },
+  { name: "The Seal at the Seam", icon: "/assets/icons/fish/seal-at-the-seam-cosmic-ultra_rare.png", catchAsset: "/assets/icons/fish/seal-at-the-seam-cosmic-ultra_rare.png", catchW: 64, catchH: 64, creatureFolder: "seal-at-the-seam-cosmic-ultra_rare", idleFrames: 1, walkFrames: 1, points: 5000, rarity: "ultra_rare", weight: 0, minDepth: 0.95, speed: 0.3, description: "A living sigil at the boundary of reality. The 10th Legendary — guardian of the Seam.", tint: "rgba(20,40,120,0.5)", baseScale: 2.8, staticImg: "/assets/icons/fish/seal-at-the-seam-cosmic-ultra_rare.png", treasureChestOnly: true },
 ];
 
 const BETA_EGG_MAX_STOCK = 50;
@@ -1015,6 +1016,10 @@ export default function FishingGame() {
     tournamentShowResults: false,
     tournamentStatusTimer: 0,
     tournamentNotified: false,
+    treasureChestFound: false,
+    treasureChestOpened: false,
+    treasureChestGlowTimer: 0,
+    deepZoneCatches: 0,
     adminOpen: false,
     adminTab: "assets" as "assets" | "gizmo" | "trace" | "map",
     gizmoEnabled: false,
@@ -1252,6 +1257,7 @@ export default function FishingGame() {
     const crabBaitMult = lure.crabName ? (lure.legendaryBoost || 1) : 0;
     const hasCrabBait = crabBaitMult > 0;
     const adjustedWeights = FISH_TYPES.map(ft => {
+      if (ft.treasureChestOnly) return { ft, w: 0 };
       let w = ft.weight;
       if (rightRatio > 0.1) {
         if (ft.rarity === "ultra_rare") w *= Math.max(0.01, 1 - rightRatio * 3);
@@ -4225,6 +4231,80 @@ export default function FishingGame() {
       }
       ctx.globalAlpha = 1;
 
+      // Treasure Chest at deepest ocean floor
+      if (s.gameState !== "title" && s.gameState !== "charSelect" && !s.treasureChestOpened) {
+        const ds = getDepthSlope();
+        const scaleX = W / ADMIN_REF_W;
+        const chestWorldX = ds.deepX * scaleX + 40;
+        const chestFloorY = getOceanFloorY(chestWorldX, waterY, W, H);
+        const chestW = 44;
+        const chestH = 22;
+        const chestDrawX = chestWorldX;
+        const chestDrawY = chestFloorY - chestH;
+        s.treasureChestGlowTimer += 0.02 * dt;
+        const glowPulse = 0.4 + Math.sin(s.treasureChestGlowTimer) * 0.3;
+        ctx.save();
+        ctx.shadowColor = "rgba(255,215,0," + glowPulse + ")";
+        ctx.shadowBlur = 12 + Math.sin(s.treasureChestGlowTimer * 1.3) * 6;
+        const chestImg = getImg("/assets/catch/Chest.png");
+        if (chestImg && chestImg.complete && chestImg.naturalWidth > 0) {
+          ctx.drawImage(chestImg, chestDrawX, chestDrawY, chestW, chestH);
+        } else {
+          ctx.fillStyle = "#8B4513";
+          ctx.fillRect(chestDrawX, chestDrawY, chestW, chestH);
+          ctx.fillStyle = "#FFD700";
+          ctx.fillRect(chestDrawX + 16, chestDrawY + 6, 12, 10);
+        }
+        ctx.shadowBlur = 0;
+        const coinGlow = 0.5 + Math.sin(s.treasureChestGlowTimer * 2) * 0.3;
+        ctx.fillStyle = "rgba(255,215,0," + coinGlow * 0.4 + ")";
+        ctx.beginPath();
+        ctx.arc(chestDrawX + chestW / 2, chestDrawY + chestH / 2, 20 + Math.sin(s.treasureChestGlowTimer * 0.7) * 5, 0, Math.PI * 2);
+        ctx.fill();
+        for (let sp = 0; sp < 3; sp++) {
+          const sparkAngle = s.treasureChestGlowTimer * 0.8 + sp * (Math.PI * 2 / 3);
+          const sparkDist = 18 + Math.sin(s.treasureChestGlowTimer * 1.5 + sp) * 8;
+          const sparkX = chestDrawX + chestW / 2 + Math.cos(sparkAngle) * sparkDist;
+          const sparkY = chestDrawY + chestH / 2 + Math.sin(sparkAngle) * sparkDist;
+          ctx.fillStyle = "rgba(255,255,200," + (0.5 + Math.sin(s.treasureChestGlowTimer * 3 + sp) * 0.4) + ")";
+          ctx.beginPath();
+          ctx.arc(sparkX, sparkY, 1.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+
+        if (s.gameState === "waiting" && s.hookY > 0) {
+          const hookDist = Math.sqrt(
+            Math.pow(s.hookX - (chestDrawX + chestW / 2), 2) +
+            Math.pow(s.hookY - (chestDrawY + chestH / 2), 2)
+          );
+          if (hookDist < 35) {
+            const lure = LURES[s.equippedLure];
+            const hasChum = s.chumActiveType >= 0;
+            const hasDepthLure = lure.depthBoost >= 0.15;
+            const zoneFatigue = s.deepZoneCatches >= 8;
+            if (hasDepthLure && hasChum || zoneFatigue) {
+              s.treasureChestOpened = true;
+              const sealType = FISH_TYPES.find(f => f.name === "The Seal at the Seam");
+              if (sealType) {
+                s.currentCatch = sealType;
+                s.gameState = "reeling";
+                s.reelProgress = 0.5;
+                s.reelTarget = 0.3 + Math.random() * 0.4;
+                s.reelDirection = Math.random() > 0.5 ? 1 : -1;
+                s.isReeling = false;
+                s.reelGauge = 0.5;
+                s.hookedFishX = chestDrawX + chestW / 2;
+                s.hookedFishY = chestDrawY;
+                s.hookedFishDir = 1;
+                addParticles(chestDrawX + chestW / 2, chestDrawY, 25, "#FFD700", 3.5, "sparkle");
+                addParticles(chestDrawX + chestW / 2, chestDrawY, 15, "#FFFFFF", 2.5, "sparkle");
+              }
+            }
+          }
+        }
+      }
+
       // Swimming fish
       if (s.gameState !== "title" && s.gameState !== "charSelect") {
         const chumAttractMult = s.chumActiveType >= 0 ? CHUM_ITEMS[s.chumActiveType].fishAttract : 1;
@@ -4390,23 +4470,31 @@ export default function FishingGame() {
             }
             ctx.restore();
           }
-        } else if (fish.type.name === "Whale") {
-          const whaleFrameIdx = Math.floor(s.time / 90) % 2;
-          const whaleSrc = whaleFrameIdx === 0
-            ? "/assets/creatures/whale-blue-legendary/whale_frame1.png"
-            : "/assets/creatures/whale-blue-legendary/whale_frame2.png";
-          const whaleImg = getImg(whaleSrc);
-          if (whaleImg && whaleImg.complete && whaleImg.naturalWidth > 0) {
-            const wScale = creatureScale * 0.9;
-            const dw = whaleImg.naturalWidth * wScale;
-            const dh = whaleImg.naturalHeight * wScale;
+        } else if (fish.type.name === "Whale" || fish.type.name === "Stingray") {
+          let frameSrc: string;
+          if (fish.type.name === "Whale") {
+            const frameIdx = Math.floor(s.time / 90) % 2;
+            frameSrc = frameIdx === 0
+              ? "/assets/creatures/whale-blue-legendary/whale_frame1.png"
+              : "/assets/creatures/whale-blue-legendary/whale_frame2.png";
+          } else {
+            const frameIdx = Math.floor(s.time / 90) % 2;
+            frameSrc = frameIdx === 0
+              ? `/assets/creatures/${fish.type.creatureFolder}/frames/1.png`
+              : `/assets/creatures/${fish.type.creatureFolder}/frames/2.png`;
+          }
+          const frameImg = getImg(frameSrc);
+          if (frameImg && frameImg.complete && frameImg.naturalWidth > 0) {
+            const fScale = creatureScale * (fish.type.name === "Whale" ? 0.9 : 1.0) * (fish.type.baseScale || 1);
+            const dw = frameImg.naturalWidth * fScale;
+            const dh = frameImg.naturalHeight * fScale;
             ctx.save();
             if (fish.direction < 0) {
               ctx.translate(fish.x + dw, fish.y);
               ctx.scale(-1, 1);
-              ctx.drawImage(whaleImg, 0, 0, dw, dh);
+              ctx.drawImage(frameImg, 0, 0, dw, dh);
             } else {
-              ctx.drawImage(whaleImg, fish.x, fish.y, dw, dh);
+              ctx.drawImage(frameImg, fish.x, fish.y, dw, dh);
             }
             ctx.restore();
           }
@@ -5649,15 +5737,17 @@ export default function FishingGame() {
           if (!hasApproaching) {
             const chumAttract = s.chumActiveType >= 0 ? CHUM_ITEMS[s.chumActiveType].fishAttract : 1;
             const hookRange = 300 * chumAttract;
+            const isInDeepZone = s.hookX < -W * 1.5;
+            const fatigueMult = isInDeepZone ? Math.max(0.05, 1 - s.deepZoneCatches * 0.1) : 1;
             const nearbyFish = s.swimmingFish.filter(f =>
               Math.abs(f.x - s.hookX) < hookRange && !f.approachingHook
             );
-            if (nearbyFish.length > 0) {
+            if (nearbyFish.length > 0 && Math.random() < fatigueMult) {
               const closest = nearbyFish.reduce((a, b) =>
                 Math.abs(a.x - s.hookX) < Math.abs(b.x - s.hookX) ? a : b
               );
               closest.approachingHook = true;
-            } else if (Math.random() < 0.15 * chumAttract) {
+            } else if (Math.random() < 0.15 * chumAttract * fatigueMult) {
               const hookWorldX = s.hookX;
               const isHookOnBeach = hookWorldX > W * 2.8;
               if (isHookOnBeach) {
@@ -5904,6 +5994,9 @@ export default function FishingGame() {
           s.combo++;
           if (s.combo > s.bestCombo) s.bestCombo = s.combo;
           s.totalCaught++;
+          const hookWorldX = s.hookX;
+          const isDeepZone = hookWorldX < -W * 1.5;
+          if (isDeepZone) s.deepZoneCatches++;
           const sizeBonus = s.hookedFishSize;
           const comboTacticsMult = 1 + s.attributes.Tactics * 0.006;
           const pts = (s.currentCatch?.points || s.currentJunk?.points || 10) * sizeBonus * (1 + (s.combo - 1) * 0.15 * comboTacticsMult);
