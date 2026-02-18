@@ -29,16 +29,16 @@ import imgCelestialWhale from "@/assets/images/fish-celestial-whale.png";
 import imgNeonEel from "@/assets/images/fish-neon-eel.png";
 import imgGoldenSalmon from "@/assets/images/fish-golden-salmon.png";
 import imgShadowLeviathan from "@/assets/images/fish-shadow-leviathan.png";
-import imgRedCrab from "@/assets/images/fish-red-crab.png";
-import imgBlueCrab from "@/assets/images/fish-blue-crab.png";
-import imgGreenCrab from "@/assets/images/fish-green-crab.png";
-import imgCyanCrab from "@/assets/images/fish-cyan-crab.png";
-import imgPinkCrab from "@/assets/images/fish-pink-crab.png";
-import imgPurpleCrab from "@/assets/images/fish-purple-crab.png";
-import imgGoldCrab from "@/assets/images/fish-gold-crab.png";
-import imgDarkCrab from "@/assets/images/fish-dark-crab.png";
-import imgCrimsonCrab from "@/assets/images/fish-crimson-crab.png";
-import imgShadowCrab from "@/assets/images/fish-shadow-crab.png";
+const imgRedCrab = "/assets/gen-icons/fish-red-crab.png";
+const imgBlueCrab = "/assets/gen-icons/fish-blue-crab.png";
+const imgGreenCrab = "/assets/gen-icons/fish-green-crab.png";
+const imgCyanCrab = "/assets/gen-icons/fish-cyan-crab.png";
+const imgPinkCrab = "/assets/gen-icons/fish-pink-crab.png";
+const imgPurpleCrab = "/assets/gen-icons/fish-purple-crab.png";
+const imgGoldCrab = "/assets/gen-icons/fish-gold-crab.png";
+const imgDarkCrab = "/assets/gen-icons/fish-dark-crab.png";
+const imgCrimsonCrab = "/assets/gen-icons/fish-crimson-crab.png";
+const imgShadowCrab = "/assets/gen-icons/fish-shadow-crab.png";
 
 function toSlug(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");

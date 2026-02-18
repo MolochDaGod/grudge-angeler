@@ -1031,13 +1031,24 @@ export default function FishingGame() {
   const spawnPredator = useCallback((canvasW: number, waterStartY: number, canvasH: number) => {
     const s = stateRef.current;
     const centerX = -s.cameraX + canvasW / 2;
-    const worldProgress = Math.min(1, Math.max(0, centerX / (canvasW * 8)));
 
-    const predType = worldProgress > 0.5 ?
-      PREDATOR_TYPES[Math.floor(Math.random() * 3)] :
-      worldProgress > 0.2 ?
-        PREDATOR_TYPES[Math.random() < 0.6 ? 0 : Math.random() < 0.5 ? 2 : 1] :
-        PREDATOR_TYPES[0];
+    const zone2Right = 0;
+    const zone3Right = -(canvasW * 1);
+    const zone3Left = -(canvasW * 3) - 200;
+
+    const inZone1 = centerX > zone2Right;
+    const inZone2 = centerX <= zone2Right && centerX > zone3Right;
+    const inZone3 = centerX <= zone3Right && centerX > zone3Left;
+    const inZone4 = centerX <= zone3Left;
+
+    if (inZone1 || inZone2) return;
+
+    let predType;
+    if (inZone4) {
+      predType = PREDATOR_TYPES[Math.floor(Math.random() * 3)];
+    } else {
+      predType = Math.random() < 0.7 ? PREDATOR_TYPES[0] : PREDATOR_TYPES[2];
+    }
 
     const waterRange = canvasH - waterStartY;
     const minY = waterStartY + waterRange * 0.25;
@@ -3952,17 +3963,6 @@ export default function FishingGame() {
           ctx.restore();
         }
         
-        // Danger glow for predators
-        if (pred.state !== "death" && pred.state !== "hurt") {
-          const glowPulse = 0.15 + Math.sin(s.time * 0.05 + pred.x * 0.01) * 0.08;
-          ctx.globalAlpha = glowPulse * pred.opacity;
-          ctx.fillStyle = pred.type.name === "Shark" ? "#ff4444" : pred.type.name === "Kraken" ? "#6644ff" : "#ff6633";
-          ctx.beginPath();
-          const gx = pred.x + PRED_FRAME * predScale * 0.5;
-          const gy = pred.y + PRED_FRAME * predScale * 0.4;
-          ctx.ellipse(gx, gy, predScale * 30, predScale * 18, 0, 0, Math.PI * 2);
-          ctx.fill();
-        }
         
         ctx.globalAlpha = 1;
       }
