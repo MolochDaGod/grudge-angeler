@@ -131,7 +131,8 @@ interface LandingFish {
 const CRAB_SHEET = "/assets/beach_crabs.png";
 
 const allFish: LandingFish[] = [
-  { name: "Minnow", rarity: "common", points: 10, desc: "A tiny silver fish, common in shallow waters.", icon: "/assets/gen-icons/fish-minnow.png", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/1/frames", frameCount: 4 } },
+  { name: "Minnow", rarity: "common", points: 10, desc: "A tiny silver fish, common in shallow waters.", icon: "/assets/gen-icons/fish-minnow.png", sprite: { src: "", frameW: 48, frameH: 48, frames: 6, sheetW: 288, framesDir: "/assets/creatures/2/frames", frameCount: 6 } },
+  { name: "Jellyfish", rarity: "common", points: 20, desc: "A translucent jellyfish drifting with the current.", icon: "/assets/gen-icons/fish-jellyfish.png", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/1/frames", frameCount: 4 } },
   { name: "Perch", rarity: "common", points: 25, desc: "A striped freshwater fish with sharp fins.", icon: "/assets/gen-icons/fish-perch.png", sprite: { src: "/assets/catch/2.png", frameW: 8, frameH: 12, frames: 4, sheetW: 32 } },
   { name: "Eel", rarity: "common", points: 40, desc: "A slippery serpentine fish.", icon: "/assets/gen-icons/fish-eel.png", sprite: { src: "", frameW: 48, frameH: 48, frames: 6, sheetW: 288, framesDir: "/assets/creatures/5/frames", frameCount: 6 } },
   { name: "Red Crab", rarity: "common", points: 8, desc: "A small red crab that scuttles along the beach.", icon: "/assets/gen-icons/fish-red-crab.png", sprite: { src: CRAB_SHEET, frameW: 16, frameH: 16, frames: 4, sheetW: 256, offsetY: 0 } },

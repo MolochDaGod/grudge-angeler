@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRUDGE Warlords - Login</title>
+    <link rel="icon" type="image/png" href="/grudge-studio-auth/favicon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a1a;
+            color: #e4e4e7;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url('/grudge-studio-auth/assets/public/login-bg.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.6));
+            z-index: 1;
+        }
+        .glow-effect {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at center, rgba(234,179,8,0.2) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 2;
+        }
+        .card {
+            position: relative;
+            z-index: 10;
+            max-width: 450px;
+            width: 100%;
+            background: linear-gradient(to bottom, rgba(15,23,42,0.85), rgba(15,23,42,0.95));
+            backdrop-filter: blur(16px);
+            border-radius: 20px;
+            border: 1px solid rgba(234, 179, 8, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(234, 179, 8, 0.2), 0 0 80px rgba(234, 179, 8, 0.1);
+            overflow: hidden;
+        }
+        .card-header {
+            text-align: center;
+            padding: 30px 30px 20px;
+        }
+        .logo {
+            width: 128px;
+            height: 128px;
+            margin: 0 auto 20px;
+            filter: drop-shadow(0 0 20px rgba(234, 179, 8, 0.5));
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #fbbf24, #f59e0b, #fb923c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: #cbd5e1;
+            font-size: 0.875rem;
+        }
+        .factions {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 24px;
+        }
+        .faction {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            padding: 2px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .faction:hover {
+            transform: scale(1.1);
+        }
+        .faction-order {
+            background: linear-gradient(to bottom right, #3b82f6, #22d3ee);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+        .faction-chaos {
+            background: linear-gradient(to bottom right, #ef4444, #fb923c);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+        .faction-neutral {
+            background: linear-gradient(to bottom right, #22c55e, #10b981);
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+        }
+        .faction-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 6px;
+            background: rgba(15, 23, 42, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+        .card-content {
+            padding: 0 30px 30px;
+        }
+        .section-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 12px;
+        }
+        .button {
+            width: 100%;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+        .button:hover {
+            transform: translateY(-2px);
+        }
+        .button-guest {
+            background: linear-gradient(to right, #059669, #16a34a);
+            color: white;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+        }
+        .button-guest:hover {
+            background: linear-gradient(to right, #047857, #15803d);
+            box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4);
+        }
+        .button-wallet {
+            background: linear-gradient(to right, #9333ea, #ec4899);
+            color: white;
+            box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3);
+        }
+        .button-wallet:hover {
+            background: linear-gradient(to right, #7e22ce, #db2777);
+            box-shadow: 0 6px 16px rgba(147, 51, 234, 0.4);
+        }
+        .button-puter {
+            background: linear-gradient(to right, #2563eb, #4f46e5);
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        .button-puter:hover {
+            background: linear-gradient(to right, #1d4ed8, #4338ca);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+        }
+        .button-login {
+            background: linear-gradient(to right, #f59e0b, #ea580c);
+            color: white;
+            box-shadow: 0 4px 12px rgba(234, 179, 8, 0.3);
+        }
+        .button-login:hover {
+            background: linear-gradient(to right, #ea580c, #f59e0b);
+            box-shadow: 0 6px 16px rgba(234, 179, 8, 0.4);
+        }
+        .button-register {
+            background: linear-gradient(to right, #16a34a, #15803d);
+            color: white;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+        }
+        .button-register:hover {
+            background: linear-gradient(to right, #15803d, #166534);
+            box-shadow: 0 6px 16px rgba(22, 163, 74, 0.4);
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #475569;
+        }
+        .divider-text {
+            padding: 0 12px;
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+        .tabs {
+            margin-bottom: 20px;
+        }
+        .tabs-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 16px;
+        }
+        .tab {
+            padding: 12px;
+            border: none;
+            background: transparent;
+            color: #94a3b8;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .tab.active {
+            background: #f59e0b;
+            color: white;
+        }
+        .input-group {
+            margin-bottom: 16px;
+        }
+        .label {
+            display: block;
+            color: #cbd5e1;
+            font-size: 0.875rem;
+            margin-bottom: 8px;
+        }
+        .input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid #475569;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+        }
+        .input:focus {
+            outline: none;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
+        .input-password-wrapper {
+            position: relative;
+        }
+        .input-password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 4px;
+        }
+        .input-password-toggle:hover {
+            color: white;
+        }
+        .footer-text {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 16px;
+        }
+        .hidden {
+            display: none;
+        }
+        .icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="glow-effect"></div>
+    
+    <div class="card">
+        <div class="card-header">
+            <img src="/grudge-studio-auth/favicon.png" alt="GRUDGE Logo" class="logo">
+            <h1>GRUDGE Warlords</h1>
+            <p class="subtitle">Crafting & Progression System</p>
+            
+            <div class="factions">
+                <div class="faction faction-order" title="Order Faction">
+                    <div class="faction-inner">🛡️</div>
+                </div>
+                <div class="faction faction-chaos" title="Chaos Faction">
+                    <div class="faction-inner">🔥</div>
+                </div>
+                <div class="faction faction-neutral" title="Neutral Faction">
+                    <div class="faction-inner">🍃</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-content">
+            <p class="section-label">Quick Play</p>
+            
+            <button class="button button-guest" onclick="guestLogin()">
+                <span class="icon">⚔️</span>
+                Play as Guest
+            </button>
+            
+            <button class="button button-wallet" onclick="walletConnect()">
+                <span class="icon">👛</span>
+                Connect Wallet
+            </button>
+            
+            <div class="divider">
+                <span class="divider-text">or sign in for cloud saves</span>
+            </div>
+            
+            <button class="button button-puter" onclick="puterLogin()">
+                <span class="icon">🛡️</span>
+                Sign in with Puter
+            </button>
+            
+            <div class="tabs">
+                <div class="tabs-list">
+                    <button class="tab active" onclick="switchTab('login')">
+                        🔑 Login
+                    </button>
+                    <button class="tab" onclick="switchTab('register')">
+                        ✨ Register
+                    </button>
+                </div>
+                
+                <div id="login-form">
+                    <div class="input-group">
+                        <label class="label" for="username">Username</label>
+                        <input type="text" id="username" class="input" placeholder="Enter your username">
+                    </div>
+                    <div class="input-group">
+                        <label class="label" for="password">Password</label>
+                        <div class="input-password-wrapper">
+                            <input type="password" id="password" class="input" placeholder="Enter your password">
+                            <button class="input-password-toggle" onclick="togglePassword()">👁️</button>
+                        </div>
+                    </div>
+                    <button class="button button-login" onclick="login()">
+                        🔓 Sign In
+                    </button>
+                </div>
+                
+                <div id="register-form" class="hidden">
+                    <div class="input-group">
+                        <label class="label" for="reg-username">Username</label>
+                        <input type="text" id="reg-username" class="input" placeholder="Choose a username (3-20 characters)">
+                    </div>
+                    <div class="input-group">
+                        <label class="label" for="reg-password">Password</label>
+                        <div class="input-password-wrapper">
+                            <input type="password" id="reg-password" class="input" placeholder="Choose a password (4+ characters)">
+                            <button class="input-password-toggle" onclick="togglePassword()">👁️</button>
+                        </div>
+                    </div>
+                    <button class="button button-register" onclick="register()">
+                        ✨ Create Account
+                    </button>
+                </div>
+            </div>
+            
+            <p class="footer-text">
+                Sign in to create your character and save progress
+            </p>
+            <p class="footer-text" style="margin-top: 8px;">
+                <a href="/grudge-studio-auth/" style="color: #f59e0b; text-decoration: none;">← Back to Asset CDN Home</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="https://js.puter.com/v2/"></script>
+    <script>
+        // Configuration
+        const APP_CONFIG = {
+            characterPageUrl: 'https://warlord-crafting-suite.vercel.app/home',  // Home dashboard after login
+            puterAppUrl: 'https://grudge-auth-73v97.puter.site',
+            guestRedirectUrl: 'https://warlord-crafting-suite.vercel.app/home',  // Direct to home dashboard
+        };
+
+        // Local storage keys
+        const STORAGE_KEYS = {
+            accounts: 'grudge_guest_accounts',
+            currentUser: 'grudge_current_user',
+            userType: 'grudge_user_type',  // 'guest', 'puter', or 'wallet'
+        };
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', checkExistingAuth);
+
+        function checkExistingAuth() {
+            const currentUser = localStorage.getItem(STORAGE_KEYS.currentUser);
+            const userType = localStorage.getItem(STORAGE_KEYS.userType);
+            
+            if (currentUser && userType) {
+                // User already logged in, redirect to character page
+                console.log(`Existing ${userType} session found, redirecting...`);
+                redirectToCharacterPage();
+            }
+        }
+
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.tab');
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+            } else {
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+            }
+        }
+        
+        function togglePassword() {
+            const activeWrapper = event.target.closest('.input-password-wrapper');
+            const activeInput = activeWrapper.querySelector('input');
+            activeInput.type = activeInput.type === 'password' ? 'text' : 'password';
+        }
+
+        function redirectToCharacterPage() {
+            window.location.href = APP_CONFIG.characterPageUrl;
+        }
+        
+        function guestLogin() {
+            // Create temporary guest session
+            const guestId = 'guest_' + Date.now();
+            const guestData = {
+                id: guestId,
+                username: 'Guest',
+                type: 'temporary',
+                createdAt: new Date().toISOString()
+            };
+            
+            localStorage.setItem(STORAGE_KEYS.currentUser, JSON.stringify(guestData));
+            localStorage.setItem(STORAGE_KEYS.userType, 'guest');
+            
+            showMessage('Entering as guest...');
+            setTimeout(redirectToCharacterPage, 500);
+        }
+        
+        async function walletConnect() {
+            showMessage('Opening Web3 wallet connection...');
+            
+            // TODO: Integrate Web3Auth or similar wallet provider
+            // For now, simulate wallet connection
+            setTimeout(() => {
+                const walletAddress = '0x' + Math.random().toString(16).substr(2, 40);
+                const walletData = {
+                    id: walletAddress,
+                    type: 'wallet',
+                    address: walletAddress,
+                    connectedAt: new Date().toISOString()
+                };
+                
+                localStorage.setItem(STORAGE_KEYS.currentUser, JSON.stringify(walletData));
+                localStorage.setItem(STORAGE_KEYS.userType, 'wallet');
+                
+                showMessage('Wallet connected!');
+                setTimeout(redirectToCharacterPage, 1000);
+            }, 1000);
+        }
+        
+        async function puterLogin() {
+            showMessage('Connecting to Puter...');
+            
+            try {
+                if (typeof puter !== 'undefined') {
+                    // Use Puter SDK if available
+                    if (!puter.auth.isSignedIn()) {
+                        await puter.auth.signIn();
+                    }
+                    
+                    const user = await puter.auth.getUser();
+                    const puterData = {
+                        id: user.uuid || user.username,
+                        username: user.username,
+                        email: user.email,
+                        type: 'puter',
+                        connectedAt: new Date().toISOString()
+                    };
+                    
+                    localStorage.setItem(STORAGE_KEYS.currentUser, JSON.stringify(puterData));
+                    localStorage.setItem(STORAGE_KEYS.userType, 'puter');
+                    
+                    showMessage('Puter connected!');
+                    setTimeout(redirectToCharacterPage, 500);
+                } else {
+                    // Fallback: redirect to Puter app
+                    window.location.href = APP_CONFIG.puterAppUrl;
+                }
+            } catch (error) {
+                console.error('Puter login failed:', error);
+                showMessage('Puter connection failed. Redirecting to Puter app...');
+                setTimeout(() => {
+                    window.location.href = APP_CONFIG.puterAppUrl;
+                }, 1500);
+            }
+        }
+        
+        function login() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                showMessage('Please enter username and password', 'error');
+                return;
+            }
+            
+            // Get stored accounts
+            const accounts = JSON.parse(localStorage.getItem(STORAGE_KEYS.accounts) || '{}');
+            const account = accounts[username];
+            
+            if (!account) {
+                showMessage('Account not found. Please register first.', 'error');
+                return;
+            }
+            
+            // Simple password check (in production, use proper hashing)
+            if (account.password !== password) {
+                showMessage('Invalid password', 'error');
+                return;
+            }
+            
+            // Login successful
+            const userData = {
+                id: account.id,
+                username: account.username,
+                type: 'registered',
+                createdAt: account.createdAt,
+                loginAt: new Date().toISOString()
+            };
+            
+            localStorage.setItem(STORAGE_KEYS.currentUser, JSON.stringify(userData));
+            localStorage.setItem(STORAGE_KEYS.userType, 'guest');
+            
+            showMessage(`Welcome back, ${username}!`);
+            setTimeout(redirectToCharacterPage, 1000);
+        }
+        
+        function register() {
+            const username = document.getElementById('reg-username').value.trim();
+            const password = document.getElementById('reg-password').value;
+            
+            if (!username || !password) {
+                showMessage('Please enter username and password', 'error');
+                return;
+            }
+            
+            if (username.length < 3) {
+                showMessage('Username must be at least 3 characters', 'error');
+                return;
+            }
+            
+            if (password.length < 4) {
+                showMessage('Password must be at least 4 characters', 'error');
+                return;
+            }
+            
+            // Get existing accounts
+            const accounts = JSON.parse(localStorage.getItem(STORAGE_KEYS.accounts) || '{}');
+            
+            if (accounts[username]) {
+                showMessage('Username already exists', 'error');
+                return;
+            }
+            
+            // Create new account
+            const accountId = 'user_' + Date.now();
+            accounts[username] = {
+                id: accountId,
+                username: username,
+                password: password, // In production, hash this!
+                createdAt: new Date().toISOString(),
+                characters: []
+            };
+            
+            localStorage.setItem(STORAGE_KEYS.accounts, JSON.stringify(accounts));
+            
+            // Auto-login after registration
+            const userData = {
+                id: accountId,
+                username: username,
+                type: 'registered',
+                createdAt: accounts[username].createdAt
+            };
+            
+            localStorage.setItem(STORAGE_KEYS.currentUser, JSON.stringify(userData));
+            localStorage.setItem(STORAGE_KEYS.userType, 'guest');
+            
+            showMessage(`Account created! Welcome, ${username}!`);
+            setTimeout(redirectToCharacterPage, 1000);
+        }
+
+        function showMessage(text, type = 'success') {
+            // Create or update message element
+            let messageEl = document.getElementById('auth-message');
+            if (!messageEl) {
+                messageEl = document.createElement('div');
+                messageEl.id = 'auth-message';
+                messageEl.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    padding: 12px 24px;
+                    border-radius: 8px;
+                    font-weight: 600;
+                    z-index: 9999;
+                    animation: slideDown 0.3s ease;
+                `;
+                document.body.appendChild(messageEl);
+            }
+            
+            messageEl.textContent = text;
+            messageEl.style.background = type === 'error' 
+                ? 'linear-gradient(to right, #ef4444, #dc2626)' 
+                : 'linear-gradient(to right, #059669, #16a34a)';
+            messageEl.style.color = 'white';
+            messageEl.style.boxShadow = type === 'error'
+                ? '0 4px 12px rgba(239, 68, 68, 0.4)'
+                : '0 4px 12px rgba(5, 150, 105, 0.4)';
+            
+            // Auto-hide after 3 seconds
+            setTimeout(() => {
+                if (messageEl) {
+                    messageEl.style.animation = 'slideUp 0.3s ease';
+                    setTimeout(() => messageEl.remove(), 300);
+                }
+            }, 3000);
+        }
+    </script>
+    <style>
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -20px);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+        @keyframes slideUp {
+            from {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+            to {
+                opacity: 0;
+                transform: translate(-50%, -20px);
+            }
+        }
+    </style>
+</body>
+</html>
