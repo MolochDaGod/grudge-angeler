@@ -1013,24 +1013,17 @@ export default function FishingGame() {
 
   const spawnPredator = useCallback((canvasW: number, waterStartY: number, canvasH: number) => {
     const s = stateRef.current;
-    const shopCenterX = canvasW * 0.85 + (192 * 2.2) / 2;
     const centerX = -s.cameraX + canvasW / 2;
-    const distLeft = Math.max(0, shopCenterX - centerX);
-    const distRight = Math.max(0, centerX - shopCenterX);
-    const leftRatio = Math.min(1, distLeft / (canvasW * 4));
-    const rightRatio = Math.min(1, distRight / (canvasW * 4));
-    
-    const spawnChance = rightRatio > 0.1 ? 0.01 : 0.01 + leftRatio * 0.24;
-    if (Math.random() > spawnChance) return;
-    
-    const predType = leftRatio > 0.5 ? 
+    const worldProgress = Math.min(1, Math.max(0, centerX / (canvasW * 8)));
+
+    const predType = worldProgress > 0.5 ?
       PREDATOR_TYPES[Math.floor(Math.random() * 3)] :
-      leftRatio > 0.2 ? 
-        PREDATOR_TYPES[Math.random() < 0.7 ? 0 : Math.random() < 0.5 ? 2 : 1] :
+      worldProgress > 0.2 ?
+        PREDATOR_TYPES[Math.random() < 0.6 ? 0 : Math.random() < 0.5 ? 2 : 1] :
         PREDATOR_TYPES[0];
-    
+
     const waterRange = canvasH - waterStartY;
-    const minY = waterStartY + waterRange * 0.4;
+    const minY = waterStartY + waterRange * 0.25;
     const maxY = canvasH - 40;
     const y = minY + Math.random() * (maxY - minY);
     const direction = Math.random() > 0.5 ? 1 : -1;
@@ -1038,9 +1031,9 @@ export default function FishingGame() {
     const viewRight = -s.cameraX + canvasW + 200;
     const x = direction > 0 ? viewLeft - 150 : viewRight + 150;
     const sizeMultiplier = (0.8 + Math.random() * 0.6) * predType.size;
-    
+
     const isMurky = s.weather === "storm" || s.weather === "rain" || s.weather === "fog";
-    
+
     s.predators.push({
       x, y, baseY: y, type: predType, direction, frame: 0, frameTimer: 0,
       speed: predType.speed * (0.8 + Math.random() * 0.4),
@@ -3417,9 +3410,9 @@ export default function FishingGame() {
 
       // Predator spawning
       s.predatorSpawnTimer -= dt;
-      if (s.predatorSpawnTimer <= 0 && s.predators.length < 3) {
+      if (s.predatorSpawnTimer <= 0 && s.predators.length < 5) {
         spawnPredator(W, waterY, H);
-        s.predatorSpawnTimer = 300 + Math.random() * 600;
+        s.predatorSpawnTimer = s.predators.length < 2 ? 60 + Math.random() * 120 : 180 + Math.random() * 300;
       }
 
       // Predator alert timer
