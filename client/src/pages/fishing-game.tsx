@@ -7968,16 +7968,16 @@ export default function FishingGame() {
                     <div style={{ fontSize: 5, color: "#e0e0e0" }}>{obj.label}</div>
                     <div style={{ fontSize: 4, color: "#607d8b" }}>x:{Math.round(obj.x)} y:{Math.round(obj.y)} s:{obj.scale.toFixed(1)}</div>
                   </div>
-                  <div style={{ display: "flex", gap: 2, flexShrink: 0 }}>
+                  <div style={{ display: "flex", gap: 3, flexShrink: 0 }}>
                     <div
                       data-testid={`scale-down-${i}`}
                       onClick={(e) => { e.stopPropagation(); stateRef.current.worldObjects[i].scale = Math.max(0.3, obj.scale - 0.2); syncUI(); }}
-                      style={{ width: 16, height: 16, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(79,195,247,0.15)", borderRadius: 3, fontSize: 8, color: "#4fc3f7", cursor: "pointer" }}
+                      style={{ width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(79,195,247,0.2)", borderRadius: 4, fontSize: 14, fontWeight: "bold", color: "#4fc3f7", cursor: "pointer", border: "1px solid rgba(79,195,247,0.3)", userSelect: "none" }}
                     >-</div>
                     <div
                       data-testid={`scale-up-${i}`}
-                      onClick={(e) => { e.stopPropagation(); stateRef.current.worldObjects[i].scale = Math.min(5, obj.scale + 0.2); syncUI(); }}
-                      style={{ width: 16, height: 16, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(79,195,247,0.15)", borderRadius: 3, fontSize: 8, color: "#4fc3f7", cursor: "pointer" }}
+                      onClick={(e) => { e.stopPropagation(); stateRef.current.worldObjects[i].scale = Math.min(8, obj.scale + 0.2); syncUI(); }}
+                      style={{ width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(79,195,247,0.2)", borderRadius: 4, fontSize: 14, fontWeight: "bold", color: "#4fc3f7", cursor: "pointer", border: "1px solid rgba(79,195,247,0.3)", userSelect: "none" }}
                     >+</div>
                     <div
                       data-testid={`delete-obj-${i}`}
@@ -7989,7 +7989,7 @@ export default function FishingGame() {
                         else if (s.gizmoSelected > i) s.gizmoSelected--;
                         syncUI();
                       }}
-                      style={{ width: 16, height: 16, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(231,76,60,0.2)", borderRadius: 3, fontSize: 7, color: "#e74c3c", cursor: "pointer" }}
+                      style={{ width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(231,76,60,0.2)", borderRadius: 4, fontSize: 12, fontWeight: "bold", color: "#e74c3c", cursor: "pointer", border: "1px solid rgba(231,76,60,0.3)", userSelect: "none" }}
                     >X</div>
                   </div>
                 </div>
