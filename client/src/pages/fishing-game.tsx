@@ -411,6 +411,8 @@ interface NpcDef {
   dialogueLines: string[];
   beachNpc?: boolean;
   staticSprite?: string;
+  noWalk?: boolean;
+  specialFrames?: number;
 }
 
 const NPC_DEFS: NpcDef[] = [
@@ -539,7 +541,35 @@ const NPC_DEFS: NpcDef[] = [
     ],
   },
   {
-    id: 8, name: "Crab Master", spriteFolder: "10", idleFrames: 4, walkFrames: 6,
+    id: 8, name: "Chum Charlie", spriteFolder: "8", idleFrames: 4, walkFrames: 4,
+    worldX: 0.62, role: "shopkeeper", noWalk: true, specialFrames: 4,
+    greeting: "Sit down, friend! I mix the finest chum on the whole dock. What's your poison?",
+    shopItems: CHUM_ITEMS.map((c, i) => !c.catchable ? { name: c.name, type: "chum" as const, index: i, price: c.price, description: c.description, icon: c.icon } : null).filter((x): x is NpcShopItem => x !== null),
+    dialogueLines: [
+      "I know every chum recipe there is. Name a fish and I'll tell you what attracts it.",
+      "Fish Scraps are cheap but barely attract anything. Start with Corn Mash or Mussel Mix.",
+      "Shrimp Paste is the best all-rounder. Good attract, good bite speed, good rarity.",
+      "Blood Meal brings predators close. Dangerous but profitable!",
+      "Squid Ink reaches the deep ones. Pair it with a good rod for maximum range.",
+      "Fish Oil Slick has the widest attract radius. Great for filling your net!",
+      "Sardine Chunks boost bite speed by 50%. Fish bite fast with these!",
+      "Crab Guts give 1.3x rarity boost. Great value for rare fish hunting.",
+      "Fermented Brine gives 1.5x rarity. Worth every gbux if you're hunting legends.",
+      "Whale Blubber at 1.7x rarity can pull in legendary fish! Save up for it.",
+      "Phosphor Dust and Moonlight Essence both give 2x rarity. Top tier stuff!",
+      "Kraken Bile is 2.5x rarity. Only Abyssal Ooze beats it.",
+      "Abyssal Ooze is the best chum in existence. 2.5x rarity, 1.5x speed, 3x attract!",
+      "Golden Flakes boost everything: 2x rarity, 1.4x speed, 2.5x attract. My finest work!",
+      "Thunder Chum pulls in storm fish. Use it during bad weather for best results.",
+      "Coral Powder attracts reef fish specifically. 1.3x rarity with good attract.",
+      "Deep Sea Extract is 1.8x rarity with 2x attract. Made for the abyss!",
+      "Each chum has a cooldown after use. Higher tier chum has longer cooldowns.",
+      "Catch crabs on the beach and use them as live bait - even better than chum for legendaries!",
+      "Chum duration matters too. Golden Flakes and Abyssal Ooze last the longest!",
+    ],
+  },
+  {
+    id: 9, name: "Crab Master", spriteFolder: "10", idleFrames: 4, walkFrames: 6,
     worldX: 3.8, role: "mission", beachNpc: true,
     greeting: "I study every crab on this beach. Bring me the right bait and I'll teach you secrets!",
     missions: [
@@ -1000,6 +1030,9 @@ export default function FishingGame() {
       bubbleText: "",
       bubbleTimer: 0,
       bubbleCooldown: Math.random() * 8 + 5,
+      specialPlaying: false,
+      specialTimer: 0,
+      specialCooldown: Math.random() * 10 + 8,
     })),
     nearNpc: -1,
     activeNpc: -1,
@@ -1439,7 +1472,8 @@ export default function FishingGame() {
       "/assets/char_crusade.png",
       ...NPC_DEFS.flatMap(npc => [
         `/assets/npcs/${npc.spriteFolder}/Idle.png`,
-        `/assets/npcs/${npc.spriteFolder}/Walk.png`,
+        ...(npc.noWalk ? [] : [`/assets/npcs/${npc.spriteFolder}/Walk.png`]),
+        ...(npc.specialFrames ? [`/assets/npcs/${npc.spriteFolder}/Special.png`] : []),
       ]),
       ...UW_BG_IMAGES.map(img => img.src),
       "/assets/creatures/whale-blue-legendary/whale_frame1.png",
@@ -1987,6 +2021,34 @@ export default function FishingGame() {
           const npcBaseX = npc.worldX * W;
           const npcWorldX = npcBaseX + npc.walkX;
 
+          if (npc.noWalk) {
+            npc.walkDir = 0;
+            npc.walkX = 0;
+            if (npc.specialPlaying) {
+              npc.frameTimer += dt;
+              if (npc.frameTimer > 12) {
+                npc.frameTimer = 0;
+                npc.frame++;
+                if (npc.frame >= (npc.specialFrames || 4)) {
+                  npc.specialPlaying = false;
+                  npc.frame = 0;
+                  npc.specialCooldown = Math.random() * 12 + 8;
+                }
+              }
+            } else {
+              npc.frameTimer += dt;
+              if (npc.frameTimer > 10) {
+                npc.frameTimer = 0;
+                npc.frame = (npc.frame + 1) % (npc.idleFrames || 4);
+              }
+              npc.specialCooldown -= dt / 60;
+              if (npc.specialCooldown <= 0) {
+                npc.specialPlaying = true;
+                npc.frame = 0;
+                npc.frameTimer = 0;
+              }
+            }
+          } else {
           const walkRange = 50;
           if (npc.walkDir === 0) {
             npc.idleTimer -= dt / 60;
@@ -2016,6 +2078,7 @@ export default function FishingGame() {
               npc.idleTimer = Math.random() * 5 + 3;
               npc.frame = 0;
             }
+          }
           }
 
           npc.bubbleCooldown -= dt / 60;
@@ -3761,10 +3824,10 @@ export default function FishingGame() {
         } else {
           npcY = pierY - NPC_FRAME_SIZE * npcScale + 4;
         }
-        const spritePath = npc.walkDir !== 0 ? `/assets/npcs/${npc.spriteFolder}/Walk.png` : `/assets/npcs/${npc.spriteFolder}/Idle.png`;
+        const spritePath = npc.specialPlaying ? `/assets/npcs/${npc.spriteFolder}/Special.png` : npc.walkDir !== 0 ? `/assets/npcs/${npc.spriteFolder}/Walk.png` : `/assets/npcs/${npc.spriteFolder}/Idle.png`;
         const img = getImg(spritePath);
         if (img && img.complete && img.naturalWidth > 0) {
-          const totalFrames = npc.walkDir !== 0 ? (npc.walkFrames || 6) : (npc.idleFrames || 4);
+          const totalFrames = npc.specialPlaying ? (npc.specialFrames || 4) : npc.walkDir !== 0 ? (npc.walkFrames || 6) : (npc.idleFrames || 4);
           const frameW = img.naturalWidth / totalFrames;
           const frameH = img.naturalHeight;
           const sx = npc.frame * frameW;
