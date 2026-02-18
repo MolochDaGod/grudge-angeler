@@ -1561,6 +1561,7 @@ export default function FishingGame() {
         ...(npc.specialFrames ? [`/assets/npcs/${npc.spriteFolder}/Special.png`] : []),
       ]),
       ...UW_BG_IMAGES.map(img => img.src),
+      "/assets/tiles/underwater_surface_depth.png",
       "/assets/creatures/whale-blue-legendary/whale_frame1.png",
       "/assets/creatures/whale-blue-legendary/whale_frame2.png",
       "/assets/creatures/minnow-silver-common/frames/1.png",
@@ -3050,6 +3051,23 @@ export default function FishingGame() {
           ctx.restore();
           ctx.globalAlpha = 1;
         }
+      }
+
+      // --- DEPTH SURFACE IMAGE (ocean floor background) ---
+      const depthSurfImg = getImg("/assets/tiles/underwater_surface_depth.png");
+      if (depthSurfImg && depthSurfImg.complete && depthSurfImg.naturalWidth > 0) {
+        const dsTileW = depthSurfImg.naturalWidth * 0.8;
+        const dsTileH = depthSurfImg.naturalHeight * 0.8;
+        const dsStartX = Math.floor(viewL / dsTileW) * dsTileW;
+        ctx.save();
+        ctx.globalAlpha = 0.45;
+        for (let bx = dsStartX; bx < viewR + dsTileW; bx += dsTileW) {
+          const midX = bx + dsTileW / 2;
+          const floorAtMid = getOceanFloorY(midX, waterY, W, H);
+          const drawTopY = floorAtMid - dsTileH * 0.7;
+          ctx.drawImage(depthSurfImg, bx, drawTopY, dsTileW, dsTileH);
+        }
+        ctx.restore();
       }
 
       // --- DRAW UNDERWATER PLANTS (behind fish layer) ---
