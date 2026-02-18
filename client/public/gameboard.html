@@ -743,24 +743,26 @@
 var FISH_SILHOUETTE = '<svg viewBox="0 0 48 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M4 16c0-4 3-8 8-10 3-1 7-1 12 0 4 1 8 3 11 5l5 5-5 5c-3 2-7 4-11 5-5 1-9 1-12 0C7 24 4 20 4 16z"/><path d="M2 12l-1 4 1 4 2-4-2-4z" opacity="0.6"/><circle cx="32" cy="14" r="2" fill="rgba(0,0,0,0.3)"/></svg>';
 
 var FISH_SPECIES = [
-  { name: "Minnow", img: "/assets/catch/1.png", points: 10, rarity: "common", weight: 40, minDepth: 0.15, speed: 1.5, description: "A tiny silver fish, common in shallow waters.", zone: "Shallow" },
-  { name: "Perch", img: "/assets/catch/2.png", points: 25, rarity: "common", weight: 30, minDepth: 0.25, speed: 1.2, description: "A striped freshwater fish with sharp fins.", zone: "Shallow" },
-  { name: "Eel", img: "/assets/catch/7.png", points: 40, rarity: "common", weight: 20, minDepth: 0.3, speed: 1.3, description: "A slippery serpentine fish.", zone: "Shallow-Mid" },
-  { name: "Bass", img: "/assets/catch/3.png", points: 50, rarity: "uncommon", weight: 15, minDepth: 0.35, speed: 1.0, description: "A strong fighter popular with anglers.", zone: "Mid" },
-  { name: "Catfish", img: "/assets/catch/4.png", points: 75, rarity: "uncommon", weight: 8, minDepth: 0.45, speed: 0.8, description: "A bottom-dweller with long whiskers.", zone: "Mid" },
-  { name: "Salmon", img: "/assets/catch/8.png", points: 60, rarity: "uncommon", weight: 12, minDepth: 0.35, speed: 1.1, description: "A prized pink-fleshed fish.", zone: "Mid" },
-  { name: "Whale", img: "/assets/catch/6.png", points: 300, rarity: "legendary", weight: 1, minDepth: 0.65, speed: 0.5, description: "The king of the deep. Incredibly rare!", zone: "Deep Ocean" },
+  { name: "Minnow", img: "/assets/gen-icons/fish-minnow.png", points: 10, rarity: "common", weight: 40, minDepth: 0.15, speed: 1.5, description: "A tiny silver fish, common in shallow waters.", zone: "Shallow" },
+  { name: "Jellyfish", img: "/assets/gen-icons/fish-jellyfish.png", points: 20, rarity: "common", weight: 25, minDepth: 0.2, speed: 0.7, description: "A translucent jellyfish drifting with the current.", zone: "Shallow" },
+  { name: "Perch", img: "/assets/gen-icons/fish-perch.png", points: 25, rarity: "common", weight: 30, minDepth: 0.25, speed: 1.2, description: "A striped freshwater fish with sharp fins.", zone: "Shallow" },
+  { name: "Eel", img: "/assets/gen-icons/fish-eel.png", points: 40, rarity: "common", weight: 20, minDepth: 0.3, speed: 1.3, description: "A slippery serpentine fish.", zone: "Shallow-Mid" },
+  { name: "Bass", img: "/assets/gen-icons/fish-bass.png", points: 50, rarity: "uncommon", weight: 15, minDepth: 0.35, speed: 1.0, description: "A strong fighter popular with anglers.", zone: "Mid" },
+  { name: "Catfish", img: "/assets/gen-icons/fish-catfish.png", points: 75, rarity: "uncommon", weight: 8, minDepth: 0.45, speed: 0.8, description: "A bottom-dweller with long whiskers.", zone: "Mid" },
+  { name: "Salmon", img: "/assets/gen-icons/fish-salmon.png", points: 60, rarity: "uncommon", weight: 12, minDepth: 0.35, speed: 1.1, description: "A prized pink-fleshed fish.", zone: "Mid" },
+  { name: "Blue Ring Octopus", img: "/assets/gen-icons/fish-blue-octopus.png", points: 55, rarity: "uncommon", weight: 10, minDepth: 0.4, speed: 0.9, description: "A small but deadly octopus with glowing blue rings.", zone: "Mid" },
+  { name: "Whale", img: "/assets/gen-icons/fish-whale.png", points: 300, rarity: "legendary", weight: 1, minDepth: 0.65, speed: 0.5, description: "The king of the deep. Incredibly rare!", zone: "Deep Ocean" },
 ];
 
 var RARE_FISH = [
-  { name: "Swordfish", img: "/assets/catch/5.png", points: 150, rarity: "rare", weight: 4, minDepth: 0.55, speed: 1.8, description: "A powerful ocean predator with a sharp bill.", zone: "Deep" },
+  { name: "Swordfish", img: "/assets/gen-icons/fish-swordfish.png", points: 150, rarity: "rare", weight: 4, minDepth: 0.55, speed: 1.8, description: "A powerful ocean predator with a sharp bill.", zone: "Deep" },
   { name: "Barracuda", img: "", points: 160, rarity: "rare", weight: 3.5, minDepth: 0.5, speed: 2.0, description: "A torpedo-shaped predator with razor teeth.", zone: "Mid-Deep" },
   { name: "Marlin", img: "", points: 180, rarity: "rare", weight: 3, minDepth: 0.6, speed: 2.2, description: "A majestic billfish known for spectacular leaps.", zone: "Deep" },
   { name: "Mahi-Mahi", img: "", points: 140, rarity: "rare", weight: 4, minDepth: 0.45, speed: 1.6, description: "A brilliant blue-gold dolphinfish.", zone: "Mid" },
   { name: "Tuna", img: "", points: 170, rarity: "rare", weight: 3.5, minDepth: 0.5, speed: 1.9, description: "A powerful pelagic hunter built for speed.", zone: "Mid-Deep" },
-  { name: "Stingray", img: "", points: 130, rarity: "rare", weight: 5, minDepth: 0.4, speed: 1.0, description: "A graceful flat-bodied bottom glider.", zone: "Mid" },
+  { name: "Stingray", img: "/assets/gen-icons/fish-stingray.png", points: 130, rarity: "rare", weight: 5, minDepth: 0.4, speed: 1.0, description: "A graceful flat-bodied bottom glider.", zone: "Mid" },
   { name: "Pufferfish", img: "", points: 120, rarity: "rare", weight: 6, minDepth: 0.35, speed: 0.7, description: "Inflates into a spiky ball when threatened.", zone: "Shallow-Mid" },
-  { name: "Moray Eel", img: "", points: 145, rarity: "rare", weight: 4, minDepth: 0.5, speed: 1.1, description: "A fearsome eel hiding in coral crevices.", zone: "Mid-Deep" },
+  { name: "Moray Eel", img: "/assets/gen-icons/fish-moray-eel.png", points: 145, rarity: "rare", weight: 4, minDepth: 0.5, speed: 1.1, description: "A fearsome eel hiding in coral crevices.", zone: "Mid-Deep" },
   { name: "Lionfish", img: "", points: 155, rarity: "rare", weight: 5, minDepth: 0.45, speed: 0.9, description: "Venomous spines and striking striped beauty.", zone: "Mid" },
   { name: "Triggerfish", img: "", points: 110, rarity: "rare", weight: 5.5, minDepth: 0.4, speed: 1.2, description: "Aggressive reef dweller with powerful jaws.", zone: "Mid" },
   { name: "Grouper", img: "", points: 135, rarity: "rare", weight: 4.5, minDepth: 0.5, speed: 0.8, description: "A massive ambush predator of reef systems.", zone: "Mid-Deep" },
@@ -788,39 +790,41 @@ var EPIC_FISH = [
   { name: "Goblin Shark", img: "", points: 380, rarity: "epic", weight: 1.2, minDepth: 0.7, speed: 1.0, description: "A prehistoric horror with a protruding jaw.", zone: "Abyss" },
   { name: "Sunfish", img: "", points: 320, rarity: "epic", weight: 1.5, minDepth: 0.6, speed: 0.4, description: "The heaviest bony fish. A gentle ocean giant.", zone: "Deep" },
   { name: "Nautilus", img: "", points: 370, rarity: "epic", weight: 1.3, minDepth: 0.65, speed: 0.5, description: "A living shell from prehistoric oceans.", zone: "Deep" },
-  { name: "Electric Eel", img: "", points: 340, rarity: "epic", weight: 1.5, minDepth: 0.55, speed: 1.2, description: "Generates 860 volts. Handle with extreme care.", zone: "Mid-Deep" },
+  { name: "Electric Eel", img: "/assets/gen-icons/fish-electric-eel.png", points: 340, rarity: "epic", weight: 1.5, minDepth: 0.55, speed: 1.2, description: "Generates 860 volts. Handle with extreme care.", zone: "Mid-Deep" },
   { name: "Dragonfish", img: "", points: 420, rarity: "epic", weight: 1, minDepth: 0.7, speed: 1.1, description: "A bioluminescent horror of the midnight zone.", zone: "Abyss" },
   { name: "Vampire Squid", img: "", points: 390, rarity: "epic", weight: 1.2, minDepth: 0.75, speed: 0.7, description: "Cloaked in darkness, from the oxygen minimum zone.", zone: "Abyss" },
 ];
 
 var ULTRA_RARE_FISH = [
-  { name: "Phantom Minnow", img: "/assets/catch/1.png", points: 500, rarity: "ultra_rare", weight: 0.3, minDepth: 0.55, speed: 2.2, description: "A ghostly minnow wreathed in spectral flame.", zone: "Deep", stars: 5 },
-  { name: "Volcanic Perch", img: "/assets/catch/2.png", points: 600, rarity: "ultra_rare", weight: 0.25, minDepth: 0.6, speed: 1.6, description: "A perch superheated by deep-sea vents.", zone: "Deep Ocean", stars: 5 },
-  { name: "Abyssal Bass", img: "/assets/catch/3.png", points: 750, rarity: "ultra_rare", weight: 0.2, minDepth: 0.65, speed: 1.4, description: "A colossal bass from the deepest trenches.", zone: "Abyss", stars: 5 },
-  { name: "Frost Catfish", img: "/assets/catch/4.png", points: 800, rarity: "ultra_rare", weight: 0.18, minDepth: 0.6, speed: 0.9, description: "An ancient catfish encased in living ice.", zone: "Deep Ocean", stars: 5 },
-  { name: "Storm Swordfish", img: "/assets/catch/5.png", points: 1000, rarity: "ultra_rare", weight: 0.12, minDepth: 0.7, speed: 2.5, description: "A swordfish that rides lightning bolts.", zone: "Deep Ocean", stars: 5 },
-  { name: "Celestial Whale", img: "/assets/catch/6.png", points: 2000, rarity: "ultra_rare", weight: 0.05, minDepth: 0.75, speed: 0.4, description: "A cosmic whale that swallowed a dying star.", zone: "Abyss", stars: 5 },
-  { name: "Neon Eel", img: "/assets/catch/7.png", points: 650, rarity: "ultra_rare", weight: 0.22, minDepth: 0.55, speed: 1.9, description: "A bioluminescent eel pulsing with neon colors.", zone: "Deep", stars: 5 },
-  { name: "Golden Salmon", img: "/assets/catch/8.png", points: 700, rarity: "ultra_rare", weight: 0.2, minDepth: 0.6, speed: 1.5, description: "A legendary salmon with solid gold scales.", zone: "Deep Ocean", stars: 5 },
-  { name: "Shadow Leviathan", img: "/assets/catch/6.png", points: 1500, rarity: "ultra_rare", weight: 0.08, minDepth: 0.8, speed: 0.6, description: "A titanic shadow beast from beyond the abyss.", zone: "Abyss", stars: 5 },
+  { name: "Phantom Minnow", img: "/assets/gen-icons/fish-phantom-minnow.png", points: 500, rarity: "ultra_rare", weight: 0.3, minDepth: 0.55, speed: 2.2, description: "A ghostly minnow wreathed in spectral flame.", zone: "Deep", stars: 5 },
+  { name: "Volcanic Perch", img: "/assets/gen-icons/fish-volcanic-perch.png", points: 600, rarity: "ultra_rare", weight: 0.25, minDepth: 0.6, speed: 1.6, description: "A perch superheated by deep-sea vents.", zone: "Deep Ocean", stars: 5 },
+  { name: "Abyssal Bass", img: "/assets/gen-icons/fish-abyssal-bass.png", points: 750, rarity: "ultra_rare", weight: 0.2, minDepth: 0.65, speed: 1.4, description: "A colossal bass from the deepest trenches.", zone: "Abyss", stars: 5 },
+  { name: "Frost Catfish", img: "/assets/gen-icons/fish-frost-catfish.png", points: 800, rarity: "ultra_rare", weight: 0.18, minDepth: 0.6, speed: 0.9, description: "An ancient catfish encased in living ice.", zone: "Deep Ocean", stars: 5 },
+  { name: "Storm Swordfish", img: "/assets/gen-icons/fish-storm-swordfish.png", points: 1000, rarity: "ultra_rare", weight: 0.12, minDepth: 0.7, speed: 2.5, description: "A swordfish that rides lightning bolts.", zone: "Deep Ocean", stars: 5 },
+  { name: "Celestial Whale", img: "/assets/gen-icons/fish-celestial-whale.png", points: 2000, rarity: "ultra_rare", weight: 0.05, minDepth: 0.75, speed: 0.4, description: "A cosmic whale that swallowed a dying star.", zone: "Abyss", stars: 5 },
+  { name: "Neon Eel", img: "/assets/gen-icons/fish-neon-eel.png", points: 650, rarity: "ultra_rare", weight: 0.22, minDepth: 0.55, speed: 1.9, description: "A bioluminescent eel pulsing with neon colors.", zone: "Deep", stars: 5 },
+  { name: "Golden Salmon", img: "/assets/gen-icons/fish-golden-salmon.png", points: 700, rarity: "ultra_rare", weight: 0.2, minDepth: 0.6, speed: 1.5, description: "A legendary salmon with solid gold scales.", zone: "Deep Ocean", stars: 5 },
+  { name: "Shadow Leviathan", img: "/assets/gen-icons/fish-shadow-leviathan.png", points: 1500, rarity: "ultra_rare", weight: 0.08, minDepth: 0.8, speed: 0.6, description: "A titanic shadow beast from beyond the abyss.", zone: "Abyss", stars: 5 },
   { name: "The Seal at the Seam", img: "/assets/grudge_logo.png", points: 5000, rarity: "ultra_rare", weight: 0.01, minDepth: 0.99, speed: 0.1, description: "The 10th Legendary. A living sigil found at the deepest seam of reality.", zone: "The Seam", stars: 5 },
 ];
 
 var BEACH_CRABS = [
-  { name: "Red Crab", img: "/assets/beach_crabs.png", points: 8, rarity: "common", weight: 50, description: "A small red crab that scuttles along the beach.", zone: "Beach" },
-  { name: "Blue Crab", img: "/assets/beach_crabs.png", points: 10, rarity: "common", weight: 40, description: "A bright blue crab found near tidal pools.", zone: "Beach" },
-  { name: "Green Crab", img: "/assets/beach_crabs.png", points: 8, rarity: "common", weight: 45, description: "A mossy green crab hiding in the seaweed.", zone: "Beach" },
-  { name: "Purple Crab", img: "/assets/beach_crabs.png", points: 15, rarity: "uncommon", weight: 20, description: "An uncommon purple crab with iridescent shell.", zone: "Beach" },
-  { name: "Gold Crab", img: "/assets/beach_crabs.png", points: 25, rarity: "uncommon", weight: 15, description: "A rare golden crab. Prized for its shimmering shell.", zone: "Beach" },
-  { name: "Cyan Crab", img: "/assets/beach_crabs.png", points: 8, rarity: "common", weight: 45, description: "A pale cyan crab commonly found on sandy shores.", zone: "Beach" },
-  { name: "Pink Crab", img: "/assets/beach_crabs.png", points: 12, rarity: "common", weight: 35, description: "A cute pink crab that loves warm shallow waters.", zone: "Beach" },
-  { name: "Dark Crab", img: "/assets/beach_crabs.png", points: 20, rarity: "uncommon", weight: 18, description: "A dark-shelled crab with powerful pincers.", zone: "Beach" },
+  { name: "Red Crab", img: "/assets/gen-icons/fish-red-crab.png", points: 8, rarity: "common", weight: 50, description: "A small red crab that scuttles along the beach.", zone: "Beach" },
+  { name: "Blue Crab", img: "/assets/gen-icons/fish-blue-crab.png", points: 10, rarity: "common", weight: 40, description: "A bright blue crab found near tidal pools.", zone: "Beach" },
+  { name: "Green Crab", img: "/assets/gen-icons/fish-green-crab.png", points: 8, rarity: "common", weight: 45, description: "A mossy green crab hiding in the seaweed.", zone: "Beach" },
+  { name: "Cyan Crab", img: "/assets/gen-icons/fish-cyan-crab.png", points: 8, rarity: "common", weight: 45, description: "A pale cyan crab commonly found on sandy shores.", zone: "Beach" },
+  { name: "Pink Crab", img: "/assets/gen-icons/fish-pink-crab.png", points: 12, rarity: "common", weight: 35, description: "A cute pink crab that loves warm shallow waters.", zone: "Beach" },
+  { name: "Purple Crab", img: "/assets/gen-icons/fish-purple-crab.png", points: 15, rarity: "uncommon", weight: 20, description: "An uncommon purple crab with iridescent shell.", zone: "Beach" },
+  { name: "Gold Crab", img: "/assets/gen-icons/fish-gold-crab.png", points: 25, rarity: "uncommon", weight: 15, description: "A rare golden crab. Prized for its shimmering shell.", zone: "Beach" },
+  { name: "Dark Crab", img: "/assets/gen-icons/fish-dark-crab.png", points: 20, rarity: "uncommon", weight: 18, description: "A dark-shelled crab with powerful pincers.", zone: "Beach" },
+  { name: "Crimson Crab", img: "/assets/gen-icons/fish-crimson-crab.png", points: 40, rarity: "rare", weight: 8, description: "A blood-red crab with Sea Devil markings. Extremely aggressive.", zone: "Beach" },
+  { name: "Shadow Crab", img: "/assets/gen-icons/fish-shadow-crab.png", points: 55, rarity: "rare", weight: 5, description: "A dark maroon crab that moves like a phantom. Kin of the Sea Devil.", zone: "Beach" },
 ];
 
 var PREDATORS = [
-  { name: "Shark", img: "/assets/predators/1/Idle.png", points: 400, rarity: "rare", weight: 3, speed: 2.2, description: "A fearsome shark prowling the deep waters. Patrols territory, chases fish and players.", zone: "Deep", scareRadius: 200 },
-  { name: "Kraken", img: "/assets/predators/2/Idle.png", points: 800, rarity: "legendary", weight: 1, speed: 1.5, description: "A massive squid from the abyss. Enormous scare radius drives fish away.", zone: "Abyss", scareRadius: 280 },
-  { name: "Sea Devil", img: "/assets/predators/3/Idle.png", points: 600, rarity: "rare", weight: 2, speed: 1.8, description: "A monstrous crab creature from the deep trenches. Ambush predator.", zone: "Deep", scareRadius: 240 },
+  { name: "Shark", img: "/assets/gen-icons/fish-shark.png", points: 400, rarity: "rare", weight: 3, speed: 2.2, description: "A fearsome shark prowling the deep waters. Patrols territory, chases fish and players.", zone: "Deep", scareRadius: 200 },
+  { name: "Kraken", img: "/assets/gen-icons/fish-kraken.png", points: 800, rarity: "legendary", weight: 1, speed: 1.5, description: "A massive squid from the abyss. Enormous scare radius drives fish away.", zone: "Abyss", scareRadius: 280 },
+  { name: "Sea Devil", img: "/assets/gen-icons/fish-sea-devil.png", points: 600, rarity: "rare", weight: 2, speed: 1.8, description: "A monstrous crab creature from the deep trenches. Ambush predator.", zone: "Deep", scareRadius: 240 },
 ];
 
 var RODS = [

@@ -12,6 +12,7 @@ I want to prioritize iterative development. I prefer detailed explanations for c
 - **Status:** Live in production (deployed 2026-02-15)
 
 ## Recent Changes
+- **2026-02-18:** Added Crimson Crab (rare) and Shadow Crab (rare) — Sea Devil-inspired variants. Updated gameboard.html, landing.tsx, fishing-game.tsx. All fish/crab/predator images in gameboard now use gen-icons instead of sprite sheets. Species count updated from 28 to 30.
 - **2026-02-15:** Equipment progression system: rods now have castRange (350-1500m) and sinkSpeed (1.0-2.5x) stats; lures have depthBoost stat; cast range enforced with visual feedback (red crosshair + MAX RANGE text when out of range, green range arc); hook sink speed scales with rod + lure depth stats; shop/equipment panels show all new stats
 - **2026-02-15:** Fixed fish sprite-to-species mapping: Eel uses folder 5, Swordfish uses folder 3, Bass/Salmon use folder 2 with tints
 - **2026-02-15:** Fixed casting restriction: removed canvas-width clamp, aim now uses world coordinates
@@ -67,7 +68,7 @@ The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a f
 - **Net Tool:** An alternative fishing method with specific casting mechanics, auto-catching, cooldowns, and a chance to catch chum items.
 - **Sprite Orientation:** Standardized sprite conventions for character facing, movement, and mirroring.
 - **Character System:** Three selectable factions (Fabled, Legion, Crusade), each with unique recolored sprite sets and faction icons.
-- **Fish Species:** 17 distinct fish species across 5 rarity tiers (common, uncommon, rare, legendary, ultra_rare), including 10 ultra-rare variants (The Legendary 10) with unique visual traits and spawn mechanics. The 10th legendary "The Seal at the Seam" uses the grudge skull logo as its image.
+- **Fish Species:** 30 distinct species (fish + crabs) across 5 rarity tiers (common, uncommon, rare, legendary, ultra_rare), including 10 ultra-rare variants (The Legendary 10) with unique visual traits and spawn mechanics, 10 beach crab variants (5 common, 3 uncommon, 2 rare Sea Devil-inspired). The 10th legendary "The Seal at the Seam" uses the grudge skull logo as its image.
 - **Equipment System:** Diverse range of 5 rods, 5 live baits, 11 artificial lures, and 22 chum items, each affecting gameplay mechanics.
 - **Chum System:** Throwable items that boost fish spawns, rarity, and bite speed, activated via the hotbar.
 - **Rarity System:** 5 tiers (common to ultra_rare) with distinct colors, star ratings, sell price multipliers, and reeling difficulty multipliers.
