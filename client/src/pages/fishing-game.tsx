@@ -7895,6 +7895,11 @@ export default function FishingGame() {
                   { name: "Boat", sprite: "/assets/objects/Boat.png", scale: 1.5 },
                   { name: "Boat 2", sprite: "/assets/objects/Boat2.png", scale: 1.5 },
                   { name: "Water", sprite: "/assets/objects/Water.png", scale: 1.5 },
+                  { name: "Dock Front", sprite: "/assets/dock_front.png", scale: 2.0 },
+                  { name: "Dock Full", sprite: "/assets/dock_structure_full.png", scale: 2.0 },
+                  { name: "Dock Legs", sprite: "/assets/dock_legs_underwater.png", scale: 2.0 },
+                  { name: "Dock Water", sprite: "/assets/dock_legs_waterline.png", scale: 2.0 },
+                  { name: "Pier Tiles", sprite: "/assets/objects/Pier_Tiles.png", scale: 2.0 },
                 ].map((item, idx) => (
                   <div
                     key={idx}
