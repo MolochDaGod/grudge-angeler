@@ -8,15 +8,25 @@ function toSlug(name: string) {
 const sealAtTheSeamImg = "/assets/gen-icons/fish-seal-at-the-seam.png";
 
 interface SpriteData {
-  src: string;
+  framesDir: string;
+  frameCount: number;
   frameW: number;
   frameH: number;
-  frames: number;
-  sheetW: number;
   isSingleImage?: boolean;
+  src?: string;
 }
 
 function CodexAnimatedSprite({ sprite, size, tint }: { sprite: SpriteData; size: number; tint?: string }) {
+  const [frame, setFrame] = useState(1);
+
+  useEffect(() => {
+    if (sprite.isSingleImage) return;
+    const interval = setInterval(() => {
+      setFrame(f => (f % sprite.frameCount) + 1);
+    }, 250);
+    return () => clearInterval(interval);
+  }, [sprite.frameCount, sprite.isSingleImage]);
+
   if (sprite.isSingleImage) {
     return (
       <div style={{ width: size, height: size, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", flexShrink: 0 }}>
@@ -24,30 +34,19 @@ function CodexAnimatedSprite({ sprite, size, tint }: { sprite: SpriteData; size:
       </div>
     );
   }
-  const scale = size / Math.max(sprite.frameW, sprite.frameH);
-  const displayW = sprite.frameW * scale;
-  const displayH = sprite.frameH * scale;
-  const totalW = sprite.sheetW * scale;
-  const animId = `codex-anim-${sprite.src.replace(/[^a-z0-9]/gi, "")}`;
+
   return (
-    <div style={{ width: displayW, height: displayH, overflow: "hidden", position: "relative", flexShrink: 0 }}>
-      <style>{`
-        @keyframes ${animId} {
-          from { transform: translateX(0); }
-          to { transform: translateX(-${totalW}px); }
-        }
-      `}</style>
+    <div style={{ width: size, height: size, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
       <img
-        src={sprite.src}
+        src={`${sprite.framesDir}/${frame}.png`}
         alt=""
         style={{
-          width: totalW,
-          height: displayH,
+          width: size,
+          height: size,
           imageRendering: "pixelated",
+          objectFit: "contain",
           display: "block",
-          animation: `${animId} ${sprite.frames * 0.25}s steps(${sprite.frames}) infinite`,
           filter: tint ? `drop-shadow(0 0 6px ${tint})` : undefined,
-          mixBlendMode: "screen",
         }}
       />
     </div>
@@ -120,7 +119,7 @@ function UnderwaterBackground() {
 const legendaries = [
   {
     name: "Phantom Minnow",
-    sprite: { src: "/assets/creatures/7/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
+    sprite: { framesDir: "/assets/creatures/7/frames", frameCount: 4, frameW: 48, frameH: 48 },
     artImage: "/assets/gen-icons/fish-phantom-minnow.png",
     stars: 5,
     pts: 500,
@@ -136,7 +135,7 @@ const legendaries = [
   },
   {
     name: "Volcanic Perch",
-    sprite: { src: "/assets/creatures/8/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
+    sprite: { framesDir: "/assets/creatures/8/frames", frameCount: 4, frameW: 48, frameH: 48 },
     artImage: "/assets/gen-icons/fish-volcanic-perch.png",
     stars: 5,
     pts: 600,
@@ -152,7 +151,7 @@ const legendaries = [
   },
   {
     name: "Abyssal Bass",
-    sprite: { src: "/assets/creatures/9/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
+    sprite: { framesDir: "/assets/creatures/9/frames", frameCount: 4, frameW: 48, frameH: 48 },
     artImage: "/assets/gen-icons/fish-abyssal-bass.png",
     stars: 5,
     pts: 750,
@@ -168,7 +167,7 @@ const legendaries = [
   },
   {
     name: "Frost Catfish",
-    sprite: { src: "/assets/creatures/10/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
+    sprite: { framesDir: "/assets/creatures/10/frames", frameCount: 4, frameW: 48, frameH: 48 },
     artImage: "/assets/gen-icons/fish-frost-catfish.png",
     stars: 5,
     pts: 800,
@@ -184,7 +183,7 @@ const legendaries = [
   },
   {
     name: "Storm Swordfish",
-    sprite: { src: "/assets/creatures/11/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
+    sprite: { framesDir: "/assets/creatures/11/frames", frameCount: 4, frameW: 48, frameH: 48 },
     artImage: "/assets/gen-icons/fish-storm-swordfish.png",
     stars: 5,
     pts: 1000,
@@ -200,7 +199,7 @@ const legendaries = [
   },
   {
     name: "Celestial Whale",
-    sprite: { src: "/assets/creatures/12/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
+    sprite: { framesDir: "/assets/creatures/12/frames", frameCount: 4, frameW: 48, frameH: 48 },
     artImage: "/assets/gen-icons/fish-celestial-whale.png",
     stars: 5,
     pts: 2000,
@@ -216,7 +215,7 @@ const legendaries = [
   },
   {
     name: "Neon Eel",
-    sprite: { src: "/assets/creatures/13/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
+    sprite: { framesDir: "/assets/creatures/13/frames", frameCount: 4, frameW: 48, frameH: 48 },
     artImage: "/assets/gen-icons/fish-neon-eel.png",
     stars: 5,
     pts: 650,
@@ -232,7 +231,7 @@ const legendaries = [
   },
   {
     name: "Golden Salmon",
-    sprite: { src: "/assets/creatures/14/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
+    sprite: { framesDir: "/assets/creatures/14/frames", frameCount: 4, frameW: 48, frameH: 48 },
     artImage: "/assets/gen-icons/fish-golden-salmon.png",
     stars: 5,
     pts: 700,
@@ -248,7 +247,7 @@ const legendaries = [
   },
   {
     name: "Shadow Leviathan",
-    sprite: { src: "/assets/creatures/15/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
+    sprite: { framesDir: "/assets/creatures/15/frames", frameCount: 4, frameW: 48, frameH: 48 },
     artImage: "/assets/gen-icons/fish-shadow-leviathan.png",
     stars: 5,
     pts: 1500,
@@ -264,7 +263,7 @@ const legendaries = [
   },
   {
     name: "The Seal at the Seam",
-    sprite: { src: sealAtTheSeamImg, frameW: 0, frameH: 0, frames: 1, sheetW: 0, isSingleImage: true },
+    sprite: { src: sealAtTheSeamImg, framesDir: "", frameCount: 1, frameW: 0, frameH: 0, isSingleImage: true },
     artImage: "/assets/gen-icons/fish-seal-at-the-seam.png",
     stars: 5,
     pts: 5000,

@@ -10,15 +10,15 @@ const oceanRippleImg = "/assets/coral_reef_bg.png";
 const sealAtTheSeamImg = "/assets/gen-icons/fish-seal-at-the-seam.png";
 
 const legendaryFish = [
-  { name: "Phantom Minnow", aura: "rgba(0,255,200,0.4)", tint: "rgba(0,255,200,0.15)", chapter: "I", sprite: { src: "/assets/creatures/7/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 } },
-  { name: "Volcanic Perch", aura: "rgba(255,80,0,0.4)", tint: "rgba(255,80,0,0.15)", chapter: "II", sprite: { src: "/assets/creatures/8/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 } },
-  { name: "Abyssal Bass", aura: "rgba(120,0,255,0.4)", tint: "rgba(120,0,255,0.15)", chapter: "III", sprite: { src: "/assets/creatures/9/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 } },
-  { name: "Frost Catfish", aura: "rgba(100,200,255,0.4)", tint: "rgba(100,200,255,0.15)", chapter: "IV", sprite: { src: "/assets/creatures/10/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 } },
-  { name: "Storm Swordfish", aura: "rgba(255,255,0,0.4)", tint: "rgba(255,255,0,0.15)", chapter: "V", sprite: { src: "/assets/creatures/11/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 } },
-  { name: "Celestial Whale", aura: "rgba(255,180,255,0.3)", tint: "rgba(255,180,255,0.15)", chapter: "VI", sprite: { src: "/assets/creatures/12/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 } },
-  { name: "Neon Eel", aura: "rgba(0,255,100,0.4)", tint: "rgba(0,255,100,0.15)", chapter: "VII", sprite: { src: "/assets/creatures/13/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 } },
-  { name: "Golden Salmon", aura: "rgba(255,200,0,0.45)", tint: "rgba(255,200,0,0.15)", chapter: "VIII", sprite: { src: "/assets/creatures/14/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 } },
-  { name: "Shadow Leviathan", aura: "rgba(180,0,50,0.35)", tint: "rgba(180,0,50,0.15)", chapter: "IX", sprite: { src: "/assets/creatures/15/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 } },
+  { name: "Phantom Minnow", aura: "rgba(0,255,200,0.4)", tint: "rgba(0,255,200,0.15)", chapter: "I", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/7/frames", frameCount: 4 } },
+  { name: "Volcanic Perch", aura: "rgba(255,80,0,0.4)", tint: "rgba(255,80,0,0.15)", chapter: "II", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/8/frames", frameCount: 4 } },
+  { name: "Abyssal Bass", aura: "rgba(120,0,255,0.4)", tint: "rgba(120,0,255,0.15)", chapter: "III", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/9/frames", frameCount: 4 } },
+  { name: "Frost Catfish", aura: "rgba(100,200,255,0.4)", tint: "rgba(100,200,255,0.15)", chapter: "IV", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/10/frames", frameCount: 4 } },
+  { name: "Storm Swordfish", aura: "rgba(255,255,0,0.4)", tint: "rgba(255,255,0,0.15)", chapter: "V", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/11/frames", frameCount: 4 } },
+  { name: "Celestial Whale", aura: "rgba(255,180,255,0.3)", tint: "rgba(255,180,255,0.15)", chapter: "VI", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/12/frames", frameCount: 4 } },
+  { name: "Neon Eel", aura: "rgba(0,255,100,0.4)", tint: "rgba(0,255,100,0.15)", chapter: "VII", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/13/frames", frameCount: 4 } },
+  { name: "Golden Salmon", aura: "rgba(255,200,0,0.45)", tint: "rgba(255,200,0,0.15)", chapter: "VIII", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/14/frames", frameCount: 4 } },
+  { name: "Shadow Leviathan", aura: "rgba(180,0,50,0.35)", tint: "rgba(180,0,50,0.15)", chapter: "IX", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/15/frames", frameCount: 4 } },
   { name: "The Seal at the Seam", aura: "rgba(30,60,140,0.5)", tint: "rgba(30,60,140,0.4)", chapter: "X", sprite: { src: sealAtTheSeamImg, frameW: 0, frameH: 0, frames: 1, sheetW: 0, isSingleImage: true } },
 ];
 
@@ -122,6 +122,8 @@ interface LandingFish {
     sheetW: number;
     offsetY?: number;
     isSingleImage?: boolean;
+    framesDir?: string;
+    frameCount?: number;
   };
 }
 
@@ -147,15 +149,15 @@ const allFish: LandingFish[] = [
   { name: "Sea Devil", rarity: "rare", points: 600, desc: "A monstrous crab creature from the deep trenches.", sprite: { src: "/assets/predators/3/Idle.png", frameW: 96, frameH: 96, frames: 4, sheetW: 384 } },
   { name: "Whale", rarity: "legendary", points: 300, desc: "The king of the deep. Incredibly rare!", sprite: { src: "/assets/catch/6.png", frameW: 18, frameH: 22, frames: 6, sheetW: 108 } },
   { name: "Kraken", rarity: "legendary", points: 800, desc: "A massive squid from the abyss, feared by all.", sprite: { src: "/assets/predators/2/Idle.png", frameW: 96, frameH: 96, frames: 6, sheetW: 576 } },
-  { name: "Phantom Minnow", rarity: "ultra_rare", points: 500, desc: "A ghostly minnow wreathed in spectral flame.", tint: "rgba(0,255,200,0.15)", sprite: { src: "/assets/creatures/7/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 } },
-  { name: "Volcanic Perch", rarity: "ultra_rare", points: 600, desc: "Scales glow molten orange from deep-sea vents.", tint: "rgba(255,80,0,0.15)", sprite: { src: "/assets/creatures/8/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 } },
-  { name: "Abyssal Bass", rarity: "ultra_rare", points: 750, desc: "A colossal bass radiating dark energy.", tint: "rgba(120,0,255,0.15)", sprite: { src: "/assets/creatures/9/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 } },
-  { name: "Frost Catfish", rarity: "ultra_rare", points: 800, desc: "Encased in living ice. Freezes the water.", tint: "rgba(100,200,255,0.15)", sprite: { src: "/assets/creatures/10/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 } },
-  { name: "Storm Swordfish", rarity: "ultra_rare", points: 1000, desc: "Rides lightning bolts with electric fury.", tint: "rgba(255,255,0,0.15)", sprite: { src: "/assets/creatures/11/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 } },
-  { name: "Celestial Whale", rarity: "ultra_rare", points: 2000, desc: "A cosmic whale that swallowed a dying star.", tint: "rgba(255,180,255,0.15)", sprite: { src: "/assets/creatures/12/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 } },
-  { name: "Neon Eel", rarity: "ultra_rare", points: 650, desc: "Bioluminescent eel pulsing with neon colors.", tint: "rgba(0,255,100,0.15)", sprite: { src: "/assets/creatures/13/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 } },
-  { name: "Golden Salmon", rarity: "ultra_rare", points: 700, desc: "Solid gold scales. Worth a fortune.", tint: "rgba(255,200,0,0.15)", sprite: { src: "/assets/creatures/14/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 } },
-  { name: "Shadow Leviathan", rarity: "ultra_rare", points: 1500, desc: "A titanic shadow beast from beyond the abyss.", tint: "rgba(180,0,50,0.15)", sprite: { src: "/assets/creatures/15/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 } },
+  { name: "Phantom Minnow", rarity: "ultra_rare", points: 500, desc: "A ghostly minnow wreathed in spectral flame.", tint: "rgba(0,255,200,0.15)", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/7/frames", frameCount: 4 } },
+  { name: "Volcanic Perch", rarity: "ultra_rare", points: 600, desc: "Scales glow molten orange from deep-sea vents.", tint: "rgba(255,80,0,0.15)", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/8/frames", frameCount: 4 } },
+  { name: "Abyssal Bass", rarity: "ultra_rare", points: 750, desc: "A colossal bass radiating dark energy.", tint: "rgba(120,0,255,0.15)", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/9/frames", frameCount: 4 } },
+  { name: "Frost Catfish", rarity: "ultra_rare", points: 800, desc: "Encased in living ice. Freezes the water.", tint: "rgba(100,200,255,0.15)", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/10/frames", frameCount: 4 } },
+  { name: "Storm Swordfish", rarity: "ultra_rare", points: 1000, desc: "Rides lightning bolts with electric fury.", tint: "rgba(255,255,0,0.15)", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/11/frames", frameCount: 4 } },
+  { name: "Celestial Whale", rarity: "ultra_rare", points: 2000, desc: "A cosmic whale that swallowed a dying star.", tint: "rgba(255,180,255,0.15)", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/12/frames", frameCount: 4 } },
+  { name: "Neon Eel", rarity: "ultra_rare", points: 650, desc: "Bioluminescent eel pulsing with neon colors.", tint: "rgba(0,255,100,0.15)", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/13/frames", frameCount: 4 } },
+  { name: "Golden Salmon", rarity: "ultra_rare", points: 700, desc: "Solid gold scales. Worth a fortune.", tint: "rgba(255,200,0,0.15)", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/14/frames", frameCount: 4 } },
+  { name: "Shadow Leviathan", rarity: "ultra_rare", points: 1500, desc: "A titanic shadow beast from beyond the abyss.", tint: "rgba(180,0,50,0.15)", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/15/frames", frameCount: 4 } },
 ];
 
 const fishAchievements = [
@@ -224,6 +226,17 @@ function AnimatedSprite({ sprite, size, tint }: {
   size: number;
   tint?: string;
 }) {
+  const [frame, setFrame] = useState(1);
+
+  useEffect(() => {
+    if (sprite.isSingleImage || !sprite.framesDir) return;
+    const count = sprite.frameCount || 4;
+    const interval = setInterval(() => {
+      setFrame(f => (f % count) + 1);
+    }, 250);
+    return () => clearInterval(interval);
+  }, [sprite.framesDir, sprite.frameCount, sprite.isSingleImage]);
+
   if (sprite.isSingleImage) {
     return (
       <div style={{ width: size, height: size, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", flexShrink: 0 }}>
@@ -231,6 +244,26 @@ function AnimatedSprite({ sprite, size, tint }: {
       </div>
     );
   }
+
+  if (sprite.framesDir) {
+    return (
+      <div style={{ width: size, height: size, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+        <img
+          src={`${sprite.framesDir}/${frame}.png`}
+          alt=""
+          style={{
+            width: size,
+            height: size,
+            imageRendering: "pixelated",
+            objectFit: "contain",
+            display: "block",
+            filter: tint ? `drop-shadow(0 0 6px ${tint})` : undefined,
+          }}
+        />
+      </div>
+    );
+  }
+
   const scale = size / Math.max(sprite.frameW, sprite.frameH);
   const displayW = sprite.frameW * scale;
   const displayH = sprite.frameH * scale;
@@ -260,7 +293,6 @@ function AnimatedSprite({ sprite, size, tint }: {
           imageRendering: "pixelated",
           animation: `${animId} ${sprite.frames * 0.25}s steps(${sprite.frames}) infinite`,
           filter: tint ? `drop-shadow(0 0 4px ${tint})` : undefined,
-          mixBlendMode: "screen",
         }} />
       </div>
     );
@@ -285,7 +317,6 @@ function AnimatedSprite({ sprite, size, tint }: {
           display: "block",
           animation: `${animId} ${sprite.frames * 0.25}s steps(${sprite.frames}) infinite`,
           filter: tint ? `drop-shadow(0 0 6px ${tint})` : undefined,
-          mixBlendMode: "screen",
         }}
       />
     </div>
