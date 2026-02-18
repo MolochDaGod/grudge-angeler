@@ -22,19 +22,19 @@ interface FishDef {
 }
 
 const FISH_TYPES: FishDef[] = [
-  { name: "Minnow", icon: "/assets/icons/fish/minnow-silver-common.png", catchAsset: "/assets/catch/minnow-silver-common.png", creatureFolder: "minnow-silver-common", idleFrames: 4, walkFrames: 6, points: 10, rarity: "common", weight: 40, minDepth: 0.15, speed: 1.5, description: "A tiny silver fish, common in shallow waters.", tint: "rgba(200,210,230,0.2)", baseScale: 0.6 },
+  { name: "Minnow", icon: "/assets/icons/fish/minnow-silver-common.png", catchAsset: "/assets/catch/minnow-silver-common.png", creatureFolder: "minnow-silver-common", idleFrames: 4, walkFrames: 4, points: 10, rarity: "common", weight: 40, minDepth: 0.15, speed: 1.5, description: "A tiny silver fish, common in shallow waters.", tint: "rgba(200,210,230,0.2)", baseScale: 0.6 },
   { name: "Jellyfish", icon: "/assets/icons/fish/jellyfish-translucent-common.png", catchAsset: "/assets/catch/jellyfish-translucent-common.png", creatureFolder: "jellyfish-translucent-common", idleFrames: 4, walkFrames: 4, points: 20, rarity: "common", weight: 25, minDepth: 0.2, speed: 0.7, description: "A translucent jellyfish drifting with the current.", tint: "rgba(120,80,255,0.2)" },
-  { name: "Perch", icon: "/assets/icons/fish/perch-striped-common.png", catchAsset: "/assets/catch/perch-striped-common.png", creatureFolder: "perch-striped-common", idleFrames: 4, walkFrames: 6, points: 25, rarity: "common", weight: 30, minDepth: 0.25, speed: 1.2, description: "A striped freshwater fish with sharp fins." },
-  { name: "Bass", icon: "/assets/icons/fish/bass-green-uncommon.png", catchAsset: "/assets/catch/bass-green-uncommon.png", creatureFolder: "bass-green-uncommon", idleFrames: 4, walkFrames: 6, points: 50, rarity: "uncommon", weight: 15, minDepth: 0.35, speed: 1.0, description: "A strong fighter popular with anglers.", tint: "rgba(60,80,40,0.3)" },
+  { name: "Perch", icon: "/assets/icons/fish/perch-striped-common.png", catchAsset: "/assets/catch/perch-striped-common.png", creatureFolder: "perch-striped-common", idleFrames: 4, walkFrames: 4, points: 25, rarity: "common", weight: 30, minDepth: 0.25, speed: 1.2, description: "A striped freshwater fish with sharp fins." },
+  { name: "Bass", icon: "/assets/icons/fish/bass-green-uncommon.png", catchAsset: "/assets/catch/bass-green-uncommon.png", creatureFolder: "bass-green-uncommon", idleFrames: 4, walkFrames: 4, points: 50, rarity: "uncommon", weight: 15, minDepth: 0.35, speed: 1.0, description: "A strong fighter popular with anglers.", tint: "rgba(60,80,40,0.3)" },
   { name: "Catfish", icon: "/assets/icons/fish/catfish-brown-uncommon.png", catchAsset: "/assets/catch/catfish-brown-uncommon.png", creatureFolder: "catfish-brown-uncommon", idleFrames: 4, walkFrames: 4, points: 75, rarity: "uncommon", weight: 8, minDepth: 0.45, speed: 0.8, description: "A bottom-dweller with long whiskers.", tint: "rgba(160,120,80,0.15)" },
   { name: "Swordfish", icon: "/assets/icons/fish/swordfish-blue-rare.png", catchAsset: "/assets/catch/swordfish-blue-rare.png", creatureFolder: "swordfish-blue-rare", idleFrames: 4, walkFrames: 4, points: 150, rarity: "rare", weight: 4, minDepth: 0.55, speed: 1.8, description: "A powerful ocean predator with a sharp bill." },
   { name: "Stingray", icon: "/assets/icons/fish/stingray-gray-rare.png", catchAsset: "/assets/catch/stingray-gray-rare.png", creatureFolder: "stingray-gray-rare", idleFrames: 4, walkFrames: 4, points: 100, rarity: "rare", weight: 5, minDepth: 0.45, speed: 1.4, description: "A flat-bodied ray gliding silently along the ocean floor.", tint: "rgba(100,110,130,0.25)", baseScale: 1.2 },
   { name: "Whale", icon: "/assets/icons/fish/whale-blue-legendary.png", catchAsset: "/assets/catch/whale-blue-legendary.png", creatureFolder: "whale-blue-legendary", idleFrames: 4, walkFrames: 4, points: 300, rarity: "legendary", weight: 1, minDepth: 0.65, speed: 0.5, description: "The king of the deep. Incredibly rare!", tint: "rgba(40,80,180,0.45)", baseScale: 1.8 },
   { name: "Eel", icon: "/assets/icons/fish/eel-dark-common.png", catchAsset: "/assets/catch/eel-dark-common.png", creatureFolder: "eel-dark-common", idleFrames: 4, walkFrames: 6, points: 40, rarity: "common", weight: 20, minDepth: 0.3, speed: 1.3, description: "A slippery serpentine fish.", tint: "rgba(50,60,70,0.15)" },
-  { name: "Octopus", icon: "/assets/icons/fish/octopus-red-common.png", catchAsset: "/assets/catch/octopus-red-common.png", creatureFolder: "octopus-red-common", idleFrames: 4, walkFrames: 6, points: 35, rarity: "common", weight: 15, minDepth: 0.25, speed: 0.9, description: "A clever red octopus with grasping tentacles." },
-  { name: "Salmon", icon: "/assets/icons/fish/salmon-pink-uncommon.png", catchAsset: "/assets/catch/salmon-pink-uncommon.png", creatureFolder: "salmon-pink-uncommon", idleFrames: 4, walkFrames: 6, points: 60, rarity: "uncommon", weight: 12, minDepth: 0.35, speed: 1.1, description: "A prized pink-fleshed fish.", tint: "rgba(220,100,80,0.4)" },
+  { name: "Octopus", icon: "/assets/icons/fish/octopus-red-common.png", catchAsset: "/assets/catch/octopus-red-common.png", creatureFolder: "octopus-red-common", idleFrames: 6, walkFrames: 6, points: 35, rarity: "common", weight: 15, minDepth: 0.25, speed: 0.9, description: "A clever red octopus with grasping tentacles." },
+  { name: "Salmon", icon: "/assets/icons/fish/salmon-pink-uncommon.png", catchAsset: "/assets/catch/salmon-pink-uncommon.png", creatureFolder: "salmon-pink-uncommon", idleFrames: 4, walkFrames: 4, points: 60, rarity: "uncommon", weight: 12, minDepth: 0.35, speed: 1.1, description: "A prized pink-fleshed fish.", tint: "rgba(220,100,80,0.4)" },
   { name: "Electric Eel", icon: "/assets/icons/fish/electric-eel-yellow-uncommon.png", catchAsset: "/assets/catch/electric-eel-yellow-uncommon.png", creatureFolder: "electric-eel-yellow-uncommon", idleFrames: 4, walkFrames: 6, points: 65, rarity: "uncommon", weight: 10, minDepth: 0.4, speed: 1.6, description: "A shocking eel crackling with electric charge." },
-  { name: "Blue Ring Octopus", icon: "/assets/icons/fish/blue-ring-octopus-blue-uncommon.png", catchAsset: "/assets/catch/blue-ring-octopus-blue-uncommon.png", creatureFolder: "blue-ring-octopus-blue-uncommon", idleFrames: 4, walkFrames: 6, points: 55, rarity: "uncommon", weight: 8, minDepth: 0.35, speed: 1.0, description: "A small but deadly octopus with glowing blue rings." },
+  { name: "Blue Ring Octopus", icon: "/assets/icons/fish/blue-ring-octopus-blue-uncommon.png", catchAsset: "/assets/catch/blue-ring-octopus-blue-uncommon.png", creatureFolder: "blue-ring-octopus-blue-uncommon", idleFrames: 6, walkFrames: 6, points: 55, rarity: "uncommon", weight: 8, minDepth: 0.35, speed: 1.0, description: "A small but deadly octopus with glowing blue rings." },
   { name: "Moray Eel", icon: "/assets/icons/fish/moray-eel-brown-rare.png", catchAsset: "/assets/catch/moray-eel-brown-rare.png", creatureFolder: "moray-eel-brown-rare", idleFrames: 4, walkFrames: 6, points: 90, rarity: "rare", weight: 6, minDepth: 0.5, speed: 1.1, description: "A thick-bodied eel lurking in reef crevices." },
   { name: "Anglerfish", icon: "/assets/icons/fish/anglerfish-dark-rare.png", catchAsset: "/assets/catch/anglerfish-dark-rare.png", creatureFolder: "anglerfish-dark-rare", idleFrames: 4, walkFrames: 4, points: 120, rarity: "rare", weight: 5, minDepth: 0.55, speed: 0.6, description: "A deep-sea predator with a bioluminescent lure." },
   { name: "Deep Sea Angler", icon: "/assets/icons/fish/deep-sea-angler-dark-rare.png", catchAsset: "/assets/catch/deep-sea-angler-dark-rare.png", creatureFolder: "deep-sea-angler-dark-rare", idleFrames: 4, walkFrames: 4, points: 140, rarity: "rare", weight: 3, minDepth: 0.65, speed: 0.5, description: "A pitch-black anglerfish with a sinister yellow glow." },
@@ -109,7 +109,7 @@ export default function AdminFish() {
   const overrideInfo = spriteOverride ? allSprites.find(s => s.folder === spriteOverride) : null;
   const defaultFrames = showIdle ? fish.idleFrames : fish.walkFrames;
   const [detectedFrames, setDetectedFrames] = useState<number | null>(null);
-  const totalFrames = (spriteOverride && detectedFrames) ? detectedFrames : defaultFrames;
+  const totalFrames = detectedFrames || defaultFrames;
   const spriteType = showIdle ? "Idle" : "Walk";
   const basePath = overrideInfo?.spritePath || `/assets/creatures/${activeFolder}`;
   const spriteSrc = activeFolder ? `${basePath}/${spriteType}.png` : "";
@@ -137,7 +137,8 @@ export default function AdminFish() {
   }, [selectedIdx, showIdle]);
 
   useEffect(() => {
-    if (!spriteOverride || isWhale) { setDetectedFrames(null); return; }
+    if (isWhale) { setDetectedFrames(null); return; }
+    if (!spriteSrc) { setDetectedFrames(null); return; }
     const img = new Image();
     img.onload = () => {
       const h = img.naturalHeight;
@@ -147,7 +148,7 @@ export default function AdminFish() {
       }
     };
     img.src = spriteSrc;
-  }, [spriteOverride, spriteSrc, isWhale]);
+  }, [spriteSrc, isWhale]);
 
   useEffect(() => {
     if (!playing) return;
