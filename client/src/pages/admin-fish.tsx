@@ -75,6 +75,8 @@ interface CreatureSpriteInfo {
   hasIdle: boolean;
   hasWalk: boolean;
   hasFrames: boolean;
+  category?: string;
+  spritePath?: string;
 }
 
 export default function AdminFish() {
@@ -104,9 +106,13 @@ export default function AdminFish() {
 
   const fish = FISH_TYPES[selectedIdx];
   const activeFolder = spriteOverride || fish.creatureFolder;
-  const totalFrames = showIdle ? fish.idleFrames : fish.walkFrames;
+  const overrideInfo = spriteOverride ? allSprites.find(s => s.folder === spriteOverride) : null;
+  const defaultFrames = showIdle ? fish.idleFrames : fish.walkFrames;
+  const [detectedFrames, setDetectedFrames] = useState<number | null>(null);
+  const totalFrames = (spriteOverride && detectedFrames) ? detectedFrames : defaultFrames;
   const spriteType = showIdle ? "Idle" : "Walk";
-  const spriteSrc = activeFolder ? `/assets/creatures/${activeFolder}/${spriteType}.png` : "";
+  const basePath = overrideInfo?.spritePath || `/assets/creatures/${activeFolder}`;
+  const spriteSrc = activeFolder ? `${basePath}/${spriteType}.png` : "";
 
   const isWhale = fish.name === "Whale" && !spriteOverride;
   const whaleFrames = [
@@ -127,7 +133,21 @@ export default function AdminFish() {
   useEffect(() => {
     setCurrentFrame(0);
     setSpriteOverride("");
+    setDetectedFrames(null);
   }, [selectedIdx, showIdle]);
+
+  useEffect(() => {
+    if (!spriteOverride || isWhale) { setDetectedFrames(null); return; }
+    const img = new Image();
+    img.onload = () => {
+      const h = img.naturalHeight;
+      if (h > 0) {
+        const fc = Math.round(img.naturalWidth / h);
+        setDetectedFrames(fc > 0 ? fc : 1);
+      }
+    };
+    img.src = spriteSrc;
+  }, [spriteOverride, spriteSrc, isWhale]);
 
   useEffect(() => {
     if (!playing) return;
@@ -412,18 +432,32 @@ export default function AdminFish() {
             <option value="" style={{ background: "#0a0e1a", color: "#4fc3f7" }}>
               (default: {fish.creatureFolder})
             </option>
-            {allSprites.map(s => (
-              <option
-                key={s.folder}
-                value={s.folder}
-                style={{
-                  background: "#0a0e1a",
-                  color: s.folder === fish.creatureFolder ? "#4fc3f7" : "#ccc",
-                }}
-              >
-                {s.folder}{!s.hasIdle && !s.hasWalk ? " (no sprites)" : ""}{s.hasFrames ? " [frames]" : ""}
-              </option>
-            ))}
+            {(() => {
+              const cats = ["creature", "predator", "guardian", "npc"];
+              const catLabels: Record<string, string> = { creature: "FISH / CREATURES", predator: "PREDATORS", guardian: "GUARDIAN", npc: "NPCs" };
+              const catColors: Record<string, string> = { creature: "#4fc3f7", predator: "#e74c3c", guardian: "#2ecc71", npc: "#f39c12" };
+              return cats.flatMap(cat => {
+                const items = allSprites.filter(s => s.category === cat);
+                if (items.length === 0) return [];
+                return [
+                  <option key={`__cat_${cat}`} disabled style={{ background: "#060a14", color: catColors[cat], fontWeight: "bold", fontSize: 10 }}>
+                    {"── " + catLabels[cat] + " ──"}
+                  </option>,
+                  ...items.map(s => (
+                    <option
+                      key={s.folder}
+                      value={s.folder}
+                      style={{
+                        background: "#0a0e1a",
+                        color: s.folder === fish.creatureFolder ? "#4fc3f7" : "#ccc",
+                      }}
+                    >
+                      {"  "}{s.folder}{!s.hasIdle && !s.hasWalk ? " (no sprites)" : ""}{s.hasFrames ? " [frames]" : ""}
+                    </option>
+                  )),
+                ];
+              });
+            })()}
           </select>
           {spriteOverride && (
             <button

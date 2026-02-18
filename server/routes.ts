@@ -293,24 +293,56 @@ export async function registerRoutes(
 
   app.get("/api/creature-sprites", (_req: Request, res: Response) => {
     try {
-      const creaturesDir = path.join(process.cwd(), "client", "public", "assets", "creatures");
-      const folders = fs.readdirSync(creaturesDir, { withFileTypes: true })
-        .filter(d => d.isDirectory())
-        .map(d => {
-          const folderPath = path.join(creaturesDir, d.name);
-          const files = fs.readdirSync(folderPath);
-          const hasIdle = files.includes("Idle.png");
-          const hasWalk = files.includes("Walk.png");
-          const hasFrames = fs.existsSync(path.join(folderPath, "frames"));
-          return {
-            folder: d.name,
-            hasIdle,
-            hasWalk,
-            hasFrames,
-          };
-        })
-        .sort((a, b) => a.folder.localeCompare(b.folder));
-      res.json(folders);
+      const assetsRoot = path.join(process.cwd(), "client", "public", "assets");
+
+      function scanDir(dir: string, category: string, pathPrefix: string) {
+        if (!fs.existsSync(dir)) return [];
+        return fs.readdirSync(dir, { withFileTypes: true })
+          .filter(d => d.isDirectory() && d.name !== "PSD" && d.name !== "frames")
+          .map(d => {
+            const folderPath = path.join(dir, d.name);
+            const files = fs.readdirSync(folderPath);
+            const hasIdle = files.includes("Idle.png");
+            const hasWalk = files.includes("Walk.png");
+            const hasFrames = fs.existsSync(path.join(folderPath, "frames"));
+            return {
+              folder: d.name,
+              hasIdle,
+              hasWalk,
+              hasFrames,
+              category,
+              spritePath: `${pathPrefix}/${d.name}`,
+            };
+          });
+      }
+
+      const creatures = scanDir(path.join(assetsRoot, "creatures"), "creature", "/assets/creatures");
+      const predators = scanDir(path.join(assetsRoot, "predators"), "predator", "/assets/predators");
+      const npcs = scanDir(path.join(assetsRoot, "npcs"), "npc", "/assets/npcs");
+      const guardianDir = path.join(assetsRoot, "guardian");
+      const guardianEntries: any[] = [];
+      if (fs.existsSync(guardianDir)) {
+        const gFiles = fs.readdirSync(guardianDir);
+        guardianEntries.push({
+          folder: "guardian",
+          hasIdle: gFiles.includes("Idle.png"),
+          hasWalk: gFiles.includes("Walk.png"),
+          hasFrames: false,
+          category: "guardian",
+          spritePath: "/assets/guardian",
+        });
+      }
+
+      const all = [...creatures, ...predators, ...guardianEntries, ...npcs]
+        .filter(s => s.hasIdle || s.hasWalk)
+        .sort((a, b) => {
+          const catOrder: Record<string, number> = { creature: 0, predator: 1, guardian: 2, npc: 3 };
+          const ca = catOrder[a.category] ?? 9;
+          const cb = catOrder[b.category] ?? 9;
+          if (ca !== cb) return ca - cb;
+          return a.folder.localeCompare(b.folder);
+        });
+      res.json(all);
     } catch (err: any) {
       res.status(500).json({ error: err.message });
     }
