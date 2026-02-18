@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Landing from "@/pages/landing";
 import FishingGame from "@/pages/fishing-game";
 import LegendaryCodex from "@/pages/legendary-codex";
+import AdminMap from "@/pages/admin-map";
 
 function Router() {
   return (
@@ -14,6 +15,7 @@ function Router() {
       <Route path="/game" component={FishingGame} />
       <Route path="/codex" component={LegendaryCodex} />
       <Route path="/codex/:slug" component={LegendaryCodex} />
+      <Route path="/adminmap" component={AdminMap} />
       <Route path="/play">{() => <Redirect to="/game" />}</Route>
       <Route path="/legendaries">{() => <Redirect to="/codex" />}</Route>
     </Switch>
