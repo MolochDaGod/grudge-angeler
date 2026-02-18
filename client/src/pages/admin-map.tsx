@@ -11,6 +11,8 @@ const REF_H = 720;
 const PIER_Y = REF_H * PIER_Y_RATIO;
 const WATER_Y = REF_H * WATER_Y_RATIO;
 
+const STORAGE_KEY = "grudge-angeler-admin-map";
+
 interface MapArea {
   id: string;
   label: string;
@@ -22,6 +24,13 @@ interface MapArea {
   locked: boolean;
 }
 
+interface DepthSlope {
+  shallowX: number;
+  shallowY: number;
+  deepX: number;
+  deepY: number;
+}
+
 interface GameImage {
   id: string;
   src: string;
@@ -31,6 +40,19 @@ interface GameImage {
   h: number;
   label: string;
 }
+
+interface SavedMapData {
+  areas: MapArea[];
+  depthSlope: DepthSlope;
+  version: number;
+}
+
+const DEFAULT_DEPTH_SLOPE: DepthSlope = {
+  shallowX: WORLD_RIGHT,
+  shallowY: WATER_Y + 50,
+  deepX: WORLD_LEFT,
+  deepY: WATER_Y + 1600,
+};
 
 const DEFAULT_AREAS: MapArea[] = [
   { id: "sky", label: "Sky", x: WORLD_LEFT, y: 0, w: WORLD_WIDTH, h: PIER_Y, color: "rgba(135,206,235,0.2)", locked: false },
@@ -77,9 +99,26 @@ const AREA_PALETTE = [
   { color: "rgba(180,60,220,0.25)", label: "Custom" },
 ];
 
+function loadSavedMap(): SavedMapData | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw) as SavedMapData;
+    if (data.areas && Array.isArray(data.areas)) return data;
+    return null;
+  } catch { return null; }
+}
+
+function saveMap(areas: MapArea[], depthSlope: DepthSlope) {
+  const data: SavedMapData = { areas, depthSlope, version: 1 };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
 export default function AdminMap() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [areas, setAreas] = useState<MapArea[]>(DEFAULT_AREAS);
+  const saved = useRef(loadSavedMap());
+  const [areas, setAreas] = useState<MapArea[]>(saved.current?.areas || DEFAULT_AREAS);
+  const [depthSlope, setDepthSlope] = useState<DepthSlope>(saved.current?.depthSlope || DEFAULT_DEPTH_SLOPE);
   const [selectedArea, setSelectedArea] = useState<string | null>(null);
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(0.12);
@@ -88,13 +127,18 @@ export default function AdminMap() {
   const [showGrid, setShowGrid] = useState(true);
   const [showImages, setShowImages] = useState(true);
   const [showLabels, setShowLabels] = useState(true);
-  const [dragMode, setDragMode] = useState<null | "move" | "resize-br" | "resize-bl" | "resize-tr" | "resize-tl" | "resize-r" | "resize-b" | "resize-l" | "resize-t">(null);
+  const [showDepthSlope, setShowDepthSlope] = useState(true);
+  const [dragMode, setDragMode] = useState<null | "move" | "resize-br" | "resize-bl" | "resize-tr" | "resize-tl" | "resize-r" | "resize-b" | "resize-l" | "resize-t" | "slope-shallow" | "slope-deep">(null);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0, areaX: 0, areaY: 0, areaW: 0, areaH: 0 });
   const [newAreaColor, setNewAreaColor] = useState(0);
   const [newAreaLabel, setNewAreaLabel] = useState("New Area");
+  const [saveStatus, setSaveStatus] = useState<string>("");
   const loadedImages = useRef<Map<string, HTMLImageElement>>(new Map());
   const areasRef = useRef(areas);
   areasRef.current = areas;
+  const depthSlopeRef = useRef(depthSlope);
+  depthSlopeRef.current = depthSlope;
+  const slopeDragStart = useRef({ x: 0, y: 0, origX: 0, origY: 0 });
 
   const getImg = useCallback((src: string): HTMLImageElement | null => {
     if (loadedImages.current.has(src)) return loadedImages.current.get(src)!;
@@ -215,6 +259,72 @@ export default function AdminMap() {
       }
     }
 
+    if (showDepthSlope) {
+      const ds = depthSlopeRef.current;
+      const sShallow = worldToScreen(ds.shallowX, ds.shallowY);
+      const sDeep = worldToScreen(ds.deepX, ds.deepY);
+      const sBottomRight = worldToScreen(WORLD_RIGHT, WORLD_HEIGHT);
+      const sBottomLeft = worldToScreen(WORLD_LEFT, WORLD_HEIGHT);
+
+      ctx.beginPath();
+      ctx.moveTo(sShallow.x, sShallow.y);
+      ctx.lineTo(sDeep.x, sDeep.y);
+      ctx.lineTo(sBottomLeft.x, sBottomLeft.y);
+      ctx.lineTo(sBottomRight.x, sBottomRight.y);
+      ctx.closePath();
+      ctx.fillStyle = "rgba(8,15,40,0.25)";
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(sShallow.x, sShallow.y);
+      ctx.lineTo(sDeep.x, sDeep.y);
+      ctx.strokeStyle = "#e74c3c";
+      ctx.lineWidth = 3;
+      ctx.setLineDash([8, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      const handleR = 8;
+      ctx.beginPath();
+      ctx.arc(sShallow.x, sShallow.y, handleR, 0, Math.PI * 2);
+      ctx.fillStyle = "#2ecc71";
+      ctx.fill();
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(sDeep.x, sDeep.y, handleR, 0, Math.PI * 2);
+      ctx.fillStyle = "#e74c3c";
+      ctx.fill();
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      if (showLabels) {
+        ctx.font = `bold ${Math.max(8, 10 * zoom / 0.12)}px monospace`;
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#2ecc71";
+        ctx.fillText("SHALLOW", sShallow.x, sShallow.y - 14);
+        ctx.fillStyle = "rgba(255,255,255,0.4)";
+        ctx.font = `${Math.max(6, 8 * zoom / 0.12)}px monospace`;
+        ctx.fillText(`y=${Math.round(ds.shallowY)}`, sShallow.x, sShallow.y - 4);
+        ctx.font = `bold ${Math.max(8, 10 * zoom / 0.12)}px monospace`;
+        ctx.fillStyle = "#e74c3c";
+        ctx.fillText("DEEP", sDeep.x, sDeep.y - 14);
+        ctx.fillStyle = "rgba(255,255,255,0.4)";
+        ctx.font = `${Math.max(6, 8 * zoom / 0.12)}px monospace`;
+        ctx.fillText(`y=${Math.round(ds.deepY)}`, sDeep.x, sDeep.y - 4);
+
+        const midX = (sShallow.x + sDeep.x) / 2;
+        const midY = (sShallow.y + sDeep.y) / 2;
+        const angleDeg = Math.round(Math.atan2(ds.deepY - ds.shallowY, ds.shallowX - ds.deepX) * 180 / Math.PI);
+        ctx.font = `bold ${Math.max(9, 12 * zoom / 0.12)}px monospace`;
+        ctx.fillStyle = "#e74c3c";
+        ctx.fillText(`DEPTH SLOPE: ${angleDeg}deg`, midX, midY - 6);
+      }
+    }
+
     ctx.strokeStyle = "rgba(79,195,247,0.6)";
     ctx.lineWidth = 2;
     const wl = worldToScreen(WORLD_LEFT, WATER_Y);
@@ -298,7 +408,7 @@ export default function AdminMap() {
     ctx.strokeStyle = "rgba(255,255,255,0.15)";
     ctx.lineWidth = 1;
     ctx.strokeRect(tl.x, tl.y, worldScreenW, worldScreenH);
-  }, [worldToScreen, zoom, showGrid, showLabels, showImages, selectedArea, getImg]);
+  }, [worldToScreen, zoom, showGrid, showLabels, showImages, showDepthSlope, selectedArea, getImg]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -313,7 +423,7 @@ export default function AdminMap() {
     return () => window.removeEventListener("resize", resize);
   }, [draw]);
 
-  useEffect(() => { draw(); }, [draw, areas, panOffset, zoom, showGrid, showLabels, showImages, selectedArea]);
+  useEffect(() => { draw(); }, [draw, areas, depthSlope, panOffset, zoom, showGrid, showLabels, showImages, showDepthSlope, selectedArea]);
 
   useEffect(() => {
     setPanOffset({
@@ -321,6 +431,17 @@ export default function AdminMap() {
       y: 40,
     });
   }, []);
+
+  const getSlopeHandleAt = (sx: number, sy: number): "slope-shallow" | "slope-deep" | null => {
+    if (!showDepthSlope) return null;
+    const ds = depthSlopeRef.current;
+    const sShallow = worldToScreen(ds.shallowX, ds.shallowY);
+    const sDeep = worldToScreen(ds.deepX, ds.deepY);
+    const hr = 12;
+    if (Math.abs(sx - sShallow.x) < hr && Math.abs(sy - sShallow.y) < hr) return "slope-shallow";
+    if (Math.abs(sx - sDeep.x) < hr && Math.abs(sy - sDeep.y) < hr) return "slope-deep";
+    return null;
+  };
 
   const getHandleAt = (sx: number, sy: number): string | null => {
     if (!selectedArea) return null;
@@ -364,6 +485,18 @@ export default function AdminMap() {
       return;
     }
 
+    const slopeHandle = getSlopeHandleAt(e.clientX, e.clientY);
+    if (slopeHandle) {
+      setDragMode(slopeHandle);
+      const ds = depthSlopeRef.current;
+      const orig = slopeHandle === "slope-shallow"
+        ? { origX: ds.shallowX, origY: ds.shallowY }
+        : { origX: ds.deepX, origY: ds.deepY };
+      slopeDragStart.current = { x: e.clientX, y: e.clientY, ...orig };
+      setSelectedArea(null);
+      return;
+    }
+
     const handle = getHandleAt(e.clientX, e.clientY);
     if (handle) {
       const area = areasRef.current.find(a => a.id === selectedArea)!;
@@ -391,6 +524,19 @@ export default function AdminMap() {
       });
       return;
     }
+
+    if (dragMode === "slope-shallow" || dragMode === "slope-deep") {
+      const dx = (e.clientX - slopeDragStart.current.x) / zoom;
+      const dy = (e.clientY - slopeDragStart.current.y) / zoom;
+      const newX = Math.max(WORLD_LEFT, Math.min(WORLD_RIGHT, slopeDragStart.current.origX + dx));
+      const newY = Math.max(WATER_Y, Math.min(WORLD_HEIGHT, slopeDragStart.current.origY + dy));
+      setDepthSlope(prev => dragMode === "slope-shallow"
+        ? { ...prev, shallowX: newX, shallowY: newY }
+        : { ...prev, deepX: newX, deepY: newY }
+      );
+      return;
+    }
+
     if (!dragMode || !selectedArea) return;
     const dx = (e.clientX - dragStart.x) / zoom;
     const dy = (e.clientY - dragStart.y) / zoom;
@@ -497,8 +643,26 @@ export default function AdminMap() {
     setSelectedArea(id);
   };
 
+  const handleSave = () => {
+    saveMap(areas, depthSlope);
+    setSaveStatus("SAVED!");
+    setTimeout(() => setSaveStatus(""), 2000);
+  };
+
+  const handleLoad = () => {
+    const data = loadSavedMap();
+    if (data) {
+      setAreas(data.areas);
+      if (data.depthSlope) setDepthSlope(data.depthSlope);
+      setSaveStatus("LOADED!");
+    } else {
+      setSaveStatus("No saved data");
+    }
+    setTimeout(() => setSaveStatus(""), 2000);
+  };
+
   const exportData = () => {
-    const data = JSON.stringify(areas, null, 2);
+    const data = JSON.stringify({ areas, depthSlope, version: 1 }, null, 2);
     const blob = new Blob([data], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -513,9 +677,12 @@ export default function AdminMap() {
   const cursorStyle = (() => {
     if (isPanning) return "grabbing";
     if (dragMode === "move") return "move";
+    if (dragMode === "slope-shallow" || dragMode === "slope-deep") return "grab";
     if (dragMode?.includes("resize")) return "nwse-resize";
     return "crosshair";
   })();
+
+  const angleDeg = Math.round(Math.atan2(depthSlope.deepY - depthSlope.shallowY, depthSlope.shallowX - depthSlope.deepX) * 180 / Math.PI);
 
   return (
     <div style={{ width: "100vw", height: "100vh", overflow: "hidden", background: "#0a0e1a", position: "relative" }}>
@@ -565,6 +732,26 @@ export default function AdminMap() {
           >
             IMAGES
           </button>
+          <button
+            data-testid="btn-toggle-slope"
+            onClick={() => setShowDepthSlope(d => !d)}
+            style={{ padding: "3px 6px", borderRadius: 4, border: "1px solid rgba(231,76,60,0.3)", background: showDepthSlope ? "rgba(231,76,60,0.2)" : "transparent", color: showDepthSlope ? "#e74c3c" : "#aaa", fontSize: 9, fontFamily: "monospace", cursor: "pointer" }}
+          >
+            SLOPE
+          </button>
+        </div>
+
+        <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 8, marginBottom: 8 }}>
+          <div style={{ fontSize: 9, color: "#e74c3c", marginBottom: 4, fontWeight: "bold" }}>DEPTH SLOPE</div>
+          <div style={{ fontSize: 8, color: "#778", marginBottom: 4 }}>
+            Drag the green (shallow) and red (deep) handles on the map to set the ocean floor angle.
+          </div>
+          <div style={{ fontSize: 9, color: "#ccc", marginBottom: 2 }}>
+            Angle: <span style={{ color: "#e74c3c", fontWeight: "bold" }}>{angleDeg}deg</span>
+          </div>
+          <div style={{ fontSize: 8, color: "#667" }}>
+            Shallow Y: {Math.round(depthSlope.shallowY)} | Deep Y: {Math.round(depthSlope.deepY)}
+          </div>
         </div>
 
         <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 8, marginBottom: 8 }}>
@@ -659,8 +846,30 @@ export default function AdminMap() {
 
         <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
           <button
+            data-testid="btn-save"
+            onClick={handleSave}
+            style={{ flex: 1, padding: "5px 8px", borderRadius: 4, border: "1px solid rgba(46,204,113,0.5)", background: "rgba(46,204,113,0.15)", color: "#2ecc71", fontSize: 10, fontFamily: "monospace", cursor: "pointer", fontWeight: "bold" }}
+          >
+            SAVE MAP
+          </button>
+          <button
+            data-testid="btn-load"
+            onClick={handleLoad}
+            style={{ flex: 1, padding: "5px 8px", borderRadius: 4, border: "1px solid rgba(79,195,247,0.4)", background: "rgba(79,195,247,0.1)", color: "#4fc3f7", fontSize: 10, fontFamily: "monospace", cursor: "pointer" }}
+          >
+            LOAD
+          </button>
+        </div>
+        {saveStatus && (
+          <div style={{ fontSize: 10, color: "#2ecc71", textAlign: "center", marginTop: 4, fontWeight: "bold" }}>
+            {saveStatus}
+          </div>
+        )}
+
+        <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginTop: 6 }}>
+          <button
             data-testid="btn-reset"
-            onClick={() => { setAreas(DEFAULT_AREAS); setSelectedArea(null); }}
+            onClick={() => { setAreas(DEFAULT_AREAS); setDepthSlope(DEFAULT_DEPTH_SLOPE); setSelectedArea(null); }}
             style={{ padding: "3px 6px", borderRadius: 4, border: "1px solid rgba(255,60,60,0.3)", background: "rgba(255,60,60,0.1)", color: "#f66", fontSize: 9, fontFamily: "monospace", cursor: "pointer" }}
           >
             RESET
@@ -670,7 +879,7 @@ export default function AdminMap() {
             onClick={exportData}
             style={{ padding: "3px 6px", borderRadius: 4, border: "1px solid rgba(100,200,100,0.3)", background: "rgba(100,200,100,0.1)", color: "#6c6", fontSize: 9, fontFamily: "monospace", cursor: "pointer" }}
           >
-            EXPORT
+            EXPORT JSON
           </button>
         </div>
 

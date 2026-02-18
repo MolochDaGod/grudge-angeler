@@ -1,6 +1,49 @@
 import { useRef, useEffect, useState, useCallback } from "react";
 const BGM_URL = "/assets/bgm.mp3";
 
+const ADMIN_MAP_STORAGE_KEY = "grudge-angeler-admin-map";
+interface DepthSlopeData { shallowX: number; shallowY: number; deepX: number; deepY: number; }
+const ADMIN_REF_W = 1280;
+const ADMIN_REF_H = 720;
+function loadDepthSlope(): DepthSlopeData {
+  try {
+    const raw = localStorage.getItem(ADMIN_MAP_STORAGE_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      if (data.depthSlope &&
+          typeof data.depthSlope.shallowX === "number" &&
+          typeof data.depthSlope.shallowY === "number" &&
+          typeof data.depthSlope.deepX === "number" &&
+          typeof data.depthSlope.deepY === "number" &&
+          isFinite(data.depthSlope.shallowX) && isFinite(data.depthSlope.shallowY) &&
+          isFinite(data.depthSlope.deepX) && isFinite(data.depthSlope.deepY)) {
+        return data.depthSlope;
+      }
+    }
+  } catch {}
+  return { shallowX: 6600, shallowY: 352, deepX: -4040, deepY: 1902 };
+}
+let _depthSlope: DepthSlopeData | null = null;
+function getDepthSlope(): DepthSlopeData {
+  if (!_depthSlope) _depthSlope = loadDepthSlope();
+  return _depthSlope;
+}
+function reloadDepthSlope() { _depthSlope = loadDepthSlope(); }
+function getOceanFloorY(worldX: number, waterY: number, canvasW: number, canvasH: number): number {
+  const ds = getDepthSlope();
+  const scaleX = canvasW / ADMIN_REF_W;
+  const scaleY = canvasH / ADMIN_REF_H;
+  const sX = ds.shallowX * scaleX;
+  const sY = ds.shallowY * scaleY;
+  const dX = ds.deepX * scaleX;
+  const dY = ds.deepY * scaleY;
+  const range = dX - sX;
+  if (Math.abs(range) < 1) return waterY + 200;
+  const t = Math.max(0, Math.min(1, (worldX - sX) / range));
+  const floorY = sY + t * (dY - sY);
+  return Math.max(waterY + 30, floorY);
+}
+
 const SCALE = 4;
 const FRAME_H = 48;
 
@@ -1049,14 +1092,15 @@ export default function FishingGame() {
       r -= w;
       if (r <= 0) { fishType = ft; break; }
     }
-    const waterRange = canvasH - waterStartY;
-    const minY = waterStartY + waterRange * fishType.minDepth;
-    const maxY = canvasH - 60;
-    const y = minY + Math.random() * Math.max(10, maxY - minY);
     const direction = Math.random() > 0.5 ? 1 : -1;
     const viewLeft = -s.cameraX - 100;
     const viewRight = -s.cameraX + canvasW + 100;
     const x = direction > 0 ? viewLeft - 80 : viewRight + 80;
+    const floorY = getOceanFloorY(x, waterStartY, canvasW, canvasH);
+    const effectiveMaxY = Math.min(canvasH - 60, floorY);
+    const safeRange = Math.max(30, effectiveMaxY - waterStartY);
+    const minY = waterStartY + safeRange * fishType.minDepth;
+    const y = minY + Math.random() * Math.max(10, effectiveMaxY - minY);
     const baseSizeMult = 0.5 + Math.random() * Math.random() * 4.5;
     const ultraScale = fishType.baseScale || 1;
     const rightSizeReduction = rightRatio > 0.1 ? Math.max(0.3, 1 - rightRatio * 0.7) : 1;
@@ -1119,14 +1163,15 @@ export default function FishingGame() {
       predType = Math.random() < 0.7 ? PREDATOR_TYPES[0] : PREDATOR_TYPES[2];
     }
 
-    const waterRange = canvasH - waterStartY;
-    const minY = waterStartY + waterRange * 0.25;
-    const maxY = canvasH - 40;
-    const y = minY + Math.random() * (maxY - minY);
     const direction = Math.random() > 0.5 ? 1 : -1;
     const viewLeft = -s.cameraX - 200;
     const viewRight = -s.cameraX + canvasW + 200;
     const x = direction > 0 ? viewLeft - 150 : viewRight + 150;
+    const predFloorY = getOceanFloorY(x, waterStartY, canvasW, canvasH);
+    const predMaxY = Math.min(canvasH - 40, predFloorY);
+    const predRange = Math.max(30, predMaxY - waterStartY);
+    const minY = waterStartY + predRange * 0.25;
+    const y = minY + Math.random() * Math.max(10, predMaxY - minY);
     const sizeMultiplier = (0.8 + Math.random() * 0.6) * predType.size;
 
     const isMurky = s.weather === "storm" || s.weather === "rain" || s.weather === "fog";
@@ -1698,7 +1743,10 @@ export default function FishingGame() {
       const waterY = H * WATER_START_RATIO;
       const defaultFishermanX = W * FISHERMAN_X_RATIO;
 
-      if (s.playerX === 0) s.playerX = s.fishingLicense ? defaultFishermanX : W * 3.5;
+      if (s.playerX === 0) {
+        reloadDepthSlope();
+        s.playerX = s.fishingLicense ? defaultFishermanX : W * 3.5;
+      }
 
       if (s.worldObjects[0].x === 0 && s.worldObjects[0].y === 0) {
         const initObjY = pierY - 2;
