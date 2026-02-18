@@ -1836,7 +1836,7 @@ export default function FishingGame() {
         const leftLimit = s.fishingLicense ? pierLeftBound : licenseGateX;
         s.playerX = Math.max(leftLimit, Math.min(W * 4.8, s.playerX));
 
-        const beachShopSignX = W * 3.2 + s.licenseSignOffsetX;
+        const beachShopSignX = W * 2.6 + s.licenseSignOffsetX;
         s.nearLicenseSign = !s.inBoat && Math.abs(s.playerX - beachShopSignX) < 70 && s.gameState === "idle";
         if (!s.nearLicenseSign && s.showLicensePrompt) s.showLicensePrompt = false;
 
@@ -3776,8 +3776,8 @@ export default function FishingGame() {
 
         // License Sign - wooden sign post on beach
         const lsScale = s.licenseSignScale;
-        const signX = W * 3.2 + s.licenseSignOffsetX;
-        const signBeachProg = (signX - s.licenseSignOffsetX - beachStart) / (beachEnd - beachStart);
+        const signX = W * 2.6 + s.licenseSignOffsetX;
+        const signBeachProg = (W * 2.6 - beachStart) / (beachEnd - beachStart);
         const signBaseY = pierY + 10 + signBeachProg * 30 + s.licenseSignOffsetY;
         const signW = 90 * lsScale;
         const signH = 55 * lsScale;
@@ -6007,12 +6007,12 @@ export default function FishingGame() {
       return;
     }
     const glsScale = s.licenseSignScale;
-    const glsX = W * 3.2 + s.licenseSignOffsetX;
+    const glsX = W * 2.6 + s.licenseSignOffsetX;
     const glsW = 90 * glsScale;
     const glsH = 80 * glsScale;
     const beachS = W * 2.6;
     const beachE = W * 5.2;
-    const glsBP = (W * 3.2 - beachS) / (beachE - beachS);
+    const glsBP = (W * 2.6 - beachS) / (beachE - beachS);
     const glsBaseY = H * 0.38 + 10 + glsBP * 30 + s.licenseSignOffsetY;
     const glsTopY = glsBaseY - 80 * glsScale;
     if (worldX >= glsX && worldX <= glsX + glsW && worldY >= glsTopY && worldY <= glsTopY + glsH + 30) {
@@ -6216,10 +6216,10 @@ export default function FishingGame() {
       } else if (s.gizmoSelected === -13) {
         const canvas = canvasRef.current;
         if (canvas) {
-          const baseLsX = canvas.width * 3.2;
+          const baseLsX = canvas.width * 2.6;
           const bS = canvas.width * 2.6;
           const bE = canvas.width * 5.2;
-          const bP = (canvas.width * 3.2 - bS) / (bE - bS);
+          const bP = (canvas.width * 2.6 - bS) / (bE - bS);
           const baseLsBaseY = canvas.height * 0.38 + 10 + bP * 30;
           const baseLsTopY = baseLsBaseY - 80 * s.licenseSignScale;
           s.licenseSignOffsetX = (worldX - s.gizmoDragOffX) - baseLsX;
@@ -6265,9 +6265,9 @@ export default function FishingGame() {
         if (canvas) {
           const bS = canvas.width * 2.6;
           const bE = canvas.width * 5.2;
-          const bP = (canvas.width * 3.2 - bS) / (bE - bS);
+          const bP = (canvas.width * 2.6 - bS) / (bE - bS);
           const baseLsTopY = canvas.height * 0.38 + 10 + bP * 30 - 80 * s.licenseSignScale;
-          s.licenseSignOffsetX = (worldX - s.gizmoDragOffX) - canvas.width * 3.2;
+          s.licenseSignOffsetX = (worldX - s.gizmoDragOffX) - canvas.width * 2.6;
           s.licenseSignOffsetY = (worldY - s.gizmoDragOffY) - baseLsTopY;
         }
       } else if (s.gizmoSelected >= 0) {
