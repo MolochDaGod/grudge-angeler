@@ -829,6 +829,55 @@ interface ChapterProps {
   fromHome?: boolean;
 }
 
+function ChapterBackgroundSprite({ sprite, auraCss }: { sprite: SpriteData; auraCss: string }) {
+  const [frame, setFrame] = useState(1);
+
+  useEffect(() => {
+    if (sprite.isSingleImage) return;
+    const interval = setInterval(() => {
+      setFrame(f => (f % sprite.frameCount) + 1);
+    }, 400);
+    return () => clearInterval(interval);
+  }, [sprite.frameCount, sprite.isSingleImage]);
+
+  const imgSrc = sprite.isSingleImage ? sprite.src : `${sprite.framesDir}/${frame}.png`;
+
+  return (
+    <div style={{
+      position: "fixed",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      width: "min(90vw, 700px)",
+      height: "min(90vw, 700px)",
+      zIndex: 0,
+      pointerEvents: "none",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    }}>
+      <img
+        src={imgSrc}
+        alt=""
+        style={{
+          width: "100%",
+          height: "100%",
+          imageRendering: "pixelated",
+          objectFit: "contain",
+          opacity: 0.06,
+          filter: `drop-shadow(0 0 80px rgba(${auraCss}, 0.3)) saturate(1.5)`,
+        }}
+      />
+      <div style={{
+        position: "absolute",
+        inset: "-20%",
+        background: `radial-gradient(circle, transparent 20%, #0a0a12 70%)`,
+        pointerEvents: "none",
+      }} />
+    </div>
+  );
+}
+
 function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoToPage, fromHome }: ChapterProps) {
   const paragraphs = fish.lore.split("\n\n");
 
@@ -839,8 +888,10 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
         maxWidth: "900px",
         margin: "0 auto",
         padding: "40px 24px 80px",
+        position: "relative",
       }}
     >
+      <ChapterBackgroundSprite sprite={fish.sprite} auraCss={fish.auraCss} />
       <div
         style={{
           display: "flex",
