@@ -355,9 +355,10 @@ const CHUM_ITEMS: ChumItem[] = [
 ];
 
 const PREDATOR_TYPES = [
-  { name: "Shark", folder: "1", idleFrames: 4, walkFrames: 6, attackFrames: 6, hurtFrames: 2, deathFrames: 6, specialFrames: 6, catchAsset: "/assets/predators/1/Idle.png", catchW: 96, catchH: 96, points: 400, rarity: "rare" as const, weight: 3, speed: 2.2, size: 1.8, scareRadius: 200, description: "A fearsome shark prowling the deep waters.", tint: null as string | null },
-  { name: "Kraken", folder: "2", idleFrames: 6, walkFrames: 6, attackFrames: 6, hurtFrames: 2, deathFrames: 6, specialFrames: 6, catchAsset: "/assets/predators/2/Idle.png", catchW: 96, catchH: 96, points: 800, rarity: "legendary" as const, weight: 1, speed: 1.5, size: 2.2, scareRadius: 280, description: "A massive squid from the abyss, feared by all.", tint: null as string | null },
-  { name: "Sea Devil", folder: "3", idleFrames: 4, walkFrames: 6, attackFrames: 6, hurtFrames: 2, deathFrames: 6, specialFrames: 6, catchAsset: "/assets/predators/3/Idle.png", catchW: 96, catchH: 96, points: 600, rarity: "rare" as const, weight: 2, speed: 1.8, size: 2.0, scareRadius: 240, description: "A monstrous crab creature from the deep trenches.", tint: null as string | null },
+  { name: "Shark", folder: "shark", idleFrames: 4, walkFrames: 6, attackFrames: 6, hurtFrames: 2, deathFrames: 6, specialFrames: 6, catchAsset: "/assets/predators/shark/Idle.png", catchW: 96, catchH: 96, points: 400, rarity: "rare" as const, weight: 3, speed: 2.2, size: 1.8, scareRadius: 200, description: "A fearsome shark prowling the deep waters.", tint: null as string | null },
+  { name: "Kraken", folder: "kraken", idleFrames: 6, walkFrames: 6, attackFrames: 6, hurtFrames: 2, deathFrames: 6, specialFrames: 6, catchAsset: "/assets/predators/kraken/Idle.png", catchW: 96, catchH: 96, points: 800, rarity: "legendary" as const, weight: 1, speed: 1.5, size: 2.2, scareRadius: 280, description: "A massive squid from the abyss, feared by all.", tint: null as string | null },
+  { name: "Sea Devil", folder: "crabaggresive", idleFrames: 4, walkFrames: 6, attackFrames: 6, hurtFrames: 2, deathFrames: 6, specialFrames: 6, catchAsset: "/assets/predators/crabaggresive/Idle.png", catchW: 96, catchH: 96, points: 600, rarity: "rare" as const, weight: 2, speed: 1.8, size: 2.0, scareRadius: 240, description: "A monstrous crab creature from the deep trenches.", tint: null as string | null },
+  { name: "Shadow Leviathan", folder: "leviathan", idleFrames: 4, walkFrames: 6, attackFrames: 4, hurtFrames: 2, deathFrames: 6, specialFrames: 4, catchAsset: "/assets/predators/leviathan/Idle.png", catchW: 96, catchH: 96, points: 1200, rarity: "ultra_rare" as const, weight: 1, speed: 2.8, size: 2.8, scareRadius: 350, description: "An ancient crimson terror from the deepest abyss. Its shadow alone drives fish to madness.", tint: null as string | null },
 ];
 
 interface NpcShopItem {
@@ -980,6 +981,13 @@ export default function FishingGame() {
     predatorAlert: "" as string,
     predatorAlertTimer: 0,
     boatDamageShake: 0,
+    guardianActive: false,
+    guardianUsedThisCast: false,
+    guardianFrame: 0,
+    guardianFrameTimer: 0,
+    guardianState: "idle" as "idle" | "defending" | "cooldown",
+    guardianDefendTimer: 0,
+    guardianAlertTimer: 0,
     adminOpen: false,
     adminTab: "assets" as "assets" | "gizmo" | "trace" | "map",
     gizmoEnabled: false,
@@ -1311,7 +1319,12 @@ export default function FishingGame() {
 
     let predType;
     if (inZone4) {
-      predType = PREDATOR_TYPES[Math.floor(Math.random() * 3)];
+      const roll = Math.random();
+      if (roll < 0.15) {
+        predType = PREDATOR_TYPES[3];
+      } else {
+        predType = PREDATOR_TYPES[Math.floor(Math.random() * 3)];
+      }
     } else {
       predType = Math.random() < 0.7 ? PREDATOR_TYPES[0] : PREDATOR_TYPES[2];
     }
@@ -1455,13 +1468,16 @@ export default function FishingGame() {
         `/assets/creatures/${f.creatureFolder}/Walk.png`,
       ]),
       ...Array.from({length: 17}, (_, i) => `/assets/icons/Icons_${String(i+1).padStart(2,'0')}.png`),
-      ...["1","2","3"].flatMap(n => [
+      ...["shark","kraken","crabaggresive","leviathan"].flatMap(n => [
         `/assets/predators/${n}/Idle.png`,
         `/assets/predators/${n}/Walk.png`,
         `/assets/predators/${n}/Attack1.png`,
         `/assets/predators/${n}/Hurt.png`,
         `/assets/predators/${n}/Death.png`,
       ]),
+      "/assets/guardian/Idle.png",
+      "/assets/guardian/Attack1.png",
+      "/assets/guardian/Special.png",
       "/assets/logo.png",
       "/assets/icons/gbux.png",
       "/assets/icons/faction_fabled.png",
@@ -4380,14 +4396,36 @@ export default function FishingGame() {
               pred.attackCooldown = 300;
               
               if (s.gameState === "reeling" || s.gameState === "bite") {
-                s.predatorAlert = `${pred.type.name} stole your catch!`;
-                s.predatorAlertTimer = 180;
-                s.gameState = "idle";
-                s.currentCatch = null;
-                s.currentJunk = null;
-                s.combo = 0;
-                s.screenShake = 8;
-                addParticles(pred.x, pred.y, 15, "#ff4444", 3, "splash");
+                if (s.guardianActive && !s.guardianUsedThisCast && s.guardianState === "idle") {
+                  s.guardianUsedThisCast = true;
+                  s.guardianState = "defending";
+                  s.guardianDefendTimer = 60;
+                  s.guardianFrame = 0;
+                  s.guardianFrameTimer = 0;
+                  pred.state = "hurt";
+                  pred.stateTimer = 40;
+                  pred.frame = 0;
+                  pred.health -= 2;
+                  pred.attackCooldown = 600;
+                  const knockDir = pred.direction > 0 ? -1 : 1;
+                  pred.x += knockDir * 80;
+                  pred.y -= 20;
+                  s.predatorAlert = "Guardian defends your catch!";
+                  s.predatorAlertTimer = 180;
+                  s.guardianAlertTimer = 120;
+                  s.screenShake = 5;
+                  addParticles(pred.x, pred.y, 20, "#4488ff", 4, "splash");
+                  addParticles(s.hookX, s.hookY, 10, "#ffdd44", 2.5, "sparkle");
+                } else {
+                  s.predatorAlert = `${pred.type.name} stole your catch!`;
+                  s.predatorAlertTimer = 180;
+                  s.gameState = "idle";
+                  s.currentCatch = null;
+                  s.currentJunk = null;
+                  s.combo = 0;
+                  s.screenShake = 8;
+                  addParticles(pred.x, pred.y, 15, "#ff4444", 3, "splash");
+                }
               }
             }
           } else {
@@ -4450,7 +4488,7 @@ export default function FishingGame() {
               const vitBonus = 1 + s.attributes.Vitality * 0.02 * (1 + s.attributes.Tactics * 0.01);
               s.biteTimer = (120 + Math.random() * 80) * vitBonus;
               s.exclamationTimer = 0;
-              const predIconMap: Record<string, string> = { "Shark": "/assets/icons/fish/shark-predator.png", "Kraken": "/assets/icons/fish/kraken-predator.png", "Sea Devil": "/assets/icons/fish/sea-devil-predator.png" };
+              const predIconMap: Record<string, string> = { "Shark": "/assets/icons/fish/shark-predator.png", "Kraken": "/assets/icons/fish/kraken-predator.png", "Sea Devil": "/assets/icons/fish/sea-devil-predator.png", "Shadow Leviathan": "/assets/predators/leviathan/Idle.png" };
               s.currentCatch = { 
                 name: pred.type.name, icon: predIconMap[pred.type.name], catchAsset: pred.type.catchAsset, catchW: pred.type.catchW, catchH: pred.type.catchH, 
                 creatureFolder: pred.type.folder, idleFrames: pred.type.idleFrames, walkFrames: pred.type.walkFrames, 
@@ -4571,6 +4609,106 @@ export default function FishingGame() {
         
         
         ctx.globalAlpha = 1;
+      }
+
+      // --- GUARDIAN DEFENDER UPDATE & RENDER ---
+      {
+        const centerX = -s.cameraX + W / 2;
+        const zone3Right = -(W * 1);
+        const inDeepZone = centerX <= zone3Right;
+        s.guardianActive = inDeepZone;
+
+        if (s.guardianActive) {
+          if (s.guardianState === "defending") {
+            s.guardianDefendTimer -= dt;
+            s.guardianFrameTimer += dt;
+            if (s.guardianFrameTimer > 4) {
+              s.guardianFrameTimer = 0;
+              s.guardianFrame = (s.guardianFrame + 1) % 6;
+            }
+            if (s.guardianDefendTimer <= 0) {
+              s.guardianState = "cooldown";
+            }
+          } else {
+            s.guardianFrameTimer += dt;
+            if (s.guardianFrameTimer > 8) {
+              s.guardianFrameTimer = 0;
+              s.guardianFrame = (s.guardianFrame + 1) % 4;
+            }
+          }
+
+          if (s.guardianAlertTimer > 0) s.guardianAlertTimer -= dt;
+
+          const guardianScale = SCALE * 0.9;
+          const GF = 96;
+          const hookActive = s.gameState === "waiting" || s.gameState === "bite" || s.gameState === "reeling";
+          let gx: number, gy: number;
+          if (hookActive) {
+            gx = s.hookX + 60;
+            gy = Math.max(waterY + 30, s.hookY - 50);
+          } else {
+            gx = s.playerX - 60;
+            gy = waterY + 40;
+          }
+
+          const guardianBob = Math.sin(s.time * 0.04) * 4;
+          gy += guardianBob;
+
+          let guardSrc: string;
+          let guardFrames: number;
+          if (s.guardianState === "defending") {
+            guardSrc = "/assets/guardian/Attack1.png";
+            guardFrames = 6;
+          } else {
+            guardSrc = "/assets/guardian/Idle.png";
+            guardFrames = 4;
+          }
+
+          const guardImg = getImg(guardSrc);
+          if (guardImg && guardImg.complete) {
+            const depthVal = (gy - waterY) / Math.max(1, H - waterY);
+            const guardAlpha = (0.9 - depthVal * 0.2) * (s.guardianState === "cooldown" && s.guardianUsedThisCast ? 0.5 : 1.0);
+            ctx.save();
+            ctx.globalAlpha = Math.max(0.15, guardAlpha);
+            const flipDir = hookActive ? (s.hookX > gx ? 1 : -1) : -1;
+            const drawGX = flipDir < 0 ? gx + GF * guardianScale : gx;
+            ctx.translate(drawGX, gy);
+            if (flipDir < 0) ctx.scale(-1, 1);
+            ctx.drawImage(
+              guardImg,
+              s.guardianFrame * GF, 0, GF, GF,
+              0, 0, GF * guardianScale, GF * guardianScale
+            );
+            ctx.restore();
+
+            if (s.guardianAlertTimer > 0) {
+              ctx.save();
+              ctx.globalAlpha = Math.min(1, s.guardianAlertTimer / 30);
+              ctx.fillStyle = "#4488ff";
+              ctx.strokeStyle = "#000";
+              ctx.lineWidth = 2;
+              ctx.font = "bold 11px monospace";
+              ctx.textAlign = "center";
+              const alertText = s.guardianUsedThisCast ? "Protected!" : "Guardian Ready";
+              ctx.strokeText(alertText, gx + 20, gy - 12);
+              ctx.fillText(alertText, gx + 20, gy - 12);
+              ctx.restore();
+            }
+
+            if (!s.guardianUsedThisCast && hookActive && s.guardianState === "idle") {
+              ctx.save();
+              ctx.globalAlpha = 0.4 + Math.sin(s.time * 0.05) * 0.2;
+              const shieldGrad = ctx.createRadialGradient(gx + 20, gy + 30, 5, gx + 20, gy + 30, 35);
+              shieldGrad.addColorStop(0, "rgba(68,136,255,0.3)");
+              shieldGrad.addColorStop(1, "rgba(68,136,255,0)");
+              ctx.fillStyle = shieldGrad;
+              ctx.beginPath();
+              ctx.arc(gx + 20, gy + 30, 35, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.restore();
+            }
+          }
+        }
       }
 
       // --- DRAW UNDERWATER PLANTS (in front of fish layer) ---
@@ -6408,6 +6546,9 @@ export default function FishingGame() {
       s.gameState = "casting";
       s.castPower = 0;
       s.castDirection = 1;
+      s.guardianUsedThisCast = false;
+      s.guardianState = "idle";
+      s.guardianDefendTimer = 0;
       if (s.inBoat) {
         s.boatStanding = true;
         s.boatRowing = false;

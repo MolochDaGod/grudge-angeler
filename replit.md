@@ -39,7 +39,8 @@ The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a f
 - **World Layout (8 Scenes):** A horizontally scrolling world divided into distinct scenes, influencing fish rarity and size.
 - **Camera System:** Dynamic camera following the player/boat, clamped to world bounds, with parallax scrolling for background elements and a binoculars mode.
 - **Swimming Mechanics:** Jump arc into water with parabolic trajectory, horizontal displacement, and enhanced splash; character sprite rotates based on vertical movement direction.
-- **Predator System:** Three types of predators (Shark, Kraken, Sea Devil) with AI behaviors (patrol, chase, attack, flee), affecting fish and potentially the player.
+- **Predator System:** Four types of predators (Shark, Kraken, Sea Devil, Shadow Leviathan) with AI behaviors (patrol, chase, attack, flee), affecting fish and potentially the player. Shadow Leviathan is ultra_rare, spawns 15% in deepest zone with red/black recolored sprites.
+- **Guardian Defender:** Merman creature that appears in deep zones (zone 3+). Once per cast, intercepts predator attacks to protect the player's catch. Shows attack animation and shield glow when ready. Resets each cast.
 - **Ocean Depth Zones:** Three distinct depth zones (shallow, mid-depth, deep ocean) with visual transitions and varying fish populations.
 - **3D Visual Effects:** Includes god rays, underwater particles, depth fog, and caustic light patches.
 - **Underwater Plants:** 10 plant types swaying with a wave effect, positioned across the ocean floor.
@@ -73,3 +74,5 @@ The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a f
 - **2026-02-18:** Beach Shop & Fishing License: Added bait shop building and wooden license sign on beach area. Fishing License costs 100 gbux and gates access to the dock/pier area and main equipment shop. Players start on the beach and must earn money from beach fishing/crabs before unlocking the dock. Boat still costs 400 gbux at the pier.
 - **2026-02-18:** Crab Bait System: All 10 crabs become consumable live bait when caught. 3 tiers with escalating legendary boosts (1.5x/3.0x/6.0x). Without crab bait, legendary/ultra_rare spawn rates are heavily reduced.
 - **2026-02-18:** Added Crimson Crab and Shadow Crab (rare beach crabs). Species count: 30.
+- **2026-02-18:** Shadow Leviathan Predator: 4th predator type with red/black recolored sprites in /assets/predators/leviathan/. Ultra_rare, speed 2.8, size 2.8, 1200 points. Spawns 15% in deepest zone (zone 4). Fixed predator folder references from "1","2","3" to actual directory names.
+- **2026-02-18:** Guardian Defender: Merman sprite in /assets/guardian/. Automatically appears in deep zones (zone 3+) near the player's hook. Once per cast, intercepts predator steal attacks - knocks predator back, deals damage, shows attack animation with blue particles and shield glow. Resets each new cast.
