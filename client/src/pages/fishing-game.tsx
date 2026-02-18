@@ -1395,6 +1395,10 @@ export default function FishingGame() {
       "/assets/char_fabled.png",
       "/assets/char_legion.png",
       "/assets/char_crusade.png",
+      ...NPC_DEFS.flatMap(npc => [
+        `/assets/npcs/${npc.spriteFolder}/Idle.png`,
+        `/assets/npcs/${npc.spriteFolder}/Walk.png`,
+      ]),
     ];
     Promise.all(assets.map(a => loadImage(a)));
     generateBounties();
