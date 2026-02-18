@@ -2,6 +2,7 @@ import type { Express, Request, Response, CookieOptions } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertLeaderboardSchema } from "@shared/schema";
+import { registerImageRoutes } from "./replit_integrations/image/routes";
 
 const RARITY_COLORS: Record<string, number> = {
   common: 0xa0a0a0,
@@ -287,6 +288,8 @@ export async function registerRoutes(
     res.clearCookie("ga_session", { path: "/" });
     res.json({ ok: true });
   });
+
+  registerImageRoutes(app);
 
   return httpServer;
 }

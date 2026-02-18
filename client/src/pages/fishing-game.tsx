@@ -1442,6 +1442,8 @@ export default function FishingGame() {
         `/assets/npcs/${npc.spriteFolder}/Walk.png`,
       ]),
       ...UW_BG_IMAGES.map(img => img.src),
+      "/assets/creatures/whale-blue-legendary/whale_frame1.png",
+      "/assets/creatures/whale-blue-legendary/whale_frame2.png",
     ];
     Promise.all(assets.map(a => loadImage(a)));
     generateBounties();
@@ -4173,6 +4175,26 @@ export default function FishingGame() {
               ctx.drawImage(crabImg, sx, sy, fs, fs, 0, 0, fs * crabScale, fs * crabScale);
             } else {
               ctx.drawImage(crabImg, sx, sy, fs, fs, fish.x, fish.y, fs * crabScale, fs * crabScale);
+            }
+            ctx.restore();
+          }
+        } else if (fish.type.name === "Whale") {
+          const whaleFrameIdx = Math.floor(s.time / 90) % 2;
+          const whaleSrc = whaleFrameIdx === 0
+            ? "/assets/creatures/whale-blue-legendary/whale_frame1.png"
+            : "/assets/creatures/whale-blue-legendary/whale_frame2.png";
+          const whaleImg = getImg(whaleSrc);
+          if (whaleImg && whaleImg.complete && whaleImg.naturalWidth > 0) {
+            const wScale = creatureScale * 0.9;
+            const dw = whaleImg.naturalWidth * wScale;
+            const dh = whaleImg.naturalHeight * wScale;
+            ctx.save();
+            if (fish.direction < 0) {
+              ctx.translate(fish.x + dw, fish.y);
+              ctx.scale(-1, 1);
+              ctx.drawImage(whaleImg, 0, 0, dw, dh);
+            } else {
+              ctx.drawImage(whaleImg, fish.x, fish.y, dw, dh);
             }
             ctx.restore();
           }

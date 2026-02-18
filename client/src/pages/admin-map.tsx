@@ -133,6 +133,8 @@ export default function AdminMap() {
   const [newAreaColor, setNewAreaColor] = useState(0);
   const [newAreaLabel, setNewAreaLabel] = useState("New Area");
   const [saveStatus, setSaveStatus] = useState<string>("");
+  const [surfaceGenerating, setSurfaceGenerating] = useState(false);
+  const [surfaceResult, setSurfaceResult] = useState<string | null>(null);
   const loadedImages = useRef<Map<string, HTMLImageElement>>(new Map());
   const areasRef = useRef(areas);
   areasRef.current = areas;
@@ -881,6 +883,63 @@ export default function AdminMap() {
           >
             EXPORT JSON
           </button>
+        </div>
+
+        <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 8, marginTop: 8, marginBottom: 6 }}>
+          <div style={{ fontSize: 9, color: "#e040fb", marginBottom: 4, fontWeight: "bold" }}>AI SURFACE GEN</div>
+          <div style={{ fontSize: 7, color: "#556", marginBottom: 4 }}>
+            Generate underwater background layer images using AI.
+          </div>
+          <button
+            data-testid="btn-generate-surface"
+            disabled={surfaceGenerating}
+            onClick={async () => {
+              setSurfaceGenerating(true);
+              setSurfaceResult(null);
+              try {
+                const resp = await fetch("/api/generate-image", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    prompt: "Pixel art underwater ocean background layer for a 2D fishing game. Seamless horizontal tileable pattern. Deep blue ocean gradient with coral reef silhouettes, kelp forests, and scattered light rays. 16-bit pixel art style, moody atmosphere, side-scrolling game perspective.",
+                    size: "1024x1024",
+                  }),
+                });
+                const data = await resp.json();
+                if (!resp.ok) throw new Error(data.error || "Failed");
+                const url = data.b64_json ? `data:image/png;base64,${data.b64_json}` : data.url;
+                setSurfaceResult(url || null);
+              } catch (err: any) {
+                setSurfaceResult("ERROR: " + (err.message || "Failed"));
+              } finally {
+                setSurfaceGenerating(false);
+              }
+            }}
+            style={{
+              width: "100%", padding: "5px 8px", borderRadius: 4,
+              border: "1px solid rgba(224,64,251,0.4)", background: "rgba(224,64,251,0.12)",
+              color: "#e040fb", fontSize: 10, fontFamily: "monospace", cursor: surfaceGenerating ? "wait" : "pointer",
+              fontWeight: "bold", opacity: surfaceGenerating ? 0.5 : 1,
+            }}
+          >
+            {surfaceGenerating ? "GENERATING..." : "GENERATE SURFACE"}
+          </button>
+          {surfaceResult && !surfaceResult.startsWith("ERROR") && (
+            <div style={{ marginTop: 4 }}>
+              <img src={surfaceResult} alt="Generated surface" style={{ width: "100%", borderRadius: 4, border: "1px solid rgba(224,64,251,0.2)" }} />
+              <a
+                href={surfaceResult}
+                download="underwater_surface_generated.png"
+                data-testid="link-download-surface"
+                style={{ display: "block", textAlign: "center", marginTop: 2, fontSize: 8, color: "#2ecc71", textDecoration: "underline" }}
+              >
+                DOWNLOAD
+              </a>
+            </div>
+          )}
+          {surfaceResult && surfaceResult.startsWith("ERROR") && (
+            <div style={{ fontSize: 8, color: "#e74c3c", marginTop: 4 }}>{surfaceResult}</div>
+          )}
         </div>
 
         <div style={{ fontSize: 8, color: "#445", marginTop: 6 }}>

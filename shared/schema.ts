@@ -35,3 +35,5 @@ export const insertLeaderboardSchema = createInsertSchema(leaderboardEntries).om
 
 export type InsertLeaderboardEntry = z.infer<typeof insertLeaderboardSchema>;
 export type LeaderboardEntry = typeof leaderboardEntries.$inferSelect;
+
+export * from "./models/chat";

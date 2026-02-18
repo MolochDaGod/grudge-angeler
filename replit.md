@@ -64,6 +64,10 @@ The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a f
 - **GrudgeSDK:** Client for Grudge Studio ObjectStore API.
 
 ## Recent Changes
+- **2026-02-18:** Admin Fish Editor: New /adminfish page with fish dropdown, sprite preview canvas with animation player (play/pause/prev/next/speed control), visual overrides (tint, scale), flip toggle, idle/walk sprite switching, and AI-powered sprite generation using gpt-image-1.
+- **2026-02-18:** AI Image Generation: Server-side /api/generate-image endpoint registered via replit_integrations, supports sprite and surface generation for admin tools.
+- **2026-02-18:** Whale 2-Frame Animation: Whale sprites use two individual frame images (whale_frame1.png, whale_frame2.png) alternating every ~1.5 seconds instead of a sprite sheet.
+- **2026-02-18:** Admin Map Generate Surface: Added AI-powered "Generate Surface" button to admin map for creating underwater background layer images.
 - **2026-02-18:** Beach Shop & Fishing License: Added bait shop building and wooden license sign on beach area. Fishing License costs 100 gbux and gates access to the dock/pier area and main equipment shop. Players start on the beach and must earn money from beach fishing/crabs before unlocking the dock. Boat still costs 400 gbux at the pier.
 - **2026-02-18:** Crab Bait System: All 10 crabs become consumable live bait when caught. 3 tiers with escalating legendary boosts (1.5x/3.0x/6.0x). Without crab bait, legendary/ultra_rare spawn rates are heavily reduced.
 - **2026-02-18:** Added Crimson Crab and Shadow Crab (rare beach crabs). Species count: 30.
