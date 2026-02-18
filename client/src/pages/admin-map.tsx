@@ -22,6 +22,13 @@ interface MapArea {
   h: number;
   color: string;
   locked: boolean;
+  zIndex: number;
+  isFish?: boolean;
+  isCrab?: boolean;
+  canSwim?: boolean;
+  isDock?: boolean;
+  isSand?: boolean;
+  isPredator?: boolean;
 }
 
 interface DepthSlope {
@@ -55,16 +62,16 @@ const DEFAULT_DEPTH_SLOPE: DepthSlope = {
 };
 
 const DEFAULT_AREAS: MapArea[] = [
-  { id: "sky", label: "Sky", x: WORLD_LEFT, y: 0, w: WORLD_WIDTH, h: PIER_Y, color: "rgba(135,206,235,0.2)", locked: false },
-  { id: "pier-surface", label: "Pier / Dock Surface", x: REF_W * -0.2, y: PIER_Y - 10, w: REF_W * 3.2, h: 30, color: "rgba(141,110,99,0.5)", locked: false },
-  { id: "beach", label: "Beach / Sand", x: REF_W * 2.6, y: PIER_Y - 30, w: REF_W * 2.5, h: WATER_Y - PIER_Y + 80, color: "rgba(228,196,120,0.4)", locked: false },
-  { id: "shallow", label: "Shallow Water", x: 0, y: WATER_Y, w: REF_W * 5, h: 150, color: "rgba(100,181,246,0.3)", locked: false },
-  { id: "mid-water", label: "Mid Water", x: -REF_W, y: WATER_Y + 150, w: REF_W * 6, h: 250, color: "rgba(30,100,180,0.3)", locked: false },
-  { id: "deep-water", label: "Deep Water", x: -(REF_W * 3) - 200, y: WATER_Y + 400, w: REF_W * 4, h: 400, color: "rgba(15,50,120,0.35)", locked: false },
-  { id: "abyss", label: "Abyss", x: -(REF_W * 3) - 200, y: WATER_Y + 800, w: REF_W * 3, h: 600, color: "rgba(8,15,40,0.5)", locked: false },
-  { id: "crab-zone", label: "Crab Area", x: REF_W * 3, y: PIER_Y + 5, w: REF_W * 1.5, h: 40, color: "rgba(255,140,60,0.35)", locked: false },
-  { id: "predator-deep", label: "Predator Zone (Sharks)", x: -(REF_W * 2), y: WATER_Y + 300, w: REF_W * 2, h: 500, color: "rgba(200,30,30,0.2)", locked: false },
-  { id: "predator-abyss", label: "Predator Zone (Kraken)", x: -(REF_W * 3) - 200, y: WATER_Y + 700, w: REF_W * 1.5, h: 700, color: "rgba(150,20,60,0.2)", locked: false },
+  { id: "sky", label: "Sky", x: WORLD_LEFT, y: 0, w: WORLD_WIDTH, h: PIER_Y, color: "rgba(135,206,235,0.2)", locked: false, zIndex: 1 },
+  { id: "beach", label: "Beach / Sand", x: REF_W * 2.6, y: PIER_Y - 30, w: REF_W * 2.5, h: WATER_Y - PIER_Y + 80, color: "rgba(228,196,120,0.4)", locked: false, zIndex: 5, isSand: true, isCrab: true },
+  { id: "shallow", label: "Shallow Water", x: 0, y: WATER_Y, w: REF_W * 5, h: 150, color: "rgba(100,181,246,0.3)", locked: false, zIndex: 15, isFish: true, canSwim: true },
+  { id: "mid-water", label: "Mid Water", x: -REF_W, y: WATER_Y + 150, w: REF_W * 6, h: 250, color: "rgba(30,100,180,0.3)", locked: false, zIndex: 15, isFish: true, canSwim: true },
+  { id: "deep-water", label: "Deep Water", x: -(REF_W * 3) - 200, y: WATER_Y + 400, w: REF_W * 4, h: 400, color: "rgba(15,50,120,0.35)", locked: false, zIndex: 15, isFish: true, canSwim: true },
+  { id: "abyss", label: "Abyss", x: -(REF_W * 3) - 200, y: WATER_Y + 800, w: REF_W * 3, h: 600, color: "rgba(8,15,40,0.5)", locked: false, zIndex: 15, isFish: true, canSwim: true },
+  { id: "pier-surface", label: "Pier / Dock Surface", x: REF_W * -0.2, y: PIER_Y - 10, w: REF_W * 3.2, h: 30, color: "rgba(141,110,99,0.5)", locked: false, zIndex: 50, isDock: true },
+  { id: "crab-zone", label: "Crab Area", x: REF_W * 3, y: PIER_Y + 5, w: REF_W * 1.5, h: 40, color: "rgba(255,140,60,0.35)", locked: false, zIndex: 10, isCrab: true, isSand: true },
+  { id: "predator-deep", label: "Predator Zone (Sharks)", x: -(REF_W * 2), y: WATER_Y + 300, w: REF_W * 2, h: 500, color: "rgba(200,30,30,0.2)", locked: false, zIndex: 20, isFish: true, canSwim: true, isPredator: true },
+  { id: "predator-abyss", label: "Predator Zone (Kraken)", x: -(REF_W * 3) - 200, y: WATER_Y + 700, w: REF_W * 1.5, h: 700, color: "rgba(150,20,60,0.2)", locked: false, zIndex: 20, isFish: true, canSwim: true, isPredator: true },
 ];
 
 const GAME_IMAGES: GameImage[] = [
