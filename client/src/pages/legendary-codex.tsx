@@ -47,6 +47,7 @@ function CodexAnimatedSprite({ sprite, size, tint }: { sprite: SpriteData; size:
           display: "block",
           animation: `${animId} ${sprite.frames * 0.25}s steps(${sprite.frames}) infinite`,
           filter: tint ? `drop-shadow(0 0 6px ${tint})` : undefined,
+          mixBlendMode: "screen",
         }}
       />
     </div>

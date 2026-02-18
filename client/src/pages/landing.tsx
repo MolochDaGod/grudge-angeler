@@ -260,6 +260,7 @@ function AnimatedSprite({ sprite, size, tint }: {
           imageRendering: "pixelated",
           animation: `${animId} ${sprite.frames * 0.25}s steps(${sprite.frames}) infinite`,
           filter: tint ? `drop-shadow(0 0 4px ${tint})` : undefined,
+          mixBlendMode: "screen",
         }} />
       </div>
     );
@@ -284,6 +285,7 @@ function AnimatedSprite({ sprite, size, tint }: {
           display: "block",
           animation: `${animId} ${sprite.frames * 0.25}s steps(${sprite.frames}) infinite`,
           filter: tint ? `drop-shadow(0 0 6px ${tint})` : undefined,
+          mixBlendMode: "screen",
         }}
       />
     </div>
