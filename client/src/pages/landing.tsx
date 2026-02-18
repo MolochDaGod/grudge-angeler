@@ -29,6 +29,9 @@ import imgCelestialWhale from "@/assets/images/celestial-whale-cosmic-ultra_rare
 import imgNeonEel from "@/assets/images/neon-eel-neon-ultra_rare.png";
 import imgGoldenSalmon from "@/assets/images/golden-salmon-gold-ultra_rare.png";
 import imgShadowLeviathan from "@/assets/images/shadow-leviathan-shadow-ultra_rare.png";
+import imgGiantOctopus from "@/assets/images/giant-octopus-purple-legendary.png";
+import imgGiantSquid from "@/assets/images/giant-squid-blue-legendary.png";
+import imgSealAtTheSeam from "@/assets/images/seal-at-the-seam-cosmic-ultra_rare.png";
 const imgRedCrab = "/assets/icons/fish/red-crab-red-common.png";
 const imgBlueCrab = "/assets/icons/fish/blue-crab-blue-common.png";
 const imgGreenCrab = "/assets/icons/fish/green-crab-green-common.png";
@@ -171,6 +174,7 @@ const allFish: LandingFish[] = [
   { name: "Electric Eel", rarity: "uncommon", points: 65, desc: "A shocking eel crackling with electric charge.", img: imgElectricEel },
   { name: "Blue Ring Octopus", rarity: "uncommon", points: 55, desc: "A small but deadly octopus with glowing blue rings.", img: imgBlueOctopus },
   { name: "Catfish", rarity: "uncommon", points: 75, desc: "A bottom-dweller with long whiskers.", img: imgCatfish },
+  { name: "Giant Octopus", rarity: "uncommon", points: 70, desc: "A purple giant with eight crushing arms. Incredibly intelligent.", img: imgGiantOctopus },
   { name: "Purple Crab", rarity: "uncommon", points: 15, desc: "An uncommon purple crab with iridescent shell.", img: imgPurpleCrab },
   { name: "Gold Crab", rarity: "uncommon", points: 25, desc: "A rare golden crab. Prized for its shimmering shell.", img: imgGoldCrab },
   { name: "Dark Crab", rarity: "uncommon", points: 20, desc: "A dark-shelled crab with powerful pincers.", img: imgDarkCrab },
@@ -181,6 +185,7 @@ const allFish: LandingFish[] = [
   { name: "Anglerfish", rarity: "rare", points: 120, desc: "A deep-sea predator with a bioluminescent lure.", img: imgAnglerfish },
   { name: "Swordfish", rarity: "rare", points: 150, desc: "A powerful ocean predator with a sharp bill.", img: imgSwordfish },
   { name: "Deep Sea Angler", rarity: "rare", points: 140, desc: "A pitch-black anglerfish with a sinister yellow glow.", img: imgDeepAngler },
+  { name: "Giant Squid", rarity: "rare", points: 130, desc: "A massive blue squid from the abyss. Eyes the size of dinner plates.", img: imgGiantSquid },
   { name: "Shark", rarity: "rare", points: 400, desc: "A fearsome shark prowling the deep waters.", img: imgShark },
   { name: "Sea Devil", rarity: "rare", points: 600, desc: "A monstrous crab creature from the deep trenches.", img: imgSeaDevil },
   { name: "Whale", rarity: "legendary", points: 300, desc: "The king of the deep. Incredibly rare!", img: imgWhale },
@@ -194,6 +199,7 @@ const allFish: LandingFish[] = [
   { name: "Neon Eel", rarity: "ultra_rare", points: 650, desc: "Bioluminescent eel pulsing with neon colors.", img: imgNeonEel },
   { name: "Golden Salmon", rarity: "ultra_rare", points: 700, desc: "Solid gold scales. Worth a fortune.", img: imgGoldenSalmon },
   { name: "Shadow Leviathan", rarity: "ultra_rare", points: 1500, desc: "A titanic shadow beast from beyond the abyss.", img: imgShadowLeviathan },
+  { name: "The Seal at the Seam", rarity: "ultra_rare", points: 5000, desc: "A living sigil at the boundary of reality. The 10th Legendary.", img: imgSealAtTheSeam },
 ];
 
 const fishAchievements = [
