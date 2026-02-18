@@ -2146,7 +2146,11 @@ export default function FishingGame() {
       const calcWorldLeft = -(W * 3) - 200;
       let targetCameraX = 0;
 
-      if (s.binoculars) {
+      if (s.gameState === "title" || s.gameState === "charSelect") {
+        const dockCenterX = W * 0.85 + (192 * 2.2) / 2;
+        targetCameraX = W / 2 - dockCenterX;
+        s.cameraY += (0 - s.cameraY) * Math.min(1, 0.06 * dt);
+      } else if (s.binoculars) {
         const BINO_SPEED = 4;
         if (s.keysDown.has("a")) s.binoTargetX -= BINO_SPEED * dt;
         if (s.keysDown.has("d")) s.binoTargetX += BINO_SPEED * dt;
@@ -5866,55 +5870,9 @@ export default function FishingGame() {
         return;
       }
 
-      // Title screen & charSelect - shared background
       if (s.gameState === "title" || s.gameState === "charSelect") {
-        ctx.fillStyle = "rgba(0,10,30,0.45)";
+        ctx.fillStyle = "rgba(0,8,20,0.55)";
         ctx.fillRect(0, 0, W, H);
-
-        const creatureDefs = [
-          { folder: "1", walkFrames: 4, speed: 0.9, scale: 1.8, yBase: 0.48, yAmp: 8, frameH: 24 },
-          { folder: "1", walkFrames: 4, speed: 1.3, scale: 1.4, yBase: 0.62, yAmp: 5, frameH: 24 },
-          { folder: "2", walkFrames: 6, speed: 0.7, scale: 2.0, yBase: 0.55, yAmp: 10 },
-          { folder: "2", walkFrames: 6, speed: 1.1, scale: 1.5, yBase: 0.72, yAmp: 6 },
-          { folder: "3", walkFrames: 4, speed: 1.0, scale: 1.7, yBase: 0.50, yAmp: 7 },
-          { folder: "3", walkFrames: 4, speed: 1.4, scale: 1.3, yBase: 0.68, yAmp: 9 },
-          { folder: "4", walkFrames: 4, speed: 0.6, scale: 1.9, yBase: 0.58, yAmp: 12 },
-          { folder: "4", walkFrames: 4, speed: 1.2, scale: 1.4, yBase: 0.78, yAmp: 5 },
-          { folder: "5", walkFrames: 6, speed: 1.5, scale: 1.6, yBase: 0.45, yAmp: 6 },
-          { folder: "5", walkFrames: 6, speed: 0.8, scale: 1.3, yBase: 0.65, yAmp: 8 },
-          { folder: "6", walkFrames: 6, speed: 0.35, scale: 2.8, yBase: 0.82, yAmp: 14 },
-          { folder: "6", walkFrames: 6, speed: 0.55, scale: 2.2, yBase: 0.60, yAmp: 10 },
-          { folder: "1", walkFrames: 4, speed: 1.6, scale: 1.2, yBase: 0.88, yAmp: 4, frameH: 24 },
-          { folder: "3", walkFrames: 4, speed: 0.5, scale: 2.1, yBase: 0.75, yAmp: 11 },
-          { folder: "5", walkFrames: 6, speed: 1.8, scale: 1.1, yBase: 0.52, yAmp: 5 },
-          { folder: "2", walkFrames: 6, speed: 0.9, scale: 1.7, yBase: 0.85, yAmp: 7 },
-        ];
-        for (let i = 0; i < creatureDefs.length; i++) {
-          const cd = creatureDefs[i] as any;
-          const swimDir = i % 2 === 0 ? 1 : -1;
-          const swimRange = W + 120;
-          const phase = (s.time * cd.speed * 0.55 + i * 173) % swimRange;
-          const cx = swimDir > 0 ? -60 + phase : W + 60 - phase;
-          const bobY = Math.sin(s.time * 0.04 + i * 1.9) * cd.yAmp;
-          const frame = Math.floor(s.time * 0.065 * cd.speed) % cd.walkFrames;
-          const depth = cd.yBase;
-          const depthAlpha = depth > 0.75 ? 0.5 : depth > 0.6 ? 0.7 : 0.85;
-          ctx.globalAlpha = depthAlpha;
-          drawSprite(`/assets/creatures/${cd.folder}/Walk.png`, frame, cd.walkFrames, cx, H * cd.yBase + bobY, cd.scale, swimDir < 0, null, cd.frameH);
-        }
-        ctx.globalAlpha = 1;
-
-        ctx.globalAlpha = 0.2;
-        for (let i = 0; i < 25; i++) {
-          const bx = (i * 113 + s.time * 0.3) % W;
-          const by = H * 0.4 + ((i * 89 + s.time * 0.15) % (H * 0.55));
-          const br = 1.5 + Math.sin(s.time * 0.025 + i * 1.3) * 1;
-          ctx.fillStyle = "#88ccff";
-          ctx.beginPath();
-          ctx.arc(bx, by, br, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        ctx.globalAlpha = 1;
       }
 
       // Title screen text only
