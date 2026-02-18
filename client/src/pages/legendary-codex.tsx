@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useParams, useLocation } from "wouter";
+import { GIFEncoder, quantize, applyPalette } from "gifenc";
 
 function toSlug(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -448,6 +449,202 @@ function FlipbookOverlay({ targetPage, onComplete }: { targetPage: number; onCom
   );
 }
 
+function loadImage(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error(`Failed to load ${src}`));
+    img.src = src;
+  });
+}
+
+function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number, lineHeight: number, maxLines: number): string[] {
+  const words = text.split(" ");
+  const lines: string[] = [];
+  let current = "";
+  for (const word of words) {
+    const test = current ? `${current} ${word}` : word;
+    if (ctx.measureText(test).width > maxWidth && current) {
+      lines.push(current);
+      current = word;
+      if (lines.length >= maxLines) break;
+    } else {
+      current = test;
+    }
+  }
+  if (current && lines.length < maxLines) {
+    lines.push(current);
+  }
+  if (lines.length >= maxLines) {
+    lines[maxLines - 1] = lines[maxLines - 1].replace(/\s+\S*$/, "...");
+  }
+  return lines;
+}
+
+async function generateCodexGif(onProgress: (msg: string) => void): Promise<Blob> {
+  const W = 640;
+  const H = 400;
+  const gif = GIFEncoder();
+
+  const canvas = document.createElement("canvas");
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext("2d")!;
+
+  onProgress("Loading fish artwork...");
+  const images: (HTMLImageElement | null)[] = [];
+  for (const entry of legendaries) {
+    try {
+      images.push(await loadImage(entry.artImage));
+    } catch {
+      images.push(null);
+    }
+  }
+
+  const RARITY_GLOW: Record<string, string> = {
+    "Phantom Minnow": "#00ffc8",
+    "Volcanic Perch": "#ff5000",
+    "Abyssal Bass": "#7800ff",
+    "Frost Catfish": "#64c8ff",
+    "Storm Swordfish": "#ffff00",
+    "Celestial Whale": "#ffb4ff",
+    "Neon Eel": "#00ff64",
+    "Golden Salmon": "#ffc800",
+    "Shadow Leviathan": "#b40032",
+    "The Seal at the Seam": "#1e3c8c",
+  };
+
+  for (let i = 0; i < legendaries.length; i++) {
+    const entry = legendaries[i];
+    const img = images[i];
+    onProgress(`Drawing page ${i + 1}/${legendaries.length}: ${entry.name}`);
+
+    ctx.fillStyle = "#12101e";
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.fillStyle = "#1a1828";
+    ctx.fillRect(8, 8, W / 2 - 12, H - 16);
+    ctx.fillStyle = "#161422";
+    ctx.fillRect(W / 2 + 4, 8, W / 2 - 12, H - 16);
+
+    ctx.fillStyle = "#0c0a16";
+    ctx.fillRect(W / 2 - 3, 4, 6, H - 8);
+
+    ctx.strokeStyle = "rgba(196,160,80,0.25)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(12, 12, W / 2 - 20, H - 24);
+    ctx.strokeRect(W / 2 + 8, 12, W / 2 - 20, H - 24);
+
+    ctx.strokeStyle = "rgba(196,160,80,0.12)";
+    ctx.strokeRect(6, 6, W - 12, H - 12);
+
+    const leftCx = W / 4;
+    const leftCy = H / 2;
+
+    if (img) {
+      const glowColor = RARITY_GLOW[entry.name] || entry.aura;
+      ctx.save();
+      ctx.shadowColor = glowColor;
+      ctx.shadowBlur = 30;
+      const maxDim = 140;
+      const scale = Math.min(maxDim / img.naturalWidth, maxDim / img.naturalHeight);
+      const dw = img.naturalWidth * scale;
+      const dh = img.naturalHeight * scale;
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(img, leftCx - dw / 2, leftCy - dh / 2 - 10, dw, dh);
+      ctx.shadowBlur = 0;
+      ctx.restore();
+    }
+
+    ctx.fillStyle = "#c4a050";
+    ctx.font = "bold 11px Georgia, serif";
+    ctx.textAlign = "center";
+    ctx.fillText(`Chapter ${entry.chapter}`, leftCx, 36);
+
+    ctx.fillStyle = "rgba(196,160,80,0.3)";
+    ctx.fillRect(leftCx - 30, 42, 60, 1);
+
+    ctx.fillStyle = "#f0e6d0";
+    ctx.font = "bold 16px Georgia, serif";
+    ctx.fillText(entry.name, leftCx, H - 60);
+
+    ctx.fillStyle = "#9090b0";
+    ctx.font = "italic 10px Georgia, serif";
+    ctx.fillText(entry.subtitle, leftCx, H - 44);
+
+    const starStr = Array(entry.stars).fill("\u2605").join(" ");
+    ctx.fillStyle = "#c4a050";
+    ctx.font = "12px serif";
+    ctx.fillText(starStr, leftCx, H - 28);
+
+    const rx = W / 2 + 20;
+    const rw = W / 2 - 40;
+    let ry = 30;
+
+    ctx.fillStyle = "#666680";
+    ctx.font = "9px Georgia, serif";
+    ctx.textAlign = "left";
+    ctx.fillText(`CHAPTER ${entry.chapter}`, rx, ry);
+    ry += 18;
+
+    ctx.fillStyle = "#f0e6d0";
+    ctx.font = "bold 15px Georgia, serif";
+    ctx.fillText(entry.name, rx, ry);
+    ry += 16;
+
+    ctx.fillStyle = "#9090b0";
+    ctx.font = "italic 10px Georgia, serif";
+    ctx.fillText(entry.subtitle, rx, ry);
+    ry += 20;
+
+    ctx.fillStyle = "rgba(196,160,80,0.3)";
+    ctx.fillRect(rx, ry, rw, 1);
+    ry += 14;
+
+    ctx.font = "9px monospace";
+    const stats = [
+      `PTS: ${entry.pts.toLocaleString()}`,
+      `WT: ${entry.wt}`,
+      `SPD: ${entry.spd}`,
+      `DEP: ${entry.dep}`,
+      `ZONE: ${entry.zone}`,
+    ];
+    ctx.fillStyle = "#888898";
+    ctx.fillText(stats.join("  |  "), rx, ry);
+    ry += 18;
+
+    ctx.fillStyle = "rgba(255,255,255,0.06)";
+    ctx.fillRect(rx, ry, rw, 1);
+    ry += 12;
+
+    const loreFirst = entry.lore.split("\n\n")[0];
+    ctx.font = "10px Georgia, serif";
+    ctx.fillStyle = "#b0b0c8";
+    const loreLines = wrapText(ctx, loreFirst, rw, 14, 16);
+    for (const line of loreLines) {
+      ctx.fillText(line, rx, ry);
+      ry += 14;
+    }
+
+    ctx.fillStyle = "#555568";
+    ctx.font = "8px Georgia, serif";
+    ctx.textAlign = "center";
+    ctx.fillText(`${i + 1} / ${legendaries.length}`, W / 2, H - 10);
+    ctx.textAlign = "left";
+
+    const imageData = ctx.getImageData(0, 0, W, H);
+    const palette = quantize(imageData.data, 256, { format: "rgb444" });
+    const index = applyPalette(imageData.data, palette);
+    gif.writeFrame(index, W, H, { palette, delay: 4000, repeat: 0 });
+  }
+
+  onProgress("Encoding GIF...");
+  gif.finish();
+  const bytes = gif.bytes();
+  return new Blob([bytes], { type: "image/gif" });
+}
+
 export default function LegendaryCodex() {
   const params = useParams<{ slug?: string }>();
   const [, navigate] = useLocation();
@@ -457,8 +654,32 @@ export default function LegendaryCodex() {
   const [flipbookTarget, setFlipbookTarget] = useState<number | null>(null);
   const [showFlipbook, setShowFlipbook] = useState(false);
   const [fromHome, setFromHome] = useState(false);
+  const [gifGenerating, setGifGenerating] = useState(false);
+  const [gifProgress, setGifProgress] = useState("");
+  const [gifUrl, setGifUrl] = useState<string | null>(null);
 
   const totalPages = legendaries.length;
+
+  const handleGenerateGif = useCallback(async () => {
+    if (gifGenerating) return;
+    setGifGenerating(true);
+    setGifProgress("Starting...");
+    if (gifUrl) { URL.revokeObjectURL(gifUrl); setGifUrl(null); }
+    try {
+      const blob = await generateCodexGif(setGifProgress);
+      const url = URL.createObjectURL(blob);
+      setGifUrl(url);
+      setGifProgress("Done!");
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "legendary-codex.gif";
+      a.click();
+    } catch (err: any) {
+      setGifProgress(`Error: ${err.message}`);
+    } finally {
+      setGifGenerating(false);
+    }
+  }, [gifGenerating, gifUrl]);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -612,6 +833,48 @@ export default function LegendaryCodex() {
             PLAY GAME
           </a>
         </Link>
+        <button
+          data-testid="button-download-gif"
+          onClick={handleGenerateGif}
+          disabled={gifGenerating}
+          style={{
+            background: gifGenerating ? "rgba(196,160,80,0.3)" : "rgba(10,10,20,0.85)",
+            border: "1px solid rgba(196,160,80,0.4)",
+            borderRadius: 6,
+            padding: "6px 12px",
+            color: gifGenerating ? "#888" : "#c4a050",
+            fontFamily: "'Press Start 2P', monospace",
+            fontSize: 6,
+            cursor: gifGenerating ? "wait" : "pointer",
+            backdropFilter: "blur(10px)",
+            transition: "all 0.2s",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {gifGenerating ? gifProgress : "DOWNLOAD GIF"}
+        </button>
+        {gifUrl && !gifGenerating && (
+          <a
+            href={gifUrl}
+            download="legendary-codex.gif"
+            data-testid="link-download-gif"
+            style={{
+              background: "rgba(10,10,20,0.85)",
+              border: "1px solid rgba(46,204,113,0.3)",
+              borderRadius: 6,
+              padding: "6px 12px",
+              color: "#2ecc71",
+              fontFamily: "'Press Start 2P', monospace",
+              fontSize: 6,
+              textDecoration: "none",
+              backdropFilter: "blur(10px)",
+              transition: "all 0.2s",
+              whiteSpace: "nowrap",
+            }}
+          >
+            SAVE GIF
+          </a>
+        )}
       </div>
       <div
         style={{

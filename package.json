@@ -68,6 +68,7 @@
     "express": "^5.0.1",
     "express-session": "^1.18.1",
     "framer-motion": "^11.13.1",
+    "gifenc": "^1.0.3",
     "grudge-studio": "^1.0.2",
     "input-otp": "^1.4.2",
     "js": "^0.1.0",

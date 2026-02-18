@@ -70,6 +70,13 @@ const btnStyle = (color: string, bg: string): React.CSSProperties => ({
   fontWeight: "bold",
 });
 
+interface CreatureSpriteInfo {
+  folder: string;
+  hasIdle: boolean;
+  hasWalk: boolean;
+  hasFrames: boolean;
+}
+
 export default function AdminFish() {
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [playing, setPlaying] = useState(true);
@@ -83,15 +90,25 @@ export default function AdminFish() {
   const [aiGenerating, setAiGenerating] = useState(false);
   const [aiResult, setAiResult] = useState<string | null>(null);
   const [aiError, setAiError] = useState("");
+  const [spriteOverride, setSpriteOverride] = useState("");
+  const [allSprites, setAllSprites] = useState<CreatureSpriteInfo[]>([]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imgCache = useRef<Map<string, HTMLImageElement>>(new Map());
 
+  useEffect(() => {
+    fetch("/api/creature-sprites")
+      .then(r => r.json())
+      .then(data => setAllSprites(data))
+      .catch(() => {});
+  }, []);
+
   const fish = FISH_TYPES[selectedIdx];
+  const activeFolder = spriteOverride || fish.creatureFolder;
   const totalFrames = showIdle ? fish.idleFrames : fish.walkFrames;
   const spriteType = showIdle ? "Idle" : "Walk";
-  const spriteSrc = fish.creatureFolder ? `/assets/creatures/${fish.creatureFolder}/${spriteType}.png` : "";
+  const spriteSrc = activeFolder ? `/assets/creatures/${activeFolder}/${spriteType}.png` : "";
 
-  const isWhale = fish.name === "Whale";
+  const isWhale = fish.name === "Whale" && !spriteOverride;
   const whaleFrames = [
     "/assets/creatures/whale-blue-legendary/whale_frame1.png",
     "/assets/creatures/whale-blue-legendary/whale_frame2.png",
@@ -109,6 +126,7 @@ export default function AdminFish() {
 
   useEffect(() => {
     setCurrentFrame(0);
+    setSpriteOverride("");
   }, [selectedIdx, showIdle]);
 
   useEffect(() => {
@@ -366,14 +384,56 @@ export default function AdminFish() {
         <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 8 }}>
           <div style={{ fontSize: 9, color: "#889", marginBottom: 4 }}>ASSETS:</div>
           <div style={{ fontSize: 8, color: "#556", marginBottom: 2 }}>
-            Folder: <span style={{ color: "#4fc3f7" }}>/creatures/{fish.creatureFolder}/</span>
+            Folder: <span style={{ color: "#4fc3f7" }}>/creatures/{activeFolder}/</span>
           </div>
           <div style={{ fontSize: 8, color: "#556", marginBottom: 2 }}>
             Icon: <span style={{ color: "#4fc3f7" }}>{fish.icon.split("/").pop()}</span>
           </div>
-          <div style={{ fontSize: 8, color: "#556" }}>
+          <div style={{ fontSize: 8, color: "#556", marginBottom: 6 }}>
             Catch: <span style={{ color: "#4fc3f7" }}>{fish.catchAsset.split("/").pop()}</span>
           </div>
+        </div>
+
+        <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 8 }}>
+          <div style={{ fontSize: 9, color: "#889", marginBottom: 4 }}>SWAP SPRITE:</div>
+          <div style={{ fontSize: 8, color: "#556", marginBottom: 4 }}>
+            Preview a different creature sprite for this fish.
+          </div>
+          <select
+            data-testid="select-sprite-override"
+            value={spriteOverride}
+            onChange={e => { setSpriteOverride(e.target.value); setCurrentFrame(0); }}
+            style={{
+              width: "100%", padding: "5px 6px", borderRadius: 4,
+              border: "1px solid rgba(224,64,251,0.2)", background: "rgba(255,255,255,0.05)",
+              color: "#ccc", fontSize: 9, fontFamily: "monospace",
+            }}
+          >
+            <option value="" style={{ background: "#0a0e1a", color: "#4fc3f7" }}>
+              (default: {fish.creatureFolder})
+            </option>
+            {allSprites.map(s => (
+              <option
+                key={s.folder}
+                value={s.folder}
+                style={{
+                  background: "#0a0e1a",
+                  color: s.folder === fish.creatureFolder ? "#4fc3f7" : "#ccc",
+                }}
+              >
+                {s.folder}{!s.hasIdle && !s.hasWalk ? " (no sprites)" : ""}{s.hasFrames ? " [frames]" : ""}
+              </option>
+            ))}
+          </select>
+          {spriteOverride && (
+            <button
+              data-testid="btn-reset-sprite"
+              onClick={() => { setSpriteOverride(""); setCurrentFrame(0); }}
+              style={{ ...btnStyle("#e74c3c", ""), marginTop: 4, width: "100%" }}
+            >
+              RESET TO DEFAULT
+            </button>
+          )}
         </div>
 
         <a

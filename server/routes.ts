@@ -3,6 +3,8 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertLeaderboardSchema } from "@shared/schema";
 import { registerImageRoutes } from "./replit_integrations/image/routes";
+import fs from "fs";
+import path from "path";
 
 const RARITY_COLORS: Record<string, number> = {
   common: 0xa0a0a0,
@@ -287,6 +289,31 @@ export async function registerRoutes(
     }
     res.clearCookie("ga_session", { path: "/" });
     res.json({ ok: true });
+  });
+
+  app.get("/api/creature-sprites", (_req: Request, res: Response) => {
+    try {
+      const creaturesDir = path.join(process.cwd(), "client", "public", "assets", "creatures");
+      const folders = fs.readdirSync(creaturesDir, { withFileTypes: true })
+        .filter(d => d.isDirectory())
+        .map(d => {
+          const folderPath = path.join(creaturesDir, d.name);
+          const files = fs.readdirSync(folderPath);
+          const hasIdle = files.includes("Idle.png");
+          const hasWalk = files.includes("Walk.png");
+          const hasFrames = fs.existsSync(path.join(folderPath, "frames"));
+          return {
+            folder: d.name,
+            hasIdle,
+            hasWalk,
+            hasFrames,
+          };
+        })
+        .sort((a, b) => a.folder.localeCompare(b.folder));
+      res.json(folders);
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
   });
 
   registerImageRoutes(app);

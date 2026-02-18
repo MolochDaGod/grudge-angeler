@@ -65,7 +65,8 @@ The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a f
 
 ## Recent Changes
 - **2026-02-18:** Chum Charlie NPC: New static sitting NPC (id: 8, spriteFolder "8") on the dock at worldX 0.62 (between shops). Sells all 20 non-catchable chum types derived from CHUM_ITEMS. Never walks (noWalk: true), has 4-frame Special.png chum-making animation that plays periodically. Extensive chum-specialist dialogue with stats info. NPC system now supports noWalk and specialFrames properties.
-- **2026-02-18:** Admin Fish Editor: New /adminfish page with fish dropdown, sprite preview canvas with animation player (play/pause/prev/next/speed control), visual overrides (tint, scale), flip toggle, idle/walk sprite switching, and AI-powered sprite generation using gpt-image-1.
+- **2026-02-18:** Legendary Codex GIF: "DOWNLOAD GIF" button on /codex page generates an animated GIF (640x400) of all 10 legendary fish as a book with artwork on left page and lore/stats on right page. Uses gifenc for browser-side encoding. Loops infinitely for Discord embed compatibility.
+- **2026-02-18:** Admin Fish Editor: New /adminfish page with fish dropdown, sprite preview canvas with animation player (play/pause/prev/next/speed control), visual overrides (tint, scale), flip toggle, idle/walk sprite switching, AI-powered sprite generation using gpt-image-1, and sprite swap dropdown listing all creature folders from /api/creature-sprites endpoint.
 - **2026-02-18:** AI Image Generation: Server-side /api/generate-image endpoint registered via replit_integrations, supports sprite and surface generation for admin tools.
 - **2026-02-18:** Whale 2-Frame Animation: Whale sprites use two individual frame images (whale_frame1.png, whale_frame2.png) alternating every ~1.5 seconds instead of a sprite sheet.
 - **2026-02-18:** Admin Map Generate Surface: Added AI-powered "Generate Surface" button to admin map for creating underwater background layer images.
