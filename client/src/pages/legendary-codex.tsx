@@ -16,7 +16,7 @@ interface SpriteData {
   src?: string;
 }
 
-function CodexAnimatedSprite({ sprite, size, tint }: { sprite: SpriteData; size: number; tint?: string }) {
+function CodexAnimatedSprite({ sprite, size }: { sprite: SpriteData; size: number }) {
   const [frame, setFrame] = useState(1);
 
   useEffect(() => {
@@ -30,7 +30,7 @@ function CodexAnimatedSprite({ sprite, size, tint }: { sprite: SpriteData; size:
   if (sprite.isSingleImage) {
     return (
       <div style={{ width: size, height: size, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", flexShrink: 0 }}>
-        <img src={sprite.src} alt="" style={{ width: size, height: size, imageRendering: "pixelated", objectFit: "contain", filter: tint ? `drop-shadow(0 0 8px ${tint})` : undefined }} />
+        <img src={sprite.src} alt="" style={{ width: size, height: size, imageRendering: "pixelated", objectFit: "contain" }} />
       </div>
     );
   }
@@ -46,7 +46,6 @@ function CodexAnimatedSprite({ sprite, size, tint }: { sprite: SpriteData; size:
           imageRendering: "pixelated",
           objectFit: "contain",
           display: "block",
-          filter: tint ? `drop-shadow(0 0 6px ${tint})` : undefined,
         }}
       />
     </div>
@@ -360,9 +359,8 @@ function FlipbookOverlay({ targetPage, onComplete }: { targetPage: number; onCom
             <div key={i} style={{
               width: 8, height: 8, borderRadius: "50%",
               background: i <= flipIndex
-                ? `rgba(${f.auraCss}, 0.9)`
+                ? "rgba(200,210,220,0.9)"
                 : "rgba(255,255,255,0.1)",
-              boxShadow: i === flipIndex ? `0 0 12px rgba(${f.auraCss}, 0.7)` : "none",
               transition: "all 0.2s",
             }} />
           ))}
@@ -375,7 +373,7 @@ function FlipbookOverlay({ targetPage, onComplete }: { targetPage: number; onCom
           style={{
             width: "min(340px, 85vw)",
             background: "rgba(12,12,25,0.95)",
-            border: `2px solid rgba(${currentFish.auraCss}, ${phase === "landing" ? 0.6 : 0.25})`,
+            border: `2px solid rgba(120,140,160, ${phase === "landing" ? 0.4 : 0.15})`,
             borderRadius: 12,
             padding: "32px 24px",
             textAlign: "center",
@@ -389,15 +387,8 @@ function FlipbookOverlay({ targetPage, onComplete }: { targetPage: number; onCom
           }}
         >
           <div style={{
-            position: "absolute", inset: 0,
-            background: `radial-gradient(circle at 50% 30%, rgba(${currentFish.auraCss}, ${phase === "landing" ? 0.12 : 0.05}), transparent 70%)`,
-            pointerEvents: "none",
-            transition: "all 0.3s",
-          }} />
-
-          <div style={{
             position: "absolute", left: 0, top: 0, bottom: 0, width: 3,
-            background: `linear-gradient(180deg, transparent, rgba(${currentFish.auraCss}, 0.4), transparent)`,
+            background: "linear-gradient(180deg, transparent, rgba(120,140,160,0.3), transparent)",
             animation: "flipSpine 0.4s ease-out",
           }} />
 
@@ -414,15 +405,10 @@ function FlipbookOverlay({ targetPage, onComplete }: { targetPage: number; onCom
               display: "flex", alignItems: "center", justifyContent: "center",
               position: "relative",
             }}>
-              <div style={{
-                position: "absolute", inset: -10, borderRadius: "50%",
-                background: `radial-gradient(circle, rgba(${currentFish.auraCss}, 0.3), transparent 70%)`,
-              }} />
               <div style={{ position: "relative", zIndex: 1 }}>
                 <CodexAnimatedSprite
                   sprite={currentFish.sprite}
                   size={currentFish.name === "The Seal at the Seam" ? 70 : 90}
-                  tint={currentFish.aura}
                 />
               </div>
             </div>
@@ -755,8 +741,7 @@ function CoverPage({ onEnter }: { onEnter: () => void }) {
                 width: "8px",
                 height: "8px",
                 borderRadius: "50%",
-                background: `rgba(${fish.auraCss}, 0.7)`,
-                boxShadow: `0 0 8px rgba(${fish.auraCss}, 0.5)`,
+                background: "rgba(200,210,220,0.7)",
               }}
             />
           ))}
@@ -829,7 +814,7 @@ interface ChapterProps {
   fromHome?: boolean;
 }
 
-function ChapterBackgroundSprite({ sprite, auraCss }: { sprite: SpriteData; auraCss: string }) {
+function ChapterBackgroundSprite({ sprite }: { sprite: SpriteData }) {
   const [frame, setFrame] = useState(1);
 
   useEffect(() => {
@@ -865,7 +850,6 @@ function ChapterBackgroundSprite({ sprite, auraCss }: { sprite: SpriteData; aura
           imageRendering: "pixelated",
           objectFit: "contain",
           opacity: 0.06,
-          filter: `drop-shadow(0 0 80px rgba(${auraCss}, 0.3)) saturate(1.5)`,
         }}
       />
       <div style={{
@@ -891,7 +875,7 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
         position: "relative",
       }}
     >
-      <ChapterBackgroundSprite sprite={fish.sprite} auraCss={fish.auraCss} />
+      <ChapterBackgroundSprite sprite={fish.sprite} />
       <div
         style={{
           display: "flex",
@@ -1008,17 +992,12 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
               position: "relative",
               borderRadius: "8px",
               overflow: "hidden",
-              border: `1px solid rgba(${fish.auraCss}, 0.2)`,
+              border: "1px solid rgba(120,140,160,0.15)",
               background: "rgba(0,0,0,0.3)",
               maxWidth: "320px",
               width: "100%",
             }}
           >
-            <div style={{
-              position: "absolute", inset: 0,
-              background: `radial-gradient(ellipse at 50% 50%, rgba(${fish.auraCss}, 0.08), transparent 70%)`,
-              pointerEvents: "none",
-            }} />
             <img
               src={fish.artImage}
               alt={fish.name}
@@ -1026,7 +1005,6 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
                 width: "100%",
                 display: "block",
                 imageRendering: "pixelated",
-                filter: `drop-shadow(0 0 12px rgba(${fish.auraCss}, 0.4))`,
               }}
             />
           </div>
@@ -1043,7 +1021,6 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
           <CodexAnimatedSprite
             sprite={fish.sprite}
             size={fish.name === "The Seal at the Seam" ? 120 : 160}
-            tint={fish.aura}
           />
         </div>
       </div>

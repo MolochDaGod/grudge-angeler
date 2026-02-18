@@ -1,0 +1,939 @@
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+Ocean-Angler:1 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+Ocean-Angler:1 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+Ocean-Angler:1 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+value @ stripe.js:1
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+value @ stripe.js:1
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+value @ stripe.js:1
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+value @ stripe.js:1
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+value @ stripe.js:1
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+value @ stripe.js:1
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+ed @ js?id=AW-11411994397:151
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+ed @ js?id=AW-11411994397:151
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+ed @ js?id=AW-11411994397:151
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+ed @ js?id=AW-11411994397:151
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+ed @ js?id=AW-11411994397:151
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+ed @ js?id=AW-11411994397:151
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+n @ js?id=AW-11411994397:569
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+n @ js?id=AW-11411994397:569
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+n @ js?id=AW-11411994397:569
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+(anonymous) @ recaptcha__en.js:89
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+(anonymous) @ recaptcha__en.js:89
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+(anonymous) @ recaptcha__en.js:89
+content-all.js:1 Uncaught (in promise) 
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+(anonymous) @ recaptcha__en.js:575
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+(anonymous) @ recaptcha__en.js:575
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+(anonymous) @ recaptcha__en.js:575
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+(anonymous) @ recaptcha__en.js:575
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+(anonymous) @ recaptcha__en.js:575
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+(anonymous) @ recaptcha__en.js:575
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension 88d1957f-e5f9-4bbe-8b56-60edc458561a Object
+overrideMethod @ installHook.js:1
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+(anonymous) @ recaptcha__en.js:157
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+(anonymous) @ recaptcha__en.js:157
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+(anonymous) @ recaptcha__en.js:157
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+(anonymous) @ recaptcha__en.js:157
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+(anonymous) @ recaptcha__en.js:157
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+(anonymous) @ recaptcha__en.js:157
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension 71b9e9dd-9e9b-4615-8d28-3187422a5ba7 Object
+overrideMethod @ installHook.js:1
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension adccbcd2-c9d6-4778-b0cb-20e1bf289634 Object
+overrideMethod @ installHook.js:1
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension 1f5ce3c0-6f99-4d79-8354-ef5cbc8dd034 Object
+overrideMethod @ installHook.js:1
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension 80d95f9d-da16-441f-90c4-d40e5f9f3a7a Object
+overrideMethod @ installHook.js:1
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension 14ed5892-2bf7-41c9-9f19-0bd9464b6e94 Object
+overrideMethod @ installHook.js:1
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension 3d28c542-4e39-4490-ae8d-b1af85e3affb Object
+overrideMethod @ installHook.js:1
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension 857b2e2f-2c57-42be-8033-400c06d95624 Object
+overrideMethod @ installHook.js:1
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension 7429c16f-3b87-492e-a0d0-cd9aa93313df Object
+overrideMethod @ installHook.js:1
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension 18327322-d236-4f51-93dd-bd22e040e5e3 Object
+overrideMethod @ installHook.js:1
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension 9d8280fb-1a5f-495b-9624-aba982c42205 Object
+overrideMethod @ installHook.js:1
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension 7636883a-2637-421c-aa98-27ffc46d202b Object
+overrideMethod @ installHook.js:1
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension 64d9f8f8-0c0c-46cb-8245-193024f271c7 Object
+overrideMethod @ installHook.js:1
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension 929d2f2e-70e3-407b-b5c7-9b5d4c8e7e20 Object
+overrideMethod @ installHook.js:1
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension 33a91a8f-b3df-4337-a084-d5efdb39049d Object
+overrideMethod @ installHook.js:1
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension 2de857a3-68f1-4435-8c51-eda9d5ffe3a4 Object
+overrideMethod @ installHook.js:1
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension ce79e410-37c7-48d9-88ee-d28b6a4efcd9 Object
+overrideMethod @ installHook.js:1
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension d526fa49-4249-4a76-99b8-6a8e548e485f Object
+overrideMethod @ installHook.js:1
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension f69cae31-eabd-4d70-8feb-546b81e35e1a Object
+overrideMethod @ installHook.js:1
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension dd982728-9c3f-41ed-ae69-33c51a7fec20 Object
+overrideMethod @ installHook.js:1
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension 3a43c2a4-dbc3-4bb7-8792-eed3c6c3cc7d Object
+overrideMethod @ installHook.js:1
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension e2df0c28-20a7-468f-96bb-aec04c9c8ed7 Object
+overrideMethod @ installHook.js:1
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension cb610a4e-e11a-4432-a603-20cbfeeb4da2 Object
+overrideMethod @ installHook.js:1
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension ab840018-fd1b-4dfb-8f8c-ccacfe052b60 Object
+overrideMethod @ installHook.js:1
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension 84d30d55-b036-47a5-ac3f-01e1e158bd42 Object
+overrideMethod @ installHook.js:1
+ Extension Error: An error occurred while loading the extension manifest: Manifest does not exist for extension f97af10c-89b0-4910-a11a-6554b5cd4fdd Object
+overrideMethod @ installHook.js:1
+attached_assets/image_1771395826229.png:1  Failed to load resource: the server responded with a status of 404 ()
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+/data/repls/57ceb9f8-87ae-4c23-b755-fc577a42264c/get_connection_metadata:1  Failed to load resource: the server responded with a status of 429 ()
+deced8982bab6e9a.js:2 Uncaught (in promise) 
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+ Failed when connecting: Connection closed (code: 1006)
+overrideMethod @ installHook.js:1
+/data/repls/57ceb9f8-87ae-4c23-b755-fc577a42264c/get_connection_metadata:1  Failed to load resource: the server responded with a status of 429 ()
+deced8982bab6e9a.js:2 Uncaught (in promise) 
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+content-all.js:1 Uncaught (in promise) 
+content-all.js:1 Uncaught (in promise) 
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+content-all.js:1 Uncaught (in promise) 
+content-all.js:1 Uncaught (in promise) 
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ [Coframe] Mutation callback infinite loop protection triggered, disconnecting mutation observer Object
+overrideMethod @ installHook.js:1
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+content-all.js:1 Uncaught (in promise) 
+content-all.js:1 Uncaught (in promise) 
+content-all.js:1 Uncaught (in promise) 
+content-all.js:1 Uncaught (in promise) 
+content-all.js:1 Uncaught (in promise) 
+content-all.js:1 Uncaught (in promise) 
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+content-all.js:1 Uncaught (in promise) 
+content-all.js:1 Uncaught (in promise) 
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+content-all.js:1 Uncaught (in promise) 
+content-all.js:1 Uncaught (in promise) 
+www.google.com/recaptcha/enterprise/anchor?ar=1&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=1j8p13okwgjm:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=1&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=1j8p13okwgjm:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+m.stripe.network/inner.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+sw_iframe.html?origin=https%3A%2F%2Freplit.com:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+sw_iframe.html?origin=https%3A%2F%2Freplit.com:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+(anonymous) @ recaptcha__en.js:89
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+(anonymous) @ recaptcha__en.js:89
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+(anonymous) @ recaptcha__en.js:89
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+(anonymous) @ recaptcha__en.js:575
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+(anonymous) @ recaptcha__en.js:575
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+(anonymous) @ recaptcha__en.js:575
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+(anonymous) @ recaptcha__en.js:575
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+(anonymous) @ recaptcha__en.js:575
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+(anonymous) @ recaptcha__en.js:575
+content-all.js:1 Uncaught (in promise) 
+content-all.js:1 Uncaught (in promise) 
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+js.stripe.com/v3/controller-with-preconnect-636522016f2bf8b048606ed1ca5ec411.html#__shared_params__[version]=acacia&__shared_params__[light_experiment_assignments]=%7B%22token%22%3A%228b7c94c9-c242-48d3-a24f-45b224928f9f%22%2C%22assignments%22%3A%7B%22elements_generic_skeleton_loader_v4%22%3A%22treatment%22%7D%7D&apiKey=pk_live_515YpNsJAmnYVOvfnsBqRdATWS6SzbNAslOz1z2tujdKuvRMDAwWMeFXp6dJL1YKRrQjB0WAp0UDGwlFYL7hxw7Fc00QkfxBFsL&apiVersion=2025-01-27.acacia&stripeJsId=8b7c94c9-c242-48d3-a24f-45b224928f9f&stripeObjId=sobj-68d66d84-6672-4f9f-9e60-522662b03cd6&firstStripeInstanceCreatedLatency=33&controllerCount=1&isCheckout=false&stripeJsLoadTime=1771395778886&manualBrowserDeprecationRollout=false&mids[guid]=NA&mids[muid]=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&mids[sid]=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&referrer=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&controllerId=__privateStripeController9361:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+js.stripe.com/v3/controller-with-preconnect-636522016f2bf8b048606ed1ca5ec411.html#__shared_params__[version]=acacia&__shared_params__[light_experiment_assignments]=%7B%22token%22%3A%228b7c94c9-c242-48d3-a24f-45b224928f9f%22%2C%22assignments%22%3A%7B%22elements_generic_skeleton_loader_v4%22%3A%22treatment%22%7D%7D&apiKey=pk_live_515YpNsJAmnYVOvfnsBqRdATWS6SzbNAslOz1z2tujdKuvRMDAwWMeFXp6dJL1YKRrQjB0WAp0UDGwlFYL7hxw7Fc00QkfxBFsL&apiVersion=2025-01-27.acacia&stripeJsId=8b7c94c9-c242-48d3-a24f-45b224928f9f&stripeObjId=sobj-68d66d84-6672-4f9f-9e60-522662b03cd6&firstStripeInstanceCreatedLatency=33&controllerCount=1&isCheckout=false&stripeJsLoadTime=1771395778886&manualBrowserDeprecationRollout=false&mids[guid]=NA&mids[muid]=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&mids[sid]=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&referrer=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&controllerId=__privateStripeController9361:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+(anonymous) @ recaptcha__en.js:157
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+(anonymous) @ recaptcha__en.js:157
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+(anonymous) @ recaptcha__en.js:157
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+(anonymous) @ recaptcha__en.js:157
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+(anonymous) @ recaptcha__en.js:157
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+(anonymous) @ recaptcha__en.js:157
+content-all.js:1 Uncaught (in promise) 
+content-all.js:1 Uncaught (in promise) 
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+m.stripe.network/inner.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+m.stripe.network/inner.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+m.stripe.network/inner.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+m.stripe.network/inner.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+m.stripe.network/inner.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+m.stripe.network/inner.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+m.stripe.network/inner.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+m.stripe.network/inner.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+m.stripe.network/inner.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+Ocean-Angler:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+Ocean-Angler:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+Ocean-Angler:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+sw_iframe.html?origin=https%3A%2F%2Freplit.com:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+sw_iframe.html?origin=https%3A%2F%2Freplit.com:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+js.stripe.com/v3/m-outer-3437aaddcdf6922d623e172c2d6f9278.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+js.stripe.com/v3/m-outer-3437aaddcdf6922d623e172c2d6f9278.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+js.stripe.com/v3/controller-with-preconnect-636522016f2bf8b048606ed1ca5ec411.html#__shared_params__[version]=acacia&__shared_params__[light_experiment_assignments]=%7B%22token%22%3A%228b7c94c9-c242-48d3-a24f-45b224928f9f%22%2C%22assignments%22%3A%7B%22elements_generic_skeleton_loader_v4%22%3A%22treatment%22%7D%7D&apiKey=pk_live_515YpNsJAmnYVOvfnsBqRdATWS6SzbNAslOz1z2tujdKuvRMDAwWMeFXp6dJL1YKRrQjB0WAp0UDGwlFYL7hxw7Fc00QkfxBFsL&apiVersion=2025-01-27.acacia&stripeJsId=8b7c94c9-c242-48d3-a24f-45b224928f9f&stripeObjId=sobj-68d66d84-6672-4f9f-9e60-522662b03cd6&firstStripeInstanceCreatedLatency=33&controllerCount=1&isCheckout=false&stripeJsLoadTime=1771395778886&manualBrowserDeprecationRollout=false&mids[guid]=NA&mids[muid]=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&mids[sid]=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&referrer=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&controllerId=__privateStripeController9361:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+js.stripe.com/v3/controller-with-preconnect-636522016f2bf8b048606ed1ca5ec411.html#__shared_params__[version]=acacia&__shared_params__[light_experiment_assignments]=%7B%22token%22%3A%228b7c94c9-c242-48d3-a24f-45b224928f9f%22%2C%22assignments%22%3A%7B%22elements_generic_skeleton_loader_v4%22%3A%22treatment%22%7D%7D&apiKey=pk_live_515YpNsJAmnYVOvfnsBqRdATWS6SzbNAslOz1z2tujdKuvRMDAwWMeFXp6dJL1YKRrQjB0WAp0UDGwlFYL7hxw7Fc00QkfxBFsL&apiVersion=2025-01-27.acacia&stripeJsId=8b7c94c9-c242-48d3-a24f-45b224928f9f&stripeObjId=sobj-68d66d84-6672-4f9f-9e60-522662b03cd6&firstStripeInstanceCreatedLatency=33&controllerCount=1&isCheckout=false&stripeJsLoadTime=1771395778886&manualBrowserDeprecationRollout=false&mids[guid]=NA&mids[muid]=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&mids[sid]=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&referrer=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&controllerId=__privateStripeController9361:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+sw_iframe.html?origin=https%3A%2F%2Freplit.com:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+sw_iframe.html?origin=https%3A%2F%2Freplit.com:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+js.stripe.com/v3/m-outer-3437aaddcdf6922d623e172c2d6f9278.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+js.stripe.com/v3/m-outer-3437aaddcdf6922d623e172c2d6f9278.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+js.stripe.com/v3/controller-with-preconnect-636522016f2bf8b048606ed1ca5ec411.html#__shared_params__[version]=acacia&__shared_params__[light_experiment_assignments]=%7B%22token%22%3A%228b7c94c9-c242-48d3-a24f-45b224928f9f%22%2C%22assignments%22%3A%7B%22elements_generic_skeleton_loader_v4%22%3A%22treatment%22%7D%7D&apiKey=pk_live_515YpNsJAmnYVOvfnsBqRdATWS6SzbNAslOz1z2tujdKuvRMDAwWMeFXp6dJL1YKRrQjB0WAp0UDGwlFYL7hxw7Fc00QkfxBFsL&apiVersion=2025-01-27.acacia&stripeJsId=8b7c94c9-c242-48d3-a24f-45b224928f9f&stripeObjId=sobj-68d66d84-6672-4f9f-9e60-522662b03cd6&firstStripeInstanceCreatedLatency=33&controllerCount=1&isCheckout=false&stripeJsLoadTime=1771395778886&manualBrowserDeprecationRollout=false&mids[guid]=NA&mids[muid]=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&mids[sid]=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&referrer=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&controllerId=__privateStripeController9361:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+js.stripe.com/v3/controller-with-preconnect-636522016f2bf8b048606ed1ca5ec411.html#__shared_params__[version]=acacia&__shared_params__[light_experiment_assignments]=%7B%22token%22%3A%228b7c94c9-c242-48d3-a24f-45b224928f9f%22%2C%22assignments%22%3A%7B%22elements_generic_skeleton_loader_v4%22%3A%22treatment%22%7D%7D&apiKey=pk_live_515YpNsJAmnYVOvfnsBqRdATWS6SzbNAslOz1z2tujdKuvRMDAwWMeFXp6dJL1YKRrQjB0WAp0UDGwlFYL7hxw7Fc00QkfxBFsL&apiVersion=2025-01-27.acacia&stripeJsId=8b7c94c9-c242-48d3-a24f-45b224928f9f&stripeObjId=sobj-68d66d84-6672-4f9f-9e60-522662b03cd6&firstStripeInstanceCreatedLatency=33&controllerCount=1&isCheckout=false&stripeJsLoadTime=1771395778886&manualBrowserDeprecationRollout=false&mids[guid]=NA&mids[muid]=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&mids[sid]=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&referrer=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&controllerId=__privateStripeController9361:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+js.stripe.com/v3/m-outer-3437aaddcdf6922d623e172c2d6f9278.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+js.stripe.com/v3/m-outer-3437aaddcdf6922d623e172c2d6f9278.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+js.stripe.com/v3/controller-with-preconnect-636522016f2bf8b048606ed1ca5ec411.html#__shared_params__[version]=acacia&__shared_params__[light_experiment_assignments]=%7B%22token%22%3A%228b7c94c9-c242-48d3-a24f-45b224928f9f%22%2C%22assignments%22%3A%7B%22elements_generic_skeleton_loader_v4%22%3A%22treatment%22%7D%7D&apiKey=pk_live_515YpNsJAmnYVOvfnsBqRdATWS6SzbNAslOz1z2tujdKuvRMDAwWMeFXp6dJL1YKRrQjB0WAp0UDGwlFYL7hxw7Fc00QkfxBFsL&apiVersion=2025-01-27.acacia&stripeJsId=8b7c94c9-c242-48d3-a24f-45b224928f9f&stripeObjId=sobj-68d66d84-6672-4f9f-9e60-522662b03cd6&firstStripeInstanceCreatedLatency=33&controllerCount=1&isCheckout=false&stripeJsLoadTime=1771395778886&manualBrowserDeprecationRollout=false&mids[guid]=NA&mids[muid]=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&mids[sid]=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&referrer=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&controllerId=__privateStripeController9361:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+js.stripe.com/v3/controller-with-preconnect-636522016f2bf8b048606ed1ca5ec411.html#__shared_params__[version]=acacia&__shared_params__[light_experiment_assignments]=%7B%22token%22%3A%228b7c94c9-c242-48d3-a24f-45b224928f9f%22%2C%22assignments%22%3A%7B%22elements_generic_skeleton_loader_v4%22%3A%22treatment%22%7D%7D&apiKey=pk_live_515YpNsJAmnYVOvfnsBqRdATWS6SzbNAslOz1z2tujdKuvRMDAwWMeFXp6dJL1YKRrQjB0WAp0UDGwlFYL7hxw7Fc00QkfxBFsL&apiVersion=2025-01-27.acacia&stripeJsId=8b7c94c9-c242-48d3-a24f-45b224928f9f&stripeObjId=sobj-68d66d84-6672-4f9f-9e60-522662b03cd6&firstStripeInstanceCreatedLatency=33&controllerCount=1&isCheckout=false&stripeJsLoadTime=1771395778886&manualBrowserDeprecationRollout=false&mids[guid]=NA&mids[muid]=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&mids[sid]=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&referrer=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&controllerId=__privateStripeController9361:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+Ocean-Angler:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+attached_assets/image_1771399721677.png:1  Failed to load resource: the server responded with a status of 404 ()
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+ The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+ The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+ The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id save-page
+    at y (content-all.js:1:42526)
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id translate-page
+    at y (content-all.js:1:42526)
+9954129c7dd6dc22.js:2 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+9954129c7dd6dc22.js:2 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+9954129c7dd6dc22.js:2 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+9954129c7dd6dc22.js:2 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id save-page
+    at y (content-all.js:1:42526)
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id translate-page
+    at y (content-all.js:1:42526)
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id save-page
+    at y (content-all.js:1:42526)
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id translate-page
+    at y (content-all.js:1:42526)
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id save-page
+    at y (content-all.js:1:42526)
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id translate-page
+    at y (content-all.js:1:42526)
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id save-page
+    at y (content-all.js:1:42526)
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id translate-page
+    at y (content-all.js:1:42526)
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id save-page
+    at y (content-all.js:1:42526)
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id translate-page
+    at y (content-all.js:1:42526)
+sw_iframe.html?origin=https%3A%2F%2Freplit.com:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id save-page
+    at y (content-all.js:1:42526)
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id translate-page
+    at y (content-all.js:1:42526)
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id save-page
+    at y (content-all.js:1:42526)
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id translate-page
+    at y (content-all.js:1:42526)
+www.google.com/recaptcha/enterprise/anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=P8cyHPrXODVy7ASorEhMUv3P&size=invisible&anchor-ms=20000&execute-ms=30000&cb=98txkt8d9fcs:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+js.stripe.com/v3/m-outer-3437aaddcdf6922d623e172c2d6f9278.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+js.stripe.com/v3/m-outer-3437aaddcdf6922d623e172c2d6f9278.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+m.stripe.network/inner.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+recaptcha__en.js:89 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+(anonymous) @ recaptcha__en.js:89
+recaptcha__en.js:89 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+(anonymous) @ recaptcha__en.js:89
+recaptcha__en.js:89 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+(anonymous) @ recaptcha__en.js:89
+recaptcha__en.js:575 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+(anonymous) @ recaptcha__en.js:575
+recaptcha__en.js:575 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+(anonymous) @ recaptcha__en.js:575
+recaptcha__en.js:575 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+(anonymous) @ recaptcha__en.js:575
+recaptcha__en.js:575 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+(anonymous) @ recaptcha__en.js:575
+recaptcha__en.js:575 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+(anonymous) @ recaptcha__en.js:575
+recaptcha__en.js:575 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+(anonymous) @ recaptcha__en.js:575
+sw_iframe.html?origin=https%3A%2F%2Freplit.com:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+js.stripe.com/v3/m-outer-3437aaddcdf6922d623e172c2d6f9278.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+js.stripe.com/v3/m-outer-3437aaddcdf6922d623e172c2d6f9278.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+js.stripe.com/v3/controller-with-preconnect-636522016f2bf8b048606ed1ca5ec411.html#__shared_params__[version]=acacia&__shared_params__[light_experiment_assignments]=%7B%22token%22%3A%228b7c94c9-c242-48d3-a24f-45b224928f9f%22%2C%22assignments%22%3A%7B%22elements_generic_skeleton_loader_v4%22%3A%22treatment%22%7D%7D&apiKey=pk_live_515YpNsJAmnYVOvfnsBqRdATWS6SzbNAslOz1z2tujdKuvRMDAwWMeFXp6dJL1YKRrQjB0WAp0UDGwlFYL7hxw7Fc00QkfxBFsL&apiVersion=2025-01-27.acacia&stripeJsId=8b7c94c9-c242-48d3-a24f-45b224928f9f&stripeObjId=sobj-68d66d84-6672-4f9f-9e60-522662b03cd6&firstStripeInstanceCreatedLatency=33&controllerCount=1&isCheckout=false&stripeJsLoadTime=1771395778886&manualBrowserDeprecationRollout=false&mids[guid]=NA&mids[muid]=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&mids[sid]=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&referrer=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&controllerId=__privateStripeController9361:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+js.stripe.com/v3/controller-with-preconnect-636522016f2bf8b048606ed1ca5ec411.html#__shared_params__[version]=acacia&__shared_params__[light_experiment_assignments]=%7B%22token%22%3A%228b7c94c9-c242-48d3-a24f-45b224928f9f%22%2C%22assignments%22%3A%7B%22elements_generic_skeleton_loader_v4%22%3A%22treatment%22%7D%7D&apiKey=pk_live_515YpNsJAmnYVOvfnsBqRdATWS6SzbNAslOz1z2tujdKuvRMDAwWMeFXp6dJL1YKRrQjB0WAp0UDGwlFYL7hxw7Fc00QkfxBFsL&apiVersion=2025-01-27.acacia&stripeJsId=8b7c94c9-c242-48d3-a24f-45b224928f9f&stripeObjId=sobj-68d66d84-6672-4f9f-9e60-522662b03cd6&firstStripeInstanceCreatedLatency=33&controllerCount=1&isCheckout=false&stripeJsLoadTime=1771395778886&manualBrowserDeprecationRollout=false&mids[guid]=NA&mids[muid]=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&mids[sid]=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&referrer=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&controllerId=__privateStripeController9361:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+sw_iframe.html?origin=https%3A%2F%2Freplit.com:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+m.stripe.network/inner.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+m.stripe.network/inner.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+m.stripe.network/inner.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+anchor?ar=2&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=…:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+Ocean-Angler:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id save-page
+    at y (content-all.js:1:42526)
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id translate-page
+    at y (content-all.js:1:42526)
+recaptcha__en.js:157 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+(anonymous) @ recaptcha__en.js:157
+recaptcha__en.js:157 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+(anonymous) @ recaptcha__en.js:157
+recaptcha__en.js:157 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+(anonymous) @ recaptcha__en.js:157
+recaptcha__en.js:157 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+(anonymous) @ recaptcha__en.js:157
+recaptcha__en.js:157 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+(anonymous) @ recaptcha__en.js:157
+recaptcha__en.js:157 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+(anonymous) @ recaptcha__en.js:157
+m.stripe.network/inner.html#url=https%3A%2F%2Freplit.com%2F%40grudgedev%2FOcean-Angler&title=Ocean%20Angler%20-%20Replit&referrer=&muid=cf7be6a8-9fa6-444c-b417-dee18dd5af597956af&sid=2a6e76b5-4e72-482d-b2a9-134c3136632a0a62f8&version=6&preview=false&__shared_params__[version]=acacia:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+sw_iframe.html?origin=https%3A%2F%2Freplit.com:1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id save-page
+    at y (content-all.js:1:42526)
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id translate-page
+    at y (content-all.js:1:42526)
+9954129c7dd6dc22.js:2 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+9954129c7dd6dc22.js:2 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+9954129c7dd6dc22.js:2 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+9954129c7dd6dc22.js:2 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+9954129c7dd6dc22.js:2 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+9954129c7dd6dc22.js:2 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+9954129c7dd6dc22.js:2 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+9954129c7dd6dc22.js:2 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+9954129c7dd6dc22.js:2 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+9954129c7dd6dc22.js:2 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+9954129c7dd6dc22.js:2 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+9954129c7dd6dc22.js:2 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id save-page
+    at y (content-all.js:1:42526)
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id translate-page
+    at y (content-all.js:1:42526)
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id save-page
+    at y (content-all.js:1:42526)
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id translate-page
+    at y (content-all.js:1:42526)
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id save-page
+    at y (content-all.js:1:42526)
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id translate-page
+    at y (content-all.js:1:42526)
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id save-page
+    at y (content-all.js:1:42526)
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id translate-page
+    at y (content-all.js:1:42526)
+9954129c7dd6dc22.js:2 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+9954129c7dd6dc22.js:2 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+9954129c7dd6dc22.js:2 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+9954129c7dd6dc22.js:2 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id save-page
+    at y (content-all.js:1:42526)
+content-all.js:1 Uncaught (in promise) Error: Cannot find menu item with id translate-page
+    at y (content-all.js:1:42526)
+9954129c7dd6dc22.js:2 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+9954129c7dd6dc22.js:2 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+9954129c7dd6dc22.js:2 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+9954129c7dd6dc22.js:2 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+9954129c7dd6dc22.js:2 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+C @ 9954129c7dd6dc22.js:2
+9954129c7dd6dc22.js:2 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+e @ 9954129c7dd6dc22.js:2
+9954129c7dd6dc22.js:2 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+e @ 9954129c7dd6dc22.js:2
+9954129c7dd6dc22.js:2 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+e @ 9954129c7dd6dc22.js:2
+workspace_iframe.html?initialPath=%2F&id=%3Ar55j%3A:32 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+react-dom.development.js:86 Warning: validateDOMNesting(...): <a> cannot appear as a descendant of <a>.
+    at a
+    at a
+    at https://57ceb9f8-87ae-4c23-b755-fc577a42264c-00-ienivsyjz8zn.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=0108c3d3:336:18
+    at div
+    at nav
+    at div
+    at Landing (https://57ceb9f8-87ae-4c23-b755-fc577a42264c-00-ienivsyjz8zn.worf.replit.dev/src/pages/landing.tsx:409:33)
+    at Route (https://57ceb9f8-87ae-4c23-b755-fc577a42264c-00-ienivsyjz8zn.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=0108c3d3:322:16)
+    at Switch (https://57ceb9f8-87ae-4c23-b755-fc577a42264c-00-ienivsyjz8zn.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=0108c3d3:378:17)
+    at Router
+    at Provider (https://57ceb9f8-87ae-4c23-b755-fc577a42264c-00-ienivsyjz8zn.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-XQLTDROY.js?v=0108c3d3:71:15)
+    at TooltipProvider (https://57ceb9f8-87ae-4c23-b755-fc577a42264c-00-ienivsyjz8zn.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=0108c3d3:2245:5)
+    at QueryClientProvider (https://57ceb9f8-87ae-4c23-b755-fc577a42264c-00-ienivsyjz8zn.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=0108c3d3:2747:3)
+    at App
+printWarning @ react-dom.development.js:86

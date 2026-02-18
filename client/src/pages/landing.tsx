@@ -113,7 +113,6 @@ interface LandingFish {
   rarity: string;
   points: number;
   desc: string;
-  tint?: string;
   icon?: string;
   sprite: {
     src: string;
@@ -230,10 +229,9 @@ function FishTooltip({ fish, visible }: { fish: typeof allFish[0]; visible: bool
   );
 }
 
-function AnimatedSprite({ sprite, size, tint }: {
+function AnimatedSprite({ sprite, size }: {
   sprite: LandingFish["sprite"];
   size: number;
-  tint?: string;
 }) {
   const [frame, setFrame] = useState(1);
 
@@ -249,7 +247,7 @@ function AnimatedSprite({ sprite, size, tint }: {
   if (sprite.isSingleImage) {
     return (
       <div style={{ width: size, height: size, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", flexShrink: 0 }}>
-        <img src={sprite.src} alt="" style={{ width: size, height: size, imageRendering: "pixelated", objectFit: "contain", filter: tint ? `drop-shadow(0 0 6px ${tint})` : undefined }} />
+        <img src={sprite.src} alt="" style={{ width: size, height: size, imageRendering: "pixelated", objectFit: "contain" }} />
       </div>
     );
   }
@@ -266,7 +264,6 @@ function AnimatedSprite({ sprite, size, tint }: {
             imageRendering: "pixelated",
             objectFit: "contain",
             display: "block",
-            filter: tint ? `drop-shadow(0 0 6px ${tint})` : undefined,
           }}
         />
       </div>
@@ -301,7 +298,6 @@ function AnimatedSprite({ sprite, size, tint }: {
           backgroundRepeat: "no-repeat",
           imageRendering: "pixelated",
           animation: `${animId} ${sprite.frames * 0.4}s steps(${sprite.frames}) infinite`,
-          filter: tint ? `drop-shadow(0 0 4px ${tint})` : undefined,
         }} />
       </div>
     );
@@ -325,7 +321,6 @@ function AnimatedSprite({ sprite, size, tint }: {
           imageRendering: "pixelated",
           display: "block",
           animation: `${animId} ${sprite.frames * 0.4}s steps(${sprite.frames}) infinite`,
-          filter: tint ? `drop-shadow(0 0 6px ${tint})` : undefined,
         }}
       />
     </div>
@@ -634,7 +629,7 @@ export default function Landing() {
               onClick={() => navigate(`/codex/${toSlug(fish.name)}?from=home`)}
               style={{
                 background: "rgba(8,18,35,0.9)",
-                border: `1px solid ${hoveredLegendary === i ? fish.aura : "rgba(79,195,247,0.08)"}`,
+                border: `1px solid ${hoveredLegendary === i ? "rgba(79,195,247,0.25)" : "rgba(79,195,247,0.08)"}`,
                 borderRadius: 10,
                 textAlign: "center",
                 transition: "all 0.3s",
@@ -642,29 +637,6 @@ export default function Landing() {
                 position: "relative", overflow: "hidden",
               }}
             >
-              {/* Aura background glow */}
-              <div style={{
-                position: "absolute", inset: 0,
-                background: `radial-gradient(ellipse at 50% 40%, ${fish.aura.replace("0.4", "0.12").replace("0.3", "0.1").replace("0.35", "0.1").replace("0.45", "0.12").replace("0.5", "0.12")}, transparent 70%)`,
-                opacity: hoveredLegendary === i ? 0.8 : 0.4,
-                transition: "opacity 0.3s",
-                pointerEvents: "none",
-              }} />
-              {/* Aura gradient overlay */}
-              <div style={{
-                position: "absolute", inset: 0,
-                background: `radial-gradient(circle at 50% 40%, ${fish.aura}, transparent 70%)`,
-                opacity: hoveredLegendary === i ? 0.3 : 0.08,
-                transition: "opacity 0.3s",
-                pointerEvents: "none",
-              }} />
-              {/* Dark bottom gradient for text readability */}
-              <div style={{
-                position: "absolute", inset: 0,
-                background: "linear-gradient(180deg, transparent 30%, rgba(5,12,25,0.85) 75%, rgba(5,12,25,0.95) 100%)",
-                pointerEvents: "none",
-              }} />
-
               <div style={{ position: "relative", zIndex: 1, padding: 16 }}>
                 <div style={{
                   width: 80, height: 80, margin: "0 auto 10px",
@@ -672,20 +644,12 @@ export default function Landing() {
                   position: "relative",
                 }}>
                   <div style={{
-                    position: "absolute", inset: -5,
-                    borderRadius: "50%",
-                    background: `radial-gradient(circle, ${fish.aura}, transparent 70%)`,
-                    opacity: hoveredLegendary === i ? 0.6 : 0.25,
-                    transition: "opacity 0.3s",
-                  }} />
-                  <div style={{
                     position: "relative", zIndex: 1,
                     animation: hoveredLegendary === i ? "float 2s ease-in-out infinite" : "none",
                   }}>
                     <AnimatedSprite
                       sprite={fish.sprite}
                       size={fish.name === "The Seal at the Seam" ? 56 : 72}
-                      tint={fish.aura}
                     />
                   </div>
                 </div>
@@ -694,7 +658,6 @@ export default function Landing() {
                 }}>CHAPTER {fish.chapter}</div>
                 <div style={{
                   fontSize: 7, color: "#e8edf2", letterSpacing: 1,
-                  textShadow: `0 0 ${hoveredLegendary === i ? 12 : 6}px ${fish.aura}`,
                 }}>{fish.name}</div>
                 <div style={{ marginTop: 6, display: "flex", justifyContent: "center", gap: 2 }}>
                   {[...Array(5)].map((_, s) => (
@@ -971,13 +934,6 @@ export default function Landing() {
                       }}
                     >
                       <FishTooltip fish={fish} visible={hoveredFish === idx} />
-                      {isUltra && fish.tint && (
-                        <div style={{
-                          position: "absolute", inset: 0, borderRadius: 7,
-                          background: `radial-gradient(circle, ${fish.tint}, transparent 70%)`,
-                          pointerEvents: "none",
-                        }} />
-                      )}
                       <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
                         {fish.icon ? (
                           <img
@@ -991,7 +947,7 @@ export default function Landing() {
                             }}
                           />
                         ) : (
-                          <AnimatedSprite sprite={fish.sprite} size={48} tint={isUltra ? fish.tint : undefined} />
+                          <AnimatedSprite sprite={fish.sprite} size={48} />
                         )}
                       </div>
                     </div>

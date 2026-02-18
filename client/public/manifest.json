@@ -2,11 +2,13 @@
   "name": "Grudge Angeler",
   "short_name": "GrudgeAngeler",
   "description": "A pixel art fishing game with diverse fish species, equipment, and ocean exploration.",
-  "start_url": "/",
+  "start_url": "/game",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#030a18",
   "theme_color": "#0a2540",
-  "orientation": "landscape",
+  "orientation": "any",
+  "categories": ["games", "entertainment"],
   "icons": [
     {
       "src": "/icon-192.png",
@@ -20,5 +22,6 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "prefer_related_applications": false
 }
