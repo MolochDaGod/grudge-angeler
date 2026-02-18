@@ -63,6 +63,46 @@ const PLANT_TYPES = [
   { sx: 340, sy: 560, sw: 340, sh: 300 },
 ];
 
+interface UnderwaterBgLayer {
+  id: string;
+  src: string;
+  label: string;
+  depth: 1 | 2 | 3;
+  scale: number;
+  opacity: number;
+  cropTop: number;
+  cropBottom: number;
+  cropLeft: number;
+  cropRight: number;
+  offsetY: number;
+  enabled: boolean;
+  parallax: number;
+}
+
+const UW_BG_IMAGES = [
+  { src: "/assets/tiles/underwater_bg.png", label: "Underwater BG" },
+  { src: "/assets/tiles/underwater_light_bg.png", label: "Underwater Light" },
+  { src: "/assets/tiles/underwater_scene.png", label: "Underwater Scene" },
+  { src: "/assets/tiles/coral_reef_bg.png", label: "Coral Reef" },
+];
+
+const UW_LAYERS_STORAGE_KEY = "grudge-angeler-uw-layers";
+
+function loadUwLayers(): UnderwaterBgLayer[] {
+  try {
+    const raw = localStorage.getItem(UW_LAYERS_STORAGE_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      if (Array.isArray(data)) return data;
+    }
+  } catch {}
+  return [];
+}
+
+function saveUwLayers(layers: UnderwaterBgLayer[]) {
+  localStorage.setItem(UW_LAYERS_STORAGE_KEY, JSON.stringify(layers));
+}
+
 interface UnderwaterPlant {
   typeIdx: number;
   worldX: number;
@@ -911,12 +951,13 @@ export default function FishingGame() {
     predatorAlertTimer: 0,
     boatDamageShake: 0,
     adminOpen: false,
-    adminTab: "assets" as "assets" | "gizmo" | "trace",
+    adminTab: "assets" as "assets" | "gizmo" | "trace" | "map",
     gizmoEnabled: false,
     gizmoSelected: -1,
     gizmoDragging: false,
     gizmoDragOffX: 0,
     gizmoDragOffY: 0,
+    uwLayers: loadUwLayers() as UnderwaterBgLayer[],
     deckOffsetX: 0,
     deckOffsetY: 0,
     baitShopOffsetX: 0,
@@ -1059,7 +1100,8 @@ export default function FishingGame() {
     toolMode: "rod" as "rod" | "net",
     netActive: false,
     adminOpen: false,
-    adminTab: "assets" as "assets" | "gizmo" | "trace",
+    adminTab: "assets" as "assets" | "gizmo" | "trace" | "map",
+    uwLayers: loadUwLayers() as UnderwaterBgLayer[],
     gizmoEnabled: false,
     gamePaused: false,
     traceMode: false,
@@ -1399,6 +1441,7 @@ export default function FishingGame() {
         `/assets/npcs/${npc.spriteFolder}/Idle.png`,
         `/assets/npcs/${npc.spriteFolder}/Walk.png`,
       ]),
+      ...UW_BG_IMAGES.map(img => img.src),
     ];
     Promise.all(assets.map(a => loadImage(a)));
     generateBounties();
@@ -1486,6 +1529,7 @@ export default function FishingGame() {
       netActive: s.netActive,
       adminOpen: s.adminOpen,
       adminTab: s.adminTab,
+      uwLayers: s.uwLayers,
       gizmoEnabled: s.gizmoEnabled,
       gamePaused: s.gamePaused,
       traceMode: s.traceMode,
@@ -2748,20 +2792,46 @@ export default function FishingGame() {
       ctx.closePath();
       ctx.fill();
 
-      // --- UNDERWATER BACKGROUND IMAGE ---
-      const uwBgImg = getImg("/assets/underwater_bg.png");
-      if (uwBgImg && uwBgImg.complete && uwBgImg.naturalWidth > 0) {
-        const bgTileW = uwBgImg.naturalWidth * 0.6;
-        const bgTileH = uwBgImg.naturalHeight * 0.6;
-        const bgStartX = Math.floor(viewL / bgTileW) * bgTileW;
-        ctx.globalAlpha = 0.18;
-        ctx.save();
-        ctx.filter = "hue-rotate(25deg) saturate(0.7)";
-        for (let bx = bgStartX; bx < viewR; bx += bgTileW) {
-          ctx.drawImage(uwBgImg, bx, waterY, bgTileW, waterH);
+      // --- UNDERWATER BACKGROUND LAYERS ---
+      const sortedUwLayers = [...s.uwLayers].filter(l => l.enabled).sort((a, b) => a.depth - b.depth);
+      if (sortedUwLayers.length > 0) {
+        for (const layer of sortedUwLayers) {
+          const lImg = getImg(layer.src);
+          if (!lImg || !lImg.complete || lImg.naturalWidth <= 0) continue;
+          const srcW = lImg.naturalWidth;
+          const srcH = lImg.naturalHeight;
+          const cLeft = Math.floor(srcW * layer.cropLeft);
+          const cTop = Math.floor(srcH * layer.cropTop);
+          const cRight = Math.floor(srcW * layer.cropRight);
+          const cBottom = Math.floor(srcH * layer.cropBottom);
+          const croppedW = Math.max(1, srcW - cLeft - cRight);
+          const croppedH = Math.max(1, srcH - cTop - cBottom);
+          const tileW = croppedW * layer.scale;
+          const tileH = croppedH * layer.scale;
+          const parallaxOffset = -s.cameraX * (1 - layer.parallax);
+          const drawY = waterY + layer.offsetY;
+          const startX = Math.floor((viewL + parallaxOffset) / tileW) * tileW - parallaxOffset;
+          ctx.save();
+          ctx.globalAlpha = layer.opacity;
+          for (let bx = startX; bx < viewR + tileW; bx += tileW) {
+            ctx.drawImage(lImg, cLeft, cTop, croppedW, croppedH, bx, drawY, tileW, tileH);
+          }
+          ctx.restore();
         }
-        ctx.restore();
-        ctx.globalAlpha = 1;
+      } else {
+        const uwBgImg = getImg("/assets/tiles/underwater_bg.png");
+        if (uwBgImg && uwBgImg.complete && uwBgImg.naturalWidth > 0) {
+          const bgTileW = uwBgImg.naturalWidth * 0.6;
+          const bgStartX = Math.floor(viewL / bgTileW) * bgTileW;
+          ctx.globalAlpha = 0.18;
+          ctx.save();
+          ctx.filter = "hue-rotate(25deg) saturate(0.7)";
+          for (let bx = bgStartX; bx < viewR; bx += bgTileW) {
+            ctx.drawImage(uwBgImg, bx, waterY, bgTileW, waterH);
+          }
+          ctx.restore();
+          ctx.globalAlpha = 1;
+        }
       }
 
       // --- DRAW UNDERWATER PLANTS (behind fish layer) ---
@@ -8421,7 +8491,7 @@ export default function FishingGame() {
         }} data-testid="admin-panel">
           {/* Admin Tabs */}
           <div style={{ display: "flex", borderBottom: "1px solid rgba(255,255,255,0.1)", padding: "6px 8px", gap: 4 }}>
-            {(["assets", "gizmo", "trace"] as const).map(tab => (
+            {(["assets", "gizmo", "trace", "map"] as const).map(tab => (
               <div
                 key={tab}
                 onClick={() => { stateRef.current.adminTab = tab; syncUI(); }}
@@ -8754,6 +8824,233 @@ export default function FishingGame() {
                   </div>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Map Tab - Underwater Background Layers */}
+          {uiState.adminTab === "map" && (
+            <div style={{ flex: 1, overflowY: "auto", padding: 8 }}>
+              <div style={{ color: "#4fc3f7", fontSize: 7, marginBottom: 6 }}>Underwater BG Layers</div>
+              <div style={{ color: "#607d8b", fontSize: 5, marginBottom: 8, lineHeight: "1.8" }}>
+                Layer underwater backgrounds with depth ordering. Layer 1 = farthest, 2 = middle, 3 = closest.
+              </div>
+
+              <div style={{ color: "#2ecc71", fontSize: 6, marginBottom: 4, borderBottom: "1px solid rgba(46,204,113,0.2)", paddingBottom: 2 }}>
+                + Add Layer
+              </div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 3, marginBottom: 10 }}>
+                {UW_BG_IMAGES.map((img, idx) => (
+                  <div
+                    key={idx}
+                    data-testid={`add-uw-layer-${idx}`}
+                    onClick={() => {
+                      const s = stateRef.current;
+                      const newLayer: UnderwaterBgLayer = {
+                        id: `uwl_${Date.now()}_${idx}`,
+                        src: img.src,
+                        label: img.label,
+                        depth: (s.uwLayers.length % 3 + 1) as 1 | 2 | 3,
+                        scale: 1.0,
+                        opacity: 0.3,
+                        cropTop: 0,
+                        cropBottom: 0,
+                        cropLeft: 0,
+                        cropRight: 0,
+                        offsetY: 0,
+                        enabled: true,
+                        parallax: 0.5,
+                      };
+                      s.uwLayers.push(newLayer);
+                      saveUwLayers(s.uwLayers);
+                      syncUI();
+                    }}
+                    style={{
+                      width: 70, display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
+                      padding: 3, background: "rgba(46,204,113,0.06)", borderRadius: 4,
+                      border: "1px solid rgba(46,204,113,0.15)", cursor: "pointer",
+                    }}
+                  >
+                    <div style={{ width: 56, height: 32, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", borderRadius: 2 }}>
+                      <img src={img.src} alt={img.label} style={{ maxWidth: 56, maxHeight: 32, imageRendering: "pixelated", objectFit: "cover" }} />
+                    </div>
+                    <div style={{ fontSize: 3.5, color: "#81c784", textAlign: "center", lineHeight: "1.2" }}>{img.label}</div>
+                  </div>
+                ))}
+              </div>
+
+              {uiState.uwLayers.length === 0 && (
+                <div style={{ color: "#455a64", fontSize: 5, textAlign: "center", padding: 16 }}>No layers added yet</div>
+              )}
+
+              {[...uiState.uwLayers]
+                .map((layer, origIdx) => ({ layer, origIdx }))
+                .sort((a, b) => a.layer.depth - b.layer.depth)
+                .map(({ layer, origIdx }) => (
+                <div key={layer.id} style={{
+                  marginBottom: 8, padding: 6, borderRadius: 6,
+                  background: layer.enabled ? "rgba(79,195,247,0.06)" : "rgba(255,255,255,0.02)",
+                  border: `1px solid ${layer.enabled ? "rgba(79,195,247,0.2)" : "rgba(255,255,255,0.06)"}`,
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
+                    <div style={{ width: 36, height: 24, overflow: "hidden", borderRadius: 2, flexShrink: 0 }}>
+                      <img src={layer.src} alt={layer.label} style={{ width: 36, height: 24, objectFit: "cover", imageRendering: "pixelated" }} />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 5, color: layer.enabled ? "#e0e0e0" : "#607d8b" }}>{layer.label}</div>
+                      <div style={{ fontSize: 4, color: "#607d8b" }}>Depth {layer.depth} | {Math.round(layer.opacity * 100)}%</div>
+                    </div>
+                    <div
+                      data-testid={`toggle-uw-layer-${origIdx}`}
+                      onClick={() => {
+                        const s = stateRef.current;
+                        s.uwLayers[origIdx].enabled = !s.uwLayers[origIdx].enabled;
+                        saveUwLayers(s.uwLayers);
+                        syncUI();
+                      }}
+                      style={{
+                        width: 20, height: 20, display: "flex", alignItems: "center", justifyContent: "center",
+                        background: layer.enabled ? "rgba(46,204,113,0.2)" : "rgba(231,76,60,0.2)",
+                        borderRadius: 4, fontSize: 8, cursor: "pointer",
+                        color: layer.enabled ? "#2ecc71" : "#e74c3c",
+                        border: `1px solid ${layer.enabled ? "rgba(46,204,113,0.4)" : "rgba(231,76,60,0.3)"}`,
+                      }}
+                    >{layer.enabled ? "V" : "X"}</div>
+                    <div
+                      data-testid={`delete-uw-layer-${origIdx}`}
+                      onClick={() => {
+                        const s = stateRef.current;
+                        s.uwLayers.splice(origIdx, 1);
+                        saveUwLayers(s.uwLayers);
+                        syncUI();
+                      }}
+                      style={{
+                        width: 20, height: 20, display: "flex", alignItems: "center", justifyContent: "center",
+                        background: "rgba(231,76,60,0.15)", borderRadius: 4, fontSize: 10, cursor: "pointer",
+                        color: "#e74c3c", border: "1px solid rgba(231,76,60,0.3)",
+                      }}
+                    >X</div>
+                  </div>
+
+                  {/* Depth selector */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 4 }}>
+                    <div style={{ fontSize: 4, color: "#78909c", width: 40 }}>DEPTH</div>
+                    {([1, 2, 3] as const).map(d => (
+                      <div
+                        key={d}
+                        data-testid={`uw-depth-${origIdx}-${d}`}
+                        onClick={() => {
+                          const s = stateRef.current;
+                          s.uwLayers[origIdx].depth = d;
+                          saveUwLayers(s.uwLayers);
+                          syncUI();
+                        }}
+                        style={{
+                          flex: 1, textAlign: "center", padding: "3px 0", fontSize: 5, cursor: "pointer",
+                          borderRadius: 3,
+                          background: layer.depth === d ? "rgba(79,195,247,0.2)" : "rgba(255,255,255,0.03)",
+                          color: layer.depth === d ? "#4fc3f7" : "#607d8b",
+                          border: `1px solid ${layer.depth === d ? "rgba(79,195,247,0.4)" : "rgba(255,255,255,0.06)"}`,
+                        }}
+                      >{d === 1 ? "1 Far" : d === 2 ? "2 Mid" : "3 Near"}</div>
+                    ))}
+                  </div>
+
+                  {/* Scale slider */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 4 }}>
+                    <div style={{ fontSize: 4, color: "#78909c", width: 40 }}>SCALE</div>
+                    <input
+                      type="range" min="0.2" max="4" step="0.1"
+                      value={layer.scale}
+                      data-testid={`uw-scale-${origIdx}`}
+                      onChange={(e) => {
+                        const s = stateRef.current;
+                        s.uwLayers[origIdx].scale = parseFloat(e.target.value);
+                        saveUwLayers(s.uwLayers);
+                        syncUI();
+                      }}
+                      style={{ flex: 1, height: 12, accentColor: "#4fc3f7" }}
+                    />
+                    <div style={{ fontSize: 4, color: "#90a4ae", width: 24, textAlign: "right" }}>{layer.scale.toFixed(1)}</div>
+                  </div>
+
+                  {/* Opacity slider */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 4 }}>
+                    <div style={{ fontSize: 4, color: "#78909c", width: 40 }}>ALPHA</div>
+                    <input
+                      type="range" min="0" max="1" step="0.05"
+                      value={layer.opacity}
+                      data-testid={`uw-opacity-${origIdx}`}
+                      onChange={(e) => {
+                        const s = stateRef.current;
+                        s.uwLayers[origIdx].opacity = parseFloat(e.target.value);
+                        saveUwLayers(s.uwLayers);
+                        syncUI();
+                      }}
+                      style={{ flex: 1, height: 12, accentColor: "#4fc3f7" }}
+                    />
+                    <div style={{ fontSize: 4, color: "#90a4ae", width: 24, textAlign: "right" }}>{Math.round(layer.opacity * 100)}%</div>
+                  </div>
+
+                  {/* Parallax slider */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 4 }}>
+                    <div style={{ fontSize: 4, color: "#78909c", width: 40 }}>PARA</div>
+                    <input
+                      type="range" min="0" max="1" step="0.05"
+                      value={layer.parallax}
+                      data-testid={`uw-parallax-${origIdx}`}
+                      onChange={(e) => {
+                        const s = stateRef.current;
+                        s.uwLayers[origIdx].parallax = parseFloat(e.target.value);
+                        saveUwLayers(s.uwLayers);
+                        syncUI();
+                      }}
+                      style={{ flex: 1, height: 12, accentColor: "#4fc3f7" }}
+                    />
+                    <div style={{ fontSize: 4, color: "#90a4ae", width: 24, textAlign: "right" }}>{layer.parallax.toFixed(2)}</div>
+                  </div>
+
+                  {/* Y Offset slider */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 4 }}>
+                    <div style={{ fontSize: 4, color: "#78909c", width: 40 }}>Y OFF</div>
+                    <input
+                      type="range" min="-200" max="200" step="5"
+                      value={layer.offsetY}
+                      data-testid={`uw-offsety-${origIdx}`}
+                      onChange={(e) => {
+                        const s = stateRef.current;
+                        s.uwLayers[origIdx].offsetY = parseFloat(e.target.value);
+                        saveUwLayers(s.uwLayers);
+                        syncUI();
+                      }}
+                      style={{ flex: 1, height: 12, accentColor: "#4fc3f7" }}
+                    />
+                    <div style={{ fontSize: 4, color: "#90a4ae", width: 24, textAlign: "right" }}>{layer.offsetY}</div>
+                  </div>
+
+                  {/* Crop controls */}
+                  <div style={{ fontSize: 4, color: "#78909c", marginBottom: 3, marginTop: 4 }}>CROP</div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 3 }}>
+                    {(["cropTop", "cropBottom", "cropLeft", "cropRight"] as const).map(cropKey => (
+                      <div key={cropKey} style={{ display: "flex", alignItems: "center", gap: 3 }}>
+                        <div style={{ fontSize: 3.5, color: "#607d8b", width: 20, textTransform: "capitalize" }}>{cropKey.replace("crop", "")}</div>
+                        <input
+                          type="range" min="0" max="0.5" step="0.01"
+                          value={layer[cropKey]}
+                          data-testid={`uw-${cropKey}-${origIdx}`}
+                          onChange={(e) => {
+                            const s = stateRef.current;
+                            (s.uwLayers[origIdx] as any)[cropKey] = parseFloat(e.target.value);
+                            saveUwLayers(s.uwLayers);
+                            syncUI();
+                          }}
+                          style={{ flex: 1, height: 10, accentColor: "#78909c" }}
+                        />
+                        <div style={{ fontSize: 3.5, color: "#607d8b", width: 16, textAlign: "right" }}>{Math.round(layer[cropKey] * 100)}%</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>
