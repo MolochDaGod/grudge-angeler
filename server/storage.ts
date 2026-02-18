@@ -96,29 +96,18 @@ export class DatabaseStorage implements IStorage {
         ${entry.reward ?? 0},
         NOW()
       )
-      ON CONFLICT DO NOTHING
+      ON CONFLICT (player_name, tournament_date) DO UPDATE SET
+        total_caught = CASE WHEN EXCLUDED.composite_score > tournament_entries.composite_score THEN EXCLUDED.total_caught ELSE tournament_entries.total_caught END,
+        total_weight = CASE WHEN EXCLUDED.composite_score > tournament_entries.composite_score THEN EXCLUDED.total_weight ELSE tournament_entries.total_weight END,
+        largest_catch = CASE WHEN EXCLUDED.composite_score > tournament_entries.composite_score THEN EXCLUDED.largest_catch ELSE tournament_entries.largest_catch END,
+        largest_fish_name = CASE WHEN EXCLUDED.composite_score > tournament_entries.composite_score THEN EXCLUDED.largest_fish_name ELSE tournament_entries.largest_fish_name END,
+        rarity_score = CASE WHEN EXCLUDED.composite_score > tournament_entries.composite_score THEN EXCLUDED.rarity_score ELSE tournament_entries.rarity_score END,
+        composite_score = CASE WHEN EXCLUDED.composite_score > tournament_entries.composite_score THEN EXCLUDED.composite_score ELSE tournament_entries.composite_score END,
+        created_at = CASE WHEN EXCLUDED.composite_score > tournament_entries.composite_score THEN NOW() ELSE tournament_entries.created_at END
       RETURNING *
     `);
-    const existing = await db.execute(sql`
-      SELECT * FROM tournament_entries
-      WHERE player_name = ${entry.playerName} AND tournament_date = ${entry.tournamentDate}
-      ORDER BY composite_score DESC LIMIT 1
-    `);
-    const row = (result as any).rows?.[0] || (existing as any).rows?.[0];
+    const row = (result as any).rows?.[0];
     if (row) {
-      if (entry.compositeScore > (row.composite_score || 0)) {
-        await db.execute(sql`
-          UPDATE tournament_entries
-          SET total_caught = ${entry.totalCaught},
-              total_weight = ${entry.totalWeight},
-              largest_catch = ${entry.largestCatch},
-              largest_fish_name = ${entry.largestFishName ?? null},
-              rarity_score = ${entry.rarityScore},
-              composite_score = ${entry.compositeScore},
-              created_at = NOW()
-          WHERE player_name = ${entry.playerName} AND tournament_date = ${entry.tournamentDate}
-        `);
-      }
       return {
         id: row.id,
         playerName: row.player_name,

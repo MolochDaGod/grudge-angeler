@@ -177,6 +177,8 @@ interface FishType {
   beachCrab?: boolean;
   spriteFrameH?: number;
   isPredator?: boolean;
+  staticImg?: string;
+  bottomDweller?: boolean;
 }
 
 const FISH_TYPES: FishType[] = [
@@ -184,7 +186,7 @@ const FISH_TYPES: FishType[] = [
   { name: "Jellyfish", icon: "/assets/icons/fish/jellyfish-translucent-common.png", catchAsset: "/assets/catch/jellyfish-translucent-common.png", catchW: 15, catchH: 24, creatureFolder: "jellyfish-translucent-common", idleFrames: 4, walkFrames: 4, points: 20, rarity: "common", weight: 25, minDepth: 0.2, speed: 0.7, description: "A translucent jellyfish drifting with the current.", tint: "rgba(120,80,255,0.2)" },
   { name: "Perch", icon: "/assets/icons/fish/perch-striped-common.png", catchAsset: "/assets/catch/perch-striped-common.png", catchW: 92, catchH: 22, creatureFolder: "perch-striped-common", idleFrames: 2, walkFrames: 2, points: 25, rarity: "common", weight: 30, minDepth: 0.25, speed: 1.2, description: "A striped freshwater fish with sharp fins." },
   { name: "Bass", icon: "/assets/icons/fish/bass-green-uncommon.png", catchAsset: "/assets/catch/bass-green-uncommon.png", catchW: 27, catchH: 39, creatureFolder: "bass-green-uncommon", idleFrames: 4, walkFrames: 4, points: 50, rarity: "uncommon", weight: 15, minDepth: 0.35, speed: 1.0, description: "A strong fighter popular with anglers.", tint: "rgba(60,80,40,0.3)" },
-  { name: "Catfish", icon: "/assets/icons/fish/catfish-brown-uncommon.png", catchAsset: "/assets/catch/catfish-brown-uncommon.png", catchW: 56, catchH: 36, creatureFolder: "catfish-brown-uncommon", idleFrames: 4, walkFrames: 4, points: 75, rarity: "uncommon", weight: 8, minDepth: 0.45, speed: 0.8, description: "A bottom-dweller with long whiskers.", tint: "rgba(160,120,80,0.15)" },
+  { name: "Catfish", icon: "/assets/icons/fish/catfish-brown-uncommon.png", catchAsset: "/assets/catch/catfish-brown-uncommon.png", catchW: 56, catchH: 36, creatureFolder: "catfish-brown-uncommon", idleFrames: 4, walkFrames: 4, points: 75, rarity: "uncommon", weight: 8, minDepth: 0.15, speed: 0.8, description: "A bottom-dweller with long whiskers.", tint: "rgba(160,120,80,0.15)", staticImg: "/assets/catch/catfish-brown-uncommon.png", bottomDweller: true },
   { name: "Swordfish", icon: "/assets/icons/fish/swordfish-blue-rare.png", catchAsset: "/assets/catch/swordfish-blue-rare.png", catchW: 92, catchH: 22, creatureFolder: "swordfish-blue-rare", idleFrames: 2, walkFrames: 2, points: 150, rarity: "rare", weight: 4, minDepth: 0.55, speed: 1.8, description: "A powerful ocean predator with a sharp bill." },
   { name: "Stingray", icon: "/assets/icons/fish/stingray-gray-rare.png", catchAsset: "/assets/catch/stingray-gray-rare.png", catchW: 92, catchH: 22, creatureFolder: "stingray-gray-rare", idleFrames: 2, walkFrames: 2, points: 100, rarity: "rare", weight: 5, minDepth: 0.45, speed: 1.4, description: "A flat-bodied ray gliding silently along the ocean floor.", tint: "rgba(100,110,130,0.25)", baseScale: 1.2 },
   { name: "Whale", icon: "/assets/icons/fish/whale-blue-legendary.png", catchAsset: "/assets/catch/whale-blue-legendary.png", catchW: 78, catchH: 20, creatureFolder: "whale-blue-legendary", idleFrames: 2, walkFrames: 2, points: 300, rarity: "legendary", weight: 1, minDepth: 0.65, speed: 0.5, description: "The king of the deep. Incredibly rare!", tint: "rgba(40,80,180,0.45)", baseScale: 1.8 },
@@ -1288,7 +1290,12 @@ export default function FishingGame() {
     const effectiveMaxY = Math.min(canvasH - 60, floorY);
     const safeRange = Math.max(30, effectiveMaxY - waterStartY);
     const minY = waterStartY + safeRange * fishType.minDepth;
-    const y = minY + Math.random() * Math.max(10, effectiveMaxY - minY);
+    let y: number;
+    if (fishType.bottomDweller) {
+      y = Math.max(waterStartY + 40, effectiveMaxY - 10 - Math.random() * 30);
+    } else {
+      y = minY + Math.random() * Math.max(10, effectiveMaxY - minY);
+    }
     const baseSizeMult = 0.5 + Math.random() * Math.random() * 4.5;
     const ultraScale = fishType.baseScale || 1;
     const rightSizeReduction = rightRatio > 0.1 ? Math.max(0.3, 1 - rightRatio * 0.7) : 1;
@@ -4336,6 +4343,22 @@ export default function FishingGame() {
               ctx.scale(-1, 1);
             }
             ctx.drawImage(crabImg, sx, sy, fs, fs, -fs * crabScale / 2, -fs * crabScale / 2, fs * crabScale, fs * crabScale);
+            ctx.restore();
+          }
+        } else if (fish.type.staticImg) {
+          const staticImgEl = getImg(fish.type.staticImg);
+          if (staticImgEl && staticImgEl.complete && staticImgEl.naturalWidth > 0) {
+            const sScale = creatureScale * (fish.type.baseScale || 1.0) * 0.7;
+            const dw = fish.type.catchW * sScale;
+            const dh = fish.type.catchH * sScale;
+            ctx.save();
+            if (fish.direction < 0) {
+              ctx.translate(fish.x + dw, fish.y);
+              ctx.scale(-1, 1);
+              ctx.drawImage(staticImgEl, 0, 0, dw, dh);
+            } else {
+              ctx.drawImage(staticImgEl, fish.x, fish.y, dw, dh);
+            }
             ctx.restore();
           }
         } else if (fish.type.beachCrab && fish.type.icon) {
