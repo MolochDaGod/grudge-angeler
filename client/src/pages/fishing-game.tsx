@@ -855,6 +855,8 @@ export default function FishingGame() {
     tutorialStep: 0,
     underwaterPlants: [] as UnderwaterPlant[],
     plantsInitialized: false,
+    cloudInstances: [] as { shape: number; x: number; y: number; speed: number; scale: number; frame: number; frameTimer: number }[],
+    cloudsInitialized: false,
   });
 
   const imagesRef = useRef<Map<string, HTMLImageElement>>(new Map());
@@ -1711,6 +1713,23 @@ export default function FishingGame() {
         s.plantsInitialized = true;
       }
 
+      if (!s.cloudsInitialized) {
+        s.cloudInstances = [];
+        const numClouds = 10;
+        for (let ci = 0; ci < numClouds; ci++) {
+          s.cloudInstances.push({
+            shape: Math.floor(Math.random() * 8) + 1,
+            x: Math.random() * (W + 400) - 200,
+            y: 15 + Math.random() * 120,
+            speed: 0.15 + Math.random() * 0.25,
+            scale: 0.6 + Math.random() * 0.8,
+            frame: Math.floor(Math.random() * 5) + 1,
+            frameTimer: Math.random() * 300,
+          });
+        }
+        s.cloudsInitialized = true;
+      }
+
       s.time += dt;
       s.waterOffset += 0.12 * dt;
 
@@ -2378,24 +2397,31 @@ export default function FishingGame() {
         }
       }
 
-      // === CLOUDS (weather-responsive) ===
-      const cloudCount = s.weather === "clear" ? 4 : s.weather === "cloudy" ? 8 : s.weather === "fog" ? 10 : isStormy ? 12 : 6;
-      const cloudAlphaBase = s.weather === "clear" ? 0.2 : s.weather === "cloudy" ? 0.5 : s.weather === "fog" ? 0.6 : 0.7;
+      // === CLOUDS (pixel art sprites, weather-responsive) ===
+      const cloudAlphaBase = s.weather === "clear" ? 0.35 : s.weather === "cloudy" ? 0.7 : s.weather === "fog" ? 0.8 : 0.9;
       const cloudDrift = s.windSpeed * 0.1;
-      const cloudBaseAlpha = (cloudAlphaBase + dayPhase * 0.1) * s.weatherTransition + (0.25 + dayPhase * 0.15) * (1 - s.weatherTransition);
-      for (let i = 0; i < cloudCount; i++) {
-        const cx = ((s.time * (0.02 + cloudDrift) + i * (W / cloudCount) * 1.3) % (W + 350)) - 175;
-        const cy = 35 + (i % 5) * 28 + Math.sin(s.time * 0.006 + i * 1.7) * 5;
-        const cScale = 0.8 + (i % 3) * 0.2;
-        ctx.fillStyle = isStormy ? `rgb(${70 + dayPhase * 30},${75 + dayPhase * 30},${85 + dayPhase * 30})` :
-          dayPhase > 0.5 ? "#ffffff" : "#8899aa";
-        ctx.globalAlpha = cloudBaseAlpha;
-        ctx.beginPath(); ctx.ellipse(cx, cy, (50 + i * 6) * cScale, (14 + i * 2) * cScale, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.beginPath(); ctx.ellipse(cx + 35 * cScale, cy - 4 * cScale, (35 + i * 4) * cScale, (10 + i) * cScale, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.beginPath(); ctx.ellipse(cx - 20 * cScale, cy + 2 * cScale, (30 + i * 3) * cScale, (10 + i * 0.5) * cScale, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.globalAlpha = cloudBaseAlpha * 0.3;
-        ctx.beginPath(); ctx.ellipse(cx, cy, (55 + i * 7) * cScale, (18 + i * 3) * cScale, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.beginPath(); ctx.ellipse(cx + 40 * cScale, cy - 2 * cScale, (40 + i * 5) * cScale, (14 + i * 2) * cScale, 0, 0, Math.PI * 2); ctx.fill();
+      const cloudBaseAlpha = (cloudAlphaBase + dayPhase * 0.1) * s.weatherTransition + (0.3 + dayPhase * 0.15) * (1 - s.weatherTransition);
+      const cloudColorType = isStormy ? "black" : (s.weather === "cloudy" || s.weather === "rain" || s.weather === "fog") ? "gray" : "white";
+      const visibleCount = s.weather === "clear" ? 5 : s.weather === "cloudy" ? 8 : isStormy ? 10 : s.weather === "fog" ? 9 : 6;
+      for (let ci = 0; ci < Math.min(visibleCount, s.cloudInstances.length); ci++) {
+        const cloud = s.cloudInstances[ci];
+        cloud.x += (cloud.speed + cloudDrift) * dt;
+        if (cloud.x > W + 200) cloud.x = -250;
+        if (cloud.x < -300) cloud.x = W + 150;
+        cloud.frameTimer += dt;
+        if (cloud.frameTimer >= 30) {
+          cloud.frameTimer = 0;
+          cloud.frame = (cloud.frame % 5) + 1;
+        }
+        const cloudSrc = `/assets/clouds/${cloudColorType}/cloud${cloud.shape}_${cloud.frame}.png`;
+        const cloudImg = getImg(cloudSrc);
+        if (cloudImg && cloudImg.complete && cloudImg.naturalWidth > 0) {
+          const cw = cloudImg.naturalWidth * cloud.scale;
+          const ch = cloudImg.naturalHeight * cloud.scale;
+          const vertBob = Math.sin(s.time * 0.004 + ci * 1.7) * 3;
+          ctx.globalAlpha = cloudBaseAlpha;
+          ctx.drawImage(cloudImg, cloud.x, cloud.y + vertBob, cw, ch);
+        }
       }
       ctx.globalAlpha = 1;
 
@@ -2520,8 +2546,18 @@ export default function FishingGame() {
         }
       }
 
-      // Lightning flash overlay (renders last to wash out all sky elements)
       if (s.lightningFlash > 0) {
+        const lightningIdx = ((Math.floor(s.time * 0.5)) % 5) + 1;
+        const lightningImg = getImg(`/assets/clouds/lightning/lightning${lightningIdx}.png`);
+        if (lightningImg && lightningImg.complete && lightningImg.naturalWidth > 0 && s.lightningFlash > 0.5) {
+          const lx = W * (0.2 + ((s.lightningTimer * 137) % 60) / 100);
+          const lScale = 2 + s.lightningFlash;
+          const lw = lightningImg.naturalWidth * lScale;
+          const lh = lightningImg.naturalHeight * lScale;
+          ctx.globalAlpha = Math.min(1, s.lightningFlash * 0.9);
+          ctx.drawImage(lightningImg, lx - lw / 2, 0, lw, lh);
+          ctx.globalAlpha = 1;
+        }
         ctx.fillStyle = `rgba(255,255,240,${s.lightningFlash * 0.6})`;
         ctx.fillRect(0, 0, W, H);
       }
@@ -6180,7 +6216,49 @@ export default function FishingGame() {
     }
   }, []);
 
-  const handleTouchMove = useCallback((_e: React.TouchEvent<HTMLCanvasElement>) => {
+  const handleTouchMove = useCallback((e: React.TouchEvent<HTMLCanvasElement>) => {
+    const s = stateRef.current;
+    if (!e.touches.length) return;
+    const touch = e.touches[0];
+    s.mouseX = touch.clientX;
+    s.mouseY = touch.clientY;
+    if (s.gizmoDragging && s.gizmoSelected !== -1) {
+      e.preventDefault();
+      const worldX = touch.clientX - s.cameraX;
+      const worldY = touch.clientY - s.cameraY;
+      if (s.gizmoSelected === -10) {
+        const canvas = canvasRef.current;
+        if (canvas) {
+          s.deckOffsetX = (worldX - s.gizmoDragOffX) - (canvas.width * 0.45 - 80);
+          s.deckOffsetY = (worldY - s.gizmoDragOffY) - canvas.height * 0.38;
+        }
+      } else if (s.gizmoSelected === -11) {
+        const canvas = canvasRef.current;
+        if (canvas) {
+          s.deckLegsOffsetX = (worldX - s.gizmoDragOffX) - (canvas.width * 0.45 - 80 + s.deckOffsetX);
+          s.deckLegsOffsetY = (worldY - s.gizmoDragOffY) - canvas.height * 0.42;
+        }
+      } else if (s.gizmoSelected === -12) {
+        const canvas = canvasRef.current;
+        if (canvas) {
+          s.baitShopOffsetX = (worldX - s.gizmoDragOffX) - canvas.width * 2.85;
+          s.baitShopOffsetY = (worldY - s.gizmoDragOffY) - (canvas.height * 0.38 - 122 * s.baitShopScale + 35);
+        }
+      } else if (s.gizmoSelected === -13) {
+        const canvas = canvasRef.current;
+        if (canvas) {
+          const bS = canvas.width * 2.6;
+          const bE = canvas.width * 5.2;
+          const bP = (canvas.width * 3.2 - bS) / (bE - bS);
+          const baseLsTopY = canvas.height * 0.38 + 10 + bP * 30 - 80 * s.licenseSignScale;
+          s.licenseSignOffsetX = (worldX - s.gizmoDragOffX) - canvas.width * 3.2;
+          s.licenseSignOffsetY = (worldY - s.gizmoDragOffY) - baseLsTopY;
+        }
+      } else if (s.gizmoSelected >= 0) {
+        s.worldObjects[s.gizmoSelected].x = worldX - s.gizmoDragOffX;
+        s.worldObjects[s.gizmoSelected].y = worldY - s.gizmoDragOffY;
+      }
+    }
   }, []);
 
   const rarityColor = (rarity: string) => {
