@@ -323,21 +323,49 @@ const NPC_DEFS: NpcDef[] = [
       { name: "Sardine Chunks", type: "chum", index: 7, price: 40, description: "Fast bites!", icon: "/assets/gen-icons/chum-live-shrimp.png" },
       { name: "Nightcrawler", type: "lure", index: 1, price: 35, description: "Juicy wriggling bait.", icon: "/assets/lures/nightcrawler.png" },
     ],
-    dialogueLines: ["The pier's been busy lately.", "Watch out for storms - fish bite different.", "Need chum? I got the good stuff."],
+    dialogueLines: [
+      "Crabs on the beach make powerful bait. Tier 3 crabs give 6x legendary boost!",
+      "Without crab bait, legendaries barely spawn. Stock up!",
+      "Storm weather changes fish behavior. Different species bite in rain.",
+      "The deeper you fish, the rarer the catch. Get a better rod for range.",
+      "Buy a Fishing License to access the dock. Only 100 gbux!",
+      "Fish Scraps are cheap but barely attract anything. Save for Shrimp Paste.",
+      "Combo catches raise your sell prices. Keep reeling them in!",
+      "Some say there are fish so rare, most anglers never see one.",
+      "Certain chum types boost rarity chances. Check the stats before buying.",
+    ],
   },
   {
     id: 2, name: "Marina", spriteFolder: "3", idleFrames: 4, walkFrames: 6,
     worldX: 0.60, role: "requester",
     greeting: "Hey there! I need help with something...",
     request: { description: "Bring me 2 Perch for my stew.", fishName: "Perch", count: 2, fulfilled: 0, reward: 80, completed: false },
-    dialogueLines: ["My grandmother's stew recipe needs fresh fish.", "The Perch around here are the tastiest.", "I'll pay well for your trouble!"],
+    dialogueLines: [
+      "My grandmother's stew recipe needs fresh fish.",
+      "Perch are common near the pier. Cast close to shore.",
+      "Did you know crabs count as live bait? Catch them on the beach!",
+      "Sell different fish to keep your earnings steady.",
+      "Phosphor Dust chum gives 2x rarity boost. Worth every gbux.",
+      "Upgrade your rod before chasing deep water fish. Bamboo won't reach!",
+      "Crystal Crab bait is the strongest. 6x legendary boost from Tier 3!",
+    ],
   },
   {
     id: 3, name: "Captain Rex", spriteFolder: "6", idleFrames: 4, walkFrames: 6,
     worldX: 0.48, role: "mission_giver",
     greeting: "Ahoy! Got a challenge for a brave angler.",
     mission: { description: "Catch a Bass weighing at least 5 lbs.", fishName: "Bass", minSize: 5, count: 1, caught: 0, reward: 200, completed: false },
-    dialogueLines: ["I've sailed these waters for decades.", "Only the best anglers take my missions.", "Prove your worth and you'll be rewarded."],
+    dialogueLines: [
+      "I've sailed these waters for decades. Legends lurk in the abyss.",
+      "The boat costs 400 gbux but unlocks the open ocean. Worth it.",
+      "Sharks patrol deep waters. They won't bother you on the pier.",
+      "The Kraken? Only in the deepest abyss. Zone 4 and beyond.",
+      "Ultra-rare fish are extremely hard to hook. Prepare your best gear!",
+      "Strength attribute affects how fast your Force Bar fills. Level it up!",
+      "Golden Flakes chum: 2x rarity, 1.4x bite speed, 2.5x attract. Top tier!",
+      "Celestial events are rare. Red Sun, Blood Moon... fish go wild during them.",
+      "Deeper zones mean bigger fish. Carbon Rod or better to reach them.",
+    ],
   },
   {
     id: 4, name: "Nelly", spriteFolder: "4", idleFrames: 4, walkFrames: 6,
@@ -349,14 +377,32 @@ const NPC_DEFS: NpcDef[] = [
       { name: "Crankbait", type: "lure", index: 6, price: 110, description: "Rattling diving lure.", icon: "/assets/lures/crankbait.png" },
       { name: "Crab Guts", type: "chum", index: 8, price: 50, description: "Attracts rare fish!", icon: "/assets/gen-icons/chum-sea-urchin-spines.png" },
     ],
-    dialogueLines: ["These lures are imported, you know.", "Best deals on the dock, guaranteed.", "Come back when you need more gear."],
+    dialogueLines: [
+      "Artificial lures never run out. Live bait gets consumed each cast.",
+      "Crankbait dives deep - perfect for catching bottom dwellers.",
+      "Each lure has different rarity boosts. Check your stats!",
+      "Titanium Rod has massive range but Legendary Rod is unmatched.",
+      "The Crystal Crab is ultra-rare. Its bait gives 6x legendary boost!",
+      "Bounties rotate every few minutes. Check the billboard for targets.",
+      "Net tool catches fish automatically but has a cooldown between uses.",
+      "Fermented Brine chum: 1.5x rarity boost. Good value for the price!",
+    ],
   },
   {
     id: 5, name: "Fisher Joe", spriteFolder: "2", idleFrames: 4, walkFrames: 6,
     worldX: 0.55, role: "requester",
     greeting: "Psst! I could use a hand...",
     request: { description: "Bring me 3 Minnows for bait.", fishName: "Minnow", count: 3, fulfilled: 0, reward: 50, completed: false },
-    dialogueLines: ["I ran out of bait this morning.", "Minnows make the best live bait.", "Help me out and I'll make it worth your while."],
+    dialogueLines: [
+      "Minnows are tiny but they're everywhere near shore.",
+      "I ran out of bait this morning. Beach crabs work in a pinch!",
+      "Bigger fish sell for more, but weight is random each catch.",
+      "Sand Crab and Hermit Crab are common. Easy to farm on the beach.",
+      "Wisdom attribute boosts your rarity luck. Invest points wisely!",
+      "Fiberglass Rod is a great first upgrade. 550 range beats Bamboo's 350.",
+      "Each rod level improves your catch zone. Keep using it to level up!",
+      "Chum has a cooldown between uses. Time it wisely during fishing runs!",
+    ],
   },
 ];
 
@@ -779,6 +825,14 @@ export default function FishingGame() {
       frame: 0,
       frameTimer: 0,
       facingLeft: def.worldX > 0.55,
+      walkX: 0,
+      walkDir: 0 as -1 | 0 | 1,
+      walkTimer: 0,
+      idleTimer: Math.random() * 4 + 2,
+      walkTarget: 0,
+      bubbleText: "",
+      bubbleTimer: 0,
+      bubbleCooldown: Math.random() * 8 + 5,
     })),
     nearNpc: -1,
     activeNpc: -1,
@@ -1711,6 +1765,63 @@ export default function FishingGame() {
         s.nearHut = !s.inBoat && Math.abs(s.playerX - hutCheckX) < 80 && s.gameState === "idle" && s.fishingLicense;
 
         s.nearNpc = -1;
+
+        for (let ni = 0; ni < s.npcs.length; ni++) {
+          const npc = s.npcs[ni];
+          const npcBaseX = npc.worldX * W;
+          const npcWorldX = npcBaseX + npc.walkX;
+
+          const walkRange = 50;
+          if (npc.walkDir === 0) {
+            npc.idleTimer -= dt / 60;
+            npc.frameTimer += dt;
+            if (npc.frameTimer > 10) {
+              npc.frameTimer = 0;
+              npc.frame = (npc.frame + 1) % (npc.idleFrames || 4);
+            }
+            if (npc.idleTimer <= 0) {
+              npc.walkTarget = (Math.random() - 0.5) * walkRange * 2;
+              npc.walkTarget = Math.max(-walkRange, Math.min(walkRange, npc.walkTarget));
+              npc.walkDir = npc.walkTarget > npc.walkX ? 1 : -1;
+              npc.facingLeft = npc.walkDir < 0;
+              npc.frame = 0;
+            }
+          } else {
+            const npcSpeed = 0.6 * dt;
+            npc.walkX += npc.walkDir * npcSpeed;
+            npc.walkX = Math.max(-walkRange, Math.min(walkRange, npc.walkX));
+            npc.frameTimer += dt;
+            if (npc.frameTimer > 8) {
+              npc.frameTimer = 0;
+              npc.frame = (npc.frame + 1) % (npc.walkFrames || 6);
+            }
+            if ((npc.walkDir > 0 && npc.walkX >= npc.walkTarget) || (npc.walkDir < 0 && npc.walkX <= npc.walkTarget)) {
+              npc.walkDir = 0;
+              npc.idleTimer = Math.random() * 5 + 3;
+              npc.frame = 0;
+            }
+          }
+
+          npc.bubbleCooldown -= dt / 60;
+          if (npc.bubbleTimer > 0) {
+            npc.bubbleTimer -= dt / 60;
+            if (npc.bubbleTimer <= 0) {
+              npc.bubbleText = "";
+              npc.bubbleCooldown = Math.random() * 12 + 8;
+            }
+          } else if (npc.bubbleCooldown <= 0) {
+            const lines = npc.dialogueLines;
+            npc.bubbleText = lines[Math.floor(Math.random() * lines.length)];
+            npc.bubbleTimer = 4 + Math.random() * 2;
+          }
+
+          if (s.gameState === "idle" && !s.inBoat && s.fishingLicense) {
+            const dist = Math.abs(s.playerX - npcWorldX);
+            if (dist < 50) {
+              s.nearNpc = ni;
+            }
+          }
+        }
 
         if (s.gameState === "casting") {
           const maxRange = RODS[s.equippedRod].castRange;
@@ -3373,7 +3484,112 @@ export default function FishingGame() {
         }
       }
 
-      // NPC rendering disabled
+      for (let ni = 0; ni < s.npcs.length; ni++) {
+        const npc = s.npcs[ni];
+        const npcBaseX = npc.worldX * W;
+        const npcWorldX = npcBaseX + npc.walkX;
+        const npcScale = 2.2;
+        const npcY = pierY - NPC_FRAME_SIZE * npcScale + 4;
+        const spritePath = npc.walkDir !== 0 ? `/assets/npcs/${npc.spriteFolder}/Walk.png` : `/assets/npcs/${npc.spriteFolder}/Idle.png`;
+        const img = getImg(spritePath);
+        if (img && img.complete && img.naturalWidth > 0) {
+          const totalFrames = npc.walkDir !== 0 ? (npc.walkFrames || 6) : (npc.idleFrames || 4);
+          const frameW = img.naturalWidth / totalFrames;
+          const frameH = img.naturalHeight;
+          const sx = npc.frame * frameW;
+          ctx.save();
+          const drawX = npcWorldX;
+          const drawW = frameW * npcScale;
+          const drawH = frameH * npcScale;
+          if (npc.facingLeft) {
+            ctx.translate(drawX + drawW / 2, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(img, sx, 0, frameW, frameH, -drawW / 2, npcY, drawW, drawH);
+          } else {
+            ctx.drawImage(img, sx, 0, frameW, frameH, drawX - drawW / 2, npcY, drawW, drawH);
+          }
+          ctx.restore();
+
+          const nameY = npcY - 6;
+          ctx.save();
+          ctx.font = "bold 9px 'Press Start 2P', monospace";
+          ctx.textAlign = "center";
+          ctx.fillStyle = "rgba(0,0,0,0.6)";
+          ctx.fillText(npc.name, drawX + 1, nameY + 1);
+          const roleColors: Record<string, string> = { shopkeeper: "#2ecc71", requester: "#f39c12", mission_giver: "#e74c3c" };
+          ctx.fillStyle = roleColors[npc.role] || "#ffffff";
+          ctx.fillText(npc.name, drawX, nameY);
+
+          if (s.nearNpc === ni) {
+            ctx.fillStyle = "rgba(255,255,255,0.7)";
+            ctx.font = "7px 'Press Start 2P', monospace";
+            ctx.fillText("[E] Talk", drawX, nameY - 12);
+          }
+          ctx.restore();
+        }
+
+        if (npc.bubbleText && npc.bubbleTimer > 0) {
+          ctx.save();
+          ctx.font = "7px 'Press Start 2P', monospace";
+          ctx.textAlign = "center";
+          const bubbleX = npcWorldX;
+          const bubbleY = pierY - NPC_FRAME_SIZE * 2.2 - 18;
+          const maxBubbleW = 160;
+          const words = npc.bubbleText.split(" ");
+          const lines: string[] = [];
+          let curLine = "";
+          for (const word of words) {
+            const test = curLine ? curLine + " " + word : word;
+            if (ctx.measureText(test).width > maxBubbleW - 12) {
+              if (curLine) lines.push(curLine);
+              curLine = word;
+            } else {
+              curLine = test;
+            }
+          }
+          if (curLine) lines.push(curLine);
+          const lineH = 10;
+          const padX = 6;
+          const padY = 5;
+          const bW = Math.min(maxBubbleW, Math.max(...lines.map(l => ctx.measureText(l).width)) + padX * 2);
+          const bH = lines.length * lineH + padY * 2;
+
+          const fadeIn = Math.min(1, (npc.bubbleTimer > 3 ? (6 - npc.bubbleTimer) * 2 : 1));
+          const fadeOut = Math.min(1, npc.bubbleTimer * 2);
+          const alpha = Math.min(fadeIn, fadeOut);
+          ctx.globalAlpha = alpha;
+
+          ctx.fillStyle = "rgba(8,15,25,0.92)";
+          const bx = bubbleX - bW / 2;
+          const by = bubbleY - bH;
+          const br = 5;
+          ctx.beginPath();
+          ctx.moveTo(bx + br, by);
+          ctx.lineTo(bx + bW - br, by);
+          ctx.quadraticCurveTo(bx + bW, by, bx + bW, by + br);
+          ctx.lineTo(bx + bW, by + bH - br);
+          ctx.quadraticCurveTo(bx + bW, by + bH, bx + bW - br, by + bH);
+          ctx.lineTo(bubbleX + 5, by + bH);
+          ctx.lineTo(bubbleX, by + bH + 6);
+          ctx.lineTo(bubbleX - 5, by + bH);
+          ctx.lineTo(bx + br, by + bH);
+          ctx.quadraticCurveTo(bx, by + bH, bx, by + bH - br);
+          ctx.lineTo(bx, by + br);
+          ctx.quadraticCurveTo(bx, by, bx + br, by);
+          ctx.closePath();
+          ctx.fill();
+          ctx.strokeStyle = "rgba(255,255,255,0.15)";
+          ctx.lineWidth = 1;
+          ctx.stroke();
+
+          ctx.fillStyle = "#cfd8dc";
+          for (let li = 0; li < lines.length; li++) {
+            ctx.fillText(lines[li], bubbleX, by + padY + li * lineH + 8);
+          }
+          ctx.globalAlpha = 1;
+          ctx.restore();
+        }
+      }
 
       // Docks area objects (right side scenes)
       const dockObjY = pierY - 2;
