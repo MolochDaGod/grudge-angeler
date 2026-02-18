@@ -47,7 +47,7 @@ The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a f
 - **Admin Debug Tools:** Toggleable with backtick key, featuring Asset Deck, Gizmo for object manipulation, and Trace for physics inspection.
 - **2D Rope Physics:** Verlet integration fishing line with 12 segments, simulating realistic rope behavior.
 - **World Objects System:** Array-based rendering of barrels, grass, and signs, supporting gizmo manipulation.
-- **NPC System:** 5 interactive NPCs on the pier/dock area with roles as shopkeepers, requesters, and mission givers.
+- **NPC System:** 9 interactive NPCs across pier/dock and beach areas with roles as shopkeepers, requesters, mission givers, and specialists. Includes Chum Charlie, a static sitting NPC on the dock who sells all chum types and periodically plays a chum-making animation.
 - **Core Features:** Random fish sizes, combo system, rod leveling, fish collection log, dynamic day/night cycle, weather system, far background parallax, water effects, catch cutscenes, character movement, and an interactive `gameboard.html` reference board.
 - **Leaderboard System:** Live leaderboard backed by PostgreSQL with categories for Biggest Single Catch, Most Catches in 20-Minute Session, and Legendary/Ultra-Rare Catches. Scores auto-submit via REST API.
 - **PWA Support:** Web App Manifest and Service Worker enable "Install App" / "Add to Home Screen" functionality.
@@ -64,6 +64,7 @@ The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a f
 - **GrudgeSDK:** Client for Grudge Studio ObjectStore API.
 
 ## Recent Changes
+- **2026-02-18:** Chum Charlie NPC: New static sitting NPC (id: 8, spriteFolder "8") on the dock at worldX 0.62 (between shops). Sells all 20 non-catchable chum types derived from CHUM_ITEMS. Never walks (noWalk: true), has 4-frame Special.png chum-making animation that plays periodically. Extensive chum-specialist dialogue with stats info. NPC system now supports noWalk and specialFrames properties.
 - **2026-02-18:** Admin Fish Editor: New /adminfish page with fish dropdown, sprite preview canvas with animation player (play/pause/prev/next/speed control), visual overrides (tint, scale), flip toggle, idle/walk sprite switching, and AI-powered sprite generation using gpt-image-1.
 - **2026-02-18:** AI Image Generation: Server-side /api/generate-image endpoint registered via replit_integrations, supports sprite and surface generation for admin tools.
 - **2026-02-18:** Whale 2-Frame Animation: Whale sprites use two individual frame images (whale_frame1.png, whale_frame2.png) alternating every ~1.5 seconds instead of a sprite sheet.
