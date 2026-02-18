@@ -438,11 +438,12 @@ export async function registerRoutes(
     }
   });
 
+  const tourneyWebhookUrl = () => process.env.DISCORD_WEBHOOK_URL_TOURNEY;
+
   async function sendTournamentWebhook(playerName: string, score: number, rank: number, totalPlayers: number, date: string, stats: { totalCaught: number; totalWeight: number; largestCatch: number; largestFishName: string; rarityScore: number }) {
-    const webhookUrl = process.env.DISCORD_WEBHOOK_URL_FISH;
+    const webhookUrl = tourneyWebhookUrl();
     if (!webhookUrl) return;
 
-    const baseUrl = "https://ocean-angler-grudge.replit.app";
     const prizePool = 10000;
     const rewards = [0.35, 0.20, 0.15, 0.10, 0.08, 0.05, 0.04, 0.02, 0.005, 0.005];
     const rewardPct = rank <= rewards.length ? rewards[rank - 1] : 0;
@@ -453,7 +454,7 @@ export async function registerRoutes(
     const embed: any = {
       title: `${medalEmoji} Tournament Score Submitted!`,
       description: `**${playerName}** posted a tournament score of **${Math.floor(score)}** points!`,
-      color: rank <= 3 ? 0xffd700 : 0x2196f3,
+      color: rank <= 3 ? 0xffd700 : 0xe040fb,
       fields: [
         { name: "Rank", value: `#${rank} / ${totalPlayers}`, inline: true },
         { name: "Fish Caught", value: `${stats.totalCaught}`, inline: true },
@@ -480,6 +481,106 @@ export async function registerRoutes(
       console.error("Tournament webhook error:", err);
     }
   }
+
+  async function sendTournamentStartAnnouncement(date: string) {
+    const webhookUrl = tourneyWebhookUrl();
+    if (!webhookUrl) return;
+
+    const embed: any = {
+      title: "\uD83C\uDFC6 DAILY TOURNAMENT IS LIVE!",
+      description: "**The fishing tournament has begun!** Cast your lines, reel in the biggest catches, and climb the leaderboard for a share of the **10,000 GBUX** prize pool!\n\n\u23F0 **Window:** 6:00 PM \u2013 8:00 PM CST\n\uD83C\uDFA3 **Format:** Best 20-minute catch cycle\n\uD83D\uDCB0 **Prize Pool:** 10,000 GBUX",
+      color: 0xe040fb,
+      fields: [
+        { name: "\uD83E\uDD47 1st Place", value: "3,500 gbux", inline: true },
+        { name: "\uD83E\uDD48 2nd Place", value: "2,000 gbux", inline: true },
+        { name: "\uD83E\uDD49 3rd Place", value: "1,500 gbux", inline: true },
+        { name: "4th", value: "1,000", inline: true },
+        { name: "5th", value: "800", inline: true },
+        { name: "6th", value: "500", inline: true },
+        { name: "\uD83D\uDCCA Scoring", value: "Catches \u00D7 10 + Weight \u00D7 5 + Largest \u00D7 20 + Rarity \u00D7 15", inline: false },
+      ],
+      image: { url: `${baseUrl}/assets/grudge_logo.png` },
+      footer: { text: `Grudge Angeler \u2022 ${date} \u2022 Play at ocean-angler-grudge.replit.app`, icon_url: `${baseUrl}/assets/grudge_logo.png` },
+      timestamp: new Date().toISOString(),
+    };
+
+    try {
+      await fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: "Grudge Tournament",
+          avatar_url: `${baseUrl}/assets/grudge_logo.png`,
+          content: "@everyone \uD83C\uDFC6 **Daily Tournament is NOW LIVE!** Jump in and compete for 10,000 GBUX!",
+          embeds: [embed],
+        }),
+      });
+    } catch (err) {
+      console.error("Tournament start webhook error:", err);
+    }
+  }
+
+  async function sendTournamentEndAnnouncement(date: string) {
+    const webhookUrl = tourneyWebhookUrl();
+    if (!webhookUrl) return;
+
+    try {
+      const results = await storage.getTournamentResults(date, 10);
+      if (results.length === 0) return;
+
+      const prizes = [3500, 2000, 1500, 1000, 800, 500, 400, 200, 50, 50];
+      const medalEmojis = ["\uD83E\uDD47", "\uD83E\uDD48", "\uD83E\uDD49", "4\uFE0F\u20E3", "5\uFE0F\u20E3", "6\uFE0F\u20E3", "7\uFE0F\u20E3", "8\uFE0F\u20E3", "9\uFE0F\u20E3", "\uD83D\uDD1F"];
+
+      let standings = "";
+      for (let i = 0; i < results.length; i++) {
+        const r = results[i];
+        const medal = i < medalEmojis.length ? medalEmojis[i] : `${i + 1}.`;
+        const prize = i < prizes.length ? prizes[i] : 0;
+        standings += `${medal} **${r.playerName}** \u2014 ${Math.floor(Number(r.compositeScore))} pts | ${r.totalCaught} fish | ${Number(r.totalWeight).toFixed(1)} lbs | +${prize} gbux\n`;
+      }
+
+      const winner = results[0];
+      const embed: any = {
+        title: "\uD83C\uDFC6 TOURNAMENT RESULTS",
+        description: `The daily tournament has ended! **${winner.playerName}** takes the crown with **${Math.floor(Number(winner.compositeScore))}** points!\n\n${standings}`,
+        color: 0xffd700,
+        fields: [
+          { name: "Total Participants", value: `${results.length}`, inline: true },
+          { name: "Prize Pool", value: "10,000 gbux", inline: true },
+          { name: "Next Tournament", value: "Tomorrow 6-8 PM CST", inline: true },
+        ],
+        footer: { text: `Grudge Angeler \u2022 ${date} \u2022 See you tomorrow!`, icon_url: `${baseUrl}/assets/grudge_logo.png` },
+        timestamp: new Date().toISOString(),
+      };
+
+      await fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: "Grudge Tournament",
+          avatar_url: `${baseUrl}/assets/grudge_logo.png`,
+          content: "\uD83C\uDFC6 **Daily Tournament has ENDED!** Here are the final standings:",
+          embeds: [embed],
+        }),
+      });
+    } catch (err) {
+      console.error("Tournament end webhook error:", err);
+    }
+  }
+
+  let lastTournamentState = false;
+  let lastTournamentDate = "";
+  setInterval(() => {
+    const status = isTournamentActive();
+    if (status.active && !lastTournamentState) {
+      sendTournamentStartAnnouncement(status.date);
+    }
+    if (!status.active && lastTournamentState && lastTournamentDate) {
+      sendTournamentEndAnnouncement(lastTournamentDate);
+    }
+    lastTournamentState = status.active;
+    lastTournamentDate = status.date;
+  }, 30000);
 
   registerImageRoutes(app);
 
