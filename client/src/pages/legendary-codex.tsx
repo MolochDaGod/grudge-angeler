@@ -5,7 +5,7 @@ function toSlug(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
-import sealAtTheSeamImg from "@assets/b76a7441-d8a5-49d9-aa5e-8271fc3e3022_1771118262487.png";
+const sealAtTheSeamImg = "/assets/gen-icons/fish-seal-at-the-seam.png";
 
 interface SpriteData {
   src: string;
@@ -128,7 +128,7 @@ function UnderwaterBackground() {
 const legendaries = [
   {
     name: "Phantom Minnow",
-    sprite: { src: "/assets/catch/1.png", frameW: 6, frameH: 6, frames: 4, sheetW: 24 },
+    sprite: { src: "/assets/creatures/7/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
     stars: 5,
     pts: 500,
     wt: "0.3%",
@@ -143,7 +143,7 @@ const legendaries = [
   },
   {
     name: "Volcanic Perch",
-    sprite: { src: "/assets/catch/2.png", frameW: 8, frameH: 12, frames: 4, sheetW: 32 },
+    sprite: { src: "/assets/creatures/8/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
     stars: 5,
     pts: 600,
     wt: "0.25%",
@@ -158,7 +158,7 @@ const legendaries = [
   },
   {
     name: "Abyssal Bass",
-    sprite: { src: "/assets/catch/3.png", frameW: 10, frameH: 12, frames: 4, sheetW: 40 },
+    sprite: { src: "/assets/creatures/9/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
     stars: 5,
     pts: 750,
     wt: "0.2%",
@@ -173,7 +173,7 @@ const legendaries = [
   },
   {
     name: "Frost Catfish",
-    sprite: { src: "/assets/catch/4.png", frameW: 13, frameH: 12, frames: 4, sheetW: 52 },
+    sprite: { src: "/assets/creatures/10/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
     stars: 5,
     pts: 800,
     wt: "0.18%",
@@ -188,7 +188,7 @@ const legendaries = [
   },
   {
     name: "Storm Swordfish",
-    sprite: { src: "/assets/catch/5.png", frameW: 14, frameH: 24, frames: 4, sheetW: 56 },
+    sprite: { src: "/assets/creatures/11/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
     stars: 5,
     pts: 1000,
     wt: "0.12%",
@@ -203,7 +203,7 @@ const legendaries = [
   },
   {
     name: "Celestial Whale",
-    sprite: { src: "/assets/catch/6.png", frameW: 18, frameH: 22, frames: 6, sheetW: 108 },
+    sprite: { src: "/assets/creatures/12/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
     stars: 5,
     pts: 2000,
     wt: "0.05%",
@@ -218,7 +218,7 @@ const legendaries = [
   },
   {
     name: "Neon Eel",
-    sprite: { src: "/assets/catch/7.png", frameW: 15, frameH: 12, frames: 4, sheetW: 60 },
+    sprite: { src: "/assets/creatures/13/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
     stars: 5,
     pts: 650,
     wt: "0.22%",
@@ -233,7 +233,7 @@ const legendaries = [
   },
   {
     name: "Golden Salmon",
-    sprite: { src: "/assets/catch/8.png", frameW: 15, frameH: 12, frames: 4, sheetW: 60 },
+    sprite: { src: "/assets/creatures/14/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
     stars: 5,
     pts: 700,
     wt: "0.2%",
@@ -248,7 +248,7 @@ const legendaries = [
   },
   {
     name: "Shadow Leviathan",
-    sprite: { src: "/assets/catch/6.png", frameW: 18, frameH: 22, frames: 6, sheetW: 108 },
+    sprite: { src: "/assets/creatures/15/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
     stars: 5,
     pts: 1500,
     wt: "0.08%",
