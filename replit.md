@@ -62,3 +62,8 @@ The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a f
 - **@tanstack/react-query:** Data fetching and caching for leaderboard API.
 - **PostgreSQL (Neon-backed):** Database for leaderboard entries.
 - **GrudgeSDK:** Client for Grudge Studio ObjectStore API.
+
+## Recent Changes
+- **2026-02-18:** Beach Shop & Fishing License: Added bait shop building and wooden license sign on beach area. Fishing License costs 100 gbux and gates access to the dock/pier area and main equipment shop. Players start on the beach and must earn money from beach fishing/crabs before unlocking the dock. Boat still costs 400 gbux at the pier.
+- **2026-02-18:** Crab Bait System: All 10 crabs become consumable live bait when caught. 3 tiers with escalating legendary boosts (1.5x/3.0x/6.0x). Without crab bait, legendary/ultra_rare spawn rates are heavily reduced.
+- **2026-02-18:** Added Crimson Crab and Shadow Crab (rare beach crabs). Species count: 30.

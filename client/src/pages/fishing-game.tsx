@@ -657,6 +657,9 @@ export default function FishingGame() {
     nearHut: false,
     showStorePrompt: false,
     storeTab: "rod" as "rod" | "lure" | "chum" | "eggs",
+    fishingLicense: false,
+    nearLicenseSign: false,
+    showLicensePrompt: false,
     billboardSlide: 0,
     billboardTimer: 0,
     billboardLeaderboard: [] as any[],
@@ -827,6 +830,9 @@ export default function FishingGame() {
     nearHut: false,
     showStorePrompt: false,
     storeTab: "rod" as "rod" | "lure" | "chum" | "eggs",
+    fishingLicense: false,
+    nearLicenseSign: false,
+    showLicensePrompt: false,
     billboardSlide: 0,
     billboardLeaderboard: [] as any[],
     billboardLeaderboardTimer: 0,
@@ -1233,6 +1239,9 @@ export default function FishingGame() {
       nearHut: s.nearHut,
       showStorePrompt: s.showStorePrompt,
       storeTab: s.storeTab,
+      fishingLicense: s.fishingLicense,
+      nearLicenseSign: s.nearLicenseSign,
+      showLicensePrompt: s.showLicensePrompt,
       billboardSlide: s.billboardSlide,
       bounties: [...s.bounties],
       biggestCatchName: s.biggestCatchName,
@@ -1469,7 +1478,7 @@ export default function FishingGame() {
         stateRef.current.activeNpc = -1;
         syncUI();
       }
-      if (key === "e" && stateRef.current.gameState === "idle" && !stateRef.current.showBoatPrompt && !stateRef.current.showStorePrompt) {
+      if (key === "e" && stateRef.current.gameState === "idle" && !stateRef.current.showBoatPrompt && !stateRef.current.showStorePrompt && !stateRef.current.showLicensePrompt) {
         if (stateRef.current.inBoat) {
           const canvas = canvasRef.current;
           if (canvas) {
@@ -1485,6 +1494,9 @@ export default function FishingGame() {
           }
         } else if (stateRef.current.nearBoat) {
           stateRef.current.showBoatPrompt = true;
+          syncUI();
+        } else if (stateRef.current.nearLicenseSign && !stateRef.current.fishingLicense) {
+          stateRef.current.showLicensePrompt = true;
           syncUI();
         } else if (stateRef.current.nearHut) {
           stateRef.current.gameState = "store";
@@ -1605,7 +1617,7 @@ export default function FishingGame() {
       const waterY = H * WATER_START_RATIO;
       const defaultFishermanX = W * FISHERMAN_X_RATIO;
 
-      if (s.playerX === 0) s.playerX = defaultFishermanX;
+      if (s.playerX === 0) s.playerX = s.fishingLicense ? defaultFishermanX : W * 3.5;
 
       if (s.worldObjects[0].x === 0 && s.worldObjects[0].y === 0) {
         const initObjY = pierY - 2;
@@ -1657,6 +1669,11 @@ export default function FishingGame() {
       const diveSinkMult = RODS[s.equippedRod].sinkSpeed * (1 + LURES[s.equippedLure].depthBoost);
       const pierLeftBound = defaultFishermanX - 80;
 
+      if (s.gameState !== "idle") {
+        s.nearLicenseSign = false;
+        if (s.showLicensePrompt) s.showLicensePrompt = false;
+      }
+
       if ((s.gameState === "idle" || s.gameState === "casting") && !s.inBoat && !s.binoculars) {
         let moving = false;
         if (s.keysDown.has("a")) {
@@ -1669,10 +1686,16 @@ export default function FishingGame() {
           s.facingLeft = false;
           moving = true;
         }
-        s.playerX = Math.max(pierLeftBound, Math.min(W * 4.8, s.playerX));
+        const licenseGateX = W * 2.6;
+        const leftLimit = s.fishingLicense ? pierLeftBound : licenseGateX;
+        s.playerX = Math.max(leftLimit, Math.min(W * 4.8, s.playerX));
+
+        const beachShopSignX = W * 3.4;
+        s.nearLicenseSign = !s.inBoat && Math.abs(s.playerX - beachShopSignX) < 70 && s.gameState === "idle";
+        if (!s.nearLicenseSign && s.showLicensePrompt) s.showLicensePrompt = false;
 
         const hutCheckX = W * 0.85 + (192 * 2.2) / 2;
-        s.nearHut = !s.inBoat && Math.abs(s.playerX - hutCheckX) < 80 && s.gameState === "idle";
+        s.nearHut = !s.inBoat && Math.abs(s.playerX - hutCheckX) < 80 && s.gameState === "idle" && s.fishingLicense;
 
         s.nearNpc = -1;
 
@@ -3391,6 +3414,82 @@ export default function FishingGame() {
         ctx.beginPath();
         ctx.ellipse(rx, ry, 4 + ri % 3, 3, 0, 0, Math.PI * 2);
         ctx.fill();
+      }
+
+      // Beach Shop Building
+      if (s.gameState !== "title" && s.gameState !== "charSelect") {
+        const bsScale = 1.8;
+        const bsX = W * 3.2;
+        const bsW = 192 * bsScale;
+        const bsH = 122 * bsScale;
+        const bsBeachProgress = (bsX - beachStart) / (beachEnd - beachStart);
+        const bsY = pierY + 10 + bsBeachProgress * 30 - bsH + 30;
+        drawImage("/assets/objects/Fishing_hut.png", bsX, bsY, bsScale);
+
+        // "BAIT SHOP" text on building
+        ctx.save();
+        ctx.font = "bold 11px 'Press Start 2P', monospace";
+        ctx.fillStyle = "#f1c40f";
+        ctx.textAlign = "center";
+        ctx.shadowColor = "#000";
+        ctx.shadowBlur = 4;
+        ctx.fillText("BAIT SHOP", bsX + bsW / 2, bsY + 40);
+        ctx.restore();
+
+        // License Sign - wooden sign post
+        const signX = W * 3.4;
+        const signBeachProg = (signX - beachStart) / (beachEnd - beachStart);
+        const signBaseY = pierY + 10 + signBeachProg * 30;
+        const signW = 90;
+        const signH = 55;
+        const signPostX = signX + signW / 2;
+        const signTopY = signBaseY - 80;
+
+        // Sign post
+        ctx.fillStyle = "#6d4c2e";
+        ctx.fillRect(signPostX - 4, signTopY + signH, 8, 80 - signH + 5);
+        ctx.fillStyle = "#8B6B4A";
+        ctx.fillRect(signPostX - 3, signTopY + signH, 6, 80 - signH + 5);
+
+        // Sign board
+        ctx.fillStyle = "#a07840";
+        ctx.fillRect(signX, signTopY, signW, signH);
+        ctx.fillStyle = "#8B6B4A";
+        ctx.fillRect(signX + 2, signTopY + 2, signW - 4, signH - 4);
+        ctx.strokeStyle = "#6d4c2e";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(signX, signTopY, signW, signH);
+
+        // Sign text
+        ctx.save();
+        ctx.font = "bold 7px 'Press Start 2P', monospace";
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#f1c40f";
+        ctx.shadowColor = "#000";
+        ctx.shadowBlur = 3;
+        ctx.fillText("FISHING", signX + signW / 2, signTopY + 16);
+        ctx.fillText("LICENSE", signX + signW / 2, signTopY + 28);
+        if (!s.fishingLicense) {
+          ctx.fillStyle = "#2ecc71";
+          ctx.font = "bold 9px 'Press Start 2P', monospace";
+          ctx.fillText("$100", signX + signW / 2, signTopY + 43);
+        } else {
+          ctx.fillStyle = "#5dade2";
+          ctx.font = "bold 6px 'Press Start 2P', monospace";
+          ctx.fillText("APPROVED", signX + signW / 2, signTopY + 43);
+        }
+        ctx.restore();
+
+        // Interaction glow when near
+        if (s.nearLicenseSign && !s.fishingLicense) {
+          ctx.save();
+          ctx.shadowColor = "#f1c40f";
+          ctx.shadowBlur = 12;
+          ctx.strokeStyle = "rgba(241,196,15,0.5)";
+          ctx.lineWidth = 2;
+          ctx.strokeRect(signX - 2, signTopY - 2, signW + 4, signH + 4);
+          ctx.restore();
+        }
       }
 
       // Ripples
@@ -6445,6 +6544,84 @@ export default function FishingGame() {
             </div>
           )}
 
+          {/* License Sign Hint */}
+          {uiState.nearLicenseSign && !uiState.showLicensePrompt && !uiState.fishingLicense && uiState.gameState === "idle" && (
+            <div className="absolute bottom-24 left-1/2 -translate-x-1/2 text-center px-5 py-3 flex flex-col items-center gap-2" style={{ background: "rgba(8,15,25,0.9)", borderRadius: 10, border: "1px solid rgba(241,196,15,0.4)", zIndex: 50 }} data-testid="license-hint">
+              <span style={{ color: "#f1c40f", fontSize: 13, textShadow: "1px 1px 0 #000" }}>
+                {'ontouchstart' in window ? "Tap E to buy Fishing License" : "Press E to buy Fishing License"}
+              </span>
+            </div>
+          )}
+
+          {/* License Purchase Prompt */}
+          {uiState.showLicensePrompt && (
+            <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 60, background: "rgba(0,0,0,0.4)" }} data-testid="license-prompt-overlay">
+              <div className="flex flex-col items-center gap-4 px-8 py-6" style={{ background: "rgba(8,15,25,0.95)", borderRadius: 12, border: "1px solid rgba(241,196,15,0.5)", minWidth: 240 }} data-testid="license-prompt">
+                {uiState.fishingLicense ? (
+                  <>
+                    <span style={{ color: "#5dade2", fontSize: 14, textShadow: "1px 1px 0 #000", fontFamily: "'Press Start 2P', monospace" }}>License Active</span>
+                    <span style={{ color: "#78909c", fontSize: 10, textAlign: "center" }}>You have a fishing license. Access to the dock and deeper waters is unlocked.</span>
+                    <button
+                      className="cursor-pointer px-5 py-2"
+                      style={{ background: "rgba(52,152,219,0.25)", borderRadius: 8, border: "1px solid rgba(52,152,219,0.5)", fontFamily: "'Press Start 2P', monospace", color: "#5dade2", fontSize: 13 }}
+                      onClick={(e) => { e.stopPropagation(); stateRef.current.showLicensePrompt = false; syncUI(); }}
+                      data-testid="button-license-ok"
+                    >
+                      OK
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <span style={{ color: "#f1c40f", fontSize: 14, textShadow: "1px 1px 0 #000", fontFamily: "'Press Start 2P', monospace" }}>Fishing License</span>
+                    <span style={{ color: "#b0bec5", fontSize: 9, textAlign: "center", lineHeight: 1.6 }}>Required to access the dock, deep water fishing, and the equipment shop.</span>
+                    <div className="flex items-center gap-2" style={{ marginTop: -4 }}>
+                      <img src="/assets/icons/gbux.png" alt="gbux" style={{ width: 14, height: 14 }} />
+                      <span style={{ color: "#2ecc71", fontSize: 17, fontFamily: "'Press Start 2P', monospace" }}>100</span>
+                    </div>
+                    <span style={{ color: "#78909c", fontSize: 11, textShadow: "1px 1px 0 #000" }}>
+                      You have: {uiState.money} gbux
+                    </span>
+                    <div className="flex gap-4">
+                      <button
+                        className="cursor-pointer px-5 py-2"
+                        style={{
+                          background: uiState.money >= 100 ? "rgba(46,204,113,0.25)" : "rgba(120,120,120,0.25)",
+                          borderRadius: 8,
+                          border: uiState.money >= 100 ? "1px solid rgba(46,204,113,0.5)" : "1px solid rgba(120,120,120,0.4)",
+                          fontFamily: "'Press Start 2P', monospace",
+                          color: uiState.money >= 100 ? "#2ecc71" : "#78909c",
+                          fontSize: 13,
+                          opacity: uiState.money >= 100 ? 1 : 0.6,
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const s = stateRef.current;
+                          if (s.money < 100) return;
+                          s.money -= 100;
+                          s.fishingLicense = true;
+                          s.showLicensePrompt = false;
+                          syncUI();
+                        }}
+                        disabled={uiState.money < 100}
+                        data-testid="button-license-buy"
+                      >
+                        {uiState.money >= 100 ? "Buy" : "Can't afford"}
+                      </button>
+                      <button
+                        className="cursor-pointer px-5 py-2"
+                        style={{ background: "rgba(231,76,60,0.25)", borderRadius: 8, border: "1px solid rgba(231,76,60,0.5)", fontFamily: "'Press Start 2P', monospace", color: "#e74c3c", fontSize: 13 }}
+                        onClick={(e) => { e.stopPropagation(); stateRef.current.showLicensePrompt = false; syncUI(); }}
+                        data-testid="button-license-no"
+                      >
+                        No
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Hut/Shop Hint */}
           {uiState.nearHut && !uiState.showStorePrompt && uiState.gameState === "idle" && (
             <div className="absolute bottom-24 left-1/2 -translate-x-1/2 text-center px-5 py-3 flex flex-col items-center gap-2" style={{ background: "rgba(8,15,25,0.9)", borderRadius: 10, border: "1px solid rgba(46,204,113,0.4)", zIndex: 50 }} data-testid="hut-hint">
@@ -8422,7 +8599,10 @@ export default function FishingGame() {
                 e.stopPropagation();
                 const st = stateRef.current;
                 if (st.gameState === "idle") {
-                  if (st.nearHut) {
+                  if (st.nearLicenseSign && !st.fishingLicense) {
+                    st.showLicensePrompt = true;
+                    syncUI();
+                  } else if (st.nearHut) {
                     st.gameState = "store";
                     st.storeTab = "rod";
                     syncUI();
