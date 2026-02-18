@@ -201,6 +201,8 @@ interface Lure {
   targetFish: string[];
   targetBonus: number;
   type: "live" | "lure";
+  crabBaitTier?: number;
+  legendaryBoost?: number;
 }
 
 const LURES: Lure[] = [
@@ -220,6 +222,9 @@ const LURES: Lure[] = [
   { name: "Storm Shad", price: 300, effect: "Faster bites", description: "Mimics injured baitfish. Fish bite faster.", icon: "/assets/lures/storm_shad.png", rarityBoost: 1.0, sizeBoost: 0.2, speedBoost: 2.0, depthBoost: 0, targetFish: ["Bass", "Salmon"], targetBonus: 2.0, type: "lure" },
   { name: "Kraken Bait", price: 500, effect: "Legendary + deep dive", description: "Mysterious bait from the depths. Sinks to the abyss.", icon: "/assets/lures/kraken_bait.png", rarityBoost: 3.0, sizeBoost: 0.5, speedBoost: 0.8, depthBoost: 1.2, targetFish: ["Whale"], targetBonus: 4.0, type: "lure" },
   { name: "Prismatic Lure", price: 750, effect: "All bonuses", description: "A rainbow-shifting lure. Boosts everything.", icon: "/assets/lures/prismatic_lure.png", rarityBoost: 1.8, sizeBoost: 0.5, speedBoost: 1.5, depthBoost: 0.4, targetFish: [], targetBonus: 1.0, type: "lure" },
+  { name: "Common Crab Bait", price: 0, effect: "Unlocks legendaries", description: "Live crab bait from common beach crabs. Required to attract legendary fish.", icon: "/assets/gen-icons/fish-red-crab.png", rarityBoost: 1.5, sizeBoost: 0.2, speedBoost: 1.0, depthBoost: 0.1, targetFish: [], targetBonus: 1.0, type: "live", crabBaitTier: 1, legendaryBoost: 1.5 },
+  { name: "Uncommon Crab Bait", price: 0, effect: "Boosts legendaries", description: "Live crab bait from uncommon crabs. Legendaries can't resist the scent.", icon: "/assets/gen-icons/fish-purple-crab.png", rarityBoost: 2.5, sizeBoost: 0.4, speedBoost: 1.1, depthBoost: 0.2, targetFish: [], targetBonus: 1.0, type: "live", crabBaitTier: 2, legendaryBoost: 3.0 },
+  { name: "Rare Crab Bait", price: 0, effect: "Maximum legendary boost", description: "Live rare crab bait. The ultimate legendary attractor. Sea Devil kin call to the deep.", icon: "/assets/gen-icons/fish-crimson-crab.png", rarityBoost: 4.0, sizeBoost: 0.6, speedBoost: 1.2, depthBoost: 0.4, targetFish: [], targetBonus: 1.0, type: "live", crabBaitTier: 3, legendaryBoost: 6.0 },
 ];
 
 interface ChumItem {
@@ -697,6 +702,7 @@ export default function FishingGame() {
     jumpPeakReached: false,
     showLurePopup: false,
     showChumPopup: false,
+    crabBaitCounts: [0, 0, 0] as number[],
     ownedChum: Array.from({ length: 22 }, () => 0) as number[],
     equippedChum: -1,
     chumActiveTimer: 0,
@@ -852,6 +858,7 @@ export default function FishingGame() {
     jumpPeakReached: false,
     showLurePopup: false,
     showChumPopup: false,
+    crabBaitCounts: [0, 0, 0] as number[],
     ownedChum: Array.from({ length: 22 }, () => 0) as number[],
     equippedChum: -1,
     chumActiveTimer: 0,
@@ -938,6 +945,8 @@ export default function FishingGame() {
     const celestialRare = ce === "red_sun" ? 1 + ceFade * 1.5 : 1;
     const celestialLegendary = ce === "green_moon" ? 1 + ceFade * 2.5 : ce === "blood_moon" ? 1 + ceFade * 1.5 : 1;
     const celestialUltra = ce === "tentacle_sun" ? 1 + ceFade * 3.5 : ce === "blood_moon" ? 1 + ceFade * 2 : 1;
+    const crabBaitMult = lure.crabBaitTier ? (lure.legendaryBoost || 1) : 0;
+    const hasCrabBait = crabBaitMult > 0;
     const adjustedWeights = FISH_TYPES.map(ft => {
       let w = ft.weight;
       if (rightRatio > 0.1) {
@@ -948,9 +957,13 @@ export default function FishingGame() {
         else w *= 1 + rightRatio * 2;
       } else {
         const rarityBoost = distRatio;
-        if (ft.rarity === "ultra_rare") w *= (1 + rarityBoost * 25) * lure.rarityBoost * wisdomBoost * celestialUltra * chumRarityBoost;
-        else if (ft.rarity === "legendary") w *= (1 + rarityBoost * 15) * lure.rarityBoost * wisdomBoost * celestialLegendary * chumRarityBoost;
-        else if (ft.rarity === "rare") w *= (1 + rarityBoost * 8) * lure.rarityBoost * wisdomBoost * celestialRare * chumRarityBoost;
+        if (ft.rarity === "ultra_rare") {
+          w *= (1 + rarityBoost * 25) * lure.rarityBoost * wisdomBoost * celestialUltra * chumRarityBoost;
+          w *= hasCrabBait ? crabBaitMult : 0.02;
+        } else if (ft.rarity === "legendary") {
+          w *= (1 + rarityBoost * 15) * lure.rarityBoost * wisdomBoost * celestialLegendary * chumRarityBoost;
+          w *= hasCrabBait ? crabBaitMult * 0.8 : 0.05;
+        } else if (ft.rarity === "rare") w *= (1 + rarityBoost * 8) * lure.rarityBoost * wisdomBoost * celestialRare * chumRarityBoost;
         else if (ft.rarity === "uncommon") w *= (1 + rarityBoost * 3) * (1 + (wisdomBoost - 1) * 0.5);
         else w *= Math.max(0.3, 1 - rarityBoost * 0.5);
       }
@@ -1249,6 +1262,7 @@ export default function FishingGame() {
       jumpPeakReached: s.jumpPeakReached,
       showLurePopup: s.showLurePopup,
       showChumPopup: s.showChumPopup,
+      crabBaitCounts: [...s.crabBaitCounts],
       ownedChum: [...s.ownedChum],
       equippedChum: s.equippedChum,
       chumActiveTimer: s.chumActiveTimer,
@@ -4925,11 +4939,9 @@ export default function FishingGame() {
           }
 
           if (s.currentCatch?.beachCrab) {
-            const baitCount = 1 + Math.floor(Math.random() * 2);
-            for (let bi = 0; bi < baitCount; bi++) {
-              const baitIdx = Math.random() < 0.5 ? 20 : 21;
-              s.ownedChum[baitIdx]++;
-            }
+            const crabRarity = s.currentCatch.rarity;
+            const baitTier = crabRarity === "rare" ? 2 : crabRarity === "uncommon" ? 1 : 0;
+            s.crabBaitCounts[baitTier]++;
             const bonusXP = Math.floor(5 + Math.random() * 10);
             s.playerXP += bonusXP;
             while (s.playerXP >= s.playerXPToNext) {
@@ -5565,6 +5577,19 @@ export default function FishingGame() {
     }
 
     if (s.gameState === "casting") {
+      const equippedLure = LURES[s.equippedLure];
+      if (equippedLure.crabBaitTier) {
+        const tierIdx = equippedLure.crabBaitTier - 1;
+        if (s.crabBaitCounts[tierIdx] <= 0) {
+          s.equippedLure = 0;
+          syncUI();
+          return;
+        }
+        s.crabBaitCounts[tierIdx]--;
+        if (s.crabBaitCounts[tierIdx] <= 0) {
+          s.equippedLure = 0;
+        }
+      }
       s.gameState = "waiting";
       s.hookX = s.aimX;
       s.hookY = waterY + 10;
@@ -6009,7 +6034,8 @@ export default function FishingGame() {
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(52,152,219,0.3)" }}>
               <img src="/assets/icons/Icons_09.png" alt="" className="w-4 h-4" style={{ imageRendering: "pixelated" }} />
-              <span style={{ color: "#5dade2", fontSize: 10 }}>{LURES[uiState.equippedLure].name}</span>
+              <span style={{ color: LURES[uiState.equippedLure].crabBaitTier ? "#ff4060" : "#5dade2", fontSize: 10 }}>{LURES[uiState.equippedLure].name}</span>
+              {LURES[uiState.equippedLure].crabBaitTier && <span style={{ color: "#f59e0b", fontSize: 9 }}>x{uiState.crabBaitCounts[LURES[uiState.equippedLure].crabBaitTier! - 1]}</span>}
             </div>
             <button
               className="flex items-center gap-2 px-3 py-1.5 cursor-pointer"
@@ -6203,16 +6229,30 @@ export default function FishingGame() {
               <div style={{ position: "relative" }}>
                 {uiState.showLurePopup && (
                   <div style={{ position: "absolute", bottom: "100%", left: "50%", transform: "translateX(-50%)", marginBottom: 4, background: "rgba(8,15,25,0.95)", borderRadius: 8, border: "1px solid rgba(52,152,219,0.3)", padding: 6, minWidth: 140, maxHeight: 200, overflowY: "auto", zIndex: 40 }} data-testid="lure-popup">
-                    {LURES.map((lure, i) => uiState.ownedLures[i] && (
-                      <div key={i} onClick={(e) => { e.stopPropagation(); stateRef.current.equippedLure = i; stateRef.current.showLurePopup = false; syncUI(); }}
+                    {LURES.map((lure, i) => {
+                      if (!uiState.ownedLures[i] && !lure.crabBaitTier) return null;
+                      const isCrab = lure.crabBaitTier;
+                      const crabCount = isCrab ? (uiState.crabBaitCounts[lure.crabBaitTier! - 1] || 0) : 0;
+                      const crabEmpty = isCrab && crabCount <= 0;
+                      if (!isCrab && !uiState.ownedLures[i]) return null;
+                      return (
+                      <div key={i} onClick={(e) => {
+                          e.stopPropagation();
+                          if (crabEmpty) return;
+                          stateRef.current.equippedLure = i;
+                          stateRef.current.showLurePopup = false;
+                          syncUI();
+                        }}
                         className="flex items-center gap-2 cursor-pointer"
-                        style={{ padding: "3px 4px", borderRadius: 4, background: uiState.equippedLure === i ? "rgba(52,152,219,0.2)" : "transparent", marginBottom: 2 }}
+                        style={{ padding: "3px 4px", borderRadius: 4, background: uiState.equippedLure === i ? "rgba(52,152,219,0.2)" : "transparent", marginBottom: 2, opacity: crabEmpty ? 0.4 : 1 }}
                         data-testid={`lure-popup-item-${i}`}>
                         <img src={lure.icon} alt="" style={{ width: 16, height: 16, imageRendering: "pixelated" }} />
-                        <span style={{ color: uiState.equippedLure === i ? "#5dade2" : "#b0bec5", fontSize: 9, flex: 1 }}>{lure.name}</span>
-                        {uiState.equippedLure === i && <span style={{ color: "#5dade2", fontSize: 8 }}>EQ</span>}
+                        <span style={{ color: crabEmpty ? "#607d8b" : uiState.equippedLure === i ? "#5dade2" : "#b0bec5", fontSize: 9, flex: 1 }}>{lure.name}</span>
+                        {isCrab && <span style={{ color: crabEmpty ? "#607d8b" : "#f59e0b", fontSize: 8, fontWeight: "bold" }}>x{crabCount}</span>}
+                        {uiState.equippedLure === i && !crabEmpty && <span style={{ color: "#5dade2", fontSize: 8 }}>EQ</span>}
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
                 <div onClick={(e) => { e.stopPropagation(); stateRef.current.showLurePopup = !stateRef.current.showLurePopup; stateRef.current.showChumPopup = false; stateRef.current.selectedHotbar = 2; syncUI(); }}
@@ -6527,15 +6567,17 @@ export default function FishingGame() {
                       </div>
                     );
                   })}
-                  {uiState.storeTab === "lure" && (["live", "lure"] as const).map(baitType => {
-                    const items = LURES.map((l, i) => ({ lure: l, idx: i })).filter(x => x.lure.type === baitType);
+                  {uiState.storeTab === "lure" && (["live", "lure", "crab"] as const).map(baitType => {
+                    const items = baitType === "crab"
+                      ? LURES.map((l, i) => ({ lure: l, idx: i })).filter(x => x.lure.crabBaitTier)
+                      : LURES.map((l, i) => ({ lure: l, idx: i })).filter(x => x.lure.type === baitType && !x.lure.crabBaitTier);
                     return (
                       <div key={baitType} className="flex flex-col gap-1.5">
                         <div className="flex items-center gap-2 px-1 pt-1">
-                          <span style={{ color: baitType === "live" ? "#e67e22" : "#3498db", fontSize: 11, fontFamily: "'Press Start 2P', monospace", letterSpacing: 1 }}>
-                            {baitType === "live" ? "LIVE BAIT" : "LURES"}
+                          <span style={{ color: baitType === "crab" ? "#ff4060" : baitType === "live" ? "#e67e22" : "#3498db", fontSize: 11, fontFamily: "'Press Start 2P', monospace", letterSpacing: 1 }}>
+                            {baitType === "crab" ? "CRAB BAIT" : baitType === "live" ? "LIVE BAIT" : "LURES"}
                           </span>
-                          <div style={{ flex: 1, height: 1, background: baitType === "live" ? "rgba(230,126,34,0.3)" : "rgba(52,152,219,0.3)" }} />
+                          <div style={{ flex: 1, height: 1, background: baitType === "crab" ? "rgba(255,64,96,0.3)" : baitType === "live" ? "rgba(230,126,34,0.3)" : "rgba(52,152,219,0.3)" }} />
                         </div>
                         {items.map(({ lure, idx: i }) => {
                           const owned = uiState.ownedLures[i];
@@ -6549,7 +6591,7 @@ export default function FishingGame() {
                               <div className="flex-1 min-w-0 flex flex-col gap-1">
                                 <div className="flex items-center gap-2 flex-wrap">
                                   <span style={{ color: equipped ? "#2ecc71" : "#e0e0e0", fontSize: 12 }}>{lure.name}</span>
-                                  <span style={{ color: lure.type === "live" ? "#e67e22" : "#3498db", fontSize: 8, background: lure.type === "live" ? "rgba(230,126,34,0.15)" : "rgba(52,152,219,0.15)", padding: "1px 3px", borderRadius: 2 }}>{lure.type === "live" ? "LIVE" : "LURE"}</span>
+                                  <span style={{ color: lure.crabBaitTier ? "#ff4060" : lure.type === "live" ? "#e67e22" : "#3498db", fontSize: 8, background: lure.crabBaitTier ? "rgba(255,64,96,0.15)" : lure.type === "live" ? "rgba(230,126,34,0.15)" : "rgba(52,152,219,0.15)", padding: "1px 3px", borderRadius: 2 }}>{lure.crabBaitTier ? "CRAB" : lure.type === "live" ? "LIVE" : "LURE"}</span>
                                   {equipped && <span style={{ color: "#2ecc71", fontSize: 9, background: "rgba(46,204,113,0.2)", padding: "1px 4px", borderRadius: 3 }}>EQUIPPED</span>}
                                 </div>
                                 <span style={{ color: "#78909c", fontSize: 10, lineHeight: "1.5" }}>{lure.description}</span>
@@ -6561,10 +6603,27 @@ export default function FishingGame() {
                                   {lure.sizeBoost > 0 && <span style={{ color: "#e74c3c", fontSize: 9 }}>Size +{lure.sizeBoost.toFixed(1)}</span>}
                                   {lure.speedBoost > 1 && <span style={{ color: "#5dade2", fontSize: 9 }}>Bite x{lure.speedBoost.toFixed(1)}</span>}
                                   {lure.depthBoost > 0 && <span style={{ color: "#e67e22", fontSize: 9 }}>Dive +{lure.depthBoost.toFixed(1)}</span>}
+                                  {lure.legendaryBoost && <span style={{ color: "#ff4060", fontSize: 9 }}>Legendary x{lure.legendaryBoost.toFixed(1)}</span>}
                                 </div>
                               </div>
                               <div className="flex flex-col items-end gap-1">
-                                {!owned ? (
+                                {lure.crabBaitTier ? (
+                                  <>
+                                    <span style={{ color: "#f59e0b", fontSize: 11, fontFamily: "'Press Start 2P', monospace" }}>x{uiState.crabBaitCounts[lure.crabBaitTier - 1]}</span>
+                                    {uiState.crabBaitCounts[lure.crabBaitTier - 1] > 0 && !equipped ? (
+                                      <button
+                                        className="cursor-pointer px-3 py-1.5"
+                                        style={{ background: "rgba(255,64,96,0.2)", borderRadius: 6, border: "1px solid rgba(255,64,96,0.4)", fontFamily: "'Press Start 2P', monospace", color: "#ff4060", fontSize: 10 }}
+                                        onClick={(e) => { e.stopPropagation(); stateRef.current.equippedLure = i; syncUI(); }}
+                                        data-testid={`button-equip-lure-${i}`}
+                                      >
+                                        EQUIP
+                                      </button>
+                                    ) : uiState.crabBaitCounts[lure.crabBaitTier - 1] <= 0 ? (
+                                      <span style={{ color: "#607d8b", fontSize: 8 }}>Catch crabs!</span>
+                                    ) : null}
+                                  </>
+                                ) : !owned ? (
                                   <button
                                     className="cursor-pointer px-3 py-1.5"
                                     style={{ background: canAfford ? "rgba(46,204,113,0.25)" : "rgba(255,255,255,0.05)", borderRadius: 6, border: canAfford ? "1px solid rgba(46,204,113,0.5)" : "1px solid rgba(255,255,255,0.1)", fontFamily: "'Press Start 2P', monospace", color: canAfford ? "#2ecc71" : "#455a64", fontSize: 11, opacity: canAfford ? 1 : 0.5 }}
