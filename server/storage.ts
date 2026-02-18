@@ -1,6 +1,6 @@
-import { type User, type InsertUser, type LeaderboardEntry, type InsertLeaderboardEntry, leaderboardEntries } from "@shared/schema";
+import { type User, type InsertUser, type LeaderboardEntry, type InsertLeaderboardEntry, leaderboardEntries, type TournamentEntry, type InsertTournamentEntry, tournamentEntries } from "@shared/schema";
 import { db } from "./db";
-import { desc, eq, sql } from "drizzle-orm";
+import { desc, eq, and, sql } from "drizzle-orm";
 import { randomUUID } from "crypto";
 
 export interface IStorage {
@@ -9,6 +9,8 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   getLeaderboard(category: string, limit?: number): Promise<LeaderboardEntry[]>;
   submitLeaderboardEntry(entry: InsertLeaderboardEntry): Promise<LeaderboardEntry>;
+  submitTournamentEntry(entry: InsertTournamentEntry): Promise<TournamentEntry>;
+  getTournamentResults(tournamentDate: string, limit?: number): Promise<TournamentEntry[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -77,6 +79,71 @@ export class DatabaseStorage implements IStorage {
       .values(entry)
       .returning();
     return result;
+  }
+  async submitTournamentEntry(entry: InsertTournamentEntry): Promise<TournamentEntry> {
+    const result = await db.execute(sql`
+      INSERT INTO tournament_entries (id, player_name, tournament_date, total_caught, total_weight, largest_catch, largest_fish_name, rarity_score, composite_score, reward, created_at)
+      VALUES (
+        ${randomUUID()},
+        ${entry.playerName},
+        ${entry.tournamentDate},
+        ${entry.totalCaught},
+        ${entry.totalWeight},
+        ${entry.largestCatch},
+        ${entry.largestFishName ?? null},
+        ${entry.rarityScore},
+        ${entry.compositeScore},
+        ${entry.reward ?? 0},
+        NOW()
+      )
+      ON CONFLICT DO NOTHING
+      RETURNING *
+    `);
+    const existing = await db.execute(sql`
+      SELECT * FROM tournament_entries
+      WHERE player_name = ${entry.playerName} AND tournament_date = ${entry.tournamentDate}
+      ORDER BY composite_score DESC LIMIT 1
+    `);
+    const row = (result as any).rows?.[0] || (existing as any).rows?.[0];
+    if (row) {
+      if (entry.compositeScore > (row.composite_score || 0)) {
+        await db.execute(sql`
+          UPDATE tournament_entries
+          SET total_caught = ${entry.totalCaught},
+              total_weight = ${entry.totalWeight},
+              largest_catch = ${entry.largestCatch},
+              largest_fish_name = ${entry.largestFishName ?? null},
+              rarity_score = ${entry.rarityScore},
+              composite_score = ${entry.compositeScore},
+              created_at = NOW()
+          WHERE player_name = ${entry.playerName} AND tournament_date = ${entry.tournamentDate}
+        `);
+      }
+      return {
+        id: row.id,
+        playerName: row.player_name,
+        tournamentDate: row.tournament_date,
+        totalCaught: row.total_caught,
+        totalWeight: row.total_weight,
+        largestCatch: row.largest_catch,
+        largestFishName: row.largest_fish_name,
+        rarityScore: row.rarity_score,
+        compositeScore: Math.max(row.composite_score, entry.compositeScore),
+        reward: row.reward,
+        createdAt: row.created_at,
+      } as TournamentEntry;
+    }
+    const [fallback] = await db.insert(tournamentEntries).values(entry).returning();
+    return fallback;
+  }
+
+  async getTournamentResults(tournamentDate: string, limit = 50): Promise<TournamentEntry[]> {
+    return await db
+      .select()
+      .from(tournamentEntries)
+      .where(eq(tournamentEntries.tournamentDate, tournamentDate))
+      .orderBy(desc(tournamentEntries.compositeScore))
+      .limit(limit);
   }
 }
 

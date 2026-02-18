@@ -995,6 +995,24 @@ export default function FishingGame() {
     guardianState: "idle" as "idle" | "defending" | "cooldown",
     guardianDefendTimer: 0,
     guardianAlertTimer: 0,
+    tournamentActive: false,
+    tournamentEndsIn: 0,
+    tournamentStartsIn: 0,
+    tournamentDate: "",
+    tournamentCycleStart: 0,
+    tournamentCycleTimer: 0,
+    tournamentCycleCatches: 0,
+    tournamentCycleWeight: 0,
+    tournamentCycleLargest: 0,
+    tournamentCycleLargestName: "",
+    tournamentCycleRarityScore: 0,
+    tournamentBestScore: 0,
+    tournamentBestSubmitted: false,
+    tournamentResults: [] as any[],
+    tournamentRank: 0,
+    tournamentShowResults: false,
+    tournamentStatusTimer: 0,
+    tournamentNotified: false,
     adminOpen: false,
     adminTab: "assets" as "assets" | "gizmo" | "trace" | "map",
     gizmoEnabled: false,
@@ -1402,6 +1420,35 @@ export default function FishingGame() {
     });
   }, []);
 
+  const calcTournamentScore = useCallback((catches: number, weight: number, largest: number, rarityScore: number) => {
+    return Math.floor(catches * 10 + weight * 5 + largest * 20 + rarityScore * 15);
+  }, []);
+
+  const submitTournamentScore = useCallback((s: typeof stateRef.current) => {
+    if (!s.playerName || s.tournamentBestScore <= 0) return;
+    s.tournamentBestSubmitted = true;
+    fetch("/api/tournament/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        playerName: s.playerName,
+        totalCaught: s.tournamentCycleCatches,
+        totalWeight: Math.round(s.tournamentCycleWeight * 10) / 10,
+        largestCatch: Math.round(s.tournamentCycleLargest * 10) / 10,
+        largestFishName: s.tournamentCycleLargestName,
+        rarityScore: s.tournamentCycleRarityScore,
+        compositeScore: s.tournamentBestScore,
+      }),
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (data.rank) {
+          stateRef.current.tournamentRank = data.rank;
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const getSellPrice = useCallback((fishType: FishType | null, junk: typeof JUNK_ITEMS[0] | null, size: number) => {
     const s = stateRef.current;
     if (!fishType && !junk) return 0;
@@ -1619,6 +1666,8 @@ export default function FishingGame() {
       tutorialStep: s.tutorialStep || 0,
       underwaterPlants: s.underwaterPlants,
       plantsInitialized: s.plantsInitialized,
+      tournamentActive: s.tournamentActive,
+      tournamentShowResults: s.tournamentShowResults,
     });
   }, []);
 
@@ -2001,6 +2050,56 @@ export default function FishingGame() {
           .then(r => { if (!r.ok) throw new Error(); return r.json(); })
           .then(data => { if (Array.isArray(data)) stateRef.current.billboardLeaderboard = data; })
           .catch(() => {});
+      }
+
+      s.tournamentStatusTimer += dt;
+      if (s.tournamentStatusTimer > 1800) {
+        s.tournamentStatusTimer = 0;
+        fetch("/api/tournament/status")
+          .then(r => r.json())
+          .then(data => {
+            const st = stateRef.current;
+            const wasActive = st.tournamentActive;
+            st.tournamentActive = data.active;
+            st.tournamentEndsIn = data.endsIn || 0;
+            st.tournamentStartsIn = data.startsIn || 0;
+            st.tournamentDate = data.date || "";
+            if (data.active && !wasActive) {
+              st.tournamentCycleStart = Date.now();
+              st.tournamentCycleTimer = 0;
+              st.tournamentCycleCatches = 0;
+              st.tournamentCycleWeight = 0;
+              st.tournamentCycleLargest = 0;
+              st.tournamentCycleLargestName = "";
+              st.tournamentCycleRarityScore = 0;
+              st.tournamentBestScore = 0;
+              st.tournamentBestSubmitted = false;
+              st.tournamentNotified = false;
+            }
+            if (!data.active && wasActive && !st.tournamentBestSubmitted && st.tournamentBestScore > 0) {
+              submitTournamentScore(st);
+            }
+          })
+          .catch(() => {});
+      }
+
+      if (s.tournamentActive) {
+        const cycleElapsed = (Date.now() - s.tournamentCycleStart) / 1000;
+        s.tournamentCycleTimer = cycleElapsed;
+        if (cycleElapsed >= 1200) {
+          const score = calcTournamentScore(s.tournamentCycleCatches, s.tournamentCycleWeight, s.tournamentCycleLargest, s.tournamentCycleRarityScore);
+          if (score > s.tournamentBestScore) {
+            s.tournamentBestScore = score;
+            submitTournamentScore(s);
+          }
+          s.tournamentCycleStart = Date.now();
+          s.tournamentCycleTimer = 0;
+          s.tournamentCycleCatches = 0;
+          s.tournamentCycleWeight = 0;
+          s.tournamentCycleLargest = 0;
+          s.tournamentCycleLargestName = "";
+          s.tournamentCycleRarityScore = 0;
+        }
       }
 
       const tacticsGlobal = 1 + s.attributes.Tactics * 0.01;
@@ -5828,6 +5927,17 @@ export default function FishingGame() {
 
           s.sessionCatches++;
 
+          if (s.tournamentActive && s.currentCatch) {
+            const rarityPts: Record<string, number> = { common: 1, uncommon: 3, rare: 8, legendary: 25, ultra_rare: 100 };
+            s.tournamentCycleCatches++;
+            s.tournamentCycleWeight += fishWeight;
+            s.tournamentCycleRarityScore += (rarityPts[s.currentCatch.rarity] || 1);
+            if (fishWeight > s.tournamentCycleLargest) {
+              s.tournamentCycleLargest = fishWeight;
+              s.tournamentCycleLargestName = name;
+            }
+          }
+
           if (s.playerName && s.currentCatch) {
             const submitData = {
               playerName: s.playerName,
@@ -5886,7 +5996,7 @@ export default function FishingGame() {
               rarity: s.currentCatch?.rarity || "common",
               username: s.playerName || "Anonymous",
               earnings: sellPrice,
-              icon: s.currentCatch?.icon || "",
+              icon: s.currentCatch?.catchAsset || s.currentCatch?.icon || "",
             }),
           }).catch(() => {});
 
@@ -9410,6 +9520,107 @@ export default function FishingGame() {
           </div>
         );
       })()}
+
+      {/* Tournament HUD */}
+      {uiState.gameState !== "title" && uiState.gameState !== "charSelect" && uiState.gameState !== "intro" && (() => {
+        const s = stateRef.current;
+        const isActive = s.tournamentActive;
+        const cycleRemaining = Math.max(0, 1200 - s.tournamentCycleTimer);
+        const cycleMins = Math.floor(cycleRemaining / 60);
+        const cycleSecs = Math.floor(cycleRemaining % 60);
+        const tournEndMins = Math.floor((s.tournamentEndsIn || 0) / 60);
+        const tournStartMins = Math.floor((s.tournamentStartsIn || 0) / 60);
+        const tournStartHrs = Math.floor(tournStartMins / 60);
+        const tournStartRemMins = tournStartMins % 60;
+        const currentScore = calcTournamentScore(s.tournamentCycleCatches, s.tournamentCycleWeight, s.tournamentCycleLargest, s.tournamentCycleRarityScore);
+        return (
+          <div data-testid="tournament-hud" style={{
+            position: "absolute", bottom: 50, left: 14 + 160, zIndex: 55,
+            background: isActive ? "rgba(25,8,40,0.95)" : "rgba(8,15,25,0.85)",
+            border: `1px solid ${isActive ? "rgba(224,64,251,0.6)" : "rgba(100,100,120,0.3)"}`,
+            borderRadius: 8, padding: "6px 12px", minWidth: 140,
+            color: isActive ? "#e040fb" : "#607d8b", fontSize: 10,
+            fontFamily: "'Press Start 2P', monospace", pointerEvents: isActive ? "auto" : "none",
+            boxShadow: isActive ? "0 0 12px rgba(224,64,251,0.3)" : "none",
+          }}
+          onClick={() => {
+            if (isActive) {
+              const st = stateRef.current;
+              st.tournamentShowResults = !st.tournamentShowResults;
+              if (st.tournamentShowResults) {
+                fetch(`/api/tournament/results?date=${st.tournamentDate}`)
+                  .then(r => r.json())
+                  .then(data => { if (Array.isArray(data)) stateRef.current.tournamentResults = data; })
+                  .catch(() => {});
+              }
+              setUiState(prev => ({ ...prev, gameState: prev.gameState }));
+            }
+          }}
+          >
+            <div style={{ opacity: 0.8, fontSize: 7, marginBottom: 3, color: isActive ? "#ce93d8" : "#78909c" }}>DAILY TOURNAMENT</div>
+            {isActive ? (
+              <>
+                <div style={{ color: "#e040fb", fontSize: 9 }}>LIVE - {tournEndMins}m left</div>
+                <div style={{ opacity: 0.7, fontSize: 7, marginTop: 3 }}>CYCLE {cycleMins}:{cycleSecs.toString().padStart(2, "0")}</div>
+                <div style={{ fontSize: 7, marginTop: 2, color: "#fff" }}>{s.tournamentCycleCatches} caught | {s.tournamentCycleWeight.toFixed(1)} lbs</div>
+                <div style={{ fontSize: 7, marginTop: 1, color: "#ffd54f" }}>Score: {currentScore} | Best: {s.tournamentBestScore}</div>
+                {s.tournamentRank > 0 && <div style={{ fontSize: 7, marginTop: 1, color: "#4caf50" }}>Rank #{s.tournamentRank}</div>}
+              </>
+            ) : (
+              <div style={{ fontSize: 8, color: "#78909c" }}>
+                {tournStartHrs > 0 ? `Starts in ${tournStartHrs}h ${tournStartRemMins}m` : tournStartMins > 0 ? `Starts in ${tournStartMins}m` : "6-8 PM CST"}
+              </div>
+            )}
+            <div style={{ opacity: 0.5, fontSize: 6, marginTop: 3 }}>10,000 GBUX POOL</div>
+          </div>
+        );
+      })()}
+
+      {/* Tournament Results Overlay */}
+      {stateRef.current.tournamentShowResults && stateRef.current.tournamentActive && (
+        <div style={{
+          position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 200,
+          background: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center",
+        }} onClick={() => { stateRef.current.tournamentShowResults = false; setUiState(prev => ({ ...prev, gameState: prev.gameState })); }}>
+          <div style={{
+            background: "rgba(15,8,30,0.98)", border: "1px solid rgba(224,64,251,0.5)",
+            borderRadius: 12, padding: 20, width: Math.min(420, window.innerWidth * 0.9), maxHeight: "80vh", overflow: "auto",
+            fontFamily: "'Press Start 2P', monospace", color: "#fff",
+          }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ textAlign: "center", fontSize: 12, color: "#e040fb", marginBottom: 16 }}>TOURNAMENT STANDINGS</div>
+            <div style={{ fontSize: 8, color: "#ce93d8", textAlign: "center", marginBottom: 12 }}>{stateRef.current.tournamentDate} | 6-8 PM CST | 10,000 GBUX</div>
+            <div style={{ fontSize: 7, color: "#78909c", marginBottom: 8, display: "flex", justifyContent: "space-between", gap: 4, padding: "0 4px" }}>
+              <span style={{ width: 30 }}>#</span>
+              <span style={{ flex: 1 }}>PLAYER</span>
+              <span style={{ width: 50, textAlign: "right" }}>SCORE</span>
+              <span style={{ width: 40, textAlign: "right" }}>FISH</span>
+              <span style={{ width: 50, textAlign: "right" }}>WEIGHT</span>
+            </div>
+            {stateRef.current.tournamentResults.map((r: any, i: number) => {
+              const medal = i === 0 ? "#ffd700" : i === 1 ? "#c0c0c0" : i === 2 ? "#cd7f32" : "#fff";
+              const prizes = [3500, 2000, 1500, 1000, 800, 500, 400, 200, 50, 50];
+              const prize = i < prizes.length ? prizes[i] : 0;
+              return (
+                <div key={r.id || i} style={{
+                  display: "flex", justifyContent: "space-between", gap: 4,
+                  padding: "4px 4px", fontSize: 8, color: medal,
+                  background: r.playerName === stateRef.current.playerName ? "rgba(224,64,251,0.15)" : "transparent",
+                  borderRadius: 4, marginBottom: 2,
+                }}>
+                  <span style={{ width: 30 }}>{i + 1}.</span>
+                  <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.playerName}</span>
+                  <span style={{ width: 50, textAlign: "right" }}>{Math.floor(r.compositeScore)}</span>
+                  <span style={{ width: 40, textAlign: "right" }}>{r.totalCaught}</span>
+                  <span style={{ width: 50, textAlign: "right" }}>{r.totalWeight?.toFixed(1)}</span>
+                </div>
+              );
+            })}
+            {stateRef.current.tournamentResults.length === 0 && (
+              <div style={{ textAlign: "center", fontSize: 8, color: "#78909c", padding: 20 }}>No entries yet - start fishing!</div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Leaderboard Toggle Button */}
       {uiState.gameState !== "title" && uiState.gameState !== "charSelect" && uiState.gameState !== "intro" && (

@@ -348,6 +348,139 @@ export async function registerRoutes(
     }
   });
 
+  function getTournamentDateCST(): string {
+    const now = new Date();
+    const cstOffset = -6 * 60;
+    const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
+    const cstDate = new Date(utcMs + cstOffset * 60000);
+    return cstDate.toISOString().split("T")[0];
+  }
+
+  function isTournamentActive(): { active: boolean; startsIn?: number; endsIn?: number; date: string } {
+    const now = new Date();
+    const cstOffset = -6 * 60;
+    const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
+    const cstNow = new Date(utcMs + cstOffset * 60000);
+    const dateStr = cstNow.toISOString().split("T")[0];
+    const hours = cstNow.getHours();
+    const minutes = cstNow.getMinutes();
+    const currentMinutes = hours * 60 + minutes;
+    const startMinutes = 18 * 60;
+    const endMinutes = 20 * 60;
+
+    if (currentMinutes >= startMinutes && currentMinutes < endMinutes) {
+      return { active: true, endsIn: (endMinutes - currentMinutes) * 60, date: dateStr };
+    } else if (currentMinutes < startMinutes) {
+      return { active: false, startsIn: (startMinutes - currentMinutes) * 60, date: dateStr };
+    } else {
+      const tomorrow = new Date(cstNow);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const tomorrowStr = tomorrow.toISOString().split("T")[0];
+      const minutesUntilMidnight = 24 * 60 - currentMinutes;
+      return { active: false, startsIn: (minutesUntilMidnight + startMinutes) * 60, date: tomorrowStr };
+    }
+  }
+
+  app.get("/api/tournament/status", (_req, res) => {
+    const status = isTournamentActive();
+    res.json(status);
+  });
+
+  app.get("/api/tournament/results", async (req, res) => {
+    try {
+      const dateParam = (req.query.date as string) || getTournamentDateCST();
+      const results = await storage.getTournamentResults(dateParam, 50);
+      res.json(results);
+    } catch {
+      res.status(500).json({ message: "Failed to get tournament results" });
+    }
+  });
+
+  app.post("/api/tournament/submit", async (req, res) => {
+    try {
+      const status = isTournamentActive();
+      if (!status.active) {
+        return res.status(400).json({ message: "Tournament is not currently active", status });
+      }
+
+      const { playerName, totalCaught, totalWeight, largestCatch, largestFishName, rarityScore, compositeScore } = req.body;
+      if (!playerName || compositeScore === undefined) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+
+      const entry = await storage.submitTournamentEntry({
+        playerName,
+        tournamentDate: status.date,
+        totalCaught: Number(totalCaught) || 0,
+        totalWeight: Number(totalWeight) || 0,
+        largestCatch: Number(largestCatch) || 0,
+        largestFishName: largestFishName || null,
+        rarityScore: Number(rarityScore) || 0,
+        compositeScore: Number(compositeScore) || 0,
+        reward: 0,
+      });
+
+      const results = await storage.getTournamentResults(status.date, 50);
+      const rank = results.findIndex(r => r.playerName === playerName) + 1;
+
+      sendTournamentWebhook(playerName, Number(compositeScore), rank, results.length, status.date, {
+        totalCaught: Number(totalCaught) || 0,
+        totalWeight: Number(totalWeight) || 0,
+        largestCatch: Number(largestCatch) || 0,
+        largestFishName: largestFishName || "",
+        rarityScore: Number(rarityScore) || 0,
+      });
+
+      res.json({ entry, rank, totalParticipants: results.length });
+    } catch (err) {
+      console.error("Tournament submit error:", err);
+      res.status(500).json({ message: "Failed to submit tournament score" });
+    }
+  });
+
+  async function sendTournamentWebhook(playerName: string, score: number, rank: number, totalPlayers: number, date: string, stats: { totalCaught: number; totalWeight: number; largestCatch: number; largestFishName: string; rarityScore: number }) {
+    const webhookUrl = process.env.DISCORD_WEBHOOK_URL_FISH;
+    if (!webhookUrl) return;
+
+    const baseUrl = "https://ocean-angler-grudge.replit.app";
+    const prizePool = 10000;
+    const rewards = [0.35, 0.20, 0.15, 0.10, 0.08, 0.05, 0.04, 0.02, 0.005, 0.005];
+    const rewardPct = rank <= rewards.length ? rewards[rank - 1] : 0;
+    const estimatedReward = Math.floor(prizePool * rewardPct);
+
+    const medalEmoji = rank === 1 ? "\uD83E\uDD47" : rank === 2 ? "\uD83E\uDD48" : rank === 3 ? "\uD83E\uDD49" : "\uD83C\uDFA3";
+
+    const embed: any = {
+      title: `${medalEmoji} Tournament Score Submitted!`,
+      description: `**${playerName}** posted a tournament score of **${Math.floor(score)}** points!`,
+      color: rank <= 3 ? 0xffd700 : 0x2196f3,
+      fields: [
+        { name: "Rank", value: `#${rank} / ${totalPlayers}`, inline: true },
+        { name: "Fish Caught", value: `${stats.totalCaught}`, inline: true },
+        { name: "Total Weight", value: `${stats.totalWeight.toFixed(1)} lbs`, inline: true },
+        { name: "Largest Catch", value: `${stats.largestCatch.toFixed(1)} lbs${stats.largestFishName ? ` (${stats.largestFishName})` : ""}`, inline: true },
+        { name: "Rarity Score", value: `${stats.rarityScore}`, inline: true },
+        { name: "Est. Reward", value: `${estimatedReward} gbux`, inline: true },
+      ],
+      footer: { text: `Daily Tournament ${date} \u2022 6-8 PM CST \u2022 10,000 gbux Prize Pool`, icon_url: `${baseUrl}/assets/grudge_logo.png` },
+      timestamp: new Date().toISOString(),
+    };
+
+    try {
+      await fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: "Grudge Tournament",
+          avatar_url: `${baseUrl}/assets/grudge_logo.png`,
+          embeds: [embed],
+        }),
+      });
+    } catch (err) {
+      console.error("Tournament webhook error:", err);
+    }
+  }
+
   registerImageRoutes(app);
 
   return httpServer;
