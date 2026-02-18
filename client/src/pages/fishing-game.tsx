@@ -1800,6 +1800,45 @@ export default function FishingGame() {
         return;
       }
       if (["a", "d", "w", "s", " ", "e"].includes(key)) e.preventDefault();
+      if (key === " " && stateRef.current.gameState === "idle") {
+        const st = stateRef.current;
+        const canvas = canvasRef.current;
+        if (canvas) {
+          const W = canvas.width;
+          const H = canvas.height;
+          const wY = H * 0.42;
+          if (st.toolMode === "net") {
+            if (st.netCooldown > 0 || st.netAnimPhase !== "none") return;
+            st.netActive = true;
+            st.netBroken = false;
+            st.netCastX = st.playerX - (st.facingLeft ? 120 : -120);
+            st.netCastY = wY + 60;
+            const fishermanSize = FRAME_H * SCALE;
+            st.netWidth = fishermanSize * 3;
+            st.netDepth = fishermanSize * 2;
+            st.netTimer = 120;
+            st.netAnimPhase = "throwing";
+            st.netThrowFrame = 0;
+            st.netThrowTimer = 0;
+            st.netAnimStartY = wY;
+            st.netAnimY = wY - 20;
+            st.netAnimTargetY = wY + 160;
+            st.netAnimCaughtFish = [];
+            st.netTotalWeight = 0;
+            syncUI();
+          } else {
+            st.binoculars = false;
+            st.gameState = "casting";
+            st.castPower = 0;
+            st.castDirection = 1;
+            st.guardianUsedThisCast = false;
+            st.guardianState = "idle";
+            st.guardianDefendTimer = 0;
+            syncUI();
+          }
+        }
+        return;
+      }
       if (key === "1") {
         stateRef.current.selectedHotbar = 1;
         stateRef.current.toolMode = "rod";
@@ -2488,7 +2527,15 @@ export default function FishingGame() {
         }
       } else {
         fishermanX = s.playerX;
-        fishermanY = pierY - FRAME_H * SCALE + 12;
+        const beachStartX = W * 3.0;
+        const beachEndX = W * 5 + 200;
+        if (s.playerX >= beachStartX) {
+          const beachProgress = Math.max(0, (s.playerX - beachStartX) / (beachEndX - beachStartX));
+          const beachSlopeY = pierY + 10 + beachProgress * 30;
+          fishermanY = beachSlopeY - FRAME_H * SCALE + 12;
+        } else {
+          fishermanY = pierY - FRAME_H * SCALE + 12;
+        }
       }
 
       ctx.imageSmoothingEnabled = false;
@@ -5322,7 +5369,8 @@ export default function FishingGame() {
       if (s.netActive && s.netAnimPhase !== "none") {
         const netX = s.netCastX;
         const netY = s.netAnimY;
-        const netScale = 3;
+        const fishermanW = FRAME_H * SCALE;
+        const netVisualW = fishermanW * 3;
 
         if (s.netAnimPhase === "throwing") {
           const throwImg = getImg("/assets/objects/NetThrow.png");
@@ -5331,8 +5379,9 @@ export default function FishingGame() {
             const frameW = throwImg.naturalWidth / throwFrames;
             const frameH = throwImg.naturalHeight;
             const frame = Math.min(s.netThrowFrame, throwFrames - 1);
-            const drawW = frameW * netScale;
-            const drawH = frameH * netScale;
+            const throwScale = netVisualW / frameW;
+            const drawW = frameW * throwScale;
+            const drawH = frameH * throwScale;
             ctx.save();
             ctx.imageSmoothingEnabled = false;
             ctx.globalAlpha = 0.95;
@@ -5344,30 +5393,30 @@ export default function FishingGame() {
           const netImgSrc = isSinking ? "/assets/objects/Netthrown.png" : "/assets/objects/Net.png";
           const netImg = getImg(netImgSrc);
           if (netImg && netImg.complete && netImg.naturalWidth > 0) {
-            const nScale = isSinking ? 0.12 : 0.12;
-            const nw = netImg.naturalWidth * nScale;
-            const nh = netImg.naturalHeight * nScale;
+            const nw = netVisualW;
+            const aspectRatio = netImg.naturalHeight / netImg.naturalWidth;
+            const nh = nw * aspectRatio;
             ctx.save();
             ctx.imageSmoothingEnabled = false;
             if (s.netAnimPhase === "rising") {
-              const wobble = Math.sin(s.time * 0.3) * 3;
+              const wobble = Math.sin(s.time * 0.3) * 4;
               ctx.translate(netX - nw / 2 + wobble, netY - nh / 2);
             } else {
               ctx.translate(netX - nw / 2, netY - nh / 2);
             }
             ctx.globalAlpha = 0.95;
-            ctx.drawImage(netImg, 0, 0, nw, nh);
+            ctx.drawImage(netImg, 0, 0, netImg.naturalWidth, netImg.naturalHeight, 0, 0, nw, nh);
             if ((s.netAnimPhase === "rising" || s.netAnimPhase === "scooping") && s.netAnimCaughtFish.length > 0) {
               const fishCount = s.netAnimCaughtFish.length;
-              const iconSize = 20;
+              const iconSize = 24;
               ctx.globalAlpha = 0.9;
-              const maxShow = Math.min(fishCount, 5);
-              const startX = nw / 2 - (maxShow * (iconSize + 3)) / 2;
+              const maxShow = Math.min(fishCount, 6);
+              const startX = nw / 2 - (maxShow * (iconSize + 4)) / 2;
               for (let fi = 0; fi < maxShow; fi++) {
                 const caught = s.netAnimCaughtFish[fi];
                 const cIcon = caught.icon ? getImg(caught.icon) : null;
-                const bobY = Math.sin(s.time * 0.2 + fi * 1.5) * 3;
-                const fx = startX + fi * (iconSize + 3);
+                const bobY = Math.sin(s.time * 0.2 + fi * 1.5) * 4;
+                const fx = startX + fi * (iconSize + 4);
                 const fy = nh * 0.3 + bobY;
                 if (cIcon && cIcon.complete && cIcon.naturalWidth > 0) {
                   ctx.drawImage(cIcon, fx, fy, iconSize, iconSize);
@@ -5380,19 +5429,19 @@ export default function FishingGame() {
               }
               if (fishCount > maxShow) {
                 ctx.fillStyle = "#f1c40f";
-                ctx.font = "bold 10px monospace";
+                ctx.font = "bold 11px monospace";
                 ctx.textAlign = "center";
-                ctx.fillText(`+${fishCount - maxShow}`, nw / 2 + 30, nh * 0.3 + iconSize / 2 + 4);
+                ctx.fillText(`+${fishCount - maxShow}`, nw / 2 + 40, nh * 0.3 + iconSize / 2 + 4);
               }
               ctx.fillStyle = "#fff";
-              ctx.font = "bold 9px monospace";
+              ctx.font = "bold 10px monospace";
               ctx.textAlign = "center";
               const weightText = `${s.netTotalWeight.toFixed(1)}lb / 49lb`;
-              ctx.fillText(weightText, nw / 2, nh * 0.3 + iconSize + 14);
+              ctx.fillText(weightText, nw / 2, nh * 0.3 + iconSize + 16);
               if (s.netTotalWeight > 49) {
-                ctx.fillStyle = "rgba(255,60,60,0.8)";
-                ctx.font = "bold 11px monospace";
-                ctx.fillText("BREAKING!", nw / 2, nh * 0.3 - 6);
+                ctx.fillStyle = "rgba(255,60,60,0.9)";
+                ctx.font = "bold 13px monospace";
+                ctx.fillText("BREAKING!", nw / 2, nh * 0.3 - 8);
               }
             }
             ctx.globalAlpha = 1;
@@ -5411,7 +5460,7 @@ export default function FishingGame() {
         ctx.setLineDash([]);
 
         if (s.netAnimPhase !== "throwing") {
-          addParticles(netX + (Math.random() - 0.5) * 20, netY, 1, "rgba(93,173,226,0.5)", 1, "bubble");
+          addParticles(netX + (Math.random() - 0.5) * netVisualW * 0.4, netY, 1, "rgba(93,173,226,0.5)", 1, "bubble");
         }
       }
 
@@ -6677,6 +6726,135 @@ export default function FishingGame() {
         ctx.fillRect(0, 0, W, H);
       }
 
+      // --- MINIMAP ---
+      if (s.gameState !== "title" && s.gameState !== "charSelect" && s.gameState !== "intro" && !s.binoculars) {
+        const mmW = 180;
+        const mmH = 60;
+        const mmX = W - mmW - 12;
+        const mmY = 12;
+        const worldL = -(W * 3) - 200;
+        const worldR = W * 5 + 200;
+        const worldRange = worldR - worldL;
+        const mapWaterY = waterY;
+
+        ctx.save();
+        ctx.globalAlpha = 0.75;
+        ctx.fillStyle = "rgba(5,12,30,0.85)";
+        ctx.strokeStyle = "rgba(79,195,247,0.4)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(mmX - 4, mmY - 4, mmW + 8, mmH + 8, 4);
+        ctx.fill();
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+
+        ctx.beginPath();
+        ctx.rect(mmX, mmY, mmW, mmH);
+        ctx.clip();
+
+        const toMmX = (wx: number) => mmX + ((wx - worldL) / worldRange) * mmW;
+        const toMmY = (wy: number) => {
+          const waterRatioOnMap = 0.35;
+          if (wy <= mapWaterY) return mmY + (wy / mapWaterY) * mmH * waterRatioOnMap;
+          return mmY + mmH * waterRatioOnMap + ((wy - mapWaterY) / (H * 3 - mapWaterY)) * mmH * (1 - waterRatioOnMap);
+        };
+
+        ctx.fillStyle = "rgba(20,40,80,0.3)";
+        ctx.fillRect(mmX, mmY, mmW, mmH);
+
+        try {
+          const mapRaw = localStorage.getItem(ADMIN_MAP_STORAGE_KEY);
+          if (mapRaw) {
+            const mapData = JSON.parse(mapRaw);
+            const adminScaleX = W / ADMIN_REF_W;
+            const adminScaleY = H / ADMIN_REF_H;
+            if (mapData.areas && Array.isArray(mapData.areas)) {
+              for (const area of mapData.areas) {
+                const ax = area.x * adminScaleX;
+                const ay = area.y * adminScaleY;
+                const aw = area.w * adminScaleX;
+                const ah = area.h * adminScaleY;
+                const zx1 = toMmX(ax);
+                const zy1 = toMmY(ay);
+                const zx2 = toMmX(ax + aw);
+                const zy2 = toMmY(ay + ah);
+                ctx.fillStyle = area.color || "rgba(100,150,200,0.15)";
+                ctx.globalAlpha = 0.5;
+                ctx.fillRect(zx1, zy1, zx2 - zx1, zy2 - zy1);
+                ctx.globalAlpha = 1;
+              }
+            }
+          }
+        } catch {}
+
+        const pierLmm = toMmX(pierLeftBound);
+        const pierRmm = toMmX(W * 3.0);
+        ctx.fillStyle = "rgba(141,110,99,0.6)";
+        ctx.fillRect(pierLmm, mmY + mmH * 0.32, pierRmm - pierLmm, 3);
+
+        const bchLmm = toMmX(W * 3.0);
+        const bchRmm = toMmX(W * 5 + 200);
+        ctx.fillStyle = "rgba(212,167,106,0.5)";
+        ctx.beginPath();
+        ctx.moveTo(bchLmm, mmY + mmH * 0.34);
+        ctx.lineTo(bchRmm, mmY + mmH * 0.42);
+        ctx.lineTo(bchRmm, mmY + mmH);
+        ctx.lineTo(bchLmm, mmY + mmH);
+        ctx.closePath();
+        ctx.fill();
+
+        const ds = getDepthSlope();
+        const sxScale = W / ADMIN_REF_W;
+        const syScale = H / ADMIN_REF_H;
+        const slopeShallowX = ds.shallowX * sxScale;
+        const slopeDeepX = ds.deepX * sxScale;
+        const slopeShallowY = ds.shallowY * syScale;
+        const slopeDeepY = ds.deepY * syScale;
+        ctx.strokeStyle = "rgba(100,180,100,0.5)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(toMmX(slopeShallowX), toMmY(slopeShallowY));
+        ctx.lineTo(toMmX(slopeDeepX), toMmY(slopeDeepY));
+        ctx.stroke();
+
+        const playerWorldX = s.isSwimming ? s.swimX : s.inBoat ? s.boatX : s.playerX;
+        let playerWorldY: number;
+        if (s.isSwimming) {
+          playerWorldY = s.swimY;
+        } else {
+          const beachStartX2 = W * 3.0;
+          const beachEndX2 = W * 5 + 200;
+          if (playerWorldX >= beachStartX2) {
+            const bp = Math.max(0, (playerWorldX - beachStartX2) / (beachEndX2 - beachStartX2));
+            playerWorldY = pierY + 10 + bp * 30;
+          } else {
+            playerWorldY = pierY;
+          }
+        }
+        const pmx = toMmX(playerWorldX);
+        const pmy = Math.min(mmY + mmH - 3, Math.max(mmY + 2, toMmY(playerWorldY)));
+        ctx.fillStyle = "#4fc3f7";
+        ctx.beginPath();
+        ctx.arc(pmx, pmy, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+
+        const viewLmm = toMmX(-s.cameraX);
+        const viewRmm = toMmX(-s.cameraX + W);
+        ctx.strokeStyle = "rgba(255,255,255,0.3)";
+        ctx.lineWidth = 0.5;
+        ctx.strokeRect(viewLmm, mmY, viewRmm - viewLmm, mmH);
+
+        ctx.fillStyle = "rgba(255,255,255,0.5)";
+        ctx.font = "bold 5px 'Press Start 2P', monospace";
+        ctx.textAlign = "center";
+        ctx.fillText("MAP", mmX + mmW / 2, mmY - 1);
+
+        ctx.restore();
+      }
+
       // Title screen text only
       if (s.gameState === "title") {
         const titleY = H * 0.25;
@@ -6875,8 +7053,9 @@ export default function FishingGame() {
         s.netBroken = false;
         s.netCastX = (s.mouseX - s.cameraX) || (s.playerX - 100);
         s.netCastY = Math.max(waterY + 20, s.mouseY || (waterY + 60));
-        s.netWidth = 60 + s.attributes.Strength * 3 + s.attributes.Dexterity * 2;
-        s.netDepth = 40 + s.attributes.Endurance * 2;
+        const fishermanSize = FRAME_H * SCALE;
+        s.netWidth = fishermanSize * 3;
+        s.netDepth = fishermanSize * 2;
         s.netTimer = 120;
         s.netAnimPhase = "throwing";
         s.netThrowFrame = 0;
