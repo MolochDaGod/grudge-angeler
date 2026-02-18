@@ -37,6 +37,8 @@ import imgPinkCrab from "@/assets/images/fish-pink-crab.png";
 import imgPurpleCrab from "@/assets/images/fish-purple-crab.png";
 import imgGoldCrab from "@/assets/images/fish-gold-crab.png";
 import imgDarkCrab from "@/assets/images/fish-dark-crab.png";
+import imgCrimsonCrab from "@/assets/images/fish-crimson-crab.png";
+import imgShadowCrab from "@/assets/images/fish-shadow-crab.png";
 
 function toSlug(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -60,7 +62,7 @@ const legendaryFish = [
 ];
 
 const features = [
-  { icon: "/assets/lures/golden_fly.png", title: "28 Species", desc: "Fish, crabs, and predators across 5 rarity tiers" },
+  { icon: "/assets/lures/golden_fly.png", title: "30 Species", desc: "Fish, crabs, and predators across 5 rarity tiers" },
   { icon: "/assets/icons/gbux.png", title: "Gbux Economy", desc: "Dynamic market, sell fish, complete bounties, build your fortune" },
   { icon: "/assets/lures/prismatic_lure.png", title: "Equipment System", desc: "5 rods, 5 baits, 11 lures, 22 chum items - each with unique stats" },
   { icon: "/assets/gen-icons/fish-phantom-minnow.png", title: "The Legendary 10", desc: "Ultra-rare mythic fish with complete lore and unique visual effects" },
@@ -172,6 +174,8 @@ const allFish: LandingFish[] = [
   { name: "Purple Crab", rarity: "uncommon", points: 15, desc: "An uncommon purple crab with iridescent shell.", img: imgPurpleCrab },
   { name: "Gold Crab", rarity: "uncommon", points: 25, desc: "A rare golden crab. Prized for its shimmering shell.", img: imgGoldCrab },
   { name: "Dark Crab", rarity: "uncommon", points: 20, desc: "A dark-shelled crab with powerful pincers.", img: imgDarkCrab },
+  { name: "Crimson Crab", rarity: "rare", points: 40, desc: "A blood-red crab with Sea Devil markings. Extremely aggressive.", img: imgCrimsonCrab },
+  { name: "Shadow Crab", rarity: "rare", points: 55, desc: "A dark maroon crab that moves like a phantom. Kin of the Sea Devil.", img: imgShadowCrab },
   { name: "Stingray", rarity: "rare", points: 100, desc: "A flat-bodied ray gliding silently along the ocean floor.", img: imgStingray },
   { name: "Moray Eel", rarity: "rare", points: 90, desc: "A thick-bodied eel lurking in reef crevices.", img: imgMorayEel },
   { name: "Anglerfish", rarity: "rare", points: 120, desc: "A deep-sea predator with a bioluminescent lure.", img: imgAnglerfish },
@@ -811,7 +815,7 @@ export default function Landing() {
           textAlign: "center", fontSize: 7, color: "#4a6070",
           letterSpacing: 1, marginBottom: 32, lineHeight: 2,
         }}>
-          28 species across 5 rarity tiers. Can you catch them all?
+          30 species across 5 rarity tiers. Can you catch them all?
         </p>
 
         {(["common", "uncommon", "rare", "legendary", "ultra_rare"] as const).map((rarity) => {
