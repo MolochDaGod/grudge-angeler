@@ -685,7 +685,7 @@ export default function Landing() {
                     <AnimatedSprite
                       sprite={fish.sprite}
                       size={fish.name === "The Seal at the Seam" ? 56 : 72}
-                      tint={fish.tint}
+                      tint={fish.aura}
                     />
                   </div>
                 </div>
