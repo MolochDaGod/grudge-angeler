@@ -7779,7 +7779,7 @@ export default function FishingGame() {
                   name: `Creature ${n} Walk`, src: `/assets/creatures/${n}/Walk.png`, frames: 4,
                 })) },
                 { label: "Crabs", items: BEACH_CRABS.map(c => ({
-                  name: c.name, src: c.spriteSheet || "", frames: 4,
+                  name: c.name, src: c.icon || "", frames: 1,
                   meta: c.rarity,
                 })) },
                 { label: "Predators", items: PREDATOR_TYPES.map(p => ([
@@ -7817,7 +7817,6 @@ export default function FishingGame() {
                 ] },
                 { label: "Misc", items: [
                   { name: "Logo", src: "/assets/logo.png", frames: 1 },
-                  { name: "Beach Crabs Sheet", src: "/assets/beach_crabs.png", frames: 1 },
                   { name: "Char Fabled", src: "/assets/char_fabled.png", frames: 1 },
                   { name: "Char Legion", src: "/assets/char_legion.png", frames: 1 },
                   { name: "Char Crusade", src: "/assets/char_crusade.png", frames: 1 },
@@ -7874,8 +7873,56 @@ export default function FishingGame() {
                 GIZMO: {uiState.gizmoEnabled ? "ON" : "OFF"}
               </div>
               <div style={{ color: "#607d8b", fontSize: 5, marginBottom: 8, lineHeight: "1.8" }}>
-                When enabled, click objects in the game world to select them. Drag to reposition.
+                Click objects to select &amp; drag to reposition. Use + to place new items.
               </div>
+
+              <div style={{ color: "#2ecc71", fontSize: 6, marginBottom: 4, borderBottom: "1px solid rgba(46,204,113,0.2)", paddingBottom: 2 }}>
+                + Place New Item
+              </div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 3, marginBottom: 8 }}>
+                {[
+                  { name: "Barrel 1", sprite: "/assets/objects/Fishbarrel1.png", scale: 2.0 },
+                  { name: "Barrel 2", sprite: "/assets/objects/Fishbarrel2.png", scale: 2.0 },
+                  { name: "Barrel 3", sprite: "/assets/objects/Fishbarrel3.png", scale: 2.0 },
+                  { name: "Barrel 4", sprite: "/assets/objects/Fishbarrel4.png", scale: 2.0 },
+                  { name: "Fish Rod", sprite: "/assets/objects/Fish-rod.png", scale: 1.8 },
+                  { name: "Stay Sign", sprite: "/assets/objects/Stay.png", scale: 2.0 },
+                  { name: "Grass 1", sprite: "/assets/objects/Grass1.png", scale: 1.5 },
+                  { name: "Grass 2", sprite: "/assets/objects/Grass2.png", scale: 1.5 },
+                  { name: "Grass 3", sprite: "/assets/objects/Grass3.png", scale: 1.5 },
+                  { name: "Grass 4", sprite: "/assets/objects/Grass4.png", scale: 1.5 },
+                  { name: "Fishing Hut", sprite: "/assets/objects/Fishing_hut.png", scale: 1.5 },
+                  { name: "Boat", sprite: "/assets/objects/Boat.png", scale: 1.5 },
+                  { name: "Boat 2", sprite: "/assets/objects/Boat2.png", scale: 1.5 },
+                  { name: "Water", sprite: "/assets/objects/Water.png", scale: 1.5 },
+                ].map((item, idx) => (
+                  <div
+                    key={idx}
+                    data-testid={`place-item-${idx}`}
+                    onClick={() => {
+                      const s = stateRef.current;
+                      const cx = -s.cameraX + canvasRef.current!.width / 2;
+                      const cy = canvasRef.current!.height * 0.4;
+                      const newId = `placed_${Date.now()}_${idx}`;
+                      s.worldObjects.push({ id: newId, sprite: item.sprite, x: cx, y: cy, scale: item.scale, label: item.name });
+                      s.gizmoEnabled = true;
+                      s.gizmoSelected = s.worldObjects.length - 1;
+                      syncUI();
+                    }}
+                    style={{
+                      width: 46, display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
+                      padding: 3, background: "rgba(46,204,113,0.06)", borderRadius: 4,
+                      border: "1px solid rgba(46,204,113,0.15)", cursor: "pointer",
+                    }}
+                  >
+                    <div style={{ width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <img src={item.sprite} alt={item.name} style={{ maxWidth: 30, maxHeight: 30, imageRendering: "pixelated" }} />
+                    </div>
+                    <div style={{ fontSize: 3.5, color: "#81c784", textAlign: "center", lineHeight: "1.2" }}>{item.name}</div>
+                  </div>
+                ))}
+              </div>
+
               <div style={{ color: "#ff9800", fontSize: 6, marginBottom: 4, borderBottom: "1px solid rgba(255,152,0,0.2)", paddingBottom: 2 }}>
                 Structure
               </div>
@@ -7900,21 +7947,45 @@ export default function FishingGame() {
               ))}
 
               <div style={{ color: "#4fc3f7", fontSize: 6, marginBottom: 4, marginTop: 8, borderBottom: "1px solid rgba(79,195,247,0.2)", paddingBottom: 2 }}>
-                World Objects
+                World Objects ({stateRef.current.worldObjects.length})
               </div>
               {stateRef.current.worldObjects.map((obj, i) => (
                 <div key={obj.id} style={{
-                  display: "flex", alignItems: "center", gap: 6, padding: "4px 6px", marginBottom: 3,
+                  display: "flex", alignItems: "center", gap: 4, padding: "4px 6px", marginBottom: 3,
                   background: stateRef.current.gizmoSelected === i ? "rgba(241,196,15,0.1)" : "rgba(255,255,255,0.02)",
                   border: stateRef.current.gizmoSelected === i ? "1px solid rgba(241,196,15,0.4)" : "1px solid rgba(255,255,255,0.05)",
                   borderRadius: 4, cursor: "pointer",
                 }} onClick={() => { stateRef.current.gizmoSelected = i; syncUI(); }}>
-                  <div style={{ width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <img src={obj.sprite} alt={obj.label} style={{ maxWidth: 24, maxHeight: 24, imageRendering: "pixelated" }} />
+                  <div style={{ width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <img src={obj.sprite} alt={obj.label} style={{ maxWidth: 22, maxHeight: 22, imageRendering: "pixelated" }} />
                   </div>
-                  <div style={{ flex: 1 }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 5, color: "#e0e0e0" }}>{obj.label}</div>
-                    <div style={{ fontSize: 4, color: "#607d8b" }}>x:{Math.round(obj.x)} y:{Math.round(obj.y)} s:{obj.scale}</div>
+                    <div style={{ fontSize: 4, color: "#607d8b" }}>x:{Math.round(obj.x)} y:{Math.round(obj.y)} s:{obj.scale.toFixed(1)}</div>
+                  </div>
+                  <div style={{ display: "flex", gap: 2, flexShrink: 0 }}>
+                    <div
+                      data-testid={`scale-down-${i}`}
+                      onClick={(e) => { e.stopPropagation(); stateRef.current.worldObjects[i].scale = Math.max(0.3, obj.scale - 0.2); syncUI(); }}
+                      style={{ width: 16, height: 16, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(79,195,247,0.15)", borderRadius: 3, fontSize: 8, color: "#4fc3f7", cursor: "pointer" }}
+                    >-</div>
+                    <div
+                      data-testid={`scale-up-${i}`}
+                      onClick={(e) => { e.stopPropagation(); stateRef.current.worldObjects[i].scale = Math.min(5, obj.scale + 0.2); syncUI(); }}
+                      style={{ width: 16, height: 16, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(79,195,247,0.15)", borderRadius: 3, fontSize: 8, color: "#4fc3f7", cursor: "pointer" }}
+                    >+</div>
+                    <div
+                      data-testid={`delete-obj-${i}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const s = stateRef.current;
+                        s.worldObjects.splice(i, 1);
+                        if (s.gizmoSelected === i) s.gizmoSelected = -1;
+                        else if (s.gizmoSelected > i) s.gizmoSelected--;
+                        syncUI();
+                      }}
+                      style={{ width: 16, height: 16, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(231,76,60,0.2)", borderRadius: 3, fontSize: 7, color: "#e74c3c", cursor: "pointer" }}
+                    >X</div>
                   </div>
                 </div>
               ))}
