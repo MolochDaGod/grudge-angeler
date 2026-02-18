@@ -747,6 +747,12 @@ export default function FishingGame() {
     gizmoDragOffY: 0,
     deckOffsetX: 0,
     deckOffsetY: 0,
+    baitShopOffsetX: 0,
+    baitShopOffsetY: 0,
+    baitShopScale: 1.8,
+    licenseSignOffsetX: 0,
+    licenseSignOffsetY: 0,
+    licenseSignScale: 1.0,
     deckLegsOffsetX: 0,
     deckLegsOffsetY: 0,
     gamePaused: false,
@@ -1697,7 +1703,7 @@ export default function FishingGame() {
         const leftLimit = s.fishingLicense ? pierLeftBound : licenseGateX;
         s.playerX = Math.max(leftLimit, Math.min(W * 4.8, s.playerX));
 
-        const beachShopSignX = W * 3.2;
+        const beachShopSignX = W * 3.2 + s.licenseSignOffsetX;
         s.nearLicenseSign = !s.inBoat && Math.abs(s.playerX - beachShopSignX) < 70 && s.gameState === "idle";
         if (!s.nearLicenseSign && s.showLicensePrompt) s.showLicensePrompt = false;
 
@@ -3425,39 +3431,45 @@ export default function FishingGame() {
 
       // Beach Shop Building - positioned at waterline
       if (s.gameState !== "title" && s.gameState !== "charSelect") {
-        const bsScale = 1.8;
-        const bsX = W * 2.85;
+        const bsScale = s.baitShopScale;
+        const bsX = W * 2.85 + s.baitShopOffsetX;
         const bsW = 192 * bsScale;
         const bsH = 122 * bsScale;
-        const bsY = pierY - bsH + 35;
+        const bsY = pierY - bsH + 35 + s.baitShopOffsetY;
         drawImage("/assets/objects/Fishing_hut.png", bsX, bsY, bsScale);
 
-        // "BAIT SHOP" text on building
         ctx.save();
-        ctx.font = "bold 11px 'Press Start 2P', monospace";
+        ctx.font = `bold ${Math.round(11 * bsScale / 1.8)}px 'Press Start 2P', monospace`;
         ctx.fillStyle = "#f1c40f";
         ctx.textAlign = "center";
         ctx.shadowColor = "#000";
         ctx.shadowBlur = 4;
-        ctx.fillText("BAIT SHOP", bsX + bsW / 2, bsY + 40);
+        ctx.fillText("BAIT SHOP", bsX + bsW / 2, bsY + 40 * bsScale / 1.8);
         ctx.restore();
 
+        if (s.gizmoEnabled && s.adminOpen && s.gizmoSelected === -12) {
+          ctx.strokeStyle = "#f1c40f";
+          ctx.lineWidth = 2;
+          ctx.setLineDash([4, 4]);
+          ctx.strokeRect(bsX - 2, bsY - 2, bsW + 4, bsH + 4);
+          ctx.setLineDash([]);
+        }
+
         // License Sign - wooden sign post on beach
-        const signX = W * 3.2;
-        const signBeachProg = (signX - beachStart) / (beachEnd - beachStart);
-        const signBaseY = pierY + 10 + signBeachProg * 30;
-        const signW = 90;
-        const signH = 55;
+        const lsScale = s.licenseSignScale;
+        const signX = W * 3.2 + s.licenseSignOffsetX;
+        const signBeachProg = (signX - s.licenseSignOffsetX - beachStart) / (beachEnd - beachStart);
+        const signBaseY = pierY + 10 + signBeachProg * 30 + s.licenseSignOffsetY;
+        const signW = 90 * lsScale;
+        const signH = 55 * lsScale;
         const signPostX = signX + signW / 2;
-        const signTopY = signBaseY - 80;
+        const signTopY = signBaseY - 80 * lsScale;
 
-        // Sign post
         ctx.fillStyle = "#6d4c2e";
-        ctx.fillRect(signPostX - 4, signTopY + signH, 8, 80 - signH + 5);
+        ctx.fillRect(signPostX - 4 * lsScale, signTopY + signH, 8 * lsScale, (80 - 55) * lsScale + 5);
         ctx.fillStyle = "#8B6B4A";
-        ctx.fillRect(signPostX - 3, signTopY + signH, 6, 80 - signH + 5);
+        ctx.fillRect(signPostX - 3 * lsScale, signTopY + signH, 6 * lsScale, (80 - 55) * lsScale + 5);
 
-        // Sign board
         ctx.fillStyle = "#a07840";
         ctx.fillRect(signX, signTopY, signW, signH);
         ctx.fillStyle = "#8B6B4A";
@@ -3466,27 +3478,25 @@ export default function FishingGame() {
         ctx.lineWidth = 2;
         ctx.strokeRect(signX, signTopY, signW, signH);
 
-        // Sign text
         ctx.save();
-        ctx.font = "bold 7px 'Press Start 2P', monospace";
+        ctx.font = `bold ${Math.round(7 * lsScale)}px 'Press Start 2P', monospace`;
         ctx.textAlign = "center";
         ctx.fillStyle = "#f1c40f";
         ctx.shadowColor = "#000";
         ctx.shadowBlur = 3;
-        ctx.fillText("FISHING", signX + signW / 2, signTopY + 16);
-        ctx.fillText("LICENSE", signX + signW / 2, signTopY + 28);
+        ctx.fillText("FISHING", signX + signW / 2, signTopY + 16 * lsScale);
+        ctx.fillText("LICENSE", signX + signW / 2, signTopY + 28 * lsScale);
         if (!s.fishingLicense) {
           ctx.fillStyle = "#2ecc71";
-          ctx.font = "bold 9px 'Press Start 2P', monospace";
-          ctx.fillText("$100", signX + signW / 2, signTopY + 43);
+          ctx.font = `bold ${Math.round(9 * lsScale)}px 'Press Start 2P', monospace`;
+          ctx.fillText("$100", signX + signW / 2, signTopY + 43 * lsScale);
         } else {
           ctx.fillStyle = "#5dade2";
-          ctx.font = "bold 6px 'Press Start 2P', monospace";
-          ctx.fillText("APPROVED", signX + signW / 2, signTopY + 43);
+          ctx.font = `bold ${Math.round(6 * lsScale)}px 'Press Start 2P', monospace`;
+          ctx.fillText("APPROVED", signX + signW / 2, signTopY + 43 * lsScale);
         }
         ctx.restore();
 
-        // Interaction glow when near
         if (s.nearLicenseSign && !s.fishingLicense) {
           ctx.save();
           ctx.shadowColor = "#f1c40f";
@@ -3495,6 +3505,14 @@ export default function FishingGame() {
           ctx.lineWidth = 2;
           ctx.strokeRect(signX - 2, signTopY - 2, signW + 4, signH + 4);
           ctx.restore();
+        }
+
+        if (s.gizmoEnabled && s.adminOpen && s.gizmoSelected === -13) {
+          ctx.strokeStyle = "#f1c40f";
+          ctx.lineWidth = 2;
+          ctx.setLineDash([4, 4]);
+          ctx.strokeRect(signX - 2, signTopY - 2, signW + 4, signH + (80 - 55) * lsScale + 9);
+          ctx.setLineDash([]);
         }
       }
 
@@ -5616,6 +5634,36 @@ export default function FishingGame() {
       syncUI();
       return;
     }
+    const gbsScale = s.baitShopScale;
+    const gbsX = W * 2.85 + s.baitShopOffsetX;
+    const gbsW = 192 * gbsScale;
+    const gbsH = 122 * gbsScale;
+    const gbsY = H * 0.38 - gbsH + 35 + s.baitShopOffsetY;
+    if (worldX >= gbsX && worldX <= gbsX + gbsW && worldY >= gbsY && worldY <= gbsY + gbsH) {
+      s.gizmoSelected = -12;
+      s.gizmoDragging = true;
+      s.gizmoDragOffX = worldX - gbsX;
+      s.gizmoDragOffY = worldY - gbsY;
+      syncUI();
+      return;
+    }
+    const glsScale = s.licenseSignScale;
+    const glsX = W * 3.2 + s.licenseSignOffsetX;
+    const glsW = 90 * glsScale;
+    const glsH = 80 * glsScale;
+    const beachS = W * 2.6;
+    const beachE = W * 5.2;
+    const glsBP = (W * 3.2 - beachS) / (beachE - beachS);
+    const glsBaseY = H * 0.38 + 10 + glsBP * 30 + s.licenseSignOffsetY;
+    const glsTopY = glsBaseY - 80 * glsScale;
+    if (worldX >= glsX && worldX <= glsX + glsW && worldY >= glsTopY && worldY <= glsTopY + glsH + 30) {
+      s.gizmoSelected = -13;
+      s.gizmoDragging = true;
+      s.gizmoDragOffX = worldX - glsX;
+      s.gizmoDragOffY = worldY - glsTopY;
+      syncUI();
+      return;
+    }
     s.gizmoSelected = -1;
     syncUI();
   }, [syncUI]);
@@ -5791,6 +5839,26 @@ export default function FishingGame() {
           const baseStartX = canvas.width * 0.45 - 80 + s.deckOffsetX;
           s.deckLegsOffsetX = (worldX - s.gizmoDragOffX) - baseStartX;
           s.deckLegsOffsetY = (worldY - s.gizmoDragOffY) - canvas.height * 0.42;
+        }
+      } else if (s.gizmoSelected === -12) {
+        const canvas = canvasRef.current;
+        if (canvas) {
+          const baseBsX = canvas.width * 2.85;
+          const baseBsY = canvas.height * 0.38 - 122 * s.baitShopScale + 35;
+          s.baitShopOffsetX = (worldX - s.gizmoDragOffX) - baseBsX;
+          s.baitShopOffsetY = (worldY - s.gizmoDragOffY) - baseBsY;
+        }
+      } else if (s.gizmoSelected === -13) {
+        const canvas = canvasRef.current;
+        if (canvas) {
+          const baseLsX = canvas.width * 3.2;
+          const bS = canvas.width * 2.6;
+          const bE = canvas.width * 5.2;
+          const bP = (canvas.width * 3.2 - bS) / (bE - bS);
+          const baseLsBaseY = canvas.height * 0.38 + 10 + bP * 30;
+          const baseLsTopY = baseLsBaseY - 80 * s.licenseSignScale;
+          s.licenseSignOffsetX = (worldX - s.gizmoDragOffX) - baseLsX;
+          s.licenseSignOffsetY = (worldY - s.gizmoDragOffY) - baseLsTopY;
         }
       } else if (s.gizmoSelected >= 0) {
         s.worldObjects[s.gizmoSelected].x = worldX - s.gizmoDragOffX;
@@ -7932,8 +8000,10 @@ export default function FishingGame() {
                 Structure
               </div>
               {[
-                { id: -10, label: "Deck (Planks + Front)", icon: "/assets/objects/Pier_Tiles.png", ox: stateRef.current.deckOffsetX, oy: stateRef.current.deckOffsetY },
-                { id: -11, label: "Deck Legs (Underwater)", icon: "/assets/dock_legs_underwater.png", ox: stateRef.current.deckLegsOffsetX, oy: stateRef.current.deckLegsOffsetY },
+                { id: -10, label: "Deck (Planks + Front)", icon: "/assets/objects/Pier_Tiles.png", ox: stateRef.current.deckOffsetX, oy: stateRef.current.deckOffsetY, scaleKey: null as string | null, scaleVal: 0 },
+                { id: -11, label: "Deck Legs (Underwater)", icon: "/assets/dock_legs_underwater.png", ox: stateRef.current.deckLegsOffsetX, oy: stateRef.current.deckLegsOffsetY, scaleKey: null, scaleVal: 0 },
+                { id: -12, label: "Bait Shop", icon: "/assets/objects/Fishing_hut.png", ox: stateRef.current.baitShopOffsetX, oy: stateRef.current.baitShopOffsetY, scaleKey: "baitShopScale", scaleVal: stateRef.current.baitShopScale },
+                { id: -13, label: "License Sign", icon: "/assets/objects/Stay.png", ox: stateRef.current.licenseSignOffsetX, oy: stateRef.current.licenseSignOffsetY, scaleKey: "licenseSignScale", scaleVal: stateRef.current.licenseSignScale },
               ].map(item => (
                 <div key={item.id} style={{
                   display: "flex", alignItems: "center", gap: 6, padding: "4px 6px", marginBottom: 3,
@@ -7946,8 +8016,20 @@ export default function FishingGame() {
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 5, color: "#e0e0e0" }}>{item.label}</div>
-                    <div style={{ fontSize: 4, color: "#607d8b" }}>offset x:{Math.round(item.ox)} y:{Math.round(item.oy)}</div>
+                    <div style={{ fontSize: 4, color: "#607d8b" }}>offset x:{Math.round(item.ox)} y:{Math.round(item.oy)}{item.scaleKey ? ` s:${item.scaleVal.toFixed(1)}` : ""}</div>
                   </div>
+                  {item.scaleKey && (
+                    <div style={{ display: "flex", gap: 3, flexShrink: 0 }}>
+                      <div
+                        onClick={(e) => { e.stopPropagation(); (stateRef.current as any)[item.scaleKey!] = Math.max(0.3, item.scaleVal - 0.2); syncUI(); }}
+                        style={{ width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(79,195,247,0.2)", borderRadius: 4, fontSize: 14, fontWeight: "bold", color: "#4fc3f7", cursor: "pointer", border: "1px solid rgba(79,195,247,0.3)", userSelect: "none" }}
+                      >-</div>
+                      <div
+                        onClick={(e) => { e.stopPropagation(); (stateRef.current as any)[item.scaleKey!] = Math.min(8, item.scaleVal + 0.2); syncUI(); }}
+                        style={{ width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(79,195,247,0.2)", borderRadius: 4, fontSize: 14, fontWeight: "bold", color: "#4fc3f7", cursor: "pointer", border: "1px solid rgba(79,195,247,0.3)", userSelect: "none" }}
+                      >+</div>
+                    </div>
+                  )}
                 </div>
               ))}
 
