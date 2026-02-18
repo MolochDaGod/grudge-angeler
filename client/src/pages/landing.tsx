@@ -114,6 +114,7 @@ interface LandingFish {
   points: number;
   desc: string;
   tint?: string;
+  icon?: string;
   sprite: {
     src: string;
     frameW: number;
@@ -130,34 +131,34 @@ interface LandingFish {
 const CRAB_SHEET = "/assets/beach_crabs.png";
 
 const allFish: LandingFish[] = [
-  { name: "Minnow", rarity: "common", points: 10, desc: "A tiny silver fish, common in shallow waters.", sprite: { src: "/assets/catch/1.png", frameW: 6, frameH: 6, frames: 4, sheetW: 24 } },
-  { name: "Perch", rarity: "common", points: 25, desc: "A striped freshwater fish with sharp fins.", sprite: { src: "/assets/catch/2.png", frameW: 8, frameH: 12, frames: 4, sheetW: 32 } },
-  { name: "Eel", rarity: "common", points: 40, desc: "A slippery serpentine fish.", sprite: { src: "/assets/catch/7.png", frameW: 15, frameH: 12, frames: 4, sheetW: 60 } },
-  { name: "Red Crab", rarity: "common", points: 8, desc: "A small red crab that scuttles along the beach.", sprite: { src: CRAB_SHEET, frameW: 16, frameH: 16, frames: 4, sheetW: 256, offsetY: 0 } },
-  { name: "Blue Crab", rarity: "common", points: 10, desc: "A bright blue crab found near tidal pools.", sprite: { src: CRAB_SHEET, frameW: 16, frameH: 16, frames: 4, sheetW: 256, offsetY: 3 * 16 } },
-  { name: "Green Crab", rarity: "common", points: 8, desc: "A mossy green crab hiding in the seaweed.", sprite: { src: CRAB_SHEET, frameW: 16, frameH: 16, frames: 4, sheetW: 256, offsetY: 5 * 16 } },
-  { name: "Cyan Crab", rarity: "common", points: 8, desc: "A pale cyan crab on sandy shores.", sprite: { src: CRAB_SHEET, frameW: 16, frameH: 16, frames: 4, sheetW: 256, offsetY: 14 * 16 } },
-  { name: "Pink Crab", rarity: "common", points: 12, desc: "A cute pink crab that loves warm shallow waters.", sprite: { src: CRAB_SHEET, frameW: 16, frameH: 16, frames: 4, sheetW: 256, offsetY: 18 * 16 } },
-  { name: "Bass", rarity: "uncommon", points: 50, desc: "A strong fighter popular with anglers.", sprite: { src: "/assets/catch/3.png", frameW: 10, frameH: 12, frames: 4, sheetW: 40 } },
-  { name: "Salmon", rarity: "uncommon", points: 60, desc: "A prized pink-fleshed fish.", sprite: { src: "/assets/catch/8.png", frameW: 15, frameH: 12, frames: 4, sheetW: 60 } },
-  { name: "Catfish", rarity: "uncommon", points: 75, desc: "A bottom-dweller with long whiskers.", sprite: { src: "/assets/catch/4.png", frameW: 13, frameH: 12, frames: 4, sheetW: 52 } },
-  { name: "Purple Crab", rarity: "uncommon", points: 15, desc: "An uncommon purple crab with iridescent shell.", sprite: { src: CRAB_SHEET, frameW: 16, frameH: 16, frames: 4, sheetW: 256, offsetY: 2 * 16 } },
-  { name: "Gold Crab", rarity: "uncommon", points: 25, desc: "A rare golden crab. Prized for its shimmering shell.", sprite: { src: CRAB_SHEET, frameW: 16, frameH: 16, frames: 4, sheetW: 256, offsetY: 11 * 16 } },
-  { name: "Dark Crab", rarity: "uncommon", points: 20, desc: "A dark-shelled crab with powerful pincers.", sprite: { src: CRAB_SHEET, frameW: 16, frameH: 16, frames: 4, sheetW: 256, offsetY: 22 * 16 } },
-  { name: "Swordfish", rarity: "rare", points: 150, desc: "A powerful ocean predator with a sharp bill.", sprite: { src: "/assets/catch/5.png", frameW: 14, frameH: 24, frames: 4, sheetW: 56 } },
-  { name: "Shark", rarity: "rare", points: 400, desc: "A fearsome shark prowling the deep waters.", sprite: { src: "/assets/predators/1/Idle.png", frameW: 96, frameH: 96, frames: 4, sheetW: 384 } },
-  { name: "Sea Devil", rarity: "rare", points: 600, desc: "A monstrous crab creature from the deep trenches.", sprite: { src: "/assets/predators/3/Idle.png", frameW: 96, frameH: 96, frames: 4, sheetW: 384 } },
-  { name: "Whale", rarity: "legendary", points: 300, desc: "The king of the deep. Incredibly rare!", sprite: { src: "/assets/catch/6.png", frameW: 18, frameH: 22, frames: 6, sheetW: 108 } },
-  { name: "Kraken", rarity: "legendary", points: 800, desc: "A massive squid from the abyss, feared by all.", sprite: { src: "/assets/predators/2/Idle.png", frameW: 96, frameH: 96, frames: 6, sheetW: 576 } },
-  { name: "Phantom Minnow", rarity: "ultra_rare", points: 500, desc: "A ghostly minnow wreathed in spectral flame.", tint: "rgba(0,255,200,0.15)", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/7/frames", frameCount: 4 } },
-  { name: "Volcanic Perch", rarity: "ultra_rare", points: 600, desc: "Scales glow molten orange from deep-sea vents.", tint: "rgba(255,80,0,0.15)", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/8/frames", frameCount: 4 } },
-  { name: "Abyssal Bass", rarity: "ultra_rare", points: 750, desc: "A colossal bass radiating dark energy.", tint: "rgba(120,0,255,0.15)", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/9/frames", frameCount: 4 } },
-  { name: "Frost Catfish", rarity: "ultra_rare", points: 800, desc: "Encased in living ice. Freezes the water.", tint: "rgba(100,200,255,0.15)", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/10/frames", frameCount: 4 } },
-  { name: "Storm Swordfish", rarity: "ultra_rare", points: 1000, desc: "Rides lightning bolts with electric fury.", tint: "rgba(255,255,0,0.15)", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/11/frames", frameCount: 4 } },
-  { name: "Celestial Whale", rarity: "ultra_rare", points: 2000, desc: "A cosmic whale that swallowed a dying star.", tint: "rgba(255,180,255,0.15)", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/12/frames", frameCount: 4 } },
-  { name: "Neon Eel", rarity: "ultra_rare", points: 650, desc: "Bioluminescent eel pulsing with neon colors.", tint: "rgba(0,255,100,0.15)", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/13/frames", frameCount: 4 } },
-  { name: "Golden Salmon", rarity: "ultra_rare", points: 700, desc: "Solid gold scales. Worth a fortune.", tint: "rgba(255,200,0,0.15)", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/14/frames", frameCount: 4 } },
-  { name: "Shadow Leviathan", rarity: "ultra_rare", points: 1500, desc: "A titanic shadow beast from beyond the abyss.", tint: "rgba(180,0,50,0.15)", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/15/frames", frameCount: 4 } },
+  { name: "Minnow", rarity: "common", points: 10, desc: "A tiny silver fish, common in shallow waters.", icon: "/assets/gen-icons/fish-minnow.png", sprite: { src: "/assets/catch/1.png", frameW: 6, frameH: 6, frames: 4, sheetW: 24 } },
+  { name: "Perch", rarity: "common", points: 25, desc: "A striped freshwater fish with sharp fins.", icon: "/assets/gen-icons/fish-perch.png", sprite: { src: "/assets/catch/2.png", frameW: 8, frameH: 12, frames: 4, sheetW: 32 } },
+  { name: "Eel", rarity: "common", points: 40, desc: "A slippery serpentine fish.", icon: "/assets/gen-icons/fish-eel.png", sprite: { src: "/assets/catch/7.png", frameW: 15, frameH: 12, frames: 4, sheetW: 60 } },
+  { name: "Red Crab", rarity: "common", points: 8, desc: "A small red crab that scuttles along the beach.", icon: "/assets/gen-icons/fish-red-crab.png", sprite: { src: CRAB_SHEET, frameW: 16, frameH: 16, frames: 4, sheetW: 256, offsetY: 0 } },
+  { name: "Blue Crab", rarity: "common", points: 10, desc: "A bright blue crab found near tidal pools.", icon: "/assets/gen-icons/fish-blue-crab.png", sprite: { src: CRAB_SHEET, frameW: 16, frameH: 16, frames: 4, sheetW: 256, offsetY: 3 * 16 } },
+  { name: "Green Crab", rarity: "common", points: 8, desc: "A mossy green crab hiding in the seaweed.", icon: "/assets/gen-icons/fish-green-crab.png", sprite: { src: CRAB_SHEET, frameW: 16, frameH: 16, frames: 4, sheetW: 256, offsetY: 5 * 16 } },
+  { name: "Cyan Crab", rarity: "common", points: 8, desc: "A pale cyan crab on sandy shores.", icon: "/assets/gen-icons/fish-cyan-crab.png", sprite: { src: CRAB_SHEET, frameW: 16, frameH: 16, frames: 4, sheetW: 256, offsetY: 14 * 16 } },
+  { name: "Pink Crab", rarity: "common", points: 12, desc: "A cute pink crab that loves warm shallow waters.", icon: "/assets/gen-icons/fish-pink-crab.png", sprite: { src: CRAB_SHEET, frameW: 16, frameH: 16, frames: 4, sheetW: 256, offsetY: 18 * 16 } },
+  { name: "Bass", rarity: "uncommon", points: 50, desc: "A strong fighter popular with anglers.", icon: "/assets/gen-icons/fish-bass.png", sprite: { src: "/assets/catch/3.png", frameW: 10, frameH: 12, frames: 4, sheetW: 40 } },
+  { name: "Salmon", rarity: "uncommon", points: 60, desc: "A prized pink-fleshed fish.", icon: "/assets/gen-icons/fish-salmon.png", sprite: { src: "/assets/catch/8.png", frameW: 15, frameH: 12, frames: 4, sheetW: 60 } },
+  { name: "Catfish", rarity: "uncommon", points: 75, desc: "A bottom-dweller with long whiskers.", icon: "/assets/gen-icons/fish-catfish.png", sprite: { src: "/assets/catch/4.png", frameW: 13, frameH: 12, frames: 4, sheetW: 52 } },
+  { name: "Purple Crab", rarity: "uncommon", points: 15, desc: "An uncommon purple crab with iridescent shell.", icon: "/assets/gen-icons/fish-purple-crab.png", sprite: { src: CRAB_SHEET, frameW: 16, frameH: 16, frames: 4, sheetW: 256, offsetY: 2 * 16 } },
+  { name: "Gold Crab", rarity: "uncommon", points: 25, desc: "A rare golden crab. Prized for its shimmering shell.", icon: "/assets/gen-icons/fish-gold-crab.png", sprite: { src: CRAB_SHEET, frameW: 16, frameH: 16, frames: 4, sheetW: 256, offsetY: 11 * 16 } },
+  { name: "Dark Crab", rarity: "uncommon", points: 20, desc: "A dark-shelled crab with powerful pincers.", icon: "/assets/gen-icons/fish-dark-crab.png", sprite: { src: CRAB_SHEET, frameW: 16, frameH: 16, frames: 4, sheetW: 256, offsetY: 22 * 16 } },
+  { name: "Swordfish", rarity: "rare", points: 150, desc: "A powerful ocean predator with a sharp bill.", icon: "/assets/gen-icons/fish-swordfish.png", sprite: { src: "/assets/catch/5.png", frameW: 14, frameH: 24, frames: 4, sheetW: 56 } },
+  { name: "Shark", rarity: "rare", points: 400, desc: "A fearsome shark prowling the deep waters.", icon: "/assets/gen-icons/fish-shark.png", sprite: { src: "/assets/predators/1/Idle.png", frameW: 96, frameH: 96, frames: 4, sheetW: 384 } },
+  { name: "Sea Devil", rarity: "rare", points: 600, desc: "A monstrous crab creature from the deep trenches.", icon: "/assets/gen-icons/fish-sea-devil.png", sprite: { src: "/assets/predators/3/Idle.png", frameW: 96, frameH: 96, frames: 4, sheetW: 384 } },
+  { name: "Whale", rarity: "legendary", points: 300, desc: "The king of the deep. Incredibly rare!", icon: "/assets/gen-icons/fish-whale.png", sprite: { src: "/assets/catch/6.png", frameW: 18, frameH: 22, frames: 6, sheetW: 108 } },
+  { name: "Kraken", rarity: "legendary", points: 800, desc: "A massive squid from the abyss, feared by all.", icon: "/assets/gen-icons/fish-kraken.png", sprite: { src: "/assets/predators/2/Idle.png", frameW: 96, frameH: 96, frames: 6, sheetW: 576 } },
+  { name: "Phantom Minnow", rarity: "ultra_rare", points: 500, desc: "A ghostly minnow wreathed in spectral flame.", tint: "rgba(0,255,200,0.15)", icon: "/assets/gen-icons/fish-phantom-minnow.png", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/7/frames", frameCount: 4 } },
+  { name: "Volcanic Perch", rarity: "ultra_rare", points: 600, desc: "Scales glow molten orange from deep-sea vents.", tint: "rgba(255,80,0,0.15)", icon: "/assets/gen-icons/fish-volcanic-perch.png", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/8/frames", frameCount: 4 } },
+  { name: "Abyssal Bass", rarity: "ultra_rare", points: 750, desc: "A colossal bass radiating dark energy.", tint: "rgba(120,0,255,0.15)", icon: "/assets/gen-icons/fish-abyssal-bass.png", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/9/frames", frameCount: 4 } },
+  { name: "Frost Catfish", rarity: "ultra_rare", points: 800, desc: "Encased in living ice. Freezes the water.", tint: "rgba(100,200,255,0.15)", icon: "/assets/gen-icons/fish-frost-catfish.png", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/10/frames", frameCount: 4 } },
+  { name: "Storm Swordfish", rarity: "ultra_rare", points: 1000, desc: "Rides lightning bolts with electric fury.", tint: "rgba(255,255,0,0.15)", icon: "/assets/gen-icons/fish-storm-swordfish.png", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/11/frames", frameCount: 4 } },
+  { name: "Celestial Whale", rarity: "ultra_rare", points: 2000, desc: "A cosmic whale that swallowed a dying star.", tint: "rgba(255,180,255,0.15)", icon: "/assets/gen-icons/fish-celestial-whale.png", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/12/frames", frameCount: 4 } },
+  { name: "Neon Eel", rarity: "ultra_rare", points: 650, desc: "Bioluminescent eel pulsing with neon colors.", tint: "rgba(0,255,100,0.15)", icon: "/assets/gen-icons/fish-neon-eel.png", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/13/frames", frameCount: 4 } },
+  { name: "Golden Salmon", rarity: "ultra_rare", points: 700, desc: "Solid gold scales. Worth a fortune.", tint: "rgba(255,200,0,0.15)", icon: "/assets/gen-icons/fish-golden-salmon.png", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/14/frames", frameCount: 4 } },
+  { name: "Shadow Leviathan", rarity: "ultra_rare", points: 1500, desc: "A titanic shadow beast from beyond the abyss.", tint: "rgba(180,0,50,0.15)", icon: "/assets/gen-icons/fish-shadow-leviathan.png", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/15/frames", frameCount: 4 } },
 ];
 
 const fishAchievements = [
@@ -970,7 +971,20 @@ export default function Landing() {
                         }} />
                       )}
                       <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <AnimatedSprite sprite={fish.sprite} size={48} tint={isUltra ? fish.tint : undefined} />
+                        {fish.icon ? (
+                          <img
+                            src={fish.icon}
+                            alt={fish.name}
+                            style={{
+                              width: 52, height: 52,
+                              objectFit: "contain",
+                              imageRendering: "pixelated",
+                              borderRadius: 4,
+                            }}
+                          />
+                        ) : (
+                          <AnimatedSprite sprite={fish.sprite} size={48} tint={isUltra ? fish.tint : undefined} />
+                        )}
                       </div>
                     </div>
                   );
