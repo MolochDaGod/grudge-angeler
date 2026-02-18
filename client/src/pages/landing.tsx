@@ -228,7 +228,6 @@ function AnimatedSprite({ sprite, size, tint }: {
     return (
       <div style={{ width: size, height: size, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", flexShrink: 0 }}>
         <img src={sprite.src} alt="" style={{ width: size, height: size, imageRendering: "pixelated", objectFit: "contain", filter: tint ? `drop-shadow(0 0 6px ${tint})` : undefined }} />
-        {tint && <div style={{ position: "absolute", inset: 0, background: tint, mixBlendMode: "overlay", pointerEvents: "none" }} />}
       </div>
     );
   }
@@ -262,14 +261,6 @@ function AnimatedSprite({ sprite, size, tint }: {
           animation: `${animId} ${sprite.frames * 0.25}s steps(${sprite.frames}) infinite`,
           filter: tint ? `drop-shadow(0 0 4px ${tint})` : undefined,
         }} />
-        {tint && (
-          <div style={{
-            position: "absolute", inset: 0,
-            background: tint,
-            mixBlendMode: "overlay",
-            pointerEvents: "none",
-          }} />
-        )}
       </div>
     );
   }
@@ -280,7 +271,7 @@ function AnimatedSprite({ sprite, size, tint }: {
       <style>{`
         @keyframes ${animId} {
           from { transform: translateX(0); }
-          to { transform: translateX(-${totalW - displayW}px); }
+          to { transform: translateX(-${totalW}px); }
         }
       `}</style>
       <img
@@ -291,18 +282,10 @@ function AnimatedSprite({ sprite, size, tint }: {
           height: displayH,
           imageRendering: "pixelated",
           display: "block",
-          animation: `${animId} ${sprite.frames * 0.25}s steps(${sprite.frames - 1}) infinite`,
-          filter: tint ? `drop-shadow(0 0 4px ${tint})` : undefined,
+          animation: `${animId} ${sprite.frames * 0.25}s steps(${sprite.frames}) infinite`,
+          filter: tint ? `drop-shadow(0 0 6px ${tint})` : undefined,
         }}
       />
-      {tint && (
-        <div style={{
-          position: "absolute", inset: 0,
-          background: tint,
-          mixBlendMode: "overlay",
-          pointerEvents: "none",
-        }} />
-      )}
     </div>
   );
 }

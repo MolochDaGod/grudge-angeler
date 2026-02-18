@@ -21,7 +21,6 @@ function CodexAnimatedSprite({ sprite, size, tint }: { sprite: SpriteData; size:
     return (
       <div style={{ width: size, height: size, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", flexShrink: 0 }}>
         <img src={sprite.src} alt="" style={{ width: size, height: size, imageRendering: "pixelated", objectFit: "contain", filter: tint ? `drop-shadow(0 0 8px ${tint})` : undefined }} />
-        {tint && <div style={{ position: "absolute", inset: 0, background: tint, mixBlendMode: "overlay", pointerEvents: "none" }} />}
       </div>
     );
   }
@@ -35,7 +34,7 @@ function CodexAnimatedSprite({ sprite, size, tint }: { sprite: SpriteData; size:
       <style>{`
         @keyframes ${animId} {
           from { transform: translateX(0); }
-          to { transform: translateX(-${totalW - displayW}px); }
+          to { transform: translateX(-${totalW}px); }
         }
       `}</style>
       <img
@@ -46,18 +45,10 @@ function CodexAnimatedSprite({ sprite, size, tint }: { sprite: SpriteData; size:
           height: displayH,
           imageRendering: "pixelated",
           display: "block",
-          animation: `${animId} ${sprite.frames * 0.25}s steps(${sprite.frames - 1}) infinite`,
+          animation: `${animId} ${sprite.frames * 0.25}s steps(${sprite.frames}) infinite`,
           filter: tint ? `drop-shadow(0 0 6px ${tint})` : undefined,
         }}
       />
-      {tint && (
-        <div style={{
-          position: "absolute", inset: 0,
-          background: tint,
-          mixBlendMode: "overlay",
-          pointerEvents: "none",
-        }} />
-      )}
     </div>
   );
 }
@@ -129,6 +120,7 @@ const legendaries = [
   {
     name: "Phantom Minnow",
     sprite: { src: "/assets/creatures/7/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
+    artImage: "/assets/gen-icons/fish-phantom-minnow.png",
     stars: 5,
     pts: 500,
     wt: "0.3%",
@@ -144,6 +136,7 @@ const legendaries = [
   {
     name: "Volcanic Perch",
     sprite: { src: "/assets/creatures/8/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
+    artImage: "/assets/gen-icons/fish-volcanic-perch.png",
     stars: 5,
     pts: 600,
     wt: "0.25%",
@@ -159,6 +152,7 @@ const legendaries = [
   {
     name: "Abyssal Bass",
     sprite: { src: "/assets/creatures/9/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
+    artImage: "/assets/gen-icons/fish-abyssal-bass.png",
     stars: 5,
     pts: 750,
     wt: "0.2%",
@@ -174,6 +168,7 @@ const legendaries = [
   {
     name: "Frost Catfish",
     sprite: { src: "/assets/creatures/10/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
+    artImage: "/assets/gen-icons/fish-frost-catfish.png",
     stars: 5,
     pts: 800,
     wt: "0.18%",
@@ -189,6 +184,7 @@ const legendaries = [
   {
     name: "Storm Swordfish",
     sprite: { src: "/assets/creatures/11/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
+    artImage: "/assets/gen-icons/fish-storm-swordfish.png",
     stars: 5,
     pts: 1000,
     wt: "0.12%",
@@ -204,6 +200,7 @@ const legendaries = [
   {
     name: "Celestial Whale",
     sprite: { src: "/assets/creatures/12/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
+    artImage: "/assets/gen-icons/fish-celestial-whale.png",
     stars: 5,
     pts: 2000,
     wt: "0.05%",
@@ -219,6 +216,7 @@ const legendaries = [
   {
     name: "Neon Eel",
     sprite: { src: "/assets/creatures/13/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
+    artImage: "/assets/gen-icons/fish-neon-eel.png",
     stars: 5,
     pts: 650,
     wt: "0.22%",
@@ -234,6 +232,7 @@ const legendaries = [
   {
     name: "Golden Salmon",
     sprite: { src: "/assets/creatures/14/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
+    artImage: "/assets/gen-icons/fish-golden-salmon.png",
     stars: 5,
     pts: 700,
     wt: "0.2%",
@@ -249,6 +248,7 @@ const legendaries = [
   {
     name: "Shadow Leviathan",
     sprite: { src: "/assets/creatures/15/Walk.png", frameW: 48, frameH: 48, frames: 4, sheetW: 192 },
+    artImage: "/assets/gen-icons/fish-shadow-leviathan.png",
     stars: 5,
     pts: 1500,
     wt: "0.08%",
@@ -264,6 +264,7 @@ const legendaries = [
   {
     name: "The Seal at the Seam",
     sprite: { src: sealAtTheSeamImg, frameW: 0, frameH: 0, frames: 1, sheetW: 0, isSingleImage: true },
+    artImage: "/assets/gen-icons/fish-seal-at-the-seam.png",
     stars: 5,
     pts: 5000,
     wt: "0.01%",
@@ -943,17 +944,49 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
         style={{
           position: "relative",
           marginBottom: "40px",
-          borderRadius: "4px",
-          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "24px",
         }}
       >
+        {fish.artImage && (
+          <div
+            data-testid={`art-legendary-${fish.name.toLowerCase().replace(/\s+/g, "-")}`}
+            style={{
+              position: "relative",
+              borderRadius: "8px",
+              overflow: "hidden",
+              border: `1px solid rgba(${fish.auraCss}, 0.2)`,
+              background: "rgba(0,0,0,0.3)",
+              maxWidth: "320px",
+              width: "100%",
+            }}
+          >
+            <div style={{
+              position: "absolute", inset: 0,
+              background: `radial-gradient(ellipse at 50% 50%, rgba(${fish.auraCss}, 0.08), transparent 70%)`,
+              pointerEvents: "none",
+            }} />
+            <img
+              src={fish.artImage}
+              alt={fish.name}
+              style={{
+                width: "100%",
+                display: "block",
+                imageRendering: "pixelated",
+                filter: `drop-shadow(0 0 12px rgba(${fish.auraCss}, 0.4))`,
+              }}
+            />
+          </div>
+        )}
         <div
-          data-testid={`img-legendary-${fish.name.toLowerCase().replace(/\s+/g, "-")}`}
+          data-testid={`sprite-legendary-${fish.name.toLowerCase().replace(/\s+/g, "-")}`}
           style={{
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            padding: "20px 0",
+            padding: "12px 0",
           }}
         >
           <CodexAnimatedSprite
