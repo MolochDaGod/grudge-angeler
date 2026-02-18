@@ -17,7 +17,7 @@ const legendaryFish = [
   { name: "Storm Swordfish", aura: "rgba(255,255,0,0.4)", tint: "rgba(255,255,0,0.15)", chapter: "V", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/11/frames", frameCount: 4 } },
   { name: "Celestial Whale", aura: "rgba(255,180,255,0.3)", tint: "rgba(255,180,255,0.15)", chapter: "VI", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/12/frames", frameCount: 4 } },
   { name: "Neon Eel", aura: "rgba(0,255,100,0.4)", tint: "rgba(0,255,100,0.15)", chapter: "VII", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/13/frames", frameCount: 4 } },
-  { name: "Golden Salmon", aura: "rgba(255,200,0,0.45)", tint: "rgba(255,200,0,0.15)", chapter: "VIII", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/14/frames", frameCount: 4 } },
+  { name: "Golden Salmon", aura: "rgba(255,200,0,0.45)", tint: "rgba(255,200,0,0.15)", chapter: "VIII", sprite: { src: "", frameW: 64, frameH: 48, frames: 3, sheetW: 192, framesDir: "/assets/creatures/14/frames", frameCount: 3 } },
   { name: "Shadow Leviathan", aura: "rgba(180,0,50,0.35)", tint: "rgba(180,0,50,0.15)", chapter: "IX", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/15/frames", frameCount: 4 } },
   { name: "The Seal at the Seam", aura: "rgba(30,60,140,0.5)", tint: "rgba(30,60,140,0.4)", chapter: "X", sprite: { src: sealAtTheSeamImg, frameW: 0, frameH: 0, frames: 1, sheetW: 0, isSingleImage: true } },
 ];
@@ -157,7 +157,7 @@ const allFish: LandingFish[] = [
   { name: "Storm Swordfish", rarity: "ultra_rare", points: 1000, desc: "Rides lightning bolts with electric fury.", tint: "rgba(255,255,0,0.15)", icon: "/assets/gen-icons/fish-storm-swordfish.png", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/11/frames", frameCount: 4 } },
   { name: "Celestial Whale", rarity: "ultra_rare", points: 2000, desc: "A cosmic whale that swallowed a dying star.", tint: "rgba(255,180,255,0.15)", icon: "/assets/gen-icons/fish-celestial-whale.png", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/12/frames", frameCount: 4 } },
   { name: "Neon Eel", rarity: "ultra_rare", points: 650, desc: "Bioluminescent eel pulsing with neon colors.", tint: "rgba(0,255,100,0.15)", icon: "/assets/gen-icons/fish-neon-eel.png", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/13/frames", frameCount: 4 } },
-  { name: "Golden Salmon", rarity: "ultra_rare", points: 700, desc: "Solid gold scales. Worth a fortune.", tint: "rgba(255,200,0,0.15)", icon: "/assets/gen-icons/fish-golden-salmon.png", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/14/frames", frameCount: 4 } },
+  { name: "Golden Salmon", rarity: "ultra_rare", points: 700, desc: "Solid gold scales. Worth a fortune.", tint: "rgba(255,200,0,0.15)", icon: "/assets/gen-icons/fish-golden-salmon.png", sprite: { src: "", frameW: 64, frameH: 48, frames: 3, sheetW: 192, framesDir: "/assets/creatures/14/frames", frameCount: 3 } },
   { name: "Shadow Leviathan", rarity: "ultra_rare", points: 1500, desc: "A titanic shadow beast from beyond the abyss.", tint: "rgba(180,0,50,0.15)", icon: "/assets/gen-icons/fish-shadow-leviathan.png", sprite: { src: "", frameW: 48, frameH: 48, frames: 4, sheetW: 192, framesDir: "/assets/creatures/15/frames", frameCount: 4 } },
 ];
 
@@ -234,7 +234,7 @@ function AnimatedSprite({ sprite, size, tint }: {
     const count = sprite.frameCount || 4;
     const interval = setInterval(() => {
       setFrame(f => (f % count) + 1);
-    }, 250);
+    }, 400);
     return () => clearInterval(interval);
   }, [sprite.framesDir, sprite.frameCount, sprite.isSingleImage]);
 
@@ -292,7 +292,7 @@ function AnimatedSprite({ sprite, size, tint }: {
           backgroundPosition: `0px -${oY}px`,
           backgroundRepeat: "no-repeat",
           imageRendering: "pixelated",
-          animation: `${animId} ${sprite.frames * 0.25}s steps(${sprite.frames}) infinite`,
+          animation: `${animId} ${sprite.frames * 0.4}s steps(${sprite.frames}) infinite`,
           filter: tint ? `drop-shadow(0 0 4px ${tint})` : undefined,
         }} />
       </div>
@@ -316,7 +316,7 @@ function AnimatedSprite({ sprite, size, tint }: {
           height: displayH,
           imageRendering: "pixelated",
           display: "block",
-          animation: `${animId} ${sprite.frames * 0.25}s steps(${sprite.frames}) infinite`,
+          animation: `${animId} ${sprite.frames * 0.4}s steps(${sprite.frames}) infinite`,
           filter: tint ? `drop-shadow(0 0 6px ${tint})` : undefined,
         }}
       />

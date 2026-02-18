@@ -23,7 +23,7 @@ function CodexAnimatedSprite({ sprite, size, tint }: { sprite: SpriteData; size:
     if (sprite.isSingleImage) return;
     const interval = setInterval(() => {
       setFrame(f => (f % sprite.frameCount) + 1);
-    }, 250);
+    }, 400);
     return () => clearInterval(interval);
   }, [sprite.frameCount, sprite.isSingleImage]);
 
@@ -231,7 +231,7 @@ const legendaries = [
   },
   {
     name: "Golden Salmon",
-    sprite: { framesDir: "/assets/creatures/14/frames", frameCount: 4, frameW: 48, frameH: 48 },
+    sprite: { framesDir: "/assets/creatures/14/frames", frameCount: 3, frameW: 64, frameH: 48 },
     artImage: "/assets/gen-icons/fish-golden-salmon.png",
     stars: 5,
     pts: 700,
