@@ -111,7 +111,10 @@ function loadSavedMap(): SavedMapData | null {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
     const data = JSON.parse(raw) as SavedMapData;
-    if (data.areas && Array.isArray(data.areas)) return data;
+    if (data.areas && Array.isArray(data.areas)) {
+      data.areas = data.areas.map(a => ({ ...a, zIndex: a.zIndex ?? 10 }));
+      return data;
+    }
     return null;
   } catch { return null; }
 }
@@ -227,7 +230,8 @@ export default function AdminMap() {
       }
     }
 
-    for (const area of areasRef.current) {
+    const sortedAreas = [...areasRef.current].sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0));
+    for (const area of sortedAreas) {
       const sp = worldToScreen(area.x, area.y);
       const sw = area.w * zoom;
       const sh = area.h * zoom;
@@ -244,9 +248,21 @@ export default function AdminMap() {
         ctx.font = `bold ${Math.max(8, 11 * zoom / 0.12)}px monospace`;
         ctx.textAlign = "center";
         ctx.fillText(area.label, sp.x + sw / 2, sp.y + sh / 2 + 4);
+        const flags: string[] = [];
+        if (area.isFish) flags.push("FISH");
+        if (area.isCrab) flags.push("CRAB");
+        if (area.canSwim) flags.push("SWIM");
+        if (area.isDock) flags.push("DOCK");
+        if (area.isSand) flags.push("SAND");
+        if (area.isPredator) flags.push("PRED");
         ctx.fillStyle = "rgba(255,255,255,0.35)";
         ctx.font = `${Math.max(6, 8 * zoom / 0.12)}px monospace`;
-        ctx.fillText(`${Math.round(area.w)}x${Math.round(area.h)}`, sp.x + sw / 2, sp.y + sh / 2 + 16);
+        ctx.fillText(`${Math.round(area.w)}x${Math.round(area.h)} z:${area.zIndex || 0}`, sp.x + sw / 2, sp.y + sh / 2 + 16);
+        if (flags.length > 0) {
+          ctx.fillStyle = "rgba(79,195,247,0.5)";
+          ctx.font = `${Math.max(5, 7 * zoom / 0.12)}px monospace`;
+          ctx.fillText(flags.join(" "), sp.x + sw / 2, sp.y + sh / 2 + 26);
+        }
       }
 
       if (selectedArea === area.id) {
@@ -606,6 +622,7 @@ export default function AdminMap() {
       h: 200,
       color: palette.color,
       locked: false,
+      zIndex: 10,
     }]);
     setSelectedArea(id);
     setNewAreaLabel("New Area");
@@ -632,6 +649,7 @@ export default function AdminMap() {
       h: 300,
       color: palette.color,
       locked: false,
+      zIndex: anchorArea ? (anchorArea.zIndex || 10) : 10,
     }]);
     setSelectedArea(id);
     setNewAreaLabel("New Area");
@@ -811,6 +829,84 @@ export default function AdminMap() {
             <div style={{ fontSize: 8, color: "#778", marginBottom: 4 }}>
               Pos: ({Math.round(sel.x)}, {Math.round(sel.y)}) Size: {Math.round(sel.w)}x{Math.round(sel.h)}
             </div>
+
+            <div style={{ marginBottom: 6 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                <span style={{ fontSize: 8, color: "#aab", minWidth: 40 }}>Z-INDEX</span>
+                <input
+                  data-testid="input-zindex"
+                  type="range"
+                  min={1}
+                  max={100}
+                  value={sel.zIndex || 10}
+                  onChange={e => {
+                    const val = parseInt(e.target.value);
+                    setAreas(prev => prev.map(a => a.id === sel.id ? { ...a, zIndex: val } : a));
+                  }}
+                  style={{ flex: 1, height: 12, cursor: "pointer", accentColor: "#f1c40f" }}
+                />
+                <input
+                  data-testid="input-zindex-number"
+                  type="number"
+                  min={1}
+                  max={100}
+                  value={sel.zIndex || 10}
+                  onChange={e => {
+                    const val = Math.max(1, Math.min(100, parseInt(e.target.value) || 1));
+                    setAreas(prev => prev.map(a => a.id === sel.id ? { ...a, zIndex: val } : a));
+                  }}
+                  style={{ width: 36, padding: "2px 4px", borderRadius: 3, border: "1px solid rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.05)", color: "#f1c40f", fontSize: 10, fontFamily: "monospace", textAlign: "center" }}
+                />
+              </div>
+              <div style={{ fontSize: 7, color: "#556", marginBottom: 4 }}>
+                1=back, 5=sand, 10=crab, 15=water/fish, 20=predator, 50=dock, 100=front
+              </div>
+            </div>
+
+            <div style={{ marginBottom: 6 }}>
+              <div style={{ fontSize: 8, color: "#aab", marginBottom: 3 }}>LAYER FLAGS</div>
+              <div style={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
+                {([
+                  { key: "isFish" as const, label: "FISH", color: "#4fc3f7", desc: "Fish spawn here" },
+                  { key: "isCrab" as const, label: "CRAB", color: "#ff9040", desc: "Crabs spawn here" },
+                  { key: "canSwim" as const, label: "SWIM", color: "#66bb6a", desc: "Player can swim" },
+                  { key: "isDock" as const, label: "DOCK", color: "#8d6e63", desc: "Dock surface" },
+                  { key: "isSand" as const, label: "SAND", color: "#e4c478", desc: "Beach sand" },
+                  { key: "isPredator" as const, label: "PRED", color: "#ef5350", desc: "Predators spawn" },
+                ]).map(flag => (
+                  <button
+                    key={flag.key}
+                    data-testid={`btn-flag-${flag.key}`}
+                    title={flag.desc}
+                    onClick={() => {
+                      setAreas(prev => prev.map(a => a.id === sel.id ? { ...a, [flag.key]: !a[flag.key] } : a));
+                    }}
+                    style={{
+                      padding: "2px 5px", borderRadius: 3, fontSize: 8, fontFamily: "monospace", cursor: "pointer",
+                      border: `1px solid ${sel[flag.key] ? flag.color : "rgba(255,255,255,0.12)"}`,
+                      background: sel[flag.key] ? `${flag.color}33` : "transparent",
+                      color: sel[flag.key] ? flag.color : "#667",
+                    }}
+                  >
+                    {flag.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ marginBottom: 4 }}>
+              <div style={{ fontSize: 8, color: "#aab", marginBottom: 3 }}>RENAME</div>
+              <input
+                data-testid="input-rename-area"
+                type="text"
+                value={sel.label}
+                onChange={e => {
+                  setAreas(prev => prev.map(a => a.id === sel.id ? { ...a, label: e.target.value } : a));
+                }}
+                style={{ width: "100%", padding: "3px 6px", borderRadius: 3, border: "1px solid rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.05)", color: "#ccc", fontSize: 9, fontFamily: "monospace", boxSizing: "border-box" }}
+              />
+            </div>
+
             <div style={{ display: "flex", gap: 3, flexWrap: "wrap", marginBottom: 4 }}>
               <button
                 data-testid="btn-duplicate"
@@ -836,7 +932,7 @@ export default function AdminMap() {
         <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 8, marginBottom: 6 }}>
           <div style={{ fontSize: 9, color: "#889", marginBottom: 4 }}>AREAS ({areas.length}):</div>
           <div style={{ maxHeight: 200, overflowY: "auto" }}>
-            {areas.map(a => (
+            {[...areas].sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0)).map(a => (
               <div
                 key={a.id}
                 onClick={() => setSelectedArea(a.id)}
@@ -847,7 +943,8 @@ export default function AdminMap() {
                 }}
               >
                 <div style={{ width: 10, height: 10, borderRadius: 2, background: a.color.replace(/[\d.]+\)$/, "0.8)"), flexShrink: 0 }} />
-                <span style={{ fontSize: 9, color: selectedArea === a.id ? "#f1c40f" : "#aaa" }}>{a.label}</span>
+                <span style={{ fontSize: 9, color: selectedArea === a.id ? "#f1c40f" : "#aaa", flex: 1 }}>{a.label}</span>
+                <span style={{ fontSize: 7, color: "#667", fontFamily: "monospace", flexShrink: 0 }}>z{a.zIndex || 0}</span>
               </div>
             ))}
           </div>
