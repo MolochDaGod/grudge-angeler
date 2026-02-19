@@ -41,9 +41,10 @@ async function sendDiscordCatch(data: {
   const starStr = Array(stars).fill("\u2B50").join("");
   const rarityLabel = RARITY_LABELS[data.rarity] || data.rarity.replace("_", " ").toUpperCase();
 
+  const logoUrl = `${baseUrl}/assets/icons/grudge/grudge_logo.png`;
   const iconUrl = data.icon
     ? `${baseUrl}${data.icon}`
-    : `${baseUrl}/assets/grudge_logo.png`;
+    : logoUrl;
 
   const embed: any = {
     title: `\uD83C\uDFA3 ${data.fishName} Caught!`,
@@ -56,7 +57,7 @@ async function sendDiscordCatch(data: {
       { name: "Length", value: `${data.length}"`, inline: true },
       { name: "Earnings", value: `${data.earnings} gbux`, inline: true },
     ],
-    footer: { text: "Grudge Angeler \u2022 ocean-angler-grudge.replit.app", icon_url: `${baseUrl}/assets/grudge_logo.png` },
+    footer: { text: "Grudge Angeler \u2022 ocean-angler-grudge.replit.app", icon_url: logoUrl },
     timestamp: new Date().toISOString(),
   };
 
@@ -70,7 +71,7 @@ async function sendDiscordCatch(data: {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         username: "Grudge Angeler",
-        avatar_url: `${baseUrl}/assets/grudge_logo.png`,
+        avatar_url: logoUrl,
         embeds: [embed],
       }),
     });
@@ -464,7 +465,7 @@ export async function registerRoutes(
         { name: "Rarity Score", value: `${stats.rarityScore}`, inline: true },
         { name: "Est. Reward", value: `${estimatedReward} gbux`, inline: true },
       ],
-      footer: { text: `Daily Tournament ${date} \u2022 6-8 PM CST \u2022 10,000 gbux Prize Pool`, icon_url: `${baseUrl}/assets/grudge_logo.png` },
+      footer: { text: `Daily Tournament ${date} \u2022 6-8 PM CST \u2022 10,000 gbux Prize Pool`, icon_url: `${baseUrl}/assets/icons/grudge/grudge_logo.png` },
       timestamp: new Date().toISOString(),
     };
 
@@ -474,7 +475,7 @@ export async function registerRoutes(
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: "Grudge Tournament",
-          avatar_url: `${baseUrl}/assets/grudge_logo.png`,
+          avatar_url: `${baseUrl}/assets/icons/grudge/grudge_logo.png`,
           embeds: [embed],
         }),
       });
@@ -487,9 +488,14 @@ export async function registerRoutes(
     const webhookUrl = tourneyWebhookUrl();
     if (!webhookUrl) return;
 
+    const logoUrl = `${baseUrl}/assets/icons/grudge/grudge_logo.png`;
+    const bannerUrl = `${baseUrl}/assets/icons/grudge/promo-banner.png`;
+    const playLink = baseUrl;
+
     const embed: any = {
       title: "\uD83C\uDFC6 DAILY TOURNAMENT IS LIVE!",
-      description: "**The fishing tournament has begun!** Cast your lines, reel in the biggest catches, and climb the leaderboard for a share of the **10,000 GBUX** prize pool!\n\n\u23F0 **Window:** 6:00 PM \u2013 8:00 PM CST\n\uD83C\uDFA3 **Format:** Best 20-minute catch cycle\n\uD83D\uDCB0 **Prize Pool:** 10,000 GBUX",
+      description: `**The fishing tournament has begun!** Cast your lines, reel in the biggest catches, and climb the leaderboard for a share of the **10,000 GBUX** prize pool!\n\n\u23F0 **Window:** 6:00 PM \u2013 8:00 PM CST\n\uD83C\uDFA3 **Format:** Best 20-minute catch cycle\n\uD83D\uDCB0 **Prize Pool:** 10,000 GBUX\n\n**[PLAY NOW](${playLink})**`,
+      url: playLink,
       color: 0xe040fb,
       fields: [
         { name: "\uD83E\uDD47 1st Place", value: "3,500 gbux", inline: true },
@@ -498,10 +504,12 @@ export async function registerRoutes(
         { name: "4th", value: "1,000", inline: true },
         { name: "5th", value: "800", inline: true },
         { name: "6th", value: "500", inline: true },
-        { name: "\uD83D\uDCCA Scoring", value: "Catches \u00D7 10 + Weight \u00D7 5 + Largest \u00D7 20 + Rarity \u00D7 15", inline: false },
+        { name: "\uD83D\uDCCA Scoring", value: "Catches x 10 + Weight x 5 + Largest x 20 + Rarity x 15", inline: false },
+        { name: "\uD83D\uDD11 How to Join", value: `1. [Click here to play](${playLink})\n2. Enter a username to join\n3. Fish during the tournament window\n4. Be in this Discord to see results!`, inline: false },
       ],
-      image: { url: `${baseUrl}/assets/grudge_logo.png` },
-      footer: { text: `Grudge Angeler \u2022 ${date} \u2022 Play at ocean-angler-grudge.replit.app`, icon_url: `${baseUrl}/assets/grudge_logo.png` },
+      image: { url: bannerUrl },
+      thumbnail: { url: logoUrl },
+      footer: { text: `Grudge Angeler \u2022 ${date} \u2022 Username login \u2022 No account needed`, icon_url: logoUrl },
       timestamp: new Date().toISOString(),
     };
 
@@ -511,8 +519,8 @@ export async function registerRoutes(
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: "Grudge Tournament",
-          avatar_url: `${baseUrl}/assets/grudge_logo.png`,
-          content: "@everyone \uD83C\uDFC6 **Daily Tournament is NOW LIVE!** Jump in and compete for 10,000 GBUX!",
+          avatar_url: logoUrl,
+          content: `@everyone \uD83C\uDFC6 **Daily Tournament is NOW LIVE!** Jump in and compete for 10,000 GBUX!\n\n\uD83C\uDFA3 **Play now:** ${playLink}\n\uD83D\uDD11 Just enter a username \u2014 no account needed!`,
           embeds: [embed],
         }),
       });
@@ -524,6 +532,9 @@ export async function registerRoutes(
   async function sendTournamentEndAnnouncement(date: string) {
     const webhookUrl = tourneyWebhookUrl();
     if (!webhookUrl) return;
+
+    const logoUrl = `${baseUrl}/assets/icons/grudge/grudge_logo.png`;
+    const playLink = baseUrl;
 
     try {
       const results = await storage.getTournamentResults(date, 10);
@@ -544,13 +555,16 @@ export async function registerRoutes(
       const embed: any = {
         title: "\uD83C\uDFC6 TOURNAMENT RESULTS",
         description: `The daily tournament has ended! **${winner.playerName}** takes the crown with **${Math.floor(Number(winner.compositeScore))}** points!\n\n${standings}`,
+        url: playLink,
         color: 0xffd700,
+        thumbnail: { url: logoUrl },
         fields: [
           { name: "Total Participants", value: `${results.length}`, inline: true },
           { name: "Prize Pool", value: "10,000 gbux", inline: true },
           { name: "Next Tournament", value: "Tomorrow 6-8 PM CST", inline: true },
+          { name: "\uD83C\uDFA3 Play Tomorrow", value: `[Click here to play](${playLink}) \u2014 just enter a username!`, inline: false },
         ],
-        footer: { text: `Grudge Angeler \u2022 ${date} \u2022 See you tomorrow!`, icon_url: `${baseUrl}/assets/grudge_logo.png` },
+        footer: { text: `Grudge Angeler \u2022 ${date} \u2022 See you tomorrow!`, icon_url: logoUrl },
         timestamp: new Date().toISOString(),
       };
 
@@ -559,8 +573,8 @@ export async function registerRoutes(
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: "Grudge Tournament",
-          avatar_url: `${baseUrl}/assets/grudge_logo.png`,
-          content: "\uD83C\uDFC6 **Daily Tournament has ENDED!** Here are the final standings:",
+          avatar_url: logoUrl,
+          content: `\uD83C\uDFC6 **Daily Tournament has ENDED!** Here are the final standings:\n\n\uD83C\uDFA3 Play tomorrow: ${playLink}`,
           embeds: [embed],
         }),
       });
