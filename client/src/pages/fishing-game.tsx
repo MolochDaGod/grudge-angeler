@@ -1659,7 +1659,8 @@ export default function FishingGame() {
         `/assets/creatures/${f.creatureFolder}/Idle.png`,
         `/assets/creatures/${f.creatureFolder}/Walk.png`,
       ]),
-      ...Array.from({length: 17}, (_, i) => `/assets/icons/Icons_${String(i+1).padStart(2,'0')}.png`),
+      ...Array.from({length: 17}, (_, i) => `/assets/icons/fish/Icons_${String(i+1).padStart(2,'0')}.png`),
+      ...CHUM_ITEMS.map(c => c.icon),
       ...["shark","kraken","crabaggresive","leviathan"].flatMap(n => [
         `/assets/predators/${n}/Idle.png`,
         `/assets/predators/${n}/Walk.png`,
@@ -9840,7 +9841,7 @@ export default function FishingGame() {
                   ...([1,2,3,4] as number[]).map(n => ({ name: `Barrel ${n}`, src: `/assets/objects/Fishbarrel${n}.png`, frames: 1 })),
                 ] },
                 { label: "Icons", items: Array.from({length: 20}, (_, i) => ({
-                  name: `Icon ${i+1}`, src: `/assets/icons/Icons_${String(i+1).padStart(2,'0')}.png`, frames: 1,
+                  name: `Icon ${i+1}`, src: `/assets/icons/fish/Icons_${String(i+1).padStart(2,'0')}.png`, frames: 1,
                 })).concat([
                   { name: "Gbux", src: "/assets/icons/gbux.png", frames: 1 },
                   { name: "Fabled", src: "/assets/icons/faction_fabled.png", frames: 1 },
