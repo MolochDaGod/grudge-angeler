@@ -119,8 +119,8 @@ function UnderwaterBackground() {
 const legendaries = [
   {
     name: "Phantom Minnow",
-    sprite: { framesDir: "/assets/creatures/7/frames", frameCount: 4, frameW: 48, frameH: 48 },
-    artImage: "/assets/icons/fish/phantom-minnow-spectral-ultra_rare.png",
+    sprite: { framesDir: "/assets/creatures/phantom-minnow-spectral-ultra_rare/frames", frameCount: 2, frameW: 96, frameH: 48 },
+    artImage: "/assets/catch/phantom-minnow-spectral-ultra_rare.png",
     stars: 5,
     pts: 500,
     wt: "0.3%",
@@ -135,7 +135,7 @@ const legendaries = [
   },
   {
     name: "Volcanic Perch",
-    sprite: { framesDir: "/assets/creatures/8/frames", frameCount: 4, frameW: 48, frameH: 48 },
+    sprite: { framesDir: "/assets/creatures/volcanic-perch-molten-ultra_rare/frames", frameCount: 4, frameW: 48, frameH: 48 },
     artImage: "/assets/icons/fish/volcanic-perch-molten-ultra_rare.png",
     stars: 5,
     pts: 600,
@@ -151,7 +151,7 @@ const legendaries = [
   },
   {
     name: "Abyssal Bass",
-    sprite: { framesDir: "/assets/creatures/9/frames", frameCount: 4, frameW: 48, frameH: 48 },
+    sprite: { framesDir: "/assets/creatures/abyssal-bass-dark-ultra_rare/frames", frameCount: 4, frameW: 48, frameH: 48 },
     artImage: "/assets/icons/fish/abyssal-bass-dark-ultra_rare.png",
     stars: 5,
     pts: 750,
@@ -167,7 +167,7 @@ const legendaries = [
   },
   {
     name: "Frost Catfish",
-    sprite: { framesDir: "/assets/creatures/10/frames", frameCount: 4, frameW: 48, frameH: 48 },
+    sprite: { framesDir: "/assets/creatures/frost-catfish-ice-ultra_rare/frames", frameCount: 4, frameW: 48, frameH: 48 },
     artImage: "/assets/icons/fish/frost-catfish-ice-ultra_rare.png",
     stars: 5,
     pts: 800,
@@ -183,8 +183,8 @@ const legendaries = [
   },
   {
     name: "Storm Swordfish",
-    sprite: { framesDir: "/assets/creatures/11/frames", frameCount: 4, frameW: 48, frameH: 48 },
-    artImage: "/assets/icons/fish/storm-swordfish-electric-ultra_rare.png",
+    sprite: { framesDir: "/assets/creatures/storm-swordfish-electric-ultra_rare/frames", frameCount: 2, frameW: 96, frameH: 48 },
+    artImage: "/assets/catch/storm-swordfish-electric-ultra_rare.png",
     stars: 5,
     pts: 1000,
     wt: "0.12%",
@@ -199,8 +199,8 @@ const legendaries = [
   },
   {
     name: "Celestial Whale",
-    sprite: { framesDir: "/assets/creatures/12/frames", frameCount: 4, frameW: 48, frameH: 48 },
-    artImage: "/assets/icons/fish/celestial-whale-cosmic-ultra_rare.png",
+    sprite: { framesDir: "/assets/creatures/celestial-whale-cosmic-ultra_rare/frames", frameCount: 2, frameW: 1024, frameH: 1024 },
+    artImage: "/assets/catch/celestial-whale-cosmic-ultra_rare.png",
     stars: 5,
     pts: 2000,
     wt: "0.05%",
@@ -215,7 +215,7 @@ const legendaries = [
   },
   {
     name: "Neon Eel",
-    sprite: { framesDir: "/assets/creatures/13/frames", frameCount: 4, frameW: 48, frameH: 48 },
+    sprite: { framesDir: "/assets/creatures/neon-eel-neon-ultra_rare/frames", frameCount: 4, frameW: 48, frameH: 48 },
     artImage: "/assets/icons/fish/neon-eel-neon-ultra_rare.png",
     stars: 5,
     pts: 650,
@@ -231,7 +231,7 @@ const legendaries = [
   },
   {
     name: "Golden Salmon",
-    sprite: { framesDir: "/assets/creatures/14/frames", frameCount: 3, frameW: 64, frameH: 48 },
+    sprite: { framesDir: "/assets/creatures/golden-salmon-gold-ultra_rare/frames", frameCount: 4, frameW: 48, frameH: 48 },
     artImage: "/assets/icons/fish/golden-salmon-gold-ultra_rare.png",
     stars: 5,
     pts: 700,
@@ -247,8 +247,8 @@ const legendaries = [
   },
   {
     name: "Shadow Leviathan",
-    sprite: { framesDir: "/assets/creatures/15/frames", frameCount: 4, frameW: 48, frameH: 48 },
-    artImage: "/assets/icons/fish/shadow-leviathan-shadow-ultra_rare.png",
+    sprite: { framesDir: "/assets/creatures/shadow-leviathan-shadow-ultra_rare/frames", frameCount: 2, frameW: 96, frameH: 48 },
+    artImage: "/assets/catch/shadow-leviathan-shadow-ultra_rare.png",
     stars: 5,
     pts: 1500,
     wt: "0.08%",
@@ -263,7 +263,7 @@ const legendaries = [
   },
   {
     name: "The Seal at the Seam",
-    sprite: { src: sealAtTheSeamImg, framesDir: "", frameCount: 1, frameW: 0, frameH: 0, isSingleImage: true },
+    sprite: { src: sealAtTheSeamImg, framesDir: "/assets/creatures/seal-at-the-seam-cosmic-ultra_rare/frames", frameCount: 1, frameW: 0, frameH: 0, isSingleImage: true },
     artImage: "/assets/icons/fish/seal-at-the-seam-cosmic-ultra_rare.png",
     stars: 5,
     pts: 5000,
