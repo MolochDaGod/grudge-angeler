@@ -456,8 +456,8 @@ const CHUM_ITEMS: ChumItem[] = [
   { name: "Kraken Bile", price: 180, description: "Massive rarity, strong depth pull.", icon: "/assets/icons/chum/chum-kraken-bile.png", effect: "Massive rarity + pull", duration: 300, rarityBoost: 2.5, biteSpeedBoost: 1.0, fishAttract: 1.6, cooldown: 320, catchable: false, type: "chum", depthPull: 0.3 },
   { name: "Golden Flakes", price: 250, description: "Boosts everything. Strong depth pull.", icon: "/assets/icons/chum/chum-golden-flakes.png", effect: "Everything + depth pull", duration: 500, rarityBoost: 2.0, biteSpeedBoost: 1.4, fishAttract: 2.5, cooldown: 400, catchable: false, type: "chum", depthPull: 0.35 },
   { name: "Abyssal Ooze", price: 300, description: "The ultimate chum. Pulls abyss fish to surface.", icon: "/assets/icons/chum/chum-abyssal-ooze.png", effect: "Ultimate depth pull", duration: 600, rarityBoost: 2.5, biteSpeedBoost: 1.5, fishAttract: 3.0, cooldown: 500, catchable: false, type: "chum", depthPull: 0.4 },
-  { name: "Live Shrimp Cluster", price: 0, description: "Caught live shrimp. Good bait for medium fish.", icon: "/assets/icons/Icons_05.png", effect: "Medium fish attract", duration: 250, rarityBoost: 1.2, biteSpeedBoost: 1.3, fishAttract: 1.8, cooldown: 100, catchable: true, type: "special", depthPull: 0.1 },
-  { name: "Glowing Plankton", price: 0, description: "Caught glowing plankton. Pulls rare fish up.", icon: "/assets/icons/Icons_14.png", effect: "Rare glow + pull", duration: 200, rarityBoost: 1.8, biteSpeedBoost: 1.1, fishAttract: 1.5, cooldown: 100, catchable: true, type: "special", depthPull: 0.2 },
+  { name: "Live Shrimp Cluster", price: 0, description: "Caught live shrimp. Good bait for medium fish.", icon: "/assets/icons/fish/Icons_05.png", effect: "Medium fish attract", duration: 250, rarityBoost: 1.2, biteSpeedBoost: 1.3, fishAttract: 1.8, cooldown: 100, catchable: true, type: "special", depthPull: 0.1 },
+  { name: "Glowing Plankton", price: 0, description: "Caught glowing plankton. Pulls rare fish up.", icon: "/assets/icons/fish/Icons_14.png", effect: "Rare glow + pull", duration: 200, rarityBoost: 1.8, biteSpeedBoost: 1.1, fishAttract: 1.5, cooldown: 100, catchable: true, type: "special", depthPull: 0.2 },
 ];
 
 const PREDATOR_TYPES = [
@@ -8106,11 +8106,11 @@ export default function FishingGame() {
           {/* HUD Top Left - Score & Stats */}
           <div className="absolute top-3 left-3 flex flex-col gap-1.5" style={{ pointerEvents: "none" }} data-testid="hud-score">
             <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(241,196,15,0.3)" }}>
-              <img src="/assets/icons/Icons_01.png" alt="" className="w-6 h-6" style={{ imageRendering: "pixelated" }} />
+              <img src="/assets/icons/fish/Icons_01.png" alt="" className="w-6 h-6" style={{ imageRendering: "pixelated" }} />
               <span style={{ color: "#f1c40f", fontSize: 14 }}>{uiState.score}</span>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(52,152,219,0.3)" }}>
-              <img src="/assets/icons/Icons_03.png" alt="" className="w-6 h-6" style={{ imageRendering: "pixelated" }} />
+              <img src="/assets/icons/fish/Icons_03.png" alt="" className="w-6 h-6" style={{ imageRendering: "pixelated" }} />
               <span style={{ color: "#3498db", fontSize: 14 }}>{uiState.totalCaught}</span>
             </div>
             {uiState.combo > 1 && (
@@ -8127,15 +8127,15 @@ export default function FishingGame() {
           {/* HUD Top Right - Rod Level */}
           <div className="absolute top-3 right-3 flex flex-col gap-1.5" style={{ pointerEvents: "none" }} data-testid="hud-rod">
             <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(155,89,182,0.3)" }}>
-              <img src="/assets/icons/Icons_07.png" alt="" className="w-6 h-6" style={{ imageRendering: "pixelated" }} />
+              <img src="/assets/icons/fish/Icons_07.png" alt="" className="w-6 h-6" style={{ imageRendering: "pixelated" }} />
               <span style={{ color: "#9b59b6", fontSize: 13 }}>Lv.{uiState.rodLevel}</span>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(46,204,113,0.3)" }}>
-              <img src="/assets/icons/Icons_07.png" alt="" className="w-4 h-4" style={{ imageRendering: "pixelated" }} />
+              <img src="/assets/icons/fish/Icons_07.png" alt="" className="w-4 h-4" style={{ imageRendering: "pixelated" }} />
               <span style={{ color: "#2ecc71", fontSize: 10 }}>{RODS[uiState.equippedRod].name}</span>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(52,152,219,0.3)" }}>
-              <img src="/assets/icons/Icons_09.png" alt="" className="w-4 h-4" style={{ imageRendering: "pixelated" }} />
+              <img src="/assets/icons/fish/Icons_09.png" alt="" className="w-4 h-4" style={{ imageRendering: "pixelated" }} />
               <span style={{ color: LURES[uiState.equippedLure].crabName ? "#ff4060" : "#5dade2", fontSize: 10 }}>{LURES[uiState.equippedLure].name}</span>
               {LURES[uiState.equippedLure].crabName && <span style={{ color: "#f59e0b", fontSize: 9 }}>x{uiState.crabBaitCounts[LURES[uiState.equippedLure].crabName!] || 0}</span>}
             </div>
@@ -8145,7 +8145,7 @@ export default function FishingGame() {
               onClick={(e) => { e.stopPropagation(); setShowCollection(!showCollection); }}
               data-testid="button-collection"
             >
-              <img src="/assets/icons/Icons_05.png" alt="" className="w-6 h-6" style={{ imageRendering: "pixelated" }} />
+              <img src="/assets/icons/fish/Icons_05.png" alt="" className="w-6 h-6" style={{ imageRendering: "pixelated" }} />
               <span style={{ color: "#2ecc71", fontSize: 12 }}>Fish Log</span>
             </button>
           </div>
@@ -8219,7 +8219,7 @@ export default function FishingGame() {
                     display: "flex", alignItems: "center", justifyContent: "center",
                     fontSize: 16,
                   }}>
-                    <img src={stateRef.current.currentCatch?.icon || stateRef.current.currentCatch?.catchAsset || stateRef.current.currentJunk?.asset || "/assets/icons/Icons_05.png"} alt="" style={{ width: 20, height: 20, imageRendering: "pixelated", objectFit: "contain" }} />
+                    <img src={stateRef.current.currentCatch?.icon || stateRef.current.currentCatch?.catchAsset || stateRef.current.currentJunk?.asset || "/assets/icons/fish/Icons_05.png"} alt="" style={{ width: 20, height: 20, imageRendering: "pixelated", objectFit: "contain" }} />
                   </div>
                 </div>
                 <div className="relative" style={{
@@ -8245,7 +8245,7 @@ export default function FishingGame() {
                     transition: "filter 0.1s",
                   }} data-testid="fish-icon">
                     <img
-                      src={stateRef.current.currentCatch?.icon || stateRef.current.currentCatch?.catchAsset || stateRef.current.currentJunk?.asset || "/assets/icons/Icons_05.png"}
+                      src={stateRef.current.currentCatch?.icon || stateRef.current.currentCatch?.catchAsset || stateRef.current.currentJunk?.asset || "/assets/icons/fish/Icons_05.png"}
                       alt=""
                       style={{ width: 24, height: 24, imageRendering: "pixelated", objectFit: "contain" }}
                     />
@@ -8399,7 +8399,7 @@ export default function FishingGame() {
                   className="flex flex-col items-center cursor-pointer"
                   style={{ padding: "4px 6px", borderRadius: 6, background: uiState.selectedHotbar === 3 ? "rgba(245,158,11,0.25)" : "rgba(8,15,25,0.75)", border: uiState.selectedHotbar === 3 ? "1px solid rgba(245,158,11,0.5)" : "1px solid rgba(255,255,255,0.1)", transition: "all 0.15s" }}
                   data-testid="hotbar-slot-3">
-                  <img src="/assets/icons/Icons_09.png" alt="" style={{ width: 24, height: 24, imageRendering: "pixelated" }} />
+                  <img src="/assets/icons/fish/Icons_09.png" alt="" style={{ width: 24, height: 24, imageRendering: "pixelated" }} />
                   <span style={{ fontSize: 8, color: uiState.selectedHotbar === 3 ? "#f59e0b" : "#607d8b" }}>3</span>
                 </div>
               </div>
@@ -8408,7 +8408,7 @@ export default function FishingGame() {
                 className="flex flex-col items-center cursor-pointer"
                 style={{ padding: "4px 6px", borderRadius: 6, position: "relative", background: uiState.selectedHotbar === 4 ? "rgba(168,85,247,0.25)" : "rgba(8,15,25,0.75)", border: uiState.selectedHotbar === 4 ? "1px solid rgba(168,85,247,0.5)" : "1px solid rgba(255,255,255,0.1)", transition: "all 0.15s", opacity: uiState.netCooldown > 0 ? 0.5 : 1 }}
                 data-testid="hotbar-slot-4">
-                <img src="/assets/icons/Icons_11.png" alt="" style={{ width: 24, height: 24, imageRendering: "pixelated" }} />
+                <img src="/assets/icons/fish/Icons_11.png" alt="" style={{ width: 24, height: 24, imageRendering: "pixelated" }} />
                 <span style={{ fontSize: 8, color: uiState.selectedHotbar === 4 ? "#a855f7" : "#607d8b" }}>4</span>
                 {uiState.netCooldown > 0 && (
                   <span style={{ position: "absolute", top: -4, right: -4, fontSize: 7, background: uiState.netBroken ? "rgba(220,38,38,0.9)" : "rgba(168,85,247,0.9)", color: "#fff", borderRadius: 4, padding: "1px 3px", fontWeight: "bold" }}>
@@ -9507,7 +9507,7 @@ export default function FishingGame() {
                   <div style={{ color: "#6ee7b7", fontSize: 11, marginBottom: 4 }}>RECENT CATCHES</div>
                   {uiState.catchHistory.length === 0 && (
                     <div className="flex flex-col items-center justify-center mt-6 gap-2">
-                      <img src="/assets/icons/Icons_03.png" alt="" className="w-8 h-8 opacity-30" style={{ imageRendering: "pixelated" }} />
+                      <img src="/assets/icons/fish/Icons_03.png" alt="" className="w-8 h-8 opacity-30" style={{ imageRendering: "pixelated" }} />
                       <span style={{ color: "#455a64", fontSize: 10 }}>No catches yet</span>
                     </div>
                   )}
@@ -9624,7 +9624,7 @@ export default function FishingGame() {
         >
           <div className="flex items-center justify-between p-3" style={{ borderBottom: "1px solid rgba(52,152,219,0.2)" }}>
             <div className="flex items-center gap-2">
-              <img src="/assets/icons/Icons_05.png" alt="" className="w-5 h-5" style={{ imageRendering: "pixelated" }} />
+              <img src="/assets/icons/fish/Icons_05.png" alt="" className="w-5 h-5" style={{ imageRendering: "pixelated" }} />
               <span style={{ color: "#3498db", fontSize: 13 }}>FISH LOG</span>
               <span style={{ color: "#455a64", fontSize: 10 }}>
                 {uiState.caughtCollection.filter(([,e]) => e.type).length}/{FISH_TYPES.length} species
@@ -9669,7 +9669,7 @@ export default function FishingGame() {
           <div className="flex-1 overflow-y-auto p-2.5 flex flex-col gap-2">
             {uiState.caughtCollection.length === 0 && (
               <div className="flex flex-col items-center justify-center mt-8 gap-3">
-                <img src="/assets/icons/Icons_03.png" alt="" className="w-10 h-10 opacity-30" style={{ imageRendering: "pixelated" }} />
+                <img src="/assets/icons/fish/Icons_03.png" alt="" className="w-10 h-10 opacity-30" style={{ imageRendering: "pixelated" }} />
                 <span style={{ color: "#455a64", fontSize: 11, textAlign: "center", lineHeight: "1.5" }}>
                   No fish caught yet!<br />Start fishing to fill<br />your collection.
                 </span>
@@ -10634,35 +10634,35 @@ export default function FishingGame() {
                 desc: isMob
                   ? "Tap the CAST button to throw your line into the water. Aim where the fish are swimming!"
                   : "Click to cast your line into the water. Right-click to cancel. Aim where the fish are swimming!",
-                icon: "/assets/icons/Icons_07.png",
+                icon: "/assets/icons/fish/Icons_07.png",
               },
               {
                 title: "REELING",
                 desc: isMob
                   ? "When a fish bites, tap REEL to start the minigame. Keep the green catch zone over the fish marker on the bar!"
                   : "When a fish bites, click and hold to reel. Keep the green catch zone over the fish marker on the bar!",
-                icon: "/assets/icons/Icons_07.png",
+                icon: "/assets/icons/fish/Icons_07.png",
               },
               {
                 title: "FORCE BAR",
                 desc: isMob
                   ? "Tap the FORCE button during reeling to power-reel. Uses stamina but fills the catch gauge faster. Use it in bursts!"
                   : "Hold SPACEBAR during reeling to power-reel. Uses stamina but fills the catch gauge faster. Use it in bursts!",
-                icon: "/assets/icons/Icons_04.png",
+                icon: "/assets/icons/fish/Icons_04.png",
               },
               {
                 title: "RESILIENCE",
                 desc: isMob
                   ? "Tap RES during reeling to let line out, preventing breaks on tough fish. Slows progress but saves your catch!"
                   : "Hold S during reeling to let line out, preventing breaks on tough fish. Slows progress but saves your catch!",
-                icon: "/assets/icons/Icons_05.png",
+                icon: "/assets/icons/fish/Icons_05.png",
               },
               {
                 title: "EXPLORE & SELL",
                 desc: isMob
                   ? "Use the D-pad to walk. Visit the shop (tap E near hut) to sell fish and buy better gear. Go deeper for rarer fish!"
                   : "Use A/D to walk. Visit the shop (press E near hut) to sell fish and buy better gear. Go deeper for rarer fish!",
-                icon: "/assets/icons/Icons_01.png",
+                icon: "/assets/icons/fish/Icons_01.png",
               },
             ];
             const step = steps[uiState.tutorialStep] || steps[0];
