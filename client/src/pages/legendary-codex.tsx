@@ -85,7 +85,7 @@ function UnderwaterBackground() {
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden" }}>
       <img
-        src="/assets/underwater_scene.png"
+        src="/assets/tiles/underwater_scene.png"
         alt=""
         style={{
           position: "absolute",

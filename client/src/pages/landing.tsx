@@ -203,15 +203,15 @@ const allFish: LandingFish[] = [
 ];
 
 const fishAchievements = [
-  { name: "First Catch", desc: "Catch your first fish", icon: "/assets/icons/Icons_07.png", color: "#a0a0a0" },
+  { name: "First Catch", desc: "Catch your first fish", icon: "/assets/icons/fish/Icons_07.png", color: "#a0a0a0" },
   { name: "Common Collector", desc: "Catch all common species", icon: "/assets/icons/fish/minnow-silver-common.png", color: "#a0a0a0" },
   { name: "Uncommon Hunter", desc: "Catch all uncommon species", icon: "/assets/icons/fish/bass-green-uncommon.png", color: "#4fc3f7" },
   { name: "Rare Trophy", desc: "Catch all rare species", icon: "/assets/icons/fish/swordfish-blue-rare.png", color: "#ffd54f" },
   { name: "Legendary Angler", desc: "Catch all legendary species", icon: "/assets/icons/fish/whale-blue-legendary.png", color: "#ff8a65" },
   { name: "Mythic Master", desc: "Catch all ultra-rare species", icon: "/assets/icons/lures/prismatic_lure.png", color: "#e040fb" },
   { name: "Ocean Completionist", desc: "Catch every species in the game", icon: "/assets/icons/lures/golden_fly.png", color: "#ffd700" },
-  { name: "100 Catch Club", desc: "Catch 100 fish total", icon: "/assets/icons/Icons_09.png", color: "#4fc3f7" },
-  { name: "Big Game Fisher", desc: "Catch a fish over 50 lbs", icon: "/assets/icons/Icons_13.png", color: "#ff8a65" },
+  { name: "100 Catch Club", desc: "Catch 100 fish total", icon: "/assets/icons/fish/Icons_09.png", color: "#4fc3f7" },
+  { name: "Big Game Fisher", desc: "Catch a fish over 50 lbs", icon: "/assets/icons/fish/Icons_13.png", color: "#ff8a65" },
   { name: "Grudge Legend", desc: "Reach the top of the leaderboard", icon: "/assets/icons/gbux.png", color: "#ffd700" },
 ];
 
