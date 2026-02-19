@@ -6254,7 +6254,7 @@ export default function FishingGame() {
               rarity: s.currentCatch?.rarity || "common",
               username: s.playerName || "Anonymous",
               earnings: sellPrice,
-              icon: s.currentCatch?.catchAsset || s.currentCatch?.icon || "",
+              icon: s.currentCatch?.icon || "",
             }),
           }).catch(() => {});
 

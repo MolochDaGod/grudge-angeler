@@ -34,7 +34,10 @@ async function sendDiscordCatch(data: {
   icon: string;
 }) {
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL_FISH;
-  if (!webhookUrl) return;
+  if (!webhookUrl) {
+    console.log("[Discord Fish] No DISCORD_WEBHOOK_URL_FISH set, skipping webhook");
+    return;
+  }
 
   const color = RARITY_COLORS[data.rarity] ?? 0x607d8b;
   const stars = data.rarity === "ultra_rare" ? 5 : data.rarity === "legendary" ? 4 : data.rarity === "rare" ? 3 : data.rarity === "uncommon" ? 2 : 1;
@@ -45,6 +48,8 @@ async function sendDiscordCatch(data: {
   const iconUrl = data.icon
     ? `${baseUrl}${data.icon}`
     : logoUrl;
+
+  console.log(`[Discord Fish] Sending catch: ${data.fishName} by ${data.username}, icon: ${iconUrl}`);
 
   const embed: any = {
     title: `\uD83C\uDFA3 ${data.fishName} Caught!`,
@@ -76,10 +81,13 @@ async function sendDiscordCatch(data: {
       }),
     });
     if (!resp.ok) {
-      console.error(`Discord webhook failed: ${resp.status} ${resp.statusText}`);
+      const body = await resp.text().catch(() => "");
+      console.error(`[Discord Fish] Webhook failed: ${resp.status} ${resp.statusText} - ${body}`);
+    } else {
+      console.log(`[Discord Fish] Successfully sent: ${data.fishName}`);
     }
   } catch (err) {
-    console.error("Discord webhook error:", err);
+    console.error("[Discord Fish] Webhook error:", err);
   }
 }
 
