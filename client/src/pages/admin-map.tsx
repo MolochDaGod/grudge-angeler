@@ -117,6 +117,10 @@ function loadSavedMap(): SavedMapData | null {
     const data = JSON.parse(raw) as SavedMapData;
     if (data.areas && Array.isArray(data.areas)) {
       data.areas = data.areas.map(a => ({ ...a, zIndex: a.zIndex ?? 10 }));
+      if (data.depthSlope && (data.depthSlope.shoreX === undefined || data.depthSlope.shoreY === undefined)) {
+        data.depthSlope.shoreX = DEFAULT_DEPTH_SLOPE.shoreX;
+        data.depthSlope.shoreY = DEFAULT_DEPTH_SLOPE.shoreY;
+      }
       return data;
     }
     return null;

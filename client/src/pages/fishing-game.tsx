@@ -17,7 +17,12 @@ function loadDepthSlope(): DepthSlopeData {
           typeof data.depthSlope.deepY === "number" &&
           isFinite(data.depthSlope.shallowX) && isFinite(data.depthSlope.shallowY) &&
           isFinite(data.depthSlope.deepX) && isFinite(data.depthSlope.deepY)) {
-        return data.depthSlope;
+        const ds = data.depthSlope;
+        if (ds.shoreX === undefined || ds.shoreY === undefined) {
+          ds.shoreX = 6600;
+          ds.shoreY = 332;
+        }
+        return ds;
       }
     }
   } catch {}
