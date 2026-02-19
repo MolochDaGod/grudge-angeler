@@ -322,16 +322,16 @@ const BETAXGRUDA_EGGS = [
 const CRAB_FRAME = 16;
 
 const BEACH_CRABS: FishType[] = [
-  { name: "Red Crab", icon: "/assets/icons/fish/red-crab-red-common.png", catchAsset: "/assets/icons/fish/red-crab-red-common.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 8, rarity: "common", weight: 50, minDepth: 0.05, speed: 0.9, description: "A small red crab that scuttles along the beach.", beachCrab: true, spriteSheet: "/assets/crabs/red-crab-red-common.png", spriteRow: 1, spriteFrameSize: 32 },
-  { name: "Blue Crab", icon: "/assets/icons/fish/blue-crab-blue-common.png", catchAsset: "/assets/icons/fish/blue-crab-blue-common.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 10, rarity: "common", weight: 40, minDepth: 0.05, speed: 1.0, description: "A bright blue crab found near tidal pools.", beachCrab: true, spriteSheet: "/assets/crabs/blue-crab-blue-common.png", spriteRow: 1, spriteFrameSize: 32 },
-  { name: "Green Crab", icon: "/assets/icons/fish/green-crab-green-common.png", catchAsset: "/assets/icons/fish/green-crab-green-common.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 8, rarity: "common", weight: 45, minDepth: 0.05, speed: 0.8, description: "A mossy green crab hiding in the seaweed.", beachCrab: true, spriteSheet: "/assets/crabs/green-crab-green-common.png", spriteRow: 1, spriteFrameSize: 32 },
-  { name: "Purple Crab", icon: "/assets/icons/fish/purple-crab-purple-uncommon.png", catchAsset: "/assets/icons/fish/purple-crab-purple-uncommon.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 15, rarity: "uncommon", weight: 20, minDepth: 0.05, speed: 1.1, description: "An uncommon purple crab with iridescent shell.", beachCrab: true, spriteSheet: "/assets/crabs/purple-crab-purple-uncommon.png", spriteRow: 1, spriteFrameSize: 32 },
-  { name: "Gold Crab", icon: "/assets/icons/fish/gold-crab-gold-uncommon.png", catchAsset: "/assets/icons/fish/gold-crab-gold-uncommon.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 25, rarity: "uncommon", weight: 15, minDepth: 0.05, speed: 1.2, description: "A rare golden crab. Prized for its shimmering shell.", beachCrab: true, spriteSheet: "/assets/crabs/gold-crab-gold-uncommon.png", spriteRow: 1, spriteFrameSize: 32 },
-  { name: "Cyan Crab", icon: "/assets/icons/fish/cyan-crab-cyan-common.png", catchAsset: "/assets/icons/fish/cyan-crab-cyan-common.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 8, rarity: "common", weight: 45, minDepth: 0.05, speed: 0.85, description: "A pale cyan crab commonly found on sandy shores.", beachCrab: true, spriteSheet: "/assets/crabs/cyan-crab-cyan-common.png", spriteRow: 1, spriteFrameSize: 32 },
-  { name: "Pink Crab", icon: "/assets/icons/fish/pink-crab-pink-common.png", catchAsset: "/assets/icons/fish/pink-crab-pink-common.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 12, rarity: "common", weight: 35, minDepth: 0.05, speed: 0.95, description: "A cute pink crab that loves warm shallow waters.", beachCrab: true, spriteSheet: "/assets/crabs/pink-crab-pink-common.png", spriteRow: 1, spriteFrameSize: 32 },
-  { name: "Dark Crab", icon: "/assets/icons/fish/dark-crab-dark-uncommon.png", catchAsset: "/assets/icons/fish/dark-crab-dark-uncommon.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 20, rarity: "uncommon", weight: 18, minDepth: 0.05, speed: 1.15, description: "A dark-shelled crab with powerful pincers.", beachCrab: true, spriteSheet: "/assets/crabs/dark-crab-dark-uncommon.png", spriteRow: 1, spriteFrameSize: 32 },
-  { name: "Crimson Crab", icon: "/assets/icons/fish/crimson-crab-crimson-rare.png", catchAsset: "/assets/icons/fish/crimson-crab-crimson-rare.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 40, rarity: "rare", weight: 8, minDepth: 0.05, speed: 1.4, description: "A blood-red crab with Sea Devil markings. Extremely aggressive.", beachCrab: true, spriteSheet: "/assets/crabs/crimson-crab-crimson-rare.png", spriteRow: 1, spriteFrameSize: 32 },
-  { name: "Shadow Crab", icon: "/assets/icons/fish/shadow-crab-shadow-rare.png", catchAsset: "/assets/icons/fish/shadow-crab-shadow-rare.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 55, rarity: "rare", weight: 5, minDepth: 0.05, speed: 1.6, description: "A dark maroon crab that moves like a phantom. Kin of the Sea Devil.", beachCrab: true, spriteSheet: "/assets/crabs/shadow-crab-shadow-rare.png", spriteRow: 1, spriteFrameSize: 32 },
+  { name: "Red Crab", icon: "/assets/icons/fish/red-crab-red-common.png", catchAsset: "/assets/icons/fish/red-crab-red-common.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 1, walkFrames: 1, points: 8, rarity: "common", weight: 50, minDepth: 0.05, speed: 0.9, description: "A small red crab that scuttles along the beach.", beachCrab: true, spriteSheet: "/assets/crabs/red-crab-red-common.png", spriteRow: 0, spriteFrameSize: 128 },
+  { name: "Blue Crab", icon: "/assets/icons/fish/blue-crab-blue-common.png", catchAsset: "/assets/icons/fish/blue-crab-blue-common.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 1, walkFrames: 1, points: 10, rarity: "common", weight: 40, minDepth: 0.05, speed: 1.0, description: "A bright blue crab found near tidal pools.", beachCrab: true, spriteSheet: "/assets/crabs/blue-crab-blue-common.png", spriteRow: 0, spriteFrameSize: 128 },
+  { name: "Green Crab", icon: "/assets/icons/fish/green-crab-green-common.png", catchAsset: "/assets/icons/fish/green-crab-green-common.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 1, walkFrames: 1, points: 8, rarity: "common", weight: 45, minDepth: 0.05, speed: 0.8, description: "A mossy green crab hiding in the seaweed.", beachCrab: true, spriteSheet: "/assets/crabs/green-crab-green-common.png", spriteRow: 0, spriteFrameSize: 128 },
+  { name: "Purple Crab", icon: "/assets/icons/fish/purple-crab-purple-uncommon.png", catchAsset: "/assets/icons/fish/purple-crab-purple-uncommon.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 1, walkFrames: 1, points: 15, rarity: "uncommon", weight: 20, minDepth: 0.05, speed: 1.1, description: "An uncommon purple crab with iridescent shell.", beachCrab: true, spriteSheet: "/assets/crabs/purple-crab-purple-uncommon.png", spriteRow: 0, spriteFrameSize: 128 },
+  { name: "Gold Crab", icon: "/assets/icons/fish/gold-crab-gold-uncommon.png", catchAsset: "/assets/icons/fish/gold-crab-gold-uncommon.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 1, walkFrames: 1, points: 25, rarity: "uncommon", weight: 15, minDepth: 0.05, speed: 1.2, description: "A rare golden crab. Prized for its shimmering shell.", beachCrab: true, spriteSheet: "/assets/crabs/gold-crab-gold-uncommon.png", spriteRow: 0, spriteFrameSize: 128 },
+  { name: "Cyan Crab", icon: "/assets/icons/fish/cyan-crab-cyan-common.png", catchAsset: "/assets/icons/fish/cyan-crab-cyan-common.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 1, walkFrames: 1, points: 8, rarity: "common", weight: 45, minDepth: 0.05, speed: 0.85, description: "A pale cyan crab commonly found on sandy shores.", beachCrab: true, spriteSheet: "/assets/crabs/cyan-crab-cyan-common.png", spriteRow: 0, spriteFrameSize: 128 },
+  { name: "Pink Crab", icon: "/assets/icons/fish/pink-crab-pink-common.png", catchAsset: "/assets/icons/fish/pink-crab-pink-common.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 1, walkFrames: 1, points: 12, rarity: "common", weight: 35, minDepth: 0.05, speed: 0.95, description: "A cute pink crab that loves warm shallow waters.", beachCrab: true, spriteSheet: "/assets/crabs/pink-crab-pink-common.png", spriteRow: 0, spriteFrameSize: 128 },
+  { name: "Dark Crab", icon: "/assets/icons/fish/dark-crab-dark-uncommon.png", catchAsset: "/assets/icons/fish/dark-crab-dark-uncommon.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 1, walkFrames: 1, points: 20, rarity: "uncommon", weight: 18, minDepth: 0.05, speed: 1.15, description: "A dark-shelled crab with powerful pincers.", beachCrab: true, spriteSheet: "/assets/crabs/dark-crab-dark-uncommon.png", spriteRow: 0, spriteFrameSize: 128 },
+  { name: "Crimson Crab", icon: "/assets/icons/fish/crimson-crab-crimson-rare.png", catchAsset: "/assets/icons/fish/crimson-crab-crimson-rare.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 1, walkFrames: 1, points: 40, rarity: "rare", weight: 8, minDepth: 0.05, speed: 1.4, description: "A blood-red crab with Sea Devil markings. Extremely aggressive.", beachCrab: true, spriteSheet: "/assets/crabs/crimson-crab-crimson-rare.png", spriteRow: 0, spriteFrameSize: 128 },
+  { name: "Shadow Crab", icon: "/assets/icons/fish/shadow-crab-shadow-rare.png", catchAsset: "/assets/icons/fish/shadow-crab-shadow-rare.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 1, walkFrames: 1, points: 55, rarity: "rare", weight: 5, minDepth: 0.05, speed: 1.6, description: "A dark maroon crab that moves like a phantom. Kin of the Sea Devil.", beachCrab: true, spriteSheet: "/assets/crabs/shadow-crab-shadow-rare.png", spriteRow: 0, spriteFrameSize: 128 },
 ];
 
 const JUNK_ITEMS = [
@@ -3297,20 +3297,19 @@ export default function FishingGame() {
       // --- ROCKY/SAND TERRAIN along ocean floor slope ---
       const rockFloorImg = getImg("/assets/tiles/rocky_sand_floor.png");
       const rockCliffImg = getImg("/assets/tiles/rock_cliff_wall.png");
-      const beachSandImg = getImg("/assets/tiles/beach_sand_surface.png");
       {
         const terrainStep = 60;
         const terrainStartX = Math.floor(viewL / terrainStep) * terrainStep;
-        const baitShopBoundary = W * 2.85;
         for (let tx = terrainStartX; tx < viewR + terrainStep; tx += terrainStep) {
+          if (tx > waterRightEdge) break;
+          if (tx + terrainStep > waterRightEdge) continue;
           const floorAtX = getOceanFloorY(tx, waterY, W, H);
           const floorAtNext = getOceanFloorY(tx + terrainStep, waterY, W, H);
-          const isBeachArea = tx > baitShopBoundary;
-          const terrainH = isBeachArea ? 40 : 80 + Math.sin(tx * 0.01) * 20;
-          const chosenImg = isBeachArea ? beachSandImg : (tx % 120 < 60 ? rockFloorImg : rockCliffImg);
+          const terrainH = 80 + Math.sin(tx * 0.01) * 20;
+          const chosenImg = tx % 120 < 60 ? rockFloorImg : rockCliffImg;
           if (chosenImg && chosenImg.complete && chosenImg.naturalWidth > 0) {
             ctx.save();
-            ctx.globalAlpha = isBeachArea ? 0.7 : 0.6;
+            ctx.globalAlpha = 0.6;
             ctx.beginPath();
             ctx.moveTo(tx, floorAtX);
             ctx.lineTo(tx + terrainStep, floorAtNext);
@@ -3323,7 +3322,7 @@ export default function FishingGame() {
           } else {
             ctx.save();
             ctx.globalAlpha = 0.5;
-            ctx.fillStyle = isBeachArea ? "#c4a96e" : "#4a3c2a";
+            ctx.fillStyle = "#4a3c2a";
             ctx.beginPath();
             ctx.moveTo(tx, floorAtX);
             ctx.lineTo(tx + terrainStep, floorAtNext);
@@ -4834,21 +4833,22 @@ export default function FishingGame() {
         if (fish.type.beachCrab && fish.type.spriteSheet) {
           const crabImg = getImg(fish.type.spriteSheet);
           if (crabImg && crabImg.complete) {
-            const fs = fish.type.spriteFrameSize || 32;
-            const crabScale = SCALE * 1.4 * fish.sizeMultiplier;
-            const frameIdx = fish.frame % 4;
+            const fs = fish.type.spriteFrameSize || 128;
+            const crabDrawSize = SCALE * 12 * fish.sizeMultiplier;
+            const frameIdx = fish.frame % Math.max(1, fish.type.walkFrames);
             const sx = frameIdx * fs;
-            const sy = (fish.type.spriteRow || 1) * fs;
+            const sy = (fish.type.spriteRow || 0) * fs;
             const wobble = fish.crabDigging ? 0 : Math.sin(s.time * 0.15 + fish.wobblePhase) * 3;
             const digAlpha = fish.crabDigAlpha !== undefined ? fish.crabDigAlpha : 1;
             ctx.globalAlpha = finalAlpha * digAlpha;
             ctx.save();
-            ctx.translate(fish.x + fs * crabScale / 2, fish.y + fs * crabScale / 2);
+            ctx.imageSmoothingEnabled = false;
+            ctx.translate(fish.x + crabDrawSize / 2, fish.y + crabDrawSize / 2);
             ctx.rotate(wobble * 0.03);
             if (fish.direction < 0) {
               ctx.scale(-1, 1);
             }
-            ctx.drawImage(crabImg, sx, sy, fs, fs, -fs * crabScale / 2, -fs * crabScale / 2, fs * crabScale, fs * crabScale);
+            ctx.drawImage(crabImg, sx, sy, fs, fs, -crabDrawSize / 2, -crabDrawSize / 2, crabDrawSize, crabDrawSize);
             ctx.restore();
           }
         } else if (fish.type.staticImg) {
@@ -5719,15 +5719,12 @@ export default function FishingGame() {
         if (eqLure.crabSpriteSheet) {
           const crabSheet = getImg(eqLure.crabSpriteSheet);
           if (crabSheet && crabSheet.complete && crabSheet.naturalWidth > 0) {
-            const crabFS = 32;
-            const crabFrame = Math.floor(s.time * 0.03) % 2;
-            const crabSX = crabFrame * crabFS;
-            const crabSY = crabFS;
+            const crabFS = crabSheet.naturalWidth;
             const crabDrawSize = 14;
             ctx.save();
             ctx.imageSmoothingEnabled = false;
             const wobble = Math.sin(s.time * 0.15) * 2;
-            ctx.drawImage(crabSheet, crabSX, crabSY, crabFS, crabFS,
+            ctx.drawImage(crabSheet, 0, 0, crabFS, crabFS,
               s.hookX - crabDrawSize / 2 + 2, s.hookY + 1 + wobble, crabDrawSize, crabDrawSize);
             ctx.restore();
           }
@@ -5747,7 +5744,7 @@ export default function FishingGame() {
             const frameW = throwImg.naturalWidth / throwFrames;
             const frameH = throwImg.naturalHeight;
             const frame = Math.min(s.netThrowFrame, throwFrames - 1);
-            const throwScale = netVisualW / frameW;
+            const throwScale = netVisualW * 0.6 / frameW;
             const drawW = frameW * throwScale;
             const drawH = frameH * throwScale;
             ctx.save();
