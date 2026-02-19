@@ -190,15 +190,15 @@ const allFish: LandingFish[] = [
   { name: "Sea Devil", rarity: "rare", points: 600, desc: "A monstrous crab creature from the deep trenches.", img: imgSeaDevil },
   { name: "Whale", rarity: "legendary", points: 300, desc: "The king of the deep. Incredibly rare!", img: imgWhale },
   { name: "Kraken", rarity: "legendary", points: 800, desc: "A massive squid from the abyss, feared by all.", img: imgKraken },
-  { name: "Phantom Minnow", rarity: "ultra_rare", points: 500, desc: "A ghostly minnow wreathed in spectral flame.", img: imgPhantomMinnow },
-  { name: "Volcanic Perch", rarity: "ultra_rare", points: 600, desc: "Scales glow molten orange from deep-sea vents.", img: imgVolcanicPerch },
-  { name: "Abyssal Bass", rarity: "ultra_rare", points: 750, desc: "A colossal bass radiating dark energy.", img: imgAbyssalBass },
-  { name: "Frost Catfish", rarity: "ultra_rare", points: 800, desc: "Encased in living ice. Freezes the water.", img: imgFrostCatfish },
-  { name: "Storm Swordfish", rarity: "ultra_rare", points: 1000, desc: "Rides lightning bolts with electric fury.", img: imgStormSwordfish },
-  { name: "Celestial Whale", rarity: "ultra_rare", points: 2000, desc: "A cosmic whale that swallowed a dying star.", img: imgCelestialWhale },
-  { name: "Neon Eel", rarity: "ultra_rare", points: 650, desc: "Bioluminescent eel pulsing with neon colors.", img: imgNeonEel },
-  { name: "Golden Salmon", rarity: "ultra_rare", points: 700, desc: "Solid gold scales. Worth a fortune.", img: imgGoldenSalmon },
-  { name: "Shadow Leviathan", rarity: "ultra_rare", points: 1500, desc: "A titanic shadow beast from beyond the abyss.", img: imgShadowLeviathan },
+  { name: "Phantom Minnow", rarity: "ultra_rare", points: 500, desc: "A ghostly minnow wreathed in spectral flame.", img: "/assets/icons/fish/phantom-minnow-spectral-ultra_rare.png" },
+  { name: "Volcanic Perch", rarity: "ultra_rare", points: 600, desc: "Scales glow molten orange from deep-sea vents.", img: "/assets/icons/fish/volcanic-perch-molten-ultra_rare.png" },
+  { name: "Abyssal Bass", rarity: "ultra_rare", points: 750, desc: "A colossal bass radiating dark energy.", img: "/assets/icons/fish/abyssal-bass-dark-ultra_rare.png" },
+  { name: "Frost Catfish", rarity: "ultra_rare", points: 800, desc: "Encased in living ice. Freezes the water.", img: "/assets/icons/fish/frost-catfish-ice-ultra_rare.png" },
+  { name: "Storm Swordfish", rarity: "ultra_rare", points: 1000, desc: "Rides lightning bolts with electric fury.", img: "/assets/icons/fish/storm-swordfish-electric-ultra_rare.png" },
+  { name: "Celestial Whale", rarity: "ultra_rare", points: 2000, desc: "A cosmic whale that swallowed a dying star.", img: "/assets/icons/fish/celestial-whale-cosmic-ultra_rare.png" },
+  { name: "Neon Eel", rarity: "ultra_rare", points: 650, desc: "Bioluminescent eel pulsing with neon colors.", img: "/assets/icons/fish/neon-eel-neon-ultra_rare.png" },
+  { name: "Golden Salmon", rarity: "ultra_rare", points: 700, desc: "Solid gold scales. Worth a fortune.", img: "/assets/icons/fish/golden-salmon-gold-ultra_rare.png" },
+  { name: "Shadow Leviathan", rarity: "ultra_rare", points: 1500, desc: "A titanic shadow beast from beyond the abyss.", img: "/assets/icons/fish/shadow-leviathan-shadow-ultra_rare.png" },
   { name: "The Seal at the Seam", rarity: "ultra_rare", points: 5000, desc: "A living sigil at the boundary of reality. The 10th Legendary.", img: imgSealAtTheSeam },
 ];
 
@@ -883,7 +883,7 @@ export default function Landing() {
                           style={{
                             width: 52, height: 52,
                             objectFit: "contain",
-                            imageRendering: "auto",
+                            imageRendering: "pixelated",
                             borderRadius: 4,
                           }}
                         />
