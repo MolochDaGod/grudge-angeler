@@ -440,17 +440,21 @@ function FlipbookOverlay({ targetPage, onComplete }: { targetPage: number; onCom
             </div>
 
             <div style={{
-              width: 100, height: 100, margin: "0 auto 16px",
+              width: 120, height: 120, margin: "0 auto 16px",
               display: "flex", alignItems: "center", justifyContent: "center",
               position: "relative",
             }}>
-              <div style={{ position: "relative", zIndex: 1 }}>
-                <CodexAnimatedSprite
-                  sprite={currentFish.sprite}
-                  size={currentFish.name === "The Seal at the Seam" ? 70 : 90}
-                  wiggleId={legendaries.indexOf(currentFish)}
-                />
-              </div>
+              <img
+                src={currentFish.artImage}
+                alt={currentFish.name}
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "100%",
+                  objectFit: "contain",
+                  borderRadius: 6,
+                  filter: `drop-shadow(0 0 12px ${currentFish.aura})`,
+                }}
+              />
             </div>
 
             <div style={{
