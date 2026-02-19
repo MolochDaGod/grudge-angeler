@@ -1661,6 +1661,12 @@ export default function FishingGame() {
       ]),
       ...Array.from({length: 17}, (_, i) => `/assets/icons/fish/Icons_${String(i+1).padStart(2,'0')}.png`),
       ...CHUM_ITEMS.map(c => c.icon),
+      "/assets/chest/closed.png",
+      "/assets/chest/open.png",
+      "/assets/chest/ajar.png",
+      "/assets/chest/Bubble_1.png",
+      "/assets/chest/Bubble_2.png",
+      "/assets/chest/Bubble_3.png",
       ...["shark","kraken","crabaggresive","leviathan"].flatMap(n => [
         `/assets/predators/${n}/Idle.png`,
         `/assets/predators/${n}/Walk.png`,
