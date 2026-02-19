@@ -1650,6 +1650,7 @@ export default function FishingGame() {
       ...FISH_TYPES.map(f => f.catchAsset),
       ...FISH_TYPES.filter(f => f.icon).map(f => f.icon!),
       ...BEACH_CRABS.filter(f => f.icon).map(f => f.icon!),
+      ...BEACH_CRABS.filter(f => f.spriteSheet).map(f => f.spriteSheet!),
       "/assets/icons/fish/shark-predator.png",
       "/assets/icons/fish/kraken-predator.png",
       "/assets/icons/fish/sea-devil-predator.png",
@@ -4422,6 +4423,117 @@ export default function FishingGame() {
         ctx.beginPath();
         ctx.ellipse(rx, ry, 4 + ri % 3, 3, 0, 0, Math.PI * 2);
         ctx.fill();
+      }
+
+      // Beach showcase: crab sprites walking on sand + net stages displayed
+      if (s.gameState !== "title" && s.gameState !== "charSelect") {
+        const crabAssets = [
+          "/assets/crabs/red-crab-red-common.png",
+          "/assets/crabs/blue-crab-blue-common.png",
+          "/assets/crabs/green-crab-green-common.png",
+          "/assets/crabs/cyan-crab-cyan-common.png",
+          "/assets/crabs/pink-crab-pink-common.png",
+          "/assets/crabs/gold-crab-gold-uncommon.png",
+          "/assets/crabs/purple-crab-purple-uncommon.png",
+          "/assets/crabs/dark-crab-dark-uncommon.png",
+          "/assets/crabs/crimson-crab-crimson-rare.png",
+          "/assets/crabs/shadow-crab-shadow-rare.png",
+        ];
+        ctx.save();
+        ctx.imageSmoothingEnabled = false;
+        for (let ci = 0; ci < crabAssets.length; ci++) {
+          const crabImg = getImg(crabAssets[ci]);
+          if (!crabImg || !crabImg.complete) continue;
+          const crabSpacing = 120;
+          const cx = beachStart + 80 + ci * crabSpacing + Math.sin(s.time * 0.04 + ci * 1.8) * 20;
+          const progC = (cx - beachStart) / (beachEnd - beachStart);
+          const cy = pierY + 12 + progC * 28 - 20;
+          const crabSize = 38 + Math.sin(ci * 0.9) * 6;
+          const wobble = Math.sin(s.time * 0.12 + ci * 2.3) * 3;
+          const scuttle = Math.sin(s.time * 0.08 + ci * 1.1) * 0.06;
+          ctx.save();
+          ctx.translate(cx + crabSize / 2, cy + crabSize / 2 + wobble);
+          ctx.rotate(scuttle);
+          if (Math.sin(s.time * 0.04 + ci * 1.8) > 0) ctx.scale(-1, 1);
+          ctx.drawImage(crabImg, -crabSize / 2, -crabSize / 2, crabSize, crabSize);
+          ctx.restore();
+        }
+        ctx.restore();
+
+        // Net showcase on beach: NetThrow (animated), Netthrown (sinking), Net (rising/reversed)
+        const netShowX = beachStart + 200;
+        const netShowProgBase = (netShowX - beachStart) / (beachEnd - beachStart);
+        const netShowBaseY = pierY + 8 + netShowProgBase * 28;
+
+        // 1) NetThrow.png - animated frame cycling
+        const throwShowImg = getImg("/assets/objects/NetThrow.png");
+        if (throwShowImg && throwShowImg.complete && throwShowImg.naturalWidth > 0) {
+          ctx.save();
+          ctx.imageSmoothingEnabled = false;
+          const throwFrames = 7;
+          const fW = throwShowImg.naturalWidth / throwFrames;
+          const fH = throwShowImg.naturalHeight;
+          const showFrame = Math.floor(s.time * 0.08) % throwFrames;
+          const throwShowScale = 4;
+          const dW = fW * throwShowScale;
+          const dH = fH * throwShowScale;
+          ctx.globalAlpha = 0.95;
+          ctx.drawImage(throwShowImg, showFrame * fW, 0, fW, fH,
+            netShowX - dW / 2, netShowBaseY - dH - 10, dW, dH);
+          ctx.fillStyle = "#f1c40f";
+          ctx.font = "bold 8px 'Press Start 2P', monospace";
+          ctx.textAlign = "center";
+          ctx.fillText("NET THROW", netShowX, netShowBaseY - dH - 16);
+          ctx.restore();
+        }
+
+        // 2) Netthrown.png - sinking display
+        const thrownShowX = netShowX + 300;
+        const thrownProg = (thrownShowX - beachStart) / (beachEnd - beachStart);
+        const thrownBaseY = pierY + 8 + thrownProg * 28;
+        const thrownImg = getImg("/assets/objects/Netthrown.png");
+        if (thrownImg && thrownImg.complete && thrownImg.naturalWidth > 0) {
+          ctx.save();
+          ctx.imageSmoothingEnabled = false;
+          const thrownScale = 3;
+          const tnW = thrownImg.naturalWidth * thrownScale;
+          const tnH = thrownImg.naturalHeight * thrownScale;
+          const sinkBob = Math.sin(s.time * 0.06) * 5;
+          ctx.globalAlpha = 0.95;
+          ctx.drawImage(thrownImg, 0, 0, thrownImg.naturalWidth, thrownImg.naturalHeight,
+            thrownShowX - tnW / 2, thrownBaseY - tnH - 10 + sinkBob, tnW, tnH);
+          ctx.fillStyle = "#5dade2";
+          ctx.font = "bold 8px 'Press Start 2P', monospace";
+          ctx.textAlign = "center";
+          ctx.fillText("SINKING", thrownShowX, thrownBaseY - tnH - 16 + sinkBob);
+          ctx.restore();
+        }
+
+        // 3) Net.png - rising/catch display (flipped vertically to show reversed)
+        const netRiseX = thrownShowX + 300;
+        const netRiseProg = (netRiseX - beachStart) / (beachEnd - beachStart);
+        const netRiseBaseY = pierY + 8 + netRiseProg * 28;
+        const netRiseImg = getImg("/assets/objects/Net.png");
+        if (netRiseImg && netRiseImg.complete && netRiseImg.naturalWidth > 0) {
+          ctx.save();
+          ctx.imageSmoothingEnabled = false;
+          const riseScale = 3;
+          const rnW = netRiseImg.naturalWidth * riseScale;
+          const rnH = netRiseImg.naturalHeight * riseScale;
+          const riseBob = Math.sin(s.time * 0.07 + 1) * 6;
+          ctx.globalAlpha = 0.95;
+          ctx.translate(netRiseX, netRiseBaseY - rnH / 2 - 10 + riseBob);
+          ctx.drawImage(netRiseImg, 0, 0, netRiseImg.naturalWidth, netRiseImg.naturalHeight,
+            -rnW / 2, -rnH / 2, rnW, rnH);
+          ctx.restore();
+
+          ctx.save();
+          ctx.fillStyle = "#2ecc71";
+          ctx.font = "bold 8px 'Press Start 2P', monospace";
+          ctx.textAlign = "center";
+          ctx.fillText("CATCHING!", netRiseX, netRiseBaseY - rnH - 16 + riseBob);
+          ctx.restore();
+        }
       }
 
       // Beach Shop Building - positioned at waterline
