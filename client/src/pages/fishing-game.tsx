@@ -4701,12 +4701,14 @@ export default function FishingGame() {
             ctx.restore();
           }
         } else {
+          const surfaceTintCutoff = 0.25;
+          const applyTint = fishDepth > surfaceTintCutoff ? (fish.type.tint || null) : null;
           drawSprite(
             `/assets/creatures/${fish.type.creatureFolder}/Walk.png`,
             fish.frame, fish.type.walkFrames,
             fish.x, fish.y, creatureScale,
             fish.direction < 0,
-            fish.type.tint || null,
+            applyTint,
             fish.type.spriteFrameH
           );
         }
