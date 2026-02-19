@@ -94,7 +94,7 @@ function loadBaitShopPos(): BaitShopPos {
       if (typeof d.offsetX === "number" && typeof d.offsetY === "number" && typeof d.scale === "number") return d;
     }
   } catch {}
-  return { offsetX: 0, offsetY: 0, scale: 1.8 };
+  return { offsetX: 0, offsetY: 0, scale: 3.2 };
 }
 function saveBaitShopPos(ox: number, oy: number, sc: number) {
   localStorage.setItem(BAIT_SHOP_STORAGE_KEY, JSON.stringify({ offsetX: ox, offsetY: oy, scale: sc }));
@@ -9720,11 +9720,11 @@ export default function FishingGame() {
                   {item.scaleKey && (
                     <div style={{ display: "flex", gap: 3, flexShrink: 0 }}>
                       <div
-                        onClick={(e) => { e.stopPropagation(); (stateRef.current as any)[item.scaleKey!] = Math.max(0.3, item.scaleVal - 0.2); syncUI(); }}
+                        onClick={(e) => { e.stopPropagation(); const newVal = Math.max(0.3, item.scaleVal - 0.2); (stateRef.current as any)[item.scaleKey!] = newVal; if (item.scaleKey === "baitShopScale") saveBaitShopPos(stateRef.current.baitShopOffsetX, stateRef.current.baitShopOffsetY, newVal); syncUI(); }}
                         style={{ width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(79,195,247,0.2)", borderRadius: 4, fontSize: 14, fontWeight: "bold", color: "#4fc3f7", cursor: "pointer", border: "1px solid rgba(79,195,247,0.3)", userSelect: "none" }}
                       >-</div>
                       <div
-                        onClick={(e) => { e.stopPropagation(); (stateRef.current as any)[item.scaleKey!] = Math.min(8, item.scaleVal + 0.2); syncUI(); }}
+                        onClick={(e) => { e.stopPropagation(); const newVal = Math.min(8, item.scaleVal + 0.2); (stateRef.current as any)[item.scaleKey!] = newVal; if (item.scaleKey === "baitShopScale") saveBaitShopPos(stateRef.current.baitShopOffsetX, stateRef.current.baitShopOffsetY, newVal); syncUI(); }}
                         style={{ width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(79,195,247,0.2)", borderRadius: 4, fontSize: 14, fontWeight: "bold", color: "#4fc3f7", cursor: "pointer", border: "1px solid rgba(79,195,247,0.3)", userSelect: "none" }}
                       >+</div>
                     </div>
