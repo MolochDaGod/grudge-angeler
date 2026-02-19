@@ -433,14 +433,6 @@ export async function registerRoutes(
       const results = await storage.getTournamentResults(status.date, 50);
       const rank = results.findIndex(r => r.playerName === playerName) + 1;
 
-      sendTournamentWebhook(playerName, Number(compositeScore), rank, results.length, status.date, {
-        totalCaught: Number(totalCaught) || 0,
-        totalWeight: Number(totalWeight) || 0,
-        largestCatch: Number(largestCatch) || 0,
-        largestFishName: largestFishName || "",
-        rarityScore: Number(rarityScore) || 0,
-      });
-
       res.json({ entry, rank, totalParticipants: results.length });
     } catch (err) {
       console.error("Tournament submit error:", err);
@@ -450,49 +442,7 @@ export async function registerRoutes(
 
   const tourneyWebhookUrl = () => process.env.DISCORD_WEBHOOK_URL_TOURNEY;
 
-  async function sendTournamentWebhook(playerName: string, score: number, rank: number, totalPlayers: number, date: string, stats: { totalCaught: number; totalWeight: number; largestCatch: number; largestFishName: string; rarityScore: number }) {
-    const webhookUrl = tourneyWebhookUrl();
-    if (!webhookUrl) return;
-
-    const prizePool = 10000;
-    const rewards = [0.35, 0.20, 0.15, 0.10, 0.08, 0.05, 0.04, 0.02, 0.005, 0.005];
-    const rewardPct = rank <= rewards.length ? rewards[rank - 1] : 0;
-    const estimatedReward = Math.floor(prizePool * rewardPct);
-
-    const medalEmoji = rank === 1 ? "\uD83E\uDD47" : rank === 2 ? "\uD83E\uDD48" : rank === 3 ? "\uD83E\uDD49" : "\uD83C\uDFA3";
-
-    const embed: any = {
-      title: `${medalEmoji} Tournament Score Submitted!`,
-      description: `**${playerName}** posted a tournament score of **${Math.floor(score)}** points!`,
-      color: rank <= 3 ? 0xffd700 : 0xe040fb,
-      fields: [
-        { name: "Rank", value: `#${rank} / ${totalPlayers}`, inline: true },
-        { name: "Fish Caught", value: `${stats.totalCaught}`, inline: true },
-        { name: "Total Weight", value: `${stats.totalWeight.toFixed(1)} lbs`, inline: true },
-        { name: "Largest Catch", value: `${stats.largestCatch.toFixed(1)} lbs${stats.largestFishName ? ` (${stats.largestFishName})` : ""}`, inline: true },
-        { name: "Rarity Score", value: `${stats.rarityScore}`, inline: true },
-        { name: "Est. Reward", value: `${estimatedReward} gbux`, inline: true },
-      ],
-      footer: { text: `Daily Tournament ${date} \u2022 6-8 PM CST \u2022 10,000 gbux Prize Pool`, icon_url: `${baseUrl}/assets/icons/grudge/grudge_logo.png` },
-      timestamp: new Date().toISOString(),
-    };
-
-    try {
-      await fetch(webhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: "Grudge Tournament",
-          avatar_url: `${baseUrl}/assets/icons/grudge/grudge_logo.png`,
-          embeds: [embed],
-        }),
-      });
-    } catch (err) {
-      console.error("Tournament webhook error:", err);
-    }
-  }
-
-  async function sendTournamentStartAnnouncement(date: string) {
+  async function sendTournamentAnnouncement(date: string, isReminder: boolean) {
     const webhookUrl = tourneyWebhookUrl();
     if (!webhookUrl) return;
 
@@ -500,9 +450,19 @@ export async function registerRoutes(
     const bannerUrl = `${baseUrl}/assets/icons/grudge/promo-banner.png`;
     const playLink = baseUrl;
 
+    const title = isReminder
+      ? "\u23F0 TOURNAMENT REMINDER \u2014 1 HOUR LEFT!"
+      : "\uD83C\uDFC6 DAILY TOURNAMENT IS LIVE!";
+    const desc = isReminder
+      ? `**The tournament is halfway done!** Only **1 hour left** to climb the leaderboard and claim your share of **10,000 GBUX**!\n\n\u23F0 **Ends:** 8:00 PM CST\n\uD83C\uDFA3 **Format:** Best 20-minute catch cycle\n\uD83D\uDCB0 **Prize Pool:** 10,000 GBUX\n\n**[PLAY NOW](${playLink})**`
+      : `**The fishing tournament has begun!** Cast your lines, reel in the biggest catches, and climb the leaderboard for a share of the **10,000 GBUX** prize pool!\n\n\u23F0 **Window:** 6:00 PM \u2013 8:00 PM CST\n\uD83C\uDFA3 **Format:** Best 20-minute catch cycle\n\uD83D\uDCB0 **Prize Pool:** 10,000 GBUX\n\n**[PLAY NOW](${playLink})**`;
+    const contentMsg = isReminder
+      ? `\u23F0 **1 HOUR LEFT in today's tournament!** Don't miss your chance at 10,000 GBUX!\n\n\uD83C\uDFA3 **Play now:** ${playLink}`
+      : `@everyone \uD83C\uDFC6 **Daily Tournament is NOW LIVE!** Jump in and compete for 10,000 GBUX!\n\n\uD83C\uDFA3 **Play now:** ${playLink}\n\uD83D\uDD11 Just enter a username \u2014 no account needed!`;
+
     const embed: any = {
-      title: "\uD83C\uDFC6 DAILY TOURNAMENT IS LIVE!",
-      description: `**The fishing tournament has begun!** Cast your lines, reel in the biggest catches, and climb the leaderboard for a share of the **10,000 GBUX** prize pool!\n\n\u23F0 **Window:** 6:00 PM \u2013 8:00 PM CST\n\uD83C\uDFA3 **Format:** Best 20-minute catch cycle\n\uD83D\uDCB0 **Prize Pool:** 10,000 GBUX\n\n**[PLAY NOW](${playLink})**`,
+      title,
+      description: desc,
       url: playLink,
       color: 0xe040fb,
       fields: [
@@ -522,18 +482,23 @@ export async function registerRoutes(
     };
 
     try {
-      await fetch(webhookUrl, {
+      const resp = await fetch(webhookUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: "Grudge Tournament",
           avatar_url: logoUrl,
-          content: `@everyone \uD83C\uDFC6 **Daily Tournament is NOW LIVE!** Jump in and compete for 10,000 GBUX!\n\n\uD83C\uDFA3 **Play now:** ${playLink}\n\uD83D\uDD11 Just enter a username \u2014 no account needed!`,
+          content: contentMsg,
           embeds: [embed],
         }),
       });
+      if (!resp.ok) {
+        console.error(`[Tournament] Announcement webhook failed: ${resp.status}`);
+      } else {
+        console.log(`[Tournament] ${isReminder ? "Reminder" : "Start"} announcement sent for ${date}`);
+      }
     } catch (err) {
-      console.error("Tournament start webhook error:", err);
+      console.error("[Tournament] Announcement webhook error:", err);
     }
   }
 
@@ -576,7 +541,7 @@ export async function registerRoutes(
         timestamp: new Date().toISOString(),
       };
 
-      await fetch(webhookUrl, {
+      const resp = await fetch(webhookUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -586,23 +551,59 @@ export async function registerRoutes(
           embeds: [embed],
         }),
       });
+      if (!resp.ok) {
+        console.error(`[Tournament] End webhook failed: ${resp.status}`);
+      } else {
+        console.log(`[Tournament] Results posted for ${date}`);
+      }
     } catch (err) {
-      console.error("Tournament end webhook error:", err);
+      console.error("[Tournament] End webhook error:", err);
     }
   }
 
   let lastTournamentState = false;
   let lastTournamentDate = "";
+  let sentStartAnnouncement = "";
+  let sentReminderAnnouncement = "";
+  let sentEndAnnouncement = "";
+
+  function getCSTHour(): number {
+    const now = new Date();
+    const cst = new Date(now.toLocaleString("en-US", { timeZone: "America/Chicago" }));
+    return cst.getHours();
+  }
+
+  function getCSTMinute(): number {
+    const now = new Date();
+    const cst = new Date(now.toLocaleString("en-US", { timeZone: "America/Chicago" }));
+    return cst.getMinutes();
+  }
+
   setInterval(() => {
     const status = isTournamentActive();
-    if (status.active && !lastTournamentState) {
-      sendTournamentStartAnnouncement(status.date);
+    const cstHour = getCSTHour();
+    const cstMinute = getCSTMinute();
+
+    if (status.active) {
+      if (cstHour === 18 && sentStartAnnouncement !== status.date) {
+        sentStartAnnouncement = status.date;
+        sendTournamentAnnouncement(status.date, false);
+      }
+      if (cstHour === 19 && sentReminderAnnouncement !== status.date) {
+        sentReminderAnnouncement = status.date;
+        sendTournamentAnnouncement(status.date, true);
+      }
     }
+
     if (!status.active && lastTournamentState && lastTournamentDate) {
-      sendTournamentEndAnnouncement(lastTournamentDate);
+      if (cstHour === 20 && cstMinute >= 1 && sentEndAnnouncement !== lastTournamentDate) {
+        sentEndAnnouncement = lastTournamentDate;
+        sendTournamentEndAnnouncement(lastTournamentDate);
+      }
     }
+
     lastTournamentState = status.active;
-    lastTournamentDate = status.date;
+    if (status.active) lastTournamentDate = status.date;
   }, 30000);
 
   registerImageRoutes(app);
