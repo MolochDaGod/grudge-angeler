@@ -29,6 +29,77 @@ function getDepthSlope(): DepthSlopeData {
   return _depthSlope;
 }
 function reloadDepthSlope() { _depthSlope = loadDepthSlope(); }
+
+interface SandRect { x: number; y: number; w: number; h: number; }
+let _sandAreas: SandRect[] | null = null;
+function loadSandAreas(): SandRect[] {
+  try {
+    const raw = localStorage.getItem(ADMIN_MAP_STORAGE_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      if (data.areas && Array.isArray(data.areas)) {
+        return data.areas
+          .filter((a: any) => a.isSand === true)
+          .map((a: any) => ({ x: a.x as number, y: a.y as number, w: a.w as number, h: a.h as number }));
+      }
+    }
+  } catch {}
+  const refH = 720;
+  const pierY = refH * 0.38;
+  const waterY = refH * 0.42;
+  return [
+    { x: ADMIN_REF_W * 2.6, y: pierY - 30, w: ADMIN_REF_W * 2.5, h: waterY - pierY + 80 },
+    { x: ADMIN_REF_W * 3, y: pierY + 5, w: ADMIN_REF_W * 1.5, h: 40 },
+  ];
+}
+function getSandAreas(): SandRect[] {
+  if (!_sandAreas) _sandAreas = loadSandAreas();
+  return _sandAreas;
+}
+function reloadSandAreas() { _sandAreas = loadSandAreas(); }
+function isInSandArea(worldX: number, worldY: number, canvasW: number, canvasH: number): boolean {
+  const scaleX = canvasW / ADMIN_REF_W;
+  const scaleY = canvasH / ADMIN_REF_H;
+  for (const sa of getSandAreas()) {
+    const sx = sa.x * scaleX;
+    const sy = sa.y * scaleY;
+    const sw = sa.w * scaleX;
+    const sh = sa.h * scaleY;
+    if (worldX >= sx && worldX <= sx + sw && worldY >= sy && worldY <= sy + sh) return true;
+  }
+  return false;
+}
+function getSandMinX(worldY: number, canvasW: number, canvasH: number): number {
+  const scaleX = canvasW / ADMIN_REF_W;
+  const scaleY = canvasH / ADMIN_REF_H;
+  let minX = Infinity;
+  for (const sa of getSandAreas()) {
+    const sy = sa.y * scaleY;
+    const sh = sa.h * scaleY;
+    if (worldY >= sy && worldY <= sy + sh) {
+      const sx = sa.x * scaleX;
+      if (sx < minX) minX = sx;
+    }
+  }
+  return minX;
+}
+
+const BAIT_SHOP_STORAGE_KEY = "grudge-angeler-baitshop-pos";
+interface BaitShopPos { offsetX: number; offsetY: number; scale: number; }
+function loadBaitShopPos(): BaitShopPos {
+  try {
+    const raw = localStorage.getItem(BAIT_SHOP_STORAGE_KEY);
+    if (raw) {
+      const d = JSON.parse(raw);
+      if (typeof d.offsetX === "number" && typeof d.offsetY === "number" && typeof d.scale === "number") return d;
+    }
+  } catch {}
+  return { offsetX: 0, offsetY: 0, scale: 1.8 };
+}
+function saveBaitShopPos(ox: number, oy: number, sc: number) {
+  localStorage.setItem(BAIT_SHOP_STORAGE_KEY, JSON.stringify({ offsetX: ox, offsetY: oy, scale: sc }));
+}
+
 function getOceanFloorY(worldX: number, waterY: number, canvasW: number, canvasH: number): number {
   const ds = getDepthSlope();
   const scaleX = canvasW / ADMIN_REF_W;
@@ -1053,9 +1124,9 @@ export default function FishingGame() {
     uwLayers: loadUwLayers() as UnderwaterBgLayer[],
     deckOffsetX: 0,
     deckOffsetY: 0,
-    baitShopOffsetX: 0,
-    baitShopOffsetY: 0,
-    baitShopScale: 1.8,
+    baitShopOffsetX: loadBaitShopPos().offsetX,
+    baitShopOffsetY: loadBaitShopPos().offsetY,
+    baitShopScale: loadBaitShopPos().scale,
     licenseSignOffsetX: 0,
     licenseSignOffsetY: 0,
     licenseSignScale: 1.0,
@@ -1315,6 +1386,8 @@ export default function FishingGame() {
     const viewLeft = -s.cameraX - 100;
     const viewRight = -s.cameraX + canvasW + 100;
     const x = direction > 0 ? viewLeft - 80 : viewRight + 80;
+    const sandLeftEdge = getSandMinX(waterStartY, canvasW, canvasH);
+    if (x >= sandLeftEdge - 20) return;
     const floorY = getOceanFloorY(x, waterStartY, canvasW, canvasH);
     const effectiveMaxY = Math.min(canvasH - 60, floorY);
     const safeRange = Math.max(30, effectiveMaxY - waterStartY);
@@ -1329,6 +1402,7 @@ export default function FishingGame() {
       const pulledMaxY = Math.max(minY + 10, effectiveMaxY - chumDepthPull * (effectiveMaxY - minY) * 0.3);
       y = Math.max(waterStartY + 10, minY + Math.random() * Math.max(10, pulledMaxY - minY));
     }
+    if (isInSandArea(x, y, canvasW, canvasH)) return;
     const baseSizeMult = 0.5 + Math.random() * Math.random() * 4.5;
     const ultraScale = fishType.baseScale || 1;
     const rightSizeReduction = rightRatio > 0.1 ? Math.max(0.3, 1 - rightRatio * 0.7) : 1;
@@ -2086,6 +2160,7 @@ export default function FishingGame() {
 
       if (s.playerX === 0) {
         reloadDepthSlope();
+        reloadSandAreas();
         s.playerX = s.fishingLicense ? defaultFishermanX : W * 3.5;
       }
 
@@ -4504,6 +4579,12 @@ export default function FishingGame() {
           fish.x += fish.direction * fish.speed * dt;
           fish.wobblePhase += 0.04 * dt;
           fish.y = fish.baseY + Math.sin(fish.wobblePhase) * fish.wobbleAmp;
+
+          if (isInSandArea(fish.x, fish.y, W, H) || isInSandArea(fish.x, fish.baseY, W, H)) {
+            fish.direction *= -1;
+            fish.x += fish.direction * fish.speed * 3 * dt;
+            fish.dirChangeTimer = 60 + Math.random() * 60;
+          }
         }
 
         fish.frameTimer += dt;
@@ -7109,6 +7190,9 @@ export default function FishingGame() {
 
   const handleCanvasMouseUp = useCallback(() => {
     const s = stateRef.current;
+    if (s.gizmoDragging && s.gizmoSelected === -12) {
+      saveBaitShopPos(s.baitShopOffsetX, s.baitShopOffsetY, s.baitShopScale);
+    }
     s.gizmoDragging = false;
   }, []);
 
