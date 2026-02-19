@@ -6,6 +6,8 @@ import { registerImageRoutes } from "./replit_integrations/image/routes";
 import fs from "fs";
 import path from "path";
 
+const baseUrl = "https://ocean-angler-grudge.replit.app";
+
 const RARITY_COLORS: Record<string, number> = {
   common: 0xa0a0a0,
   uncommon: 0x4caf50,
@@ -34,7 +36,6 @@ async function sendDiscordCatch(data: {
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL_FISH;
   if (!webhookUrl) return;
 
-  const baseUrl = "https://ocean-angler-grudge.replit.app";
   const color = RARITY_COLORS[data.rarity] ?? 0x607d8b;
   const stars = data.rarity === "ultra_rare" ? 5 : data.rarity === "legendary" ? 4 : data.rarity === "rare" ? 3 : data.rarity === "uncommon" ? 2 : 1;
   const starStr = Array(stars).fill("\u2B50").join("");
