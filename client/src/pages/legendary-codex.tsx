@@ -93,15 +93,15 @@ function UnderwaterBackground() {
           width: "100%",
           height: "100%",
           objectFit: "cover",
-          opacity: 0.12,
-          filter: "blur(3px) saturate(0.5) hue-rotate(-15deg)",
+          opacity: 0.22,
+          filter: "blur(2px) saturate(0.7) hue-rotate(-10deg)",
         }}
       />
       <div
         style={{
           position: "absolute",
           inset: 0,
-          background: "radial-gradient(ellipse at 50% 30%, rgba(15,15,30,0.6) 0%, rgba(10,10,18,0.9) 70%)",
+          background: "radial-gradient(ellipse at 50% 30%, rgba(20,25,50,0.4) 0%, rgba(12,15,28,0.75) 70%)",
         }}
       />
       <div
@@ -112,7 +112,7 @@ function UnderwaterBackground() {
           left: "15%",
           width: 180,
           height: "120%",
-          background: "linear-gradient(180deg, rgba(200,160,80,0.06) 0%, transparent 60%)",
+          background: "linear-gradient(180deg, rgba(200,160,80,0.1) 0%, transparent 60%)",
           transform: "rotate(15deg)",
           animation: "codexRay1 10s ease-in-out infinite",
         }}
@@ -125,7 +125,7 @@ function UnderwaterBackground() {
           left: "65%",
           width: 140,
           height: "120%",
-          background: "linear-gradient(180deg, rgba(200,160,80,0.04) 0%, transparent 50%)",
+          background: "linear-gradient(180deg, rgba(200,160,80,0.07) 0%, transparent 50%)",
           transform: "rotate(-10deg)",
           animation: "codexRay2 13s ease-in-out infinite",
         }}
@@ -354,7 +354,7 @@ function FlipbookOverlay({ targetPage, onComplete }: { targetPage: number; onCom
   return (
     <div style={{
       position: "fixed", inset: 0, zIndex: 100,
-      background: "#0a0a12",
+      background: "#101424",
       display: "flex", alignItems: "center", justifyContent: "center",
       perspective: "1200px",
     }}>
@@ -433,7 +433,7 @@ function FlipbookOverlay({ targetPage, onComplete }: { targetPage: number; onCom
 
           <div style={{ position: "relative", zIndex: 1 }}>
             <div style={{
-              fontSize: 11, letterSpacing: 5, color: "#666680",
+              fontSize: 11, letterSpacing: 5, color: "#8888a8",
               textTransform: "uppercase", marginBottom: 16,
             }}>
               Chapter {currentFish.chapter}
@@ -463,7 +463,7 @@ function FlipbookOverlay({ targetPage, onComplete }: { targetPage: number; onCom
             </div>
 
             <div style={{
-              fontSize: 13, fontStyle: "italic", color: "#9090b0",
+              fontSize: 13, fontStyle: "italic", color: "#a8a8c8",
               marginBottom: phase === "landing" ? 16 : 8,
             }}>
               {currentFish.subtitle}
@@ -785,8 +785,8 @@ export default function LegendaryCodex() {
       style={{
         width: "100vw",
         minHeight: "100vh",
-        background: "#0a0a12",
-        color: "#e8e0d0",
+        background: "#101424",
+        color: "#ede6d8",
         fontFamily: "'Georgia', 'Palatino Linotype', 'Book Antiqua', serif",
         overflowY: "auto",
         overflowX: "hidden",
@@ -817,11 +817,11 @@ export default function LegendaryCodex() {
           <a
             data-testid="link-home"
             style={{
-              background: "rgba(10,10,20,0.85)",
-              border: "1px solid rgba(196,160,80,0.2)",
+              background: "rgba(18,20,40,0.85)",
+              border: "1px solid rgba(196,160,80,0.25)",
               borderRadius: 6,
               padding: "6px 12px",
-              color: "#8888aa",
+              color: "#a0a0c0",
               fontFamily: "'Press Start 2P', monospace",
               fontSize: 6,
               textDecoration: "none",
@@ -837,11 +837,11 @@ export default function LegendaryCodex() {
           href="/gameboard.html"
           data-testid="link-gameboard"
           style={{
-            background: "rgba(10,10,20,0.85)",
-            border: "1px solid rgba(196,160,80,0.2)",
+            background: "rgba(18,20,40,0.85)",
+            border: "1px solid rgba(196,160,80,0.25)",
             borderRadius: 6,
             padding: "6px 12px",
-            color: "#8888aa",
+            color: "#a0a0c0",
             fontFamily: "'Press Start 2P', monospace",
             fontSize: 6,
             textDecoration: "none",
@@ -856,8 +856,8 @@ export default function LegendaryCodex() {
           <a
             data-testid="link-play-game"
             style={{
-              background: "rgba(10,10,20,0.85)",
-              border: "1px solid rgba(79,195,247,0.3)",
+              background: "rgba(18,20,40,0.85)",
+              border: "1px solid rgba(79,195,247,0.35)",
               borderRadius: 6,
               padding: "6px 12px",
               color: "#4fc3f7",
@@ -877,7 +877,7 @@ export default function LegendaryCodex() {
           onClick={handleGenerateGif}
           disabled={gifGenerating}
           style={{
-            background: gifGenerating ? "rgba(196,160,80,0.3)" : "rgba(10,10,20,0.85)",
+            background: gifGenerating ? "rgba(196,160,80,0.3)" : "rgba(18,20,40,0.85)",
             border: "1px solid rgba(196,160,80,0.4)",
             borderRadius: 6,
             padding: "6px 12px",
@@ -898,7 +898,7 @@ export default function LegendaryCodex() {
             download="legendary-codex.gif"
             data-testid="link-download-gif"
             style={{
-              background: "rgba(10,10,20,0.85)",
+              background: "rgba(18,20,40,0.85)",
               border: "1px solid rgba(46,204,113,0.3)",
               borderRadius: 6,
               padding: "6px 12px",
@@ -954,7 +954,7 @@ function CoverPage({ onEnter }: { onEnter: () => void }) {
         justifyContent: "center",
         textAlign: "center",
         padding: "40px 20px",
-        background: "radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a12 70%)",
+        background: "radial-gradient(ellipse at center, #222240 0%, #101424 70%)",
         position: "relative",
         overflow: "hidden",
       }}
@@ -976,7 +976,7 @@ function CoverPage({ onEnter }: { onEnter: () => void }) {
             fontSize: "14px",
             letterSpacing: "8px",
             textTransform: "uppercase",
-            color: "#8888aa",
+            color: "#a0a0c0",
             marginBottom: "20px",
           }}
         >
@@ -1001,7 +1001,7 @@ function CoverPage({ onEnter }: { onEnter: () => void }) {
         <div
           style={{
             fontSize: "clamp(14px, 2.5vw, 22px)",
-            color: "#9090b0",
+            color: "#a8a8c8",
             fontStyle: "italic",
             marginBottom: "40px",
             letterSpacing: "3px",
@@ -1025,7 +1025,7 @@ function CoverPage({ onEnter }: { onEnter: () => void }) {
             margin: "0 auto 50px",
             fontSize: "clamp(13px, 1.8vw, 16px)",
             lineHeight: 1.9,
-            color: "#a0a0b8",
+            color: "#b8b8d0",
           }}
         >
           Beneath the waves, in depths where sunlight is a forgotten memory,
@@ -1083,7 +1083,7 @@ function CoverPage({ onEnter }: { onEnter: () => void }) {
             <a
               data-testid="link-back-to-game"
               style={{
-                color: "#666680",
+                color: "#7878a0",
                 fontSize: "13px",
                 textDecoration: "none",
                 letterSpacing: "2px",
@@ -1151,13 +1151,13 @@ function ChapterBackgroundSprite({ sprite }: { sprite: SpriteData }) {
           height: "100%",
           imageRendering: "pixelated",
           objectFit: "contain",
-          opacity: 0.06,
+          opacity: 0.08,
         }}
       />
       <div style={{
         position: "absolute",
         inset: "-20%",
-        background: `radial-gradient(circle, transparent 20%, #0a0a12 70%)`,
+        background: `radial-gradient(circle, transparent 20%, #101424 70%)`,
         pointerEvents: "none",
       }} />
     </div>
@@ -1215,7 +1215,7 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
             style={{
               background: "none",
               border: "none",
-              color: "#666680",
+              color: "#8888a8",
               cursor: "pointer",
               fontSize: "13px",
               fontFamily: "inherit",
@@ -1226,7 +1226,7 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
             The Legendary 10
           </button>
         </div>
-        <div style={{ fontSize: "13px", color: "#555568", letterSpacing: "1px" }}>
+        <div style={{ fontSize: "13px", color: "#7878a0", letterSpacing: "1px" }}>
           {pageNum + 1} / {totalPages}
         </div>
       </div>
@@ -1238,7 +1238,7 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
           fontSize: "13px",
           letterSpacing: "6px",
           textTransform: "uppercase",
-          color: "#666680",
+          color: "#8888a8",
         }}
       >
         Chapter {fish.chapter}
@@ -1261,7 +1261,7 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
           textAlign: "center",
           fontSize: "clamp(13px, 2vw, 17px)",
           fontStyle: "italic",
-          color: "#9090b0",
+          color: "#a8a8c8",
           marginBottom: "32px",
         }}
       >
@@ -1284,7 +1284,6 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          gap: "24px",
         }}
       >
         {fish.artImage && (
@@ -1292,12 +1291,13 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
             data-testid={`art-legendary-${fish.name.toLowerCase().replace(/\s+/g, "-")}`}
             style={{
               position: "relative",
-              borderRadius: "8px",
+              borderRadius: "12px",
               overflow: "hidden",
-              border: "1px solid rgba(120,140,160,0.15)",
-              background: "rgba(0,0,0,0.3)",
-              maxWidth: "320px",
+              border: "1px solid rgba(160,180,200,0.2)",
+              background: "rgba(10,15,30,0.4)",
+              maxWidth: "420px",
               width: "100%",
+              boxShadow: `0 0 40px rgba(${fish.auraCss},0.15), 0 4px 20px rgba(0,0,0,0.3)`,
             }}
           >
             <style>{`
@@ -1318,45 +1318,18 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
             />
           </div>
         )}
-        <div
-          data-testid={`sprite-legendary-${fish.name.toLowerCase().replace(/\s+/g, "-")}`}
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "flex-end",
-            padding: "12px 0",
-            minHeight: "200px",
-            position: "relative",
-          }}
-        >
-          {(() => {
-            const maxDisplay = 280;
-            const minDisplay = 40;
-            const maxReal = 600;
-            const scale = Math.log(fish.realInches + 1) / Math.log(maxReal + 1);
-            const spriteSize = Math.round(minDisplay + scale * (maxDisplay - minDisplay));
-            return (
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
-                <CodexAnimatedSprite
-                  sprite={fish.sprite}
-                  size={spriteSize}
-                  wiggleId={legendaries.indexOf(fish)}
-                />
-                <span style={{
-                  fontSize: "11px",
-                  color: "rgba(196,160,80,0.6)",
-                  fontFamily: "'Courier New', monospace",
-                  letterSpacing: "1px",
-                }}>
-                  {fish.realInches >= 12
-                    ? `${Math.floor(fish.realInches / 12)}'${fish.realInches % 12 > 0 ? ` ${fish.realInches % 12}"` : ""}`
-                    : `${fish.realInches}"`
-                  }
-                </span>
-              </div>
-            );
-          })()}
-        </div>
+        <span style={{
+          fontSize: "12px",
+          color: "rgba(196,160,80,0.7)",
+          fontFamily: "'Courier New', monospace",
+          letterSpacing: "1px",
+          marginTop: "12px",
+        }}>
+          {fish.realInches >= 12
+            ? `${Math.floor(fish.realInches / 12)}'${fish.realInches % 12 > 0 ? ` ${fish.realInches % 12}"` : ""}`
+            : `${fish.realInches}"`
+          }
+        </span>
       </div>
 
       <div
@@ -1409,7 +1382,7 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
               textAlign: "center",
             }}
           >
-            <div style={{ color: "#666680", fontSize: "10px", marginBottom: "4px", textTransform: "uppercase" }}>
+            <div style={{ color: "#8888a8", fontSize: "10px", marginBottom: "4px", textTransform: "uppercase" }}>
               {stat.label}
             </div>
             <div style={{ color: "#c4a050", fontWeight: 600 }}>
@@ -1435,7 +1408,7 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
             style={{
               fontSize: "clamp(14px, 1.8vw, 16.5px)",
               lineHeight: 2,
-              color: i === 0 ? "#d0c8b8" : "#a0a0b8",
+              color: i === 0 ? "#ddd6c6" : "#b8b8d0",
               marginBottom: "24px",
               textAlign: "justify",
               textIndent: i === 0 ? "0" : "2em",
@@ -1574,7 +1547,7 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
           <a
             data-testid="link-return-to-game"
             style={{
-              color: "#555568",
+              color: "#7878a0",
               fontSize: "12px",
               textDecoration: "none",
               letterSpacing: "2px",
