@@ -3166,6 +3166,10 @@ export default function FishingGame() {
       // --- UNDERWATER BACKGROUND LAYERS ---
       const sortedUwLayers = [...s.uwLayers].filter(l => l.enabled).sort((a, b) => a.depth - b.depth);
       if (sortedUwLayers.length > 0) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(viewL - 10, waterY, viewR - viewL + 20, H - waterY + 10);
+        ctx.clip();
         for (const layer of sortedUwLayers) {
           const lImg = getImg(layer.src);
           if (!lImg || !lImg.complete || lImg.naturalWidth <= 0) continue;
@@ -3189,6 +3193,7 @@ export default function FishingGame() {
           }
           ctx.restore();
         }
+        ctx.restore();
       } else {
         const uwBgImg = getImg("/assets/tiles/underwater_bg.png");
         if (uwBgImg && uwBgImg.complete && uwBgImg.naturalWidth > 0) {
