@@ -960,6 +960,7 @@ export default function FishingGame() {
     playerX: 0,
     playerVX: 0,
     playerVY: 0,
+    beachWalkY: 0,
     swimX: 0,
     swimY: 0,
     facingLeft: true,
@@ -2425,7 +2426,23 @@ export default function FishingGame() {
           s.aimOutOfRange = Math.abs((s.mouseX - s.cameraX) - s.playerX) > maxRange;
         }
 
-        if (s.keysDown.has(" ") && s.gameState === "idle" && !s.inBoat) {
+        const beachStartForSpace = W * 3.0;
+        const isOnBeach = s.playerX >= beachStartForSpace;
+        if (isOnBeach && s.gameState === "idle" && !s.inBoat) {
+          if (s.keysDown.has("s") || s.keysDown.has(" ")) {
+            s.beachWalkY += 1.2 * dt;
+            s.beachWalkY = Math.min(s.beachWalkY, 50);
+            moving = true;
+          } else if (s.keysDown.has("w")) {
+            s.beachWalkY -= 1.2 * dt;
+            s.beachWalkY = Math.max(0, s.beachWalkY);
+            moving = true;
+          }
+        }
+        if (!isOnBeach) {
+          s.beachWalkY = Math.max(0, s.beachWalkY - 2 * dt);
+        }
+        if (s.keysDown.has(" ") && s.gameState === "idle" && !s.inBoat && !isOnBeach) {
           s.keysDown.delete(" ");
           s.gameState = "swimming";
           s.isSwimming = true;
@@ -2650,7 +2667,7 @@ export default function FishingGame() {
         if (s.playerX >= beachStartX) {
           const beachProgress = Math.max(0, (s.playerX - beachStartX) / (beachEndX - beachStartX));
           const beachSlopeY = pierY + 10 + beachProgress * 30;
-          fishermanY = beachSlopeY - FRAME_H * SCALE + 12;
+          fishermanY = beachSlopeY - FRAME_H * SCALE + 12 + (s.beachWalkY || 0);
         } else {
           fishermanY = pierY - FRAME_H * SCALE + 12;
         }
