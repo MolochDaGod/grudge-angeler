@@ -5731,119 +5731,6 @@ export default function FishingGame() {
         }
       }
 
-      if (s.netActive && s.netAnimPhase !== "none") {
-        const netX = s.netCastX;
-        const netY = s.netAnimY;
-        const fishermanW = FRAME_H * SCALE;
-        const netVisualW = fishermanW * 3;
-
-        if (s.netAnimPhase === "throwing") {
-          const throwImg = getImg("/assets/objects/NetThrow.png");
-          if (throwImg && throwImg.complete && throwImg.naturalWidth > 0) {
-            const throwFrames = 7;
-            const frameW = throwImg.naturalWidth / throwFrames;
-            const frameH = throwImg.naturalHeight;
-            const frame = Math.min(s.netThrowFrame, throwFrames - 1);
-            const throwScale = netVisualW * 0.6 / frameW;
-            const drawW = frameW * throwScale;
-            const drawH = frameH * throwScale;
-            ctx.save();
-            ctx.imageSmoothingEnabled = false;
-            ctx.globalAlpha = 0.95;
-            ctx.drawImage(throwImg, frame * frameW, 0, frameW, frameH, netX - drawW / 2, netY - drawH / 2, drawW, drawH);
-            ctx.restore();
-          }
-        } else {
-          const isSinking = s.netAnimPhase === "sinking";
-          const isRising = s.netAnimPhase === "rising";
-          const isScooping = s.netAnimPhase === "scooping";
-          const netImgSrc = isSinking ? "/assets/objects/Netthrown.png" : "/assets/objects/Net.png";
-          const netImg = getImg(netImgSrc);
-          if (netImg && netImg.complete && netImg.naturalWidth > 0) {
-            const nw = netVisualW;
-            const aspectRatio = netImg.naturalHeight / netImg.naturalWidth;
-            const nh = nw * aspectRatio;
-            ctx.save();
-            ctx.imageSmoothingEnabled = false;
-            ctx.globalAlpha = 0.95;
-            let netDrawX = netX - nw / 2;
-            let netDrawY = netY - nh / 2;
-            if (isSinking) {
-              ctx.translate(netX, netY);
-              ctx.drawImage(netImg, 0, 0, netImg.naturalWidth, netImg.naturalHeight, -nw / 2, -nh / 2, nw, nh);
-              netDrawX = netX - nw / 2;
-              netDrawY = netY - nh / 2;
-            } else if (isRising || isScooping) {
-              const wobble = isRising ? Math.sin(s.time * 0.3) * 4 : 0;
-              netDrawX = netX - nw / 2 + wobble;
-              netDrawY = netY - nh;
-              ctx.translate(netDrawX, netDrawY);
-              ctx.drawImage(netImg, 0, 0, netImg.naturalWidth, netImg.naturalHeight, 0, 0, nw, nh);
-            } else {
-              ctx.translate(netDrawX, netDrawY);
-              ctx.drawImage(netImg, 0, 0, netImg.naturalWidth, netImg.naturalHeight, 0, 0, nw, nh);
-            }
-            ctx.restore();
-            if ((isRising || isScooping) && s.netAnimCaughtFish.length > 0) {
-              ctx.save();
-              const fishCount = s.netAnimCaughtFish.length;
-              const iconSize = 24;
-              ctx.globalAlpha = 0.9;
-              const maxShow = Math.min(fishCount, 6);
-              const iconCenterX = netDrawX + nw / 2;
-              const iconCenterY = netDrawY + nh * 0.45;
-              const totalW = maxShow * (iconSize + 4);
-              for (let fi = 0; fi < maxShow; fi++) {
-                const caught = s.netAnimCaughtFish[fi];
-                const cIcon = caught.icon ? getImg(caught.icon) : null;
-                const bobY = Math.sin(s.time * 0.2 + fi * 1.5) * 4;
-                const fx = iconCenterX - totalW / 2 + fi * (iconSize + 4);
-                const fy = iconCenterY + bobY;
-                if (cIcon && cIcon.complete && cIcon.naturalWidth > 0) {
-                  ctx.drawImage(cIcon, fx, fy, iconSize, iconSize);
-                } else {
-                  ctx.fillStyle = caught.isCrab ? "#ff9800" : "#5dade2";
-                  ctx.beginPath();
-                  ctx.arc(fx + iconSize / 2, fy + iconSize / 2, iconSize / 2 - 1, 0, Math.PI * 2);
-                  ctx.fill();
-                }
-              }
-              if (fishCount > maxShow) {
-                ctx.fillStyle = "#f1c40f";
-                ctx.font = "bold 11px monospace";
-                ctx.textAlign = "center";
-                ctx.fillText(`+${fishCount - maxShow}`, iconCenterX + 40, iconCenterY + iconSize / 2 + 4);
-              }
-              ctx.fillStyle = "#fff";
-              ctx.font = "bold 10px monospace";
-              ctx.textAlign = "center";
-              const weightText = `${s.netTotalWeight.toFixed(1)}lb / 49lb`;
-              ctx.fillText(weightText, iconCenterX, iconCenterY + iconSize + 16);
-              if (s.netTotalWeight > 49) {
-                ctx.fillStyle = "rgba(255,60,60,0.9)";
-                ctx.font = "bold 13px monospace";
-                ctx.fillText("BREAKING!", iconCenterX, iconCenterY - 8);
-              }
-              ctx.restore();
-            }
-          }
-        }
-
-        ctx.strokeStyle = "rgba(180,170,150,0.6)";
-        ctx.lineWidth = 1.5;
-        ctx.setLineDash([3, 3]);
-        const lineTopY = Math.min(netY, waterY);
-        ctx.beginPath();
-        ctx.moveTo(netX, lineTopY);
-        ctx.lineTo(netX, netY);
-        ctx.stroke();
-        ctx.setLineDash([]);
-
-        if (s.netAnimPhase !== "throwing") {
-          addParticles(netX + (Math.random() - 0.5) * netVisualW * 0.4, netY, 1, "rgba(93,173,226,0.5)", 1, "bubble");
-        }
-      }
-
       if (s.gameState === "bite" || s.gameState === "reeling") {
         const creatureScale = SCALE * 0.65 * s.hookedFishSize;
         const fishSpriteW = 48 * creatureScale;
@@ -6168,6 +6055,120 @@ export default function FishingGame() {
             ctx.globalAlpha = 1;
             ctx.restore();
           }
+        }
+      }
+
+      // Net rendering (z-index 88 - draws on top of most world elements)
+      if (s.netActive && s.netAnimPhase !== "none") {
+        const netX = s.netCastX;
+        const netY = s.netAnimY;
+        const fishermanW = FRAME_H * SCALE;
+        const netVisualW = fishermanW * 3;
+
+        if (s.netAnimPhase === "throwing") {
+          const throwImg = getImg("/assets/objects/NetThrow.png");
+          if (throwImg && throwImg.complete && throwImg.naturalWidth > 0) {
+            const throwFrames = 7;
+            const frameW = throwImg.naturalWidth / throwFrames;
+            const frameH = throwImg.naturalHeight;
+            const frame = Math.min(s.netThrowFrame, throwFrames - 1);
+            const throwScale = netVisualW * 0.6 / frameW;
+            const drawW = frameW * throwScale;
+            const drawH = frameH * throwScale;
+            ctx.save();
+            ctx.imageSmoothingEnabled = false;
+            ctx.globalAlpha = 0.95;
+            ctx.drawImage(throwImg, frame * frameW, 0, frameW, frameH, netX - drawW / 2, netY - drawH / 2, drawW, drawH);
+            ctx.restore();
+          }
+        } else {
+          const isSinking = s.netAnimPhase === "sinking";
+          const isRising = s.netAnimPhase === "rising";
+          const isScooping = s.netAnimPhase === "scooping";
+          const netImgSrc = isSinking ? "/assets/objects/Netthrown.png" : "/assets/objects/Net.png";
+          const netImg = getImg(netImgSrc);
+          if (netImg && netImg.complete && netImg.naturalWidth > 0) {
+            const nw = netVisualW;
+            const aspectRatio = netImg.naturalHeight / netImg.naturalWidth;
+            const nh = nw * aspectRatio;
+            ctx.save();
+            ctx.imageSmoothingEnabled = false;
+            ctx.globalAlpha = 0.95;
+            let netDrawX = netX - nw / 2;
+            let netDrawY = netY - nh / 2;
+            if (isSinking) {
+              ctx.translate(netX, netY);
+              ctx.drawImage(netImg, 0, 0, netImg.naturalWidth, netImg.naturalHeight, -nw / 2, -nh / 2, nw, nh);
+              netDrawX = netX - nw / 2;
+              netDrawY = netY - nh / 2;
+            } else if (isRising || isScooping) {
+              const wobble = isRising ? Math.sin(s.time * 0.3) * 4 : 0;
+              netDrawX = netX - nw / 2 + wobble;
+              netDrawY = netY - nh;
+              ctx.translate(netDrawX, netDrawY);
+              ctx.drawImage(netImg, 0, 0, netImg.naturalWidth, netImg.naturalHeight, 0, 0, nw, nh);
+            } else {
+              ctx.translate(netDrawX, netDrawY);
+              ctx.drawImage(netImg, 0, 0, netImg.naturalWidth, netImg.naturalHeight, 0, 0, nw, nh);
+            }
+            ctx.restore();
+            if ((isRising || isScooping) && s.netAnimCaughtFish.length > 0) {
+              ctx.save();
+              const fishCount = s.netAnimCaughtFish.length;
+              const iconSize = 24;
+              ctx.globalAlpha = 0.9;
+              const maxShow = Math.min(fishCount, 6);
+              const iconCenterX = netDrawX + nw / 2;
+              const iconCenterY = netDrawY + nh * 0.45;
+              const totalW = maxShow * (iconSize + 4);
+              for (let fi = 0; fi < maxShow; fi++) {
+                const caught = s.netAnimCaughtFish[fi];
+                const cIcon = caught.icon ? getImg(caught.icon) : null;
+                const bobY = Math.sin(s.time * 0.2 + fi * 1.5) * 4;
+                const fx = iconCenterX - totalW / 2 + fi * (iconSize + 4);
+                const fy = iconCenterY + bobY;
+                if (cIcon && cIcon.complete && cIcon.naturalWidth > 0) {
+                  ctx.drawImage(cIcon, fx, fy, iconSize, iconSize);
+                } else {
+                  ctx.fillStyle = caught.isCrab ? "#ff9800" : "#5dade2";
+                  ctx.beginPath();
+                  ctx.arc(fx + iconSize / 2, fy + iconSize / 2, iconSize / 2 - 1, 0, Math.PI * 2);
+                  ctx.fill();
+                }
+              }
+              if (fishCount > maxShow) {
+                ctx.fillStyle = "#f1c40f";
+                ctx.font = "bold 11px monospace";
+                ctx.textAlign = "center";
+                ctx.fillText(`+${fishCount - maxShow}`, iconCenterX + 40, iconCenterY + iconSize / 2 + 4);
+              }
+              ctx.fillStyle = "#fff";
+              ctx.font = "bold 10px monospace";
+              ctx.textAlign = "center";
+              const weightText = `${s.netTotalWeight.toFixed(1)}lb / 49lb`;
+              ctx.fillText(weightText, iconCenterX, iconCenterY + iconSize + 16);
+              if (s.netTotalWeight > 49) {
+                ctx.fillStyle = "rgba(255,60,60,0.9)";
+                ctx.font = "bold 13px monospace";
+                ctx.fillText("BREAKING!", iconCenterX, iconCenterY - 8);
+              }
+              ctx.restore();
+            }
+          }
+        }
+
+        ctx.strokeStyle = "rgba(180,170,150,0.6)";
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([3, 3]);
+        const lineTopY = Math.min(netY, waterY);
+        ctx.beginPath();
+        ctx.moveTo(netX, lineTopY);
+        ctx.lineTo(netX, netY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        if (s.netAnimPhase !== "throwing") {
+          addParticles(netX + (Math.random() - 0.5) * netVisualW * 0.4, netY, 1, "rgba(93,173,226,0.5)", 1, "bubble");
         }
       }
 
