@@ -1119,6 +1119,8 @@ export default function FishingGame() {
     treasureChestFound: false,
     treasureChestOpened: false,
     treasureChestGlowTimer: 0,
+    oceanDecorGenerated: false,
+    oceanDecor: [] as { sprite: string; worldX: number; scale: number; flipX: boolean }[],
     deepZoneCatches: 0,
     adminOpen: false,
     adminTab: "assets" as "assets" | "gizmo" | "trace" | "map",
@@ -2196,6 +2198,29 @@ export default function FishingGame() {
       if (!s.plantsInitialized) {
         s.underwaterPlants = generateUnderwaterPlants(W, H, waterY, defaultFishermanX);
         s.plantsInitialized = true;
+      }
+
+      if (!s.oceanDecorGenerated) {
+        s.oceanDecorGenerated = true;
+        const decorSprites = [
+          "/assets/ocean_decor/Stone_1.png", "/assets/ocean_decor/Stone_2.png",
+          "/assets/ocean_decor/Stone_3.png", "/assets/ocean_decor/Stone_5.png",
+          "/assets/ocean_decor/Stone_6.png", "/assets/ocean_decor/Seaweed_1.png",
+          "/assets/ocean_decor/Seaweed_2.png", "/assets/ocean_decor/Barrel_1.png",
+          "/assets/ocean_decor/Barrel_2.png", "/assets/ocean_decor/Anchor.png",
+          "/assets/ocean_decor/Chain.png", "/assets/ocean_decor/Steering-wheel.png",
+        ];
+        const beachBound = W * 2.85;
+        const worldLeft = -(W * 3) - 200;
+        for (let di = 0; di < 30; di++) {
+          const seed = Math.sin(di * 127.1 + 311.7) * 43758.5453;
+          const r = seed - Math.floor(seed);
+          const wx = worldLeft + r * (beachBound - worldLeft - 100);
+          const sprIdx = Math.floor(Math.abs(Math.sin(di * 83.3 + 19.1)) * decorSprites.length) % decorSprites.length;
+          const sc = 0.6 + Math.abs(Math.sin(di * 53.7)) * 0.8;
+          const flip = Math.sin(di * 37.9) > 0;
+          s.oceanDecor.push({ sprite: decorSprites[sprIdx], worldX: wx, scale: sc, flipX: flip });
+        }
       }
 
       if (!s.cloudsInitialized) {
@@ -4500,22 +4525,51 @@ export default function FishingGame() {
       }
       ctx.globalAlpha = 1;
 
+      // --- OCEAN FLOOR DECORATIONS ---
+      if (s.gameState !== "title" && s.gameState !== "charSelect") {
+        for (const decor of s.oceanDecor) {
+          if (decor.worldX < viewL - 200 || decor.worldX > viewR + 200) continue;
+          if (decor.worldX > waterRightEdge) continue;
+          const decorImg = getImg(decor.sprite);
+          if (!decorImg || !decorImg.complete || decorImg.naturalWidth === 0) continue;
+          const floorY = getOceanFloorY(decor.worldX, waterY, W, H);
+          const dw = decorImg.naturalWidth * decor.scale;
+          const dh = decorImg.naturalHeight * decor.scale;
+          const dx = decor.worldX;
+          const dy = floorY - dh + 4;
+          if (dy < waterY) continue;
+          ctx.save();
+          ctx.globalAlpha = 0.85;
+          if (decor.flipX) {
+            ctx.translate(dx + dw, dy);
+            ctx.scale(-1, 1);
+            ctx.drawImage(decorImg, 0, 0, dw, dh);
+          } else {
+            ctx.drawImage(decorImg, dx, dy, dw, dh);
+          }
+          ctx.restore();
+        }
+      }
+
       // Treasure Chest at deepest ocean floor
       if (s.gameState !== "title" && s.gameState !== "charSelect" && !s.treasureChestOpened) {
         const ds = getDepthSlope();
         const scaleX = W / ADMIN_REF_W;
         const chestWorldX = ds.deepX * scaleX + 40;
         const chestFloorY = getOceanFloorY(chestWorldX, waterY, W, H);
-        const chestW = 44;
-        const chestH = 22;
+        const chestScale = 1.8;
+        const chestImg = getImg("/assets/chest/closed.png");
+        const chestNatW = chestImg && chestImg.complete ? chestImg.naturalWidth : 44;
+        const chestNatH = chestImg && chestImg.complete ? chestImg.naturalHeight : 22;
+        const chestW = chestNatW * chestScale;
+        const chestH = chestNatH * chestScale;
         const chestDrawX = chestWorldX;
-        const chestDrawY = chestFloorY - chestH;
+        const chestDrawY = chestFloorY - chestH + 4;
         s.treasureChestGlowTimer += 0.02 * dt;
         const glowPulse = 0.4 + Math.sin(s.treasureChestGlowTimer) * 0.3;
         ctx.save();
         ctx.shadowColor = "rgba(255,215,0," + glowPulse + ")";
         ctx.shadowBlur = 12 + Math.sin(s.treasureChestGlowTimer * 1.3) * 6;
-        const chestImg = getImg("/assets/catch/Chest.png");
         if (chestImg && chestImg.complete && chestImg.naturalWidth > 0) {
           ctx.drawImage(chestImg, chestDrawX, chestDrawY, chestW, chestH);
         } else {
@@ -4539,6 +4593,18 @@ export default function FishingGame() {
           ctx.beginPath();
           ctx.arc(sparkX, sparkY, 1.5, 0, Math.PI * 2);
           ctx.fill();
+        }
+        for (let bi = 0; bi < 3; bi++) {
+          const bubImg = getImg(`/assets/chest/Bubble_${bi + 1}.png`);
+          if (bubImg && bubImg.complete && bubImg.naturalWidth > 0) {
+            const bubPhase = s.treasureChestGlowTimer * 0.5 + bi * 2.1;
+            const bubY = chestDrawY - 10 - ((bubPhase * 30) % 80);
+            const bubX = chestDrawX + chestW * 0.3 + bi * 12 + Math.sin(bubPhase * 2 + bi) * 6;
+            const bubSize = 8 + bi * 3;
+            const bubAlpha = Math.max(0, 0.6 - ((bubPhase * 30) % 80) / 100);
+            ctx.globalAlpha = bubAlpha;
+            ctx.drawImage(bubImg, bubX, bubY, bubSize, bubSize);
+          }
         }
         ctx.restore();
 
@@ -4570,6 +4636,26 @@ export default function FishingGame() {
                 addParticles(chestDrawX + chestW / 2, chestDrawY, 15, "#FFFFFF", 2.5, "sparkle");
               }
             }
+          }
+        }
+      }
+
+      // Opened treasure chest - show open sprite
+      if (s.gameState !== "title" && s.gameState !== "charSelect" && s.treasureChestOpened) {
+        const ds = getDepthSlope();
+        const scaleX = W / ADMIN_REF_W;
+        const chestWorldX = ds.deepX * scaleX + 40;
+        if (chestWorldX > viewL - 100 && chestWorldX < viewR + 100) {
+          const chestFloorY = getOceanFloorY(chestWorldX, waterY, W, H);
+          const openImg = getImg("/assets/chest/open.png");
+          if (openImg && openImg.complete && openImg.naturalWidth > 0) {
+            const cScale = 1.8;
+            const ow = openImg.naturalWidth * cScale;
+            const oh = openImg.naturalHeight * cScale;
+            ctx.save();
+            ctx.globalAlpha = 0.7;
+            ctx.drawImage(openImg, chestWorldX, chestFloorY - oh + 4, ow, oh);
+            ctx.restore();
           }
         }
       }
