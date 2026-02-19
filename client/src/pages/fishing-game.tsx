@@ -204,7 +204,8 @@ interface UnderwaterPlant {
 function generateUnderwaterPlants(W: number, H: number, waterY: number, dockX: number): UnderwaterPlant[] {
   const plants: UnderwaterPlant[] = [];
   const worldLeft = -(W * 3) - 200;
-  const worldRight = W * 5 + 200;
+  const beachBoundary = W * 2.85;
+  const worldRight = beachBoundary;
   const dockExcludeLeft = dockX - 100;
   const dockExcludeRight = W * 2.8 + 50;
   const fishermanHeight = 48 * 4;
@@ -822,6 +823,10 @@ interface SwimmingFish {
   approachingHook: boolean;
   dirChangeTimer: number;
   sizeMultiplier: number;
+  crabDigTimer?: number;
+  crabDigging?: boolean;
+  crabDigAlpha?: number;
+  crabVertDir?: number;
 }
 
 interface Predator {
@@ -1423,25 +1428,31 @@ export default function FishingGame() {
   const spawnBeachCrab = useCallback((canvasW: number, waterStartY: number, canvasH: number) => {
     const s = stateRef.current;
     const centerX = -s.cameraX + canvasW / 2;
-    const beachStart = canvasW * 3.0;
+    const beachStart = canvasW * 2.85;
     if (centerX < beachStart - canvasW) return;
 
     const crabType = BEACH_CRABS[Math.floor(Math.random() * BEACH_CRABS.length)];
-    const y = waterStartY + 5 + Math.random() * 40;
+    const beachTopY = waterStartY - 15;
+    const beachBottomY = waterStartY + 25;
+    const y = beachTopY + Math.random() * (beachBottomY - beachTopY);
     const direction = Math.random() > 0.5 ? 1 : -1;
     const viewLeft = -s.cameraX - 50;
     const viewRight = -s.cameraX + canvasW + 50;
-    const x = direction > 0 ? viewLeft - 40 : viewRight + 40;
+    const x = direction > 0 ? Math.max(viewLeft - 40, beachStart) : viewRight + 40;
     const sizeMultiplier = 0.6 + Math.random() * 0.8;
 
     s.swimmingFish.push({
       x, y, baseY: y, type: crabType, direction, frame: 0, frameTimer: 0,
-      speed: crabType.speed * (0.7 + Math.random() * 0.5),
+      speed: crabType.speed * (0.15 + Math.random() * 0.2),
       wobblePhase: Math.random() * Math.PI * 2,
       wobbleAmp: 1 + Math.random() * 2,
       approachingHook: false,
       dirChangeTimer: 40 + Math.random() * 80,
       sizeMultiplier,
+      crabDigTimer: 300 + Math.random() * 500,
+      crabDigging: false,
+      crabDigAlpha: 1,
+      crabVertDir: Math.random() > 0.5 ? 1 : -1,
     });
   }, []);
 
@@ -3151,26 +3162,29 @@ export default function FishingGame() {
       waterGrad.addColorStop(0.7, `rgb(${20 - wDeep},${85 - wDeep * 2},${128 - wDeep})`);
       waterGrad.addColorStop(1, `rgb(${13 - wDeep},${59 - wDeep},${94 - wDeep})`);
       ctx.fillStyle = waterGrad;
+      const waterRightEdge = W * 2.85;
 
       ctx.beginPath();
       ctx.moveTo(worldLeft, waterY - 8);
-      for (let x = worldLeft; x <= worldRight; x += 4) {
+      for (let x = worldLeft; x <= waterRightEdge; x += 4) {
         const wv = Math.sin((x + s.waterOffset * 2) * 0.02) * 3
                  + Math.sin((x + s.waterOffset * 1.5) * 0.035 + 1.2) * 2
                  + Math.sin((x + s.waterOffset * 3) * 0.008 + 0.5) * 4;
         ctx.lineTo(x, waterY + wv - 6);
       }
-      ctx.lineTo(worldRight, H);
+      ctx.lineTo(waterRightEdge, H);
       ctx.lineTo(worldLeft, H);
       ctx.closePath();
       ctx.fill();
 
       // --- UNDERWATER BACKGROUND LAYERS ---
+      const uwBeachLimit = W * 2.85;
       const sortedUwLayers = [...s.uwLayers].filter(l => l.enabled).sort((a, b) => a.depth - b.depth);
       if (sortedUwLayers.length > 0) {
         ctx.save();
         ctx.beginPath();
-        ctx.rect(viewL - 10, waterY, viewR - viewL + 20, H - waterY + 10);
+        const uwClipRight = Math.min(viewR + 10, uwBeachLimit);
+        ctx.rect(viewL - 10, waterY, uwClipRight - viewL + 10, H - waterY + 10);
         ctx.clip();
         for (const layer of sortedUwLayers) {
           const lImg = getImg(layer.src);
@@ -3204,7 +3218,10 @@ export default function FishingGame() {
           ctx.globalAlpha = 0.18;
           ctx.save();
           ctx.filter = "hue-rotate(25deg) saturate(0.7)";
-          for (let bx = bgStartX; bx < viewR; bx += bgTileW) {
+          ctx.beginPath();
+          ctx.rect(viewL - 10, waterY, Math.min(viewR, uwBeachLimit) - viewL + 10, waterH);
+          ctx.clip();
+          for (let bx = bgStartX; bx < Math.min(viewR, uwBeachLimit); bx += bgTileW) {
             ctx.drawImage(uwBgImg, bx, waterY, bgTileW, waterH);
           }
           ctx.restore();
@@ -3220,8 +3237,9 @@ export default function FishingGame() {
         const dsStartX = Math.floor(viewL / dsTileW) * dsTileW;
         ctx.save();
         ctx.globalAlpha = 0.45;
-        for (let bx = dsStartX; bx < viewR + dsTileW; bx += dsTileW) {
+        for (let bx = dsStartX; bx < Math.min(viewR + dsTileW, uwBeachLimit); bx += dsTileW) {
           const midX = bx + dsTileW / 2;
+          if (midX > uwBeachLimit) continue;
           const floorAtMid = getOceanFloorY(midX, waterY, W, H);
           const drawTopY = floorAtMid - dsTileH * 0.7;
           ctx.drawImage(depthSurfImg, bx, drawTopY, dsTileW, dsTileH);
@@ -3278,6 +3296,7 @@ export default function FishingGame() {
           if (plant.inFront) continue;
           const px = plant.worldX;
           if (px < viewL - 200 || px > viewR + 200) continue;
+          if (px > waterRightEdge) continue;
           const pt = PLANT_TYPES[plant.typeIdx];
           const drawW = pt.sw * plant.scale;
           const drawH = pt.sh * plant.scale;
@@ -3442,7 +3461,7 @@ export default function FishingGame() {
       scatterGrad.addColorStop(0.5, `rgba(80,150,200,${0.04 + dayPhase * 0.02})`);
       scatterGrad.addColorStop(1, "rgba(60,120,170,0)");
       ctx.fillStyle = scatterGrad;
-      ctx.fillRect(worldLeft, waterY - 4, worldRight - worldLeft, 39);
+      ctx.fillRect(worldLeft, waterY - 4, waterRightEdge - worldLeft, 39);
 
       // Surface shimmer - organic dappled highlights
       for (let i = 0; i < 25; i++) {
@@ -4615,6 +4634,45 @@ export default function FishingGame() {
             syncUI();
             continue;
           }
+        } else if (fish.type.beachCrab) {
+          if (fish.crabDigging) {
+            fish.crabDigAlpha = Math.max(0, (fish.crabDigAlpha || 1) - 0.02 * dt);
+            fish.y += 0.3 * dt;
+            if ((fish.crabDigAlpha || 0) <= 0) {
+              s.swimmingFish.splice(i, 1);
+              for (let sp = 0; sp < 3; sp++) {
+                s.particles.push({ x: fish.x + 10 + (Math.random() - 0.5) * 15, y: fish.baseY, vx: (Math.random() - 0.5) * 2, vy: -1 - Math.random() * 2, life: 20 + Math.random() * 15, maxLife: 35, size: 2 + Math.random() * 2, color: "#c4a96e", type: "splash" });
+              }
+              continue;
+            }
+          } else {
+            fish.crabDigTimer = (fish.crabDigTimer || 300) - dt;
+            if ((fish.crabDigTimer || 0) <= 0) {
+              fish.crabDigging = true;
+              fish.crabDigAlpha = 1;
+              fish.speed = 0;
+              for (let sp = 0; sp < 5; sp++) {
+                s.particles.push({ x: fish.x + 10 + (Math.random() - 0.5) * 10, y: fish.y, vx: (Math.random() - 0.5) * 3, vy: -1.5 - Math.random() * 2, life: 25 + Math.random() * 15, maxLife: 40, size: 2 + Math.random() * 3, color: "#d4b97a", type: "splash" });
+              }
+            } else {
+              fish.dirChangeTimer -= dt;
+              if (fish.dirChangeTimer <= 0) {
+                if (Math.random() < 0.4) fish.direction *= -1;
+                if (Math.random() < 0.5) fish.crabVertDir = (fish.crabVertDir || 1) * -1;
+                fish.speed = fish.type.speed * (0.1 + Math.random() * 0.15);
+                fish.dirChangeTimer = 30 + Math.random() * 60;
+              }
+              fish.x += fish.direction * fish.speed * 0.4 * dt;
+              const vertSpeed = 0.15 * (fish.crabVertDir || 0);
+              fish.baseY += vertSpeed * dt;
+              const beachTopY = waterY - 15;
+              const beachBottomY = waterY + 25;
+              if (fish.baseY < beachTopY) { fish.baseY = beachTopY; fish.crabVertDir = 1; }
+              if (fish.baseY > beachBottomY) { fish.baseY = beachBottomY; fish.crabVertDir = -1; }
+              fish.y = fish.baseY + Math.sin(fish.wobblePhase) * 1;
+              fish.wobblePhase += 0.02 * dt;
+            }
+          }
         } else {
           fish.dirChangeTimer -= dt;
           if (fish.dirChangeTimer <= 0 && !fish.approachingHook) {
@@ -4630,7 +4688,7 @@ export default function FishingGame() {
           fish.y = fish.baseY + Math.sin(fish.wobblePhase) * fish.wobbleAmp;
 
           const beachBound = W * 2.85;
-          if (!fish.type.beachCrab && fish.x >= beachBound) {
+          if (fish.x >= beachBound) {
             fish.direction = -1;
             fish.x = beachBound - 10;
             fish.dirChangeTimer = 60 + Math.random() * 60;
@@ -4673,7 +4731,9 @@ export default function FishingGame() {
             const frameIdx = fish.frame % 4;
             const sx = frameIdx * fs;
             const sy = (fish.type.spriteRow || 1) * fs;
-            const wobble = Math.sin(s.time * 0.15 + fish.wobblePhase) * 3;
+            const wobble = fish.crabDigging ? 0 : Math.sin(s.time * 0.15 + fish.wobblePhase) * 3;
+            const digAlpha = fish.crabDigAlpha !== undefined ? fish.crabDigAlpha : 1;
+            ctx.globalAlpha = finalAlpha * digAlpha;
             ctx.save();
             ctx.translate(fish.x + fs * crabScale / 2, fish.y + fs * crabScale / 2);
             ctx.rotate(wobble * 0.03);
@@ -5216,6 +5276,7 @@ export default function FishingGame() {
           if (!plant.inFront) continue;
           const px = plant.worldX;
           if (px < viewL - 200 || px > viewR + 200) continue;
+          if (px > waterRightEdge) continue;
           const pt = PLANT_TYPES[plant.typeIdx];
           const drawW = pt.sw * plant.scale;
           const drawH = pt.sh * plant.scale;
