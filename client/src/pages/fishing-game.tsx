@@ -1386,6 +1386,8 @@ export default function FishingGame() {
     const viewLeft = -s.cameraX - 100;
     const viewRight = -s.cameraX + canvasW + 100;
     const x = direction > 0 ? viewLeft - 80 : viewRight + 80;
+    const beachFishBoundary = canvasW * 2.85;
+    if (x >= beachFishBoundary) return;
     const sandLeftEdge = getSandMinX(waterStartY, canvasW, canvasH);
     if (x >= sandLeftEdge - 20) return;
     const floorY = getOceanFloorY(x, waterStartY, canvasW, canvasH);
@@ -3227,6 +3229,48 @@ export default function FishingGame() {
         ctx.restore();
       }
 
+      // --- ROCKY/SAND TERRAIN along ocean floor slope ---
+      const rockFloorImg = getImg("/assets/tiles/rocky_sand_floor.png");
+      const rockCliffImg = getImg("/assets/tiles/rock_cliff_wall.png");
+      const beachSandImg = getImg("/assets/tiles/beach_sand_surface.png");
+      {
+        const terrainStep = 60;
+        const terrainStartX = Math.floor(viewL / terrainStep) * terrainStep;
+        const baitShopBoundary = W * 2.85;
+        for (let tx = terrainStartX; tx < viewR + terrainStep; tx += terrainStep) {
+          const floorAtX = getOceanFloorY(tx, waterY, W, H);
+          const floorAtNext = getOceanFloorY(tx + terrainStep, waterY, W, H);
+          const isBeachArea = tx > baitShopBoundary;
+          const terrainH = isBeachArea ? 40 : 80 + Math.sin(tx * 0.01) * 20;
+          const chosenImg = isBeachArea ? beachSandImg : (tx % 120 < 60 ? rockFloorImg : rockCliffImg);
+          if (chosenImg && chosenImg.complete && chosenImg.naturalWidth > 0) {
+            ctx.save();
+            ctx.globalAlpha = isBeachArea ? 0.7 : 0.6;
+            ctx.beginPath();
+            ctx.moveTo(tx, floorAtX);
+            ctx.lineTo(tx + terrainStep, floorAtNext);
+            ctx.lineTo(tx + terrainStep, floorAtNext + terrainH);
+            ctx.lineTo(tx, floorAtX + terrainH);
+            ctx.closePath();
+            ctx.clip();
+            ctx.drawImage(chosenImg, tx, Math.min(floorAtX, floorAtNext) - 5, terrainStep, terrainH + 10);
+            ctx.restore();
+          } else {
+            ctx.save();
+            ctx.globalAlpha = 0.5;
+            ctx.fillStyle = isBeachArea ? "#c4a96e" : "#4a3c2a";
+            ctx.beginPath();
+            ctx.moveTo(tx, floorAtX);
+            ctx.lineTo(tx + terrainStep, floorAtNext);
+            ctx.lineTo(tx + terrainStep, floorAtNext + terrainH);
+            ctx.lineTo(tx, floorAtX + terrainH);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+          }
+        }
+      }
+
       // --- DRAW UNDERWATER PLANTS (behind fish layer) ---
       const plantSheet = getImg("/assets/plants_sheet.png");
       if (plantSheet && plantSheet.complete) {
@@ -4585,6 +4629,12 @@ export default function FishingGame() {
           fish.wobblePhase += 0.04 * dt;
           fish.y = fish.baseY + Math.sin(fish.wobblePhase) * fish.wobbleAmp;
 
+          const beachBound = W * 2.85;
+          if (!fish.type.beachCrab && fish.x >= beachBound) {
+            fish.direction = -1;
+            fish.x = beachBound - 10;
+            fish.dirChangeTimer = 60 + Math.random() * 60;
+          }
           if (isInSandArea(fish.x, fish.y, W, H) || isInSandArea(fish.x, fish.baseY, W, H)) {
             fish.direction *= -1;
             fish.x += fish.direction * fish.speed * 3 * dt;
@@ -5539,6 +5589,8 @@ export default function FishingGame() {
           }
         } else {
           const isSinking = s.netAnimPhase === "sinking";
+          const isRising = s.netAnimPhase === "rising";
+          const isScooping = s.netAnimPhase === "scooping";
           const netImgSrc = isSinking ? "/assets/objects/Netthrown.png" : "/assets/objects/Net.png";
           const netImg = getImg(netImgSrc);
           if (netImg && netImg.complete && netImg.naturalWidth > 0) {
@@ -5547,26 +5599,40 @@ export default function FishingGame() {
             const nh = nw * aspectRatio;
             ctx.save();
             ctx.imageSmoothingEnabled = false;
-            if (s.netAnimPhase === "rising") {
-              const wobble = Math.sin(s.time * 0.3) * 4;
-              ctx.translate(netX - nw / 2 + wobble, netY - nh / 2);
-            } else {
-              ctx.translate(netX - nw / 2, netY - nh / 2);
-            }
             ctx.globalAlpha = 0.95;
-            ctx.drawImage(netImg, 0, 0, netImg.naturalWidth, netImg.naturalHeight, 0, 0, nw, nh);
-            if ((s.netAnimPhase === "rising" || s.netAnimPhase === "scooping") && s.netAnimCaughtFish.length > 0) {
+            let netDrawX = netX - nw / 2;
+            let netDrawY = netY - nh / 2;
+            if (isSinking) {
+              ctx.translate(netX, netY);
+              ctx.drawImage(netImg, 0, 0, netImg.naturalWidth, netImg.naturalHeight, -nw / 2, -nh / 2, nw, nh);
+              netDrawX = netX - nw / 2;
+              netDrawY = netY - nh / 2;
+            } else if (isRising || isScooping) {
+              const wobble = isRising ? Math.sin(s.time * 0.3) * 4 : 0;
+              netDrawX = netX - nw / 2 + wobble;
+              netDrawY = netY - nh;
+              ctx.translate(netDrawX, netDrawY);
+              ctx.drawImage(netImg, 0, 0, netImg.naturalWidth, netImg.naturalHeight, 0, 0, nw, nh);
+            } else {
+              ctx.translate(netDrawX, netDrawY);
+              ctx.drawImage(netImg, 0, 0, netImg.naturalWidth, netImg.naturalHeight, 0, 0, nw, nh);
+            }
+            ctx.restore();
+            if ((isRising || isScooping) && s.netAnimCaughtFish.length > 0) {
+              ctx.save();
               const fishCount = s.netAnimCaughtFish.length;
               const iconSize = 24;
               ctx.globalAlpha = 0.9;
               const maxShow = Math.min(fishCount, 6);
-              const startX = nw / 2 - (maxShow * (iconSize + 4)) / 2;
+              const iconCenterX = netDrawX + nw / 2;
+              const iconCenterY = netDrawY + nh * 0.45;
+              const totalW = maxShow * (iconSize + 4);
               for (let fi = 0; fi < maxShow; fi++) {
                 const caught = s.netAnimCaughtFish[fi];
                 const cIcon = caught.icon ? getImg(caught.icon) : null;
                 const bobY = Math.sin(s.time * 0.2 + fi * 1.5) * 4;
-                const fx = startX + fi * (iconSize + 4);
-                const fy = nh * 0.3 + bobY;
+                const fx = iconCenterX - totalW / 2 + fi * (iconSize + 4);
+                const fy = iconCenterY + bobY;
                 if (cIcon && cIcon.complete && cIcon.naturalWidth > 0) {
                   ctx.drawImage(cIcon, fx, fy, iconSize, iconSize);
                 } else {
@@ -5580,21 +5646,20 @@ export default function FishingGame() {
                 ctx.fillStyle = "#f1c40f";
                 ctx.font = "bold 11px monospace";
                 ctx.textAlign = "center";
-                ctx.fillText(`+${fishCount - maxShow}`, nw / 2 + 40, nh * 0.3 + iconSize / 2 + 4);
+                ctx.fillText(`+${fishCount - maxShow}`, iconCenterX + 40, iconCenterY + iconSize / 2 + 4);
               }
               ctx.fillStyle = "#fff";
               ctx.font = "bold 10px monospace";
               ctx.textAlign = "center";
               const weightText = `${s.netTotalWeight.toFixed(1)}lb / 49lb`;
-              ctx.fillText(weightText, nw / 2, nh * 0.3 + iconSize + 16);
+              ctx.fillText(weightText, iconCenterX, iconCenterY + iconSize + 16);
               if (s.netTotalWeight > 49) {
                 ctx.fillStyle = "rgba(255,60,60,0.9)";
                 ctx.font = "bold 13px monospace";
-                ctx.fillText("BREAKING!", nw / 2, nh * 0.3 - 8);
+                ctx.fillText("BREAKING!", iconCenterX, iconCenterY - 8);
               }
+              ctx.restore();
             }
-            ctx.globalAlpha = 1;
-            ctx.restore();
           }
         }
 
