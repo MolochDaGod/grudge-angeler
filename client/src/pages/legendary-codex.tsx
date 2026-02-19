@@ -1460,23 +1460,29 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
               data-testid="button-prev-chapter"
               onClick={onPrev}
               style={{
-                background: "none",
-                border: "1px solid #333348",
-                color: "#8888aa",
+                background: "rgba(196,160,80,0.06)",
+                border: "1px solid rgba(196,160,80,0.4)",
+                color: "#c4a050",
                 padding: "10px 24px",
                 fontSize: "12px",
                 letterSpacing: "2px",
                 cursor: "pointer",
                 fontFamily: "inherit",
                 transition: "all 0.3s ease",
+                textShadow: "0 0 8px rgba(196,160,80,0.5)",
+                boxShadow: "0 0 10px rgba(196,160,80,0.15), inset 0 0 10px rgba(196,160,80,0.05)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "#666680";
-                e.currentTarget.style.color = "#c0c0d0";
+                e.currentTarget.style.borderColor = "rgba(196,160,80,0.7)";
+                e.currentTarget.style.color = "#e0c870";
+                e.currentTarget.style.textShadow = "0 0 12px rgba(196,160,80,0.8)";
+                e.currentTarget.style.boxShadow = "0 0 18px rgba(196,160,80,0.3), inset 0 0 12px rgba(196,160,80,0.08)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "#333348";
-                e.currentTarget.style.color = "#8888aa";
+                e.currentTarget.style.borderColor = "rgba(196,160,80,0.4)";
+                e.currentTarget.style.color = "#c4a050";
+                e.currentTarget.style.textShadow = "0 0 8px rgba(196,160,80,0.5)";
+                e.currentTarget.style.boxShadow = "0 0 10px rgba(196,160,80,0.15), inset 0 0 10px rgba(196,160,80,0.05)";
               }}
             >
               Previous
@@ -1517,23 +1523,29 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
               data-testid="button-next-chapter"
               onClick={onNext}
               style={{
-                background: "none",
-                border: "1px solid #333348",
-                color: "#8888aa",
+                background: "rgba(196,160,80,0.06)",
+                border: "1px solid rgba(196,160,80,0.4)",
+                color: "#c4a050",
                 padding: "10px 24px",
                 fontSize: "12px",
                 letterSpacing: "2px",
                 cursor: "pointer",
                 fontFamily: "inherit",
                 transition: "all 0.3s ease",
+                textShadow: "0 0 8px rgba(196,160,80,0.5)",
+                boxShadow: "0 0 10px rgba(196,160,80,0.15), inset 0 0 10px rgba(196,160,80,0.05)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "#666680";
-                e.currentTarget.style.color = "#c0c0d0";
+                e.currentTarget.style.borderColor = "rgba(196,160,80,0.7)";
+                e.currentTarget.style.color = "#e0c870";
+                e.currentTarget.style.textShadow = "0 0 12px rgba(196,160,80,0.8)";
+                e.currentTarget.style.boxShadow = "0 0 18px rgba(196,160,80,0.3), inset 0 0 12px rgba(196,160,80,0.08)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "#333348";
-                e.currentTarget.style.color = "#8888aa";
+                e.currentTarget.style.borderColor = "rgba(196,160,80,0.4)";
+                e.currentTarget.style.color = "#c4a050";
+                e.currentTarget.style.textShadow = "0 0 8px rgba(196,160,80,0.5)";
+                e.currentTarget.style.boxShadow = "0 0 10px rgba(196,160,80,0.15), inset 0 0 10px rgba(196,160,80,0.05)";
               }}
             >
               Next
