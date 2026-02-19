@@ -4427,22 +4427,11 @@ export default function FishingGame() {
 
       // Beach showcase: crab sprites walking on sand + net stages displayed
       if (s.gameState !== "title" && s.gameState !== "charSelect") {
-        const crabAssets = [
-          "/assets/crabs/red-crab-red-common.png",
-          "/assets/crabs/blue-crab-blue-common.png",
-          "/assets/crabs/green-crab-green-common.png",
-          "/assets/crabs/cyan-crab-cyan-common.png",
-          "/assets/crabs/pink-crab-pink-common.png",
-          "/assets/crabs/gold-crab-gold-uncommon.png",
-          "/assets/crabs/purple-crab-purple-uncommon.png",
-          "/assets/crabs/dark-crab-dark-uncommon.png",
-          "/assets/crabs/crimson-crab-crimson-rare.png",
-          "/assets/crabs/shadow-crab-shadow-rare.png",
-        ];
         ctx.save();
         ctx.imageSmoothingEnabled = false;
-        for (let ci = 0; ci < crabAssets.length; ci++) {
-          const crabImg = getImg(crabAssets[ci]);
+        for (let ci = 0; ci < BEACH_CRABS.length; ci++) {
+          const crabData = BEACH_CRABS[ci];
+          const crabImg = crabData.spriteSheet ? getImg(crabData.spriteSheet) : null;
           if (!crabImg || !crabImg.complete) continue;
           const crabSpacing = 120;
           const cx = beachStart + 80 + ci * crabSpacing + Math.sin(s.time * 0.04 + ci * 1.8) * 20;
@@ -4455,7 +4444,7 @@ export default function FishingGame() {
           ctx.translate(cx + crabSize / 2, cy + crabSize / 2 + wobble);
           ctx.rotate(scuttle);
           if (Math.sin(s.time * 0.04 + ci * 1.8) > 0) ctx.scale(-1, 1);
-          ctx.drawImage(crabImg, -crabSize / 2, -crabSize / 2, crabSize, crabSize);
+          ctx.drawImage(crabImg, 0, 0, crabImg.naturalWidth, crabImg.naturalHeight, -crabSize / 2, -crabSize / 2, crabSize, crabSize);
           ctx.restore();
         }
         ctx.restore();
