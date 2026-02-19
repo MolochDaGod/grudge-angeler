@@ -7213,7 +7213,7 @@ export default function FishingGame() {
       if (s.gameState !== "title" && s.gameState !== "charSelect" && s.gameState !== "intro" && !s.binoculars) {
         const mmW = 200;
         const mmH = 70;
-        const mmX = W - mmW - 12;
+        const mmX = (W - mmW) / 2;
         const mmY = 14;
         const worldL = -(W * 3) - 200;
         const worldR = W * 5 + 200;
