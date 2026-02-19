@@ -1927,14 +1927,15 @@ export default function FishingGame() {
         const st = stateRef.current;
         const canvas = canvasRef.current;
         if (canvas) {
-          const W = canvas.width;
-          const H = canvas.height;
+          const dpr = window.devicePixelRatio || 1;
+          const W = canvas.width / dpr;
+          const H = canvas.height / dpr;
           const wY = H * 0.42;
           if (st.toolMode === "net") {
             if (st.netCooldown > 0 || st.netAnimPhase !== "none") return;
             st.netActive = true;
             st.netBroken = false;
-            st.netCastX = st.playerX - (st.facingLeft ? 120 : -120);
+            st.netCastX = st.playerX + (st.facingLeft ? -100 : 100);
             st.netCastY = wY + 60;
             const fishermanSize = FRAME_H * SCALE;
             st.netWidth = fishermanSize * 3;
@@ -7542,8 +7543,9 @@ export default function FishingGame() {
     if (!canvas) return;
     if (s.gizmoDragging || (s.gizmoEnabled && s.adminOpen)) return;
 
-    const W = canvas.width;
-    const H = canvas.height;
+    const dpr = window.devicePixelRatio || 1;
+    const W = canvas.width / dpr;
+    const H = canvas.height / dpr;
     const waterY = H * 0.42;
     const defaultFX = W * 0.45;
 
@@ -7570,13 +7572,17 @@ export default function FishingGame() {
     }
 
     if (s.gameState === "idle") {
+      const clickX = e.clientX;
+      const clickY = e.clientY;
+      const worldClickX = clickX - s.cameraX;
+      const worldClickY = clickY - s.cameraY;
       if (s.toolMode === "net") {
         if (s.netCooldown > 0) return;
         if (s.netAnimPhase !== "none") return;
         s.netActive = true;
         s.netBroken = false;
-        s.netCastX = (s.mouseX - s.cameraX) || (s.playerX - 100);
-        s.netCastY = Math.max(waterY + 20, s.mouseY || (waterY + 60));
+        s.netCastX = s.playerX + (s.facingLeft ? -100 : 100);
+        s.netCastY = waterY + 60;
         const fishermanSize = FRAME_H * SCALE;
         s.netWidth = fishermanSize * 3;
         s.netDepth = fishermanSize * 2;
@@ -7586,7 +7592,7 @@ export default function FishingGame() {
         s.netThrowTimer = 0;
         s.netAnimStartY = waterY;
         s.netAnimY = waterY - 20;
-        s.netAnimTargetY = Math.max(waterY + 60, s.netCastY + 100);
+        s.netAnimTargetY = waterY + 160;
         s.netAnimCaughtFish = [];
         s.netTotalWeight = 0;
         syncUI();
@@ -7603,8 +7609,8 @@ export default function FishingGame() {
         s.boatStanding = true;
         s.boatRowing = false;
       }
-      s.aimX = (s.mouseX - s.cameraX) || (s.playerX - 100);
-      s.aimY = Math.max(waterY + 20, s.mouseY || (waterY + 60));
+      s.aimX = worldClickX || (s.playerX - 100);
+      s.aimY = Math.max(waterY + 20, worldClickY || (waterY + 60));
       syncUI();
       return;
     }
@@ -10935,7 +10941,31 @@ export default function FishingGame() {
                   onTouchStart={(e) => {
                     e.stopPropagation();
                     const st = stateRef.current;
-                    if (st.gameState === "idle" || st.gameState === "caught" || st.gameState === "missed") {
+                    if (st.gameState === "idle") {
+                      if (st.toolMode === "net") {
+                        st.keysDown.add(" ");
+                        setTimeout(() => st.keysDown.delete(" "), 100);
+                      } else {
+                        const canvas = canvasRef.current;
+                        if (canvas) {
+                          const dpr = window.devicePixelRatio || 1;
+                          const cW = canvas.width / dpr;
+                          const cH = canvas.height / dpr;
+                          const wY = cH * 0.42;
+                          st.binoculars = false;
+                          st.gameState = "casting";
+                          st.castPower = 0;
+                          st.castDirection = 1;
+                          st.guardianUsedThisCast = false;
+                          st.guardianState = "idle";
+                          st.guardianDefendTimer = 0;
+                          if (st.inBoat) { st.boatStanding = true; st.boatRowing = false; }
+                          st.aimX = st.playerX + (st.facingLeft ? -200 : 200);
+                          st.aimY = wY + 80;
+                          syncUI();
+                        }
+                      }
+                    } else if (st.gameState === "caught" || st.gameState === "missed") {
                       st.isReeling = true;
                     }
                   }}
@@ -10947,11 +10977,11 @@ export default function FishingGame() {
                     e.stopPropagation();
                     stateRef.current.isReeling = false;
                   }}
-                  style={btnStyle(isIdle || isCaught || isMissed, "#4fc3f7")}
+                  style={btnStyle(isIdle || isCaught || isMissed, uiState.toolMode === "net" ? "#a855f7" : "#4fc3f7")}
                   disabled={isReeling || isSwimming}
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2v8m0 0l3-3m-3 3l-3-3M5 16l7 6 7-6"/></svg>
-                  <span>CAST</span>
+                  <span>{uiState.toolMode === "net" ? "NET" : "CAST"}</span>
                 </button>
 
                 <button
