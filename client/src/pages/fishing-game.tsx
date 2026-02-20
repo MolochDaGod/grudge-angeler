@@ -5000,36 +5000,25 @@ export default function FishingGame() {
             }
             ctx.restore();
           }
-        } else if (fish.type.name === "Whale" || fish.type.name === "Stingray" || fish.type.name === "Minnow" || fish.type.name === "Perch" || fish.type.name === "Anglerfish" || fish.type.name === "Deep Sea Angler" || fish.type.name === "Celestial Whale" || fish.type.name === "The Seal at the Seam") {
-          const frameIdx = Math.floor(s.time / 90) % 2;
-          let frameSrc: string;
-          if (fish.type.name === "Whale") {
-            frameSrc = frameIdx === 0
-              ? "/assets/creatures/whale-blue-legendary/whale_frame1.png"
-              : "/assets/creatures/whale-blue-legendary/whale_frame2.png";
-          } else {
-            frameSrc = frameIdx === 0
-              ? `/assets/creatures/${fish.type.creatureFolder}/frames/1.png`
-              : `/assets/creatures/${fish.type.creatureFolder}/frames/2.png`;
-          }
-          const frameImg = getImg(frameSrc);
-          if (frameImg && frameImg.complete && frameImg.naturalWidth > 0) {
-            const fScale = creatureScale * (fish.type.name === "Whale" ? 0.9 : 1.0) * (fish.type.baseScale || 1);
-            const expectedW = fish.type.catchW || 48;
-            const expectedH = fish.type.catchH || 48;
-            const imgAspect = frameImg.naturalWidth / frameImg.naturalHeight;
-            const targetW = expectedW > 64 ? expectedW : (imgAspect >= 1.5 ? 96 : 48);
-            const targetH = expectedW > 64 ? expectedH : (imgAspect >= 1.5 ? 48 : 48);
-            const dw = targetW * fScale;
-            const dh = targetH * fScale;
+        } else if (fish.type.catchAsset && fish.type.walkFrames === 2) {
+          const catchImg = getImg(fish.type.catchAsset);
+          if (catchImg && catchImg.complete && catchImg.naturalWidth > 0) {
+            const isDoubleWide = catchImg.naturalWidth > catchImg.naturalHeight * 1.5;
+            const frameIdx = Math.floor(s.time / 90) % 2;
+            const frameW = isDoubleWide ? catchImg.naturalWidth / 2 : catchImg.naturalWidth;
+            const frameH = catchImg.naturalHeight;
+            const sx = isDoubleWide ? frameIdx * frameW : 0;
+            const fScale = creatureScale * (fish.type.baseScale || 1);
+            const dw = frameW * fScale;
+            const dh = frameH * fScale;
             ctx.save();
             ctx.imageSmoothingEnabled = false;
             if (fish.direction < 0) {
               ctx.translate(fish.x + dw, fish.y);
               ctx.scale(-1, 1);
-              ctx.drawImage(frameImg, 0, 0, dw, dh);
+              ctx.drawImage(catchImg, sx, 0, frameW, frameH, 0, 0, dw, dh);
             } else {
-              ctx.drawImage(frameImg, fish.x, fish.y, dw, dh);
+              ctx.drawImage(catchImg, sx, 0, frameW, frameH, fish.x, fish.y, dw, dh);
             }
             ctx.restore();
           }
@@ -6133,8 +6122,19 @@ export default function FishingGame() {
               ctx.scale(flopScale, 1 / flopScale);
             }
             
-            if (iconSrc) {
-              ctx.imageSmoothingEnabled = false;
+            ctx.imageSmoothingEnabled = false;
+            const catchSheetImg = s.currentCatch ? getImg(s.currentCatch.catchAsset) : null;
+            const isTwoFrame = catchSheetImg && catchSheetImg.complete && catchSheetImg.naturalWidth > catchSheetImg.naturalHeight * 1.5;
+            if (isTwoFrame && catchSheetImg) {
+              const frameIdx = Math.floor(s.time / 90) % 2;
+              const frameW = catchSheetImg.naturalWidth / 2;
+              const frameH = catchSheetImg.naturalHeight;
+              const sx = frameIdx * frameW;
+              const aspect = frameH / frameW;
+              const dw = iconSize;
+              const dh = iconSize * aspect;
+              ctx.drawImage(catchSheetImg, sx, 0, frameW, frameH, -dw / 2, -dh / 2, dw, dh);
+            } else if (iconSrc) {
               ctx.drawImage(displayImg, -iconSize / 2, -iconSize / 2, iconSize, iconSize);
             } else {
               const cs = 3 + Math.min(3, s.hookedFishSize);
