@@ -1944,9 +1944,8 @@ export default function FishingGame() {
             st.netBroken = false;
             st.netCastX = st.playerX + (st.facingLeft ? -100 : 100);
             st.netCastY = wY + 60;
-            const fishermanSize = FRAME_H * SCALE;
-            st.netWidth = fishermanSize * 3;
-            st.netDepth = fishermanSize * 2;
+            st.netWidth = 74 * 2.5 * 0.5;
+            st.netDepth = (FRAME_H * SCALE) * 2;
             st.netTimer = 120;
             st.netAnimPhase = "throwing";
             st.netThrowFrame = 0;
@@ -4457,25 +4456,21 @@ export default function FishingGame() {
         }
         ctx.restore();
 
-        // Net showcase on beach: NetThrow (animated), Netthrown (sinking), Net (rising/reversed)
+        // Net showcase on beach: 1Net (throw), 2net (sinking), 3net (rising)
         const netShowX = beachStart + 200;
         const netShowProgBase = (netShowX - beachStart) / (beachEnd - beachStart);
         const netShowBaseY = pierY + 8 + netShowProgBase * 28;
 
-        // 1) NetThrow.png - animated frame cycling
-        const throwShowImg = getImg("/assets/objects/NetThrow.png");
+        // 1) 1Net.png - throw display
+        const throwShowImg = getImg("/assets/objects/Net/1Net.png");
         if (throwShowImg && throwShowImg.complete && throwShowImg.naturalWidth > 0) {
           ctx.save();
           ctx.imageSmoothingEnabled = false;
-          const throwFrames = 7;
-          const fW = throwShowImg.naturalWidth / throwFrames;
-          const fH = throwShowImg.naturalHeight;
-          const showFrame = Math.floor(s.time * 0.08) % throwFrames;
-          const throwShowScale = 4;
-          const dW = fW * throwShowScale;
-          const dH = fH * throwShowScale;
+          const throwShowScale = 3;
+          const dW = throwShowImg.naturalWidth * throwShowScale;
+          const dH = throwShowImg.naturalHeight * throwShowScale;
           ctx.globalAlpha = 0.95;
-          ctx.drawImage(throwShowImg, showFrame * fW, 0, fW, fH,
+          ctx.drawImage(throwShowImg, 0, 0, throwShowImg.naturalWidth, throwShowImg.naturalHeight,
             netShowX - dW / 2, netShowBaseY - dH - 10, dW, dH);
           ctx.fillStyle = "#f1c40f";
           ctx.font = "bold 8px 'Press Start 2P', monospace";
@@ -4484,11 +4479,11 @@ export default function FishingGame() {
           ctx.restore();
         }
 
-        // 2) Netthrown.png - sinking display
+        // 2) 2net.png - sinking display
         const thrownShowX = netShowX + 300;
         const thrownProg = (thrownShowX - beachStart) / (beachEnd - beachStart);
         const thrownBaseY = pierY + 8 + thrownProg * 28;
-        const thrownImg = getImg("/assets/objects/Netthrown.png");
+        const thrownImg = getImg("/assets/objects/Net/2net.png");
         if (thrownImg && thrownImg.complete && thrownImg.naturalWidth > 0) {
           ctx.save();
           ctx.imageSmoothingEnabled = false;
@@ -4506,11 +4501,11 @@ export default function FishingGame() {
           ctx.restore();
         }
 
-        // 3) Net.png - rising/catch display (flipped vertically to show reversed)
+        // 3) 3net.png - rising/catch display
         const netRiseX = thrownShowX + 300;
         const netRiseProg = (netRiseX - beachStart) / (beachEnd - beachStart);
         const netRiseBaseY = pierY + 8 + netRiseProg * 28;
-        const netRiseImg = getImg("/assets/objects/Net.png");
+        const netRiseImg = getImg("/assets/objects/Net/3net.png");
         if (netRiseImg && netRiseImg.complete && netRiseImg.naturalWidth > 0) {
           ctx.save();
           ctx.imageSmoothingEnabled = false;
@@ -6177,30 +6172,25 @@ export default function FishingGame() {
       if (s.netActive && s.netAnimPhase !== "none") {
         const netX = s.netCastX;
         const netY = s.netAnimY;
-        const fishermanW = FRAME_H * SCALE;
-        const netVisualW = fishermanW * 3;
+        const netVisualW = 74 * 2.5 * 0.5;
 
         if (s.netAnimPhase === "throwing") {
-          const throwImg = getImg("/assets/objects/NetThrow.png");
+          const throwImg = getImg("/assets/objects/Net/1Net.png");
           if (throwImg && throwImg.complete && throwImg.naturalWidth > 0) {
-            const throwFrames = 7;
-            const frameW = throwImg.naturalWidth / throwFrames;
-            const frameH = throwImg.naturalHeight;
-            const frame = Math.min(s.netThrowFrame, throwFrames - 1);
-            const throwScale = netVisualW * 0.6 / frameW;
-            const drawW = frameW * throwScale;
-            const drawH = frameH * throwScale;
+            const aspectR = throwImg.naturalHeight / throwImg.naturalWidth;
+            const drawW = netVisualW * 0.5;
+            const drawH = drawW * aspectR;
             ctx.save();
             ctx.imageSmoothingEnabled = false;
             ctx.globalAlpha = 0.95;
-            ctx.drawImage(throwImg, frame * frameW, 0, frameW, frameH, netX - drawW / 2, netY - drawH / 2, drawW, drawH);
+            ctx.drawImage(throwImg, 0, 0, throwImg.naturalWidth, throwImg.naturalHeight, netX - drawW / 2, netY - drawH / 2, drawW, drawH);
             ctx.restore();
           }
         } else {
           const isSinking = s.netAnimPhase === "sinking";
           const isRising = s.netAnimPhase === "rising";
           const isScooping = s.netAnimPhase === "scooping";
-          const netImgSrc = isSinking ? "/assets/objects/Netthrown.png" : "/assets/objects/Net.png";
+          const netImgSrc = isSinking ? "/assets/objects/Net/2net.png" : "/assets/objects/Net/3net.png";
           const netImg = getImg(netImgSrc);
           if (netImg && netImg.complete && netImg.naturalWidth > 0) {
             const nw = netVisualW;
@@ -6833,12 +6823,8 @@ export default function FishingGame() {
         const NET_BREAK_COOLDOWN = 18000;
         if (s.netAnimPhase === "throwing") {
           s.netThrowTimer += dt;
-          if (s.netThrowTimer >= 6) {
-            s.netThrowFrame = Math.min(s.netThrowFrame + 1, 6);
-            s.netThrowTimer = 0;
-          }
           s.netAnimY += sinkSpeed * 0.5 * dt;
-          if (s.netThrowFrame >= 6) {
+          if (s.netThrowTimer >= 30) {
             s.netAnimPhase = "sinking";
             addParticles(s.netCastX, s.netAnimY, 6, "#5dade2", 2, "splash");
             addRipple(s.netCastX, s.netAnimY);
@@ -7596,9 +7582,8 @@ export default function FishingGame() {
         s.netBroken = false;
         s.netCastX = s.playerX + (s.facingLeft ? -100 : 100);
         s.netCastY = waterY + 60;
-        const fishermanSize = FRAME_H * SCALE;
-        s.netWidth = fishermanSize * 3;
-        s.netDepth = fishermanSize * 2;
+        s.netWidth = 74 * 2.5 * 0.5;
+        s.netDepth = (FRAME_H * SCALE) * 2;
         s.netTimer = 120;
         s.netAnimPhase = "throwing";
         s.netThrowFrame = 0;
