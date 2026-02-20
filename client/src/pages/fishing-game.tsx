@@ -4778,7 +4778,9 @@ export default function FishingGame() {
         if (s.swimmingFish.length < maxFish && Math.random() < baseSpawnRate * dt && !isBeachArea) {
           spawnFish(W, waterY, H);
         }
-        if (Math.random() < (isBeachArea ? 0.016 : 0.008) * dt) {
+        const crabCount = s.swimmingFish.filter(f => f.type.beachCrab).length;
+        const maxCrabs = isBeachArea ? 5 : 3;
+        if (crabCount < maxCrabs && Math.random() < (isBeachArea ? 0.008 : 0.004) * dt) {
           spawnBeachCrab(W, waterY, H);
         }
       }
