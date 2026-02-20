@@ -5020,9 +5020,15 @@ export default function FishingGame() {
           const frameImg = getImg(frameSrc);
           if (frameImg && frameImg.complete && frameImg.naturalWidth > 0) {
             const fScale = creatureScale * (fish.type.name === "Whale" ? 0.9 : 1.0) * (fish.type.baseScale || 1);
-            const dw = frameImg.naturalWidth * fScale;
-            const dh = frameImg.naturalHeight * fScale;
+            const expectedW = fish.type.catchW || 48;
+            const expectedH = fish.type.catchH || 48;
+            const imgAspect = frameImg.naturalWidth / frameImg.naturalHeight;
+            const targetW = expectedW > 64 ? expectedW : (imgAspect >= 1.5 ? 96 : 48);
+            const targetH = expectedW > 64 ? expectedH : (imgAspect >= 1.5 ? 48 : 48);
+            const dw = targetW * fScale;
+            const dh = targetH * fScale;
             ctx.save();
+            ctx.imageSmoothingEnabled = false;
             if (fish.direction < 0) {
               ctx.translate(fish.x + dw, fish.y);
               ctx.scale(-1, 1);
