@@ -3302,6 +3302,35 @@ export default function FishingGame() {
         ctx.restore();
       }
 
+      // --- OCEAN FLOOR LINE (visible depth slope from admin map) ---
+      {
+        const lineStep = 4;
+        const lineStartX = Math.floor(viewL / lineStep) * lineStep;
+        ctx.save();
+        ctx.beginPath();
+        const firstFloorY = getOceanFloorY(lineStartX, waterY, W, H);
+        ctx.moveTo(lineStartX, firstFloorY);
+        for (let lx = lineStartX + lineStep; lx <= viewR + lineStep; lx += lineStep) {
+          if (lx > waterRightEdge + 50) break;
+          const fy = getOceanFloorY(lx, waterY, W, H);
+          ctx.lineTo(lx, fy);
+        }
+        ctx.strokeStyle = "rgba(90,70,50,0.7)";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(lineStartX, firstFloorY);
+        for (let lx = lineStartX + lineStep; lx <= viewR + lineStep; lx += lineStep) {
+          if (lx > waterRightEdge + 50) break;
+          const fy = getOceanFloorY(lx, waterY, W, H);
+          ctx.lineTo(lx, fy);
+        }
+        ctx.strokeStyle = "rgba(160,140,100,0.5)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.restore();
+      }
+
       // --- ROCKY/SAND TERRAIN along ocean floor slope ---
       const rockFloorImg = getImg("/assets/tiles/rocky_sand_floor.png");
       const rockCliffImg = getImg("/assets/tiles/rock_cliff_wall.png");
