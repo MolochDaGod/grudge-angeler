@@ -1286,54 +1286,131 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
           position: "relative",
           marginBottom: "40px",
           display: "flex",
-          flexDirection: "column",
           alignItems: "center",
+          justifyContent: "center",
+          gap: "16px",
         }}
       >
-        {fish.artImage && (
-          <div
-            data-testid={`art-legendary-${fish.name.toLowerCase().replace(/\s+/g, "-")}`}
-            style={{
-              position: "relative",
-              borderRadius: "12px",
-              overflow: "hidden",
-              border: "1px solid rgba(160,180,200,0.2)",
-              background: "rgba(10,15,30,0.4)",
-              maxWidth: "420px",
-              width: "100%",
-              boxShadow: `0 0 40px rgba(${fish.auraCss},0.15), 0 4px 20px rgba(0,0,0,0.3)`,
-            }}
-          >
-            <style>{`
-              @keyframes artFloat${legendaries.indexOf(fish)} {
-                0%, 100% { transform: translateY(0px) scale(1); }
-                50% { transform: translateY(-4px) scale(1.005); }
-              }
-            `}</style>
-            <img
-              src={fish.artImage}
-              alt={fish.name}
+        <div style={{ flex: "0 0 auto", minWidth: "80px", display: "flex", justifyContent: "flex-end" }}>
+          {onPrev && (
+            <button
+              data-testid="button-prev-chapter-top"
+              onClick={onPrev}
               style={{
-                width: "100%",
-                display: "block",
-                imageRendering: "auto",
-                animation: `artFloat${legendaries.indexOf(fish)} ${3 + legendaries.indexOf(fish) * 0.4}s ease-in-out infinite`,
+                background: "rgba(196,160,80,0.06)",
+                border: "1px solid rgba(196,160,80,0.4)",
+                color: "#c4a050",
+                padding: "10px 16px",
+                fontSize: "12px",
+                letterSpacing: "2px",
+                cursor: "pointer",
+                fontFamily: "inherit",
+                transition: "all 0.3s ease",
+                textShadow: "0 0 8px rgba(196,160,80,0.5)",
+                boxShadow: "0 0 10px rgba(196,160,80,0.15), inset 0 0 10px rgba(196,160,80,0.05)",
+                whiteSpace: "nowrap",
               }}
-            />
-          </div>
-        )}
-        <span style={{
-          fontSize: "12px",
-          color: "rgba(196,160,80,0.7)",
-          fontFamily: "'Courier New', monospace",
-          letterSpacing: "1px",
-          marginTop: "12px",
-        }}>
-          {fish.realInches >= 12
-            ? `${Math.floor(fish.realInches / 12)}'${fish.realInches % 12 > 0 ? ` ${fish.realInches % 12}"` : ""}`
-            : `${fish.realInches}"`
-          }
-        </span>
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "rgba(196,160,80,0.7)";
+                e.currentTarget.style.color = "#e0c870";
+                e.currentTarget.style.textShadow = "0 0 12px rgba(196,160,80,0.8)";
+                e.currentTarget.style.boxShadow = "0 0 18px rgba(196,160,80,0.3), inset 0 0 12px rgba(196,160,80,0.08)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "rgba(196,160,80,0.4)";
+                e.currentTarget.style.color = "#c4a050";
+                e.currentTarget.style.textShadow = "0 0 8px rgba(196,160,80,0.5)";
+                e.currentTarget.style.boxShadow = "0 0 10px rgba(196,160,80,0.15), inset 0 0 10px rgba(196,160,80,0.05)";
+              }}
+            >
+              &#9664; Prev
+            </button>
+          )}
+        </div>
+
+        <div style={{ flex: "1 1 auto", display: "flex", flexDirection: "column", alignItems: "center", minWidth: 0 }}>
+          {fish.artImage && (
+            <div
+              data-testid={`art-legendary-${fish.name.toLowerCase().replace(/\s+/g, "-")}`}
+              style={{
+                position: "relative",
+                borderRadius: "12px",
+                overflow: "hidden",
+                border: "1px solid rgba(160,180,200,0.2)",
+                background: "rgba(10,15,30,0.4)",
+                maxWidth: "420px",
+                width: "100%",
+                boxShadow: `0 0 40px rgba(${fish.auraCss},0.15), 0 4px 20px rgba(0,0,0,0.3)`,
+              }}
+            >
+              <style>{`
+                @keyframes artFloat${legendaries.indexOf(fish)} {
+                  0%, 100% { transform: translateY(0px) scale(1); }
+                  50% { transform: translateY(-4px) scale(1.005); }
+                }
+              `}</style>
+              <img
+                src={fish.artImage}
+                alt={fish.name}
+                style={{
+                  width: "100%",
+                  display: "block",
+                  imageRendering: "auto",
+                  animation: `artFloat${legendaries.indexOf(fish)} ${3 + legendaries.indexOf(fish) * 0.4}s ease-in-out infinite`,
+                }}
+              />
+            </div>
+          )}
+          <span style={{
+            fontSize: "12px",
+            color: "rgba(196,160,80,0.7)",
+            fontFamily: "'Courier New', monospace",
+            letterSpacing: "1px",
+            marginTop: "12px",
+          }}>
+            {fish.realInches >= 12
+              ? `${Math.floor(fish.realInches / 12)}'${fish.realInches % 12 > 0 ? ` ${fish.realInches % 12}"` : ""}`
+              : `${fish.realInches}"`
+            }
+          </span>
+        </div>
+
+        <div style={{ flex: "0 0 auto", minWidth: "80px", display: "flex", justifyContent: "flex-start" }}>
+          {onNext && (
+            <button
+              data-testid="button-next-chapter-top"
+              onClick={onNext}
+              style={{
+                background: "rgba(196,160,80,0.06)",
+                border: "1px solid rgba(196,160,80,0.4)",
+                color: "#c4a050",
+                padding: "10px 16px",
+                fontSize: "12px",
+                letterSpacing: "2px",
+                cursor: "pointer",
+                fontFamily: "inherit",
+                transition: "all 0.3s ease",
+                textShadow: "0 0 8px rgba(196,160,80,0.5)",
+                boxShadow: "0 0 10px rgba(196,160,80,0.15), inset 0 0 10px rgba(196,160,80,0.05)",
+                whiteSpace: "nowrap",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "rgba(196,160,80,0.7)";
+                e.currentTarget.style.color = "#e0c870";
+                e.currentTarget.style.textShadow = "0 0 12px rgba(196,160,80,0.8)";
+                e.currentTarget.style.boxShadow = "0 0 18px rgba(196,160,80,0.3), inset 0 0 12px rgba(196,160,80,0.08)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "rgba(196,160,80,0.4)";
+                e.currentTarget.style.color = "#c4a050";
+                e.currentTarget.style.textShadow = "0 0 8px rgba(196,160,80,0.5)";
+                e.currentTarget.style.boxShadow = "0 0 10px rgba(196,160,80,0.15), inset 0 0 10px rgba(196,160,80,0.05)";
+              }}
+            >
+              Next &#9654;
+            </button>
+          )}
+        </div>
       </div>
 
       <div
@@ -1450,112 +1527,37 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
       <div
         style={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "center",
           alignItems: "center",
           maxWidth: "640px",
           margin: "0 auto",
-          flexWrap: "wrap",
-          gap: "12px",
+          gap: "4px",
         }}
       >
-        <div>
-          {onPrev && (
-            <button
-              data-testid="button-prev-chapter"
-              onClick={onPrev}
-              style={{
-                background: "rgba(196,160,80,0.06)",
-                border: "1px solid rgba(196,160,80,0.4)",
-                color: "#c4a050",
-                padding: "10px 24px",
-                fontSize: "12px",
-                letterSpacing: "2px",
-                cursor: "pointer",
-                fontFamily: "inherit",
-                transition: "all 0.3s ease",
-                textShadow: "0 0 8px rgba(196,160,80,0.5)",
-                boxShadow: "0 0 10px rgba(196,160,80,0.15), inset 0 0 10px rgba(196,160,80,0.05)",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "rgba(196,160,80,0.7)";
-                e.currentTarget.style.color = "#e0c870";
-                e.currentTarget.style.textShadow = "0 0 12px rgba(196,160,80,0.8)";
-                e.currentTarget.style.boxShadow = "0 0 18px rgba(196,160,80,0.3), inset 0 0 12px rgba(196,160,80,0.08)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "rgba(196,160,80,0.4)";
-                e.currentTarget.style.color = "#c4a050";
-                e.currentTarget.style.textShadow = "0 0 8px rgba(196,160,80,0.5)";
-                e.currentTarget.style.boxShadow = "0 0 10px rgba(196,160,80,0.15), inset 0 0 10px rgba(196,160,80,0.05)";
-              }}
-            >
-              Previous
-            </button>
-          )}
-        </div>
-
-        <div style={{ display: "flex", gap: "4px" }}>
-          {legendaries.map((_, i) => (
-            <button
-              key={i}
-              data-testid={`button-page-dot-${i}`}
-              onClick={() => onGoToPage(i)}
-              style={{
-                width: "8px",
-                height: "8px",
-                borderRadius: "50%",
-                border: "none",
-                cursor: "pointer",
-                padding: 0,
-                background:
-                  i === pageNum
-                    ? "rgba(196,160,80,0.8)"
-                    : "rgba(255,255,255,0.15)",
-                boxShadow:
-                  i === pageNum
-                    ? "0 0 8px rgba(196,160,80,0.4)"
-                    : "none",
-                transition: "all 0.3s ease",
-              }}
-            />
-          ))}
-        </div>
-
-        <div>
-          {onNext && (
-            <button
-              data-testid="button-next-chapter"
-              onClick={onNext}
-              style={{
-                background: "rgba(196,160,80,0.06)",
-                border: "1px solid rgba(196,160,80,0.4)",
-                color: "#c4a050",
-                padding: "10px 24px",
-                fontSize: "12px",
-                letterSpacing: "2px",
-                cursor: "pointer",
-                fontFamily: "inherit",
-                transition: "all 0.3s ease",
-                textShadow: "0 0 8px rgba(196,160,80,0.5)",
-                boxShadow: "0 0 10px rgba(196,160,80,0.15), inset 0 0 10px rgba(196,160,80,0.05)",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "rgba(196,160,80,0.7)";
-                e.currentTarget.style.color = "#e0c870";
-                e.currentTarget.style.textShadow = "0 0 12px rgba(196,160,80,0.8)";
-                e.currentTarget.style.boxShadow = "0 0 18px rgba(196,160,80,0.3), inset 0 0 12px rgba(196,160,80,0.08)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "rgba(196,160,80,0.4)";
-                e.currentTarget.style.color = "#c4a050";
-                e.currentTarget.style.textShadow = "0 0 8px rgba(196,160,80,0.5)";
-                e.currentTarget.style.boxShadow = "0 0 10px rgba(196,160,80,0.15), inset 0 0 10px rgba(196,160,80,0.05)";
-              }}
-            >
-              Next
-            </button>
-          )}
-        </div>
+        {legendaries.map((_, i) => (
+          <button
+            key={i}
+            data-testid={`button-page-dot-${i}`}
+            onClick={() => onGoToPage(i)}
+            style={{
+              width: "8px",
+              height: "8px",
+              borderRadius: "50%",
+              border: "none",
+              cursor: "pointer",
+              padding: 0,
+              background:
+                i === pageNum
+                  ? "rgba(196,160,80,0.8)"
+                  : "rgba(255,255,255,0.15)",
+              boxShadow:
+                i === pageNum
+                  ? "0 0 8px rgba(196,160,80,0.4)"
+                  : "none",
+              transition: "all 0.3s ease",
+            }}
+          />
+        ))}
       </div>
 
       <div style={{ textAlign: "center", marginTop: "40px" }}>
