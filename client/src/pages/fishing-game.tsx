@@ -615,7 +615,7 @@ const NPC_DEFS: NpcDef[] = [
     ],
   },
   {
-    id: 6, name: "Bait Vendor", spriteFolder: "10", idleFrames: 4, walkFrames: 6,
+    id: 6, name: "Bait Vendor", spriteFolder: "10", idleFrames: 4, walkFrames: 4,
     worldX: 3.15, role: "shopkeeper", beachNpc: true,
     greeting: "Fresh bait, straight from the shore!",
     shopItems: [
@@ -634,7 +634,7 @@ const NPC_DEFS: NpcDef[] = [
     ],
   },
   {
-    id: 7, name: "Sandy", spriteFolder: "9", idleFrames: 4, walkFrames: 4,
+    id: 7, name: "Sandy", spriteFolder: "9", idleFrames: 4, walkFrames: 6,
     worldX: 3.6, role: "requester", beachNpc: true,
     greeting: "Hey newcomer! Need some help getting started?",
     request: { description: "Catch 3 crabs of any kind for me.", fishName: "Red Crab", count: 3, fulfilled: 0, reward: 40, completed: false },
@@ -676,7 +676,7 @@ const NPC_DEFS: NpcDef[] = [
     ],
   },
   {
-    id: 9, name: "Crab Master", spriteFolder: "10", idleFrames: 4, walkFrames: 6,
+    id: 9, name: "Crab Master", spriteFolder: "10", idleFrames: 4, walkFrames: 4,
     worldX: 3.8, role: "mission", beachNpc: true,
     greeting: "I study every crab on this beach. Bring me the right bait and I'll teach you secrets!",
     missions: [
@@ -2415,11 +2415,11 @@ export default function FishingGame() {
               npc.frame = 0;
             }
           } else {
-            const npcSpeed = 0.6 * dt;
+            const npcSpeed = 0.3 * dt;
             npc.walkX += npc.walkDir * npcSpeed;
             npc.walkX = Math.max(-walkRange, Math.min(walkRange, npc.walkX));
             npc.frameTimer += dt;
-            if (npc.frameTimer > 8) {
+            if (npc.frameTimer > 6) {
               npc.frameTimer = 0;
               npc.frame = (npc.frame + 1) % (npc.walkFrames || 6);
             }
@@ -5881,17 +5881,13 @@ export default function FishingGame() {
         if (s.currentCatch?.beachCrab && s.currentCatch?.spriteSheet) {
           const crabImg = getImg(s.currentCatch.spriteSheet);
           if (crabImg && crabImg.complete) {
-            const fs = s.currentCatch.spriteFrameSize || 32;
-            const crabScale = SCALE * 1.6 * (s.hookedFishSize || 1);
-            const frameIdx = s.hookedFishFrame % 4;
-            const sx = frameIdx * fs;
-            const sy = (s.currentCatch.spriteRow || 1) * fs;
+            const crabDrawSize = SCALE * 14 * (s.hookedFishSize || 1);
             const wobble = Math.sin(s.time * 0.2) * 0.08;
             ctx.save();
-            ctx.translate(s.hookedFishX + fs * crabScale / 2, s.hookedFishY + fs * crabScale / 2);
+            ctx.translate(s.hookedFishX + crabDrawSize / 2, s.hookedFishY + crabDrawSize / 2);
             ctx.rotate(wobble);
             if (s.hookedFishDir < 0) ctx.scale(-1, 1);
-            ctx.drawImage(crabImg, sx, sy, fs, fs, -fs * crabScale / 2, -fs * crabScale / 2, fs * crabScale, fs * crabScale);
+            ctx.drawImage(crabImg, 0, 0, crabImg.naturalWidth, crabImg.naturalHeight, -crabDrawSize / 2, -crabDrawSize / 2, crabDrawSize, crabDrawSize);
             ctx.restore();
           }
         } else if (s.currentCatch?.beachCrab && s.currentCatch?.icon) {
