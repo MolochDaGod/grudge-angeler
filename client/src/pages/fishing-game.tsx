@@ -4417,8 +4417,8 @@ export default function FishingGame() {
       drawImage("/assets/objects/Stay.png", W * 2.8, dockObjY - 15 * 1.8, 1.8);
       drawImage("/assets/objects/Grass3.png", W * 3.1, dockObjY - 24 * 1.0, 1.0);
 
-      // Beach area (right side)
-      const beachStart = W * 3.0;
+      // Beach area (right side) - start at water edge to avoid gap
+      const beachStart = W * 2.85;
       const beachEnd = W * 5 + 200;
       const sandGrad = ctx.createLinearGradient(0, pierY - 5, 0, H);
       sandGrad.addColorStop(0, "#d4a76a");
@@ -4429,7 +4429,7 @@ export default function FishingGame() {
       ctx.beginPath();
       ctx.moveTo(beachStart, pierY + 10);
       for (let bx = beachStart; bx <= beachEnd; bx += 5) {
-        const progress = (bx - beachStart) / (beachEnd - beachStart);
+        const progress = Math.max(0, (bx - beachStart) / (beachEnd - beachStart));
         const beachY = pierY + 10 + progress * 30;
         ctx.lineTo(bx, beachY);
       }
@@ -4443,7 +4443,7 @@ export default function FishingGame() {
       ctx.lineWidth = 2;
       ctx.beginPath();
       for (let bx = beachStart; bx <= beachEnd; bx += 3) {
-        const progress = (bx - beachStart) / (beachEnd - beachStart);
+        const progress = Math.max(0, (bx - beachStart) / (beachEnd - beachStart));
         const shoreY = pierY + 10 + progress * 30 + Math.sin(s.time * 0.03 + bx * 0.02) * 3;
         if (bx === beachStart) ctx.moveTo(bx, shoreY);
         else ctx.lineTo(bx, shoreY);
@@ -4451,8 +4451,9 @@ export default function FishingGame() {
       ctx.stroke();
       ctx.globalAlpha = 1;
 
+      const beachRockStart = beachStart + W * 0.15;
       for (let ri = 0; ri < 8; ri++) {
-        const rx = beachStart + 100 + ri * 180 + Math.sin(ri * 2.7) * 40;
+        const rx = beachRockStart + 100 + ri * 180 + Math.sin(ri * 2.7) * 40;
         const progress = (rx - beachStart) / (beachEnd - beachStart);
         const ry = pierY + 15 + progress * 28;
         ctx.fillStyle = ri % 2 === 0 ? "#8a7c6b" : "#9e9080";
