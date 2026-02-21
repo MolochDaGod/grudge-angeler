@@ -8114,11 +8114,11 @@ export default function FishingGame() {
           {/* HUD Top Left - Score & Stats */}
           <div className="absolute top-3 left-3 flex flex-col gap-1.5" style={{ pointerEvents: "none" }} data-testid="hud-score">
             <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(241,196,15,0.3)" }}>
-              <img src="/assets/icons/fish/Icons_01.png" alt="" className="w-6 h-6" style={{ imageRendering: "pixelated" }} />
+              <img src="/assets/icons/fish/Icons_01.png" alt="" className="w-6 h-6" />
               <span style={{ color: "#f1c40f", fontSize: 14 }}>{uiState.score}</span>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(52,152,219,0.3)" }}>
-              <img src="/assets/icons/fish/Icons_03.png" alt="" className="w-6 h-6" style={{ imageRendering: "pixelated" }} />
+              <img src="/assets/icons/fish/Icons_03.png" alt="" className="w-6 h-6" />
               <span style={{ color: "#3498db", fontSize: 14 }}>{uiState.totalCaught}</span>
             </div>
             {uiState.combo > 1 && (
@@ -8135,15 +8135,15 @@ export default function FishingGame() {
           {/* HUD Top Right - Rod Level */}
           <div className="absolute top-3 right-3 flex flex-col gap-1.5" style={{ pointerEvents: "none" }} data-testid="hud-rod">
             <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(155,89,182,0.3)" }}>
-              <img src="/assets/icons/fish/Icons_07.png" alt="" className="w-6 h-6" style={{ imageRendering: "pixelated" }} />
+              <img src="/assets/icons/fish/Icons_07.png" alt="" className="w-6 h-6" />
               <span style={{ color: "#9b59b6", fontSize: 13 }}>Lv.{uiState.rodLevel}</span>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(46,204,113,0.3)" }}>
-              <img src="/assets/icons/fish/Icons_07.png" alt="" className="w-4 h-4" style={{ imageRendering: "pixelated" }} />
+              <img src="/assets/icons/fish/Icons_07.png" alt="" className="w-4 h-4" />
               <span style={{ color: "#2ecc71", fontSize: 10 }}>{RODS[uiState.equippedRod].name}</span>
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: "rgba(8,15,25,0.85)", borderRadius: 8, border: "1px solid rgba(52,152,219,0.3)" }}>
-              <img src="/assets/icons/fish/Icons_09.png" alt="" className="w-4 h-4" style={{ imageRendering: "pixelated" }} />
+              <img src="/assets/icons/fish/Icons_09.png" alt="" className="w-4 h-4" />
               <span style={{ color: LURES[uiState.equippedLure].crabName ? "#ff4060" : "#5dade2", fontSize: 10 }}>{LURES[uiState.equippedLure].name}</span>
               {LURES[uiState.equippedLure].crabName && <span style={{ color: "#f59e0b", fontSize: 9 }}>x{uiState.crabBaitCounts[LURES[uiState.equippedLure].crabName!] || 0}</span>}
             </div>
@@ -8153,7 +8153,7 @@ export default function FishingGame() {
               onClick={(e) => { e.stopPropagation(); setShowCollection(!showCollection); }}
               data-testid="button-collection"
             >
-              <img src="/assets/icons/fish/Icons_05.png" alt="" className="w-6 h-6" style={{ imageRendering: "pixelated" }} />
+              <img src="/assets/icons/fish/Icons_05.png" alt="" className="w-6 h-6" />
               <span style={{ color: "#2ecc71", fontSize: 12 }}>Fish Log</span>
             </button>
           </div>
@@ -8227,7 +8227,7 @@ export default function FishingGame() {
                     display: "flex", alignItems: "center", justifyContent: "center",
                     fontSize: 16,
                   }}>
-                    <img src={stateRef.current.currentCatch?.icon || stateRef.current.currentCatch?.catchAsset || stateRef.current.currentJunk?.asset || "/assets/icons/fish/Icons_05.png"} alt="" style={{ width: 20, height: 20, imageRendering: "pixelated", objectFit: "contain" }} />
+                    <img src={stateRef.current.currentCatch?.icon || stateRef.current.currentCatch?.catchAsset || stateRef.current.currentJunk?.asset || "/assets/icons/fish/Icons_05.png"} alt="" style={{ width: 20, height: 20, objectFit: "contain" }} />
                   </div>
                 </div>
                 <div className="relative" style={{
@@ -8407,7 +8407,7 @@ export default function FishingGame() {
                   className="flex flex-col items-center cursor-pointer"
                   style={{ padding: "4px 6px", borderRadius: 6, background: uiState.selectedHotbar === 3 ? "rgba(245,158,11,0.25)" : "rgba(8,15,25,0.75)", border: uiState.selectedHotbar === 3 ? "1px solid rgba(245,158,11,0.5)" : "1px solid rgba(255,255,255,0.1)", transition: "all 0.15s" }}
                   data-testid="hotbar-slot-3">
-                  <img src="/assets/icons/fish/Icons_09.png" alt="" style={{ width: 24, height: 24, imageRendering: "pixelated" }} />
+                  <img src="/assets/icons/fish/Icons_09.png" alt="" style={{ width: 24, height: 24 }} />
                   <span style={{ fontSize: 8, color: uiState.selectedHotbar === 3 ? "#f59e0b" : "#607d8b" }}>3</span>
                 </div>
               </div>
@@ -8416,7 +8416,7 @@ export default function FishingGame() {
                 className="flex flex-col items-center cursor-pointer"
                 style={{ padding: "4px 6px", borderRadius: 6, position: "relative", background: uiState.selectedHotbar === 4 ? "rgba(168,85,247,0.25)" : "rgba(8,15,25,0.75)", border: uiState.selectedHotbar === 4 ? "1px solid rgba(168,85,247,0.5)" : "1px solid rgba(255,255,255,0.1)", transition: "all 0.15s", opacity: uiState.netCooldown > 0 ? 0.5 : 1 }}
                 data-testid="hotbar-slot-4">
-                <img src="/assets/icons/fish/Icons_11.png" alt="" style={{ width: 24, height: 24, imageRendering: "pixelated" }} />
+                <img src="/assets/icons/fish/Icons_11.png" alt="" style={{ width: 24, height: 24 }} />
                 <span style={{ fontSize: 8, color: uiState.selectedHotbar === 4 ? "#a855f7" : "#607d8b" }}>4</span>
                 {uiState.netCooldown > 0 && (
                   <span style={{ position: "absolute", top: -4, right: -4, fontSize: 7, background: uiState.netBroken ? "rgba(220,38,38,0.9)" : "rgba(168,85,247,0.9)", color: "#fff", borderRadius: 4, padding: "1px 3px", fontWeight: "bold" }}>
@@ -9515,7 +9515,7 @@ export default function FishingGame() {
                   <div style={{ color: "#6ee7b7", fontSize: 11, marginBottom: 4 }}>RECENT CATCHES</div>
                   {uiState.catchHistory.length === 0 && (
                     <div className="flex flex-col items-center justify-center mt-6 gap-2">
-                      <img src="/assets/icons/fish/Icons_03.png" alt="" className="w-8 h-8 opacity-30" style={{ imageRendering: "pixelated" }} />
+                      <img src="/assets/icons/fish/Icons_03.png" alt="" className="w-8 h-8 opacity-30" />
                       <span style={{ color: "#455a64", fontSize: 10 }}>No catches yet</span>
                     </div>
                   )}
@@ -9632,7 +9632,7 @@ export default function FishingGame() {
         >
           <div className="flex items-center justify-between p-3" style={{ borderBottom: "1px solid rgba(52,152,219,0.2)" }}>
             <div className="flex items-center gap-2">
-              <img src="/assets/icons/fish/Icons_05.png" alt="" className="w-5 h-5" style={{ imageRendering: "pixelated" }} />
+              <img src="/assets/icons/fish/Icons_05.png" alt="" className="w-5 h-5" />
               <span style={{ color: "#3498db", fontSize: 13 }}>FISH LOG</span>
               <span style={{ color: "#455a64", fontSize: 10 }}>
                 {uiState.caughtCollection.filter(([,e]) => e.type).length}/{FISH_TYPES.length} species
@@ -9677,7 +9677,7 @@ export default function FishingGame() {
           <div className="flex-1 overflow-y-auto p-2.5 flex flex-col gap-2">
             {uiState.caughtCollection.length === 0 && (
               <div className="flex flex-col items-center justify-center mt-8 gap-3">
-                <img src="/assets/icons/fish/Icons_03.png" alt="" className="w-10 h-10 opacity-30" style={{ imageRendering: "pixelated" }} />
+                <img src="/assets/icons/fish/Icons_03.png" alt="" className="w-10 h-10 opacity-30" />
                 <span style={{ color: "#455a64", fontSize: 11, textAlign: "center", lineHeight: "1.5" }}>
                   No fish caught yet!<br />Start fishing to fill<br />your collection.
                 </span>

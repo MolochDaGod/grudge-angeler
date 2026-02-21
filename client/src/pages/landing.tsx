@@ -517,7 +517,7 @@ export default function Landing() {
               }}
             >
               <img src={f.icon} alt="" style={{
-                width: 40, height: 40, imageRendering: "pixelated",
+                width: 40, height: 40,
                 flexShrink: 0, objectFit: "contain",
               }} />
               <div>
@@ -927,7 +927,7 @@ export default function Landing() {
                 }}
               >
                 <img src={ach.icon} alt="" style={{
-                  width: 24, height: 24, imageRendering: "pixelated", objectFit: "contain",
+                  width: 24, height: 24, objectFit: "contain",
                   flexShrink: 0,
                 }} />
                 <div>
