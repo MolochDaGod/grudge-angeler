@@ -652,7 +652,6 @@ export default function Landing() {
               transform: "translate(-50%, -50%)",
               width: "110%", height: "110%",
               objectFit: "contain",
-              imageRendering: "pixelated",
               opacity: 0.06,
               pointerEvents: "none",
               filter: "blur(1px)",
@@ -669,7 +668,7 @@ export default function Landing() {
               src={sealAtTheSeamImg}
               alt="The Seal at the Seam"
               style={{
-                width: 80, height: 80, imageRendering: "pixelated",
+                width: 80, height: 80,
                 filter: "drop-shadow(0 0 20px rgba(30,60,140,0.5))",
                 marginBottom: 16,
                 display: "block", margin: "0 auto 16px",
@@ -731,7 +730,7 @@ export default function Landing() {
                 src={faction.img}
                 alt={faction.name}
                 style={{
-                  width: 80, height: 80, imageRendering: "pixelated",
+                  width: 80, height: 80,
                   filter: `drop-shadow(0 0 12px ${faction.color}66)`,
                   marginBottom: 12,
                 }}
@@ -883,7 +882,6 @@ export default function Landing() {
                           style={{
                             width: 52, height: 52,
                             objectFit: "contain",
-                            imageRendering: "pixelated",
                             borderRadius: 4,
                           }}
                         />
