@@ -1,47 +1,47 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
 
-const imgMinnow = "/assets/icons/fish/minnow-silver-common.png";
-const imgJellyfish = "/assets/icons/fish/jellyfish-translucent-common.png";
-const imgPerch = "/assets/icons/fish/perch-striped-common.png";
-const imgEel = "/assets/icons/fish/eel-dark-common.png";
-const imgOctopus = "/assets/icons/fish/octopus-red-common.png";
-const imgBass = "/assets/icons/fish/bass-green-uncommon.png";
-const imgSalmon = "/assets/icons/fish/salmon-pink-uncommon.png";
-const imgElectricEel = "/assets/icons/fish/electric-eel-yellow-uncommon.png";
-const imgBlueOctopus = "/assets/icons/fish/blue-ring-octopus-blue-uncommon.png";
-const imgCatfish = "/assets/icons/fish/catfish-brown-uncommon.png";
-const imgStingray = "/assets/icons/fish/stingray-gray-rare.png";
-const imgMorayEel = "/assets/icons/fish/moray-eel-brown-rare.png";
-const imgAnglerfish = "/assets/icons/fish/anglerfish-dark-rare.png";
-const imgSwordfish = "/assets/icons/fish/swordfish-blue-rare.png";
-const imgDeepAngler = "/assets/icons/fish/deep-sea-angler-dark-rare.png";
-const imgShark = "/assets/icons/fish/shark-predator.png";
-const imgSeaDevil = "/assets/icons/fish/sea-devil-predator.png";
-const imgWhale = "/assets/icons/fish/whale-blue-legendary.png";
-const imgKraken = "/assets/icons/fish/kraken-predator.png";
-const imgPhantomMinnow = "/assets/icons/fish/phantom-minnow-spectral-ultra_rare.png";
-const imgVolcanicPerch = "/assets/icons/fish/volcanic-perch-molten-ultra_rare.png";
-const imgAbyssalBass = "/assets/icons/fish/abyssal-bass-dark-ultra_rare.png";
-const imgFrostCatfish = "/assets/icons/fish/frost-catfish-ice-ultra_rare.png";
-const imgStormSwordfish = "/assets/icons/fish/storm-swordfish-electric-ultra_rare.png";
-const imgCelestialWhale = "/assets/icons/fish/celestial-whale-cosmic-ultra_rare.png";
-const imgNeonEel = "/assets/icons/fish/neon-eel-neon-ultra_rare.png";
-const imgGoldenSalmon = "/assets/icons/fish/golden-salmon-gold-ultra_rare.png";
-const imgShadowLeviathan = "/assets/icons/fish/shadow-leviathan-shadow-ultra_rare.png";
-const imgGiantOctopus = "/assets/icons/fish/giant-octopus-purple-legendary.png";
-const imgGiantSquid = "/assets/icons/fish/giant-squid-blue-legendary.png";
-const imgSealAtTheSeam = "/assets/icons/fish/seal-at-the-seam-cosmic-ultra_rare.png";
-const imgRedCrab = "/assets/icons/fish/red-crab-red-common.png";
-const imgBlueCrab = "/assets/icons/fish/blue-crab-blue-common.png";
-const imgGreenCrab = "/assets/icons/fish/green-crab-green-common.png";
-const imgCyanCrab = "/assets/icons/fish/cyan-crab-cyan-common.png";
-const imgPinkCrab = "/assets/icons/fish/pink-crab-pink-common.png";
-const imgPurpleCrab = "/assets/icons/fish/purple-crab-purple-uncommon.png";
-const imgGoldCrab = "/assets/icons/fish/gold-crab-gold-uncommon.png";
-const imgDarkCrab = "/assets/icons/fish/dark-crab-dark-uncommon.png";
-const imgCrimsonCrab = "/assets/icons/fish/crimson-crab-crimson-rare.png";
-const imgShadowCrab = "/assets/icons/fish/shadow-crab-shadow-rare.png";
+const imgMinnow = "/assets/fish-images/minnow.png";
+const imgJellyfish = "/assets/fish-images/jellyfish.png";
+const imgPerch = "/assets/fish-images/perch.png";
+const imgEel = "/assets/fish-images/eel.png";
+const imgOctopus = "/assets/fish-images/octopus.png";
+const imgBass = "/assets/fish-images/bass.png";
+const imgSalmon = "/assets/fish-images/salmon.png";
+const imgElectricEel = "/assets/fish-images/electric-eel.png";
+const imgBlueOctopus = "/assets/fish-images/blue-ring-octopus.png";
+const imgCatfish = "/assets/fish-images/catfish.png";
+const imgStingray = "/assets/fish-images/stingray.png";
+const imgMorayEel = "/assets/fish-images/moray-eel.png";
+const imgAnglerfish = "/assets/fish-images/anglerfish.png";
+const imgSwordfish = "/assets/fish-images/swordfish.png";
+const imgDeepAngler = "/assets/fish-images/deep-sea-angler.png";
+const imgShark = "/assets/fish-images/shark.png";
+const imgSeaDevil = "/assets/fish-images/sea-devil.png";
+const imgWhale = "/assets/fish-images/whale.png";
+const imgKraken = "/assets/fish-images/kraken.png";
+const imgPhantomMinnow = "/assets/fish-images/phantom-minnow.png";
+const imgVolcanicPerch = "/assets/fish-images/volcanic-perch.png";
+const imgAbyssalBass = "/assets/fish-images/abyssal-bass.png";
+const imgFrostCatfish = "/assets/fish-images/frost-catfish.png";
+const imgStormSwordfish = "/assets/fish-images/storm-swordfish.png";
+const imgCelestialWhale = "/assets/fish-images/celestial-whale.png";
+const imgNeonEel = "/assets/fish-images/neon-eel.png";
+const imgGoldenSalmon = "/assets/fish-images/golden-salmon.png";
+const imgShadowLeviathan = "/assets/fish-images/shadow-leviathan.png";
+const imgGiantOctopus = "/assets/fish-images/giant-octopus.png";
+const imgGiantSquid = "/assets/fish-images/giant-squid.png";
+const imgSealAtTheSeam = "/assets/fish-images/seal-at-the-seam.png";
+const imgRedCrab = "/assets/fish-images/red-crab.png";
+const imgBlueCrab = "/assets/fish-images/blue-crab.png";
+const imgGreenCrab = "/assets/fish-images/green-crab.png";
+const imgCyanCrab = "/assets/fish-images/cyan-crab.png";
+const imgPinkCrab = "/assets/fish-images/pink-crab.png";
+const imgPurpleCrab = "/assets/fish-images/purple-crab.png";
+const imgGoldCrab = "/assets/fish-images/gold-crab.png";
+const imgDarkCrab = "/assets/fish-images/dark-crab.png";
+const imgCrimsonCrab = "/assets/fish-images/crimson-crab.png";
+const imgShadowCrab = "/assets/fish-images/shadow-crab.png";
 
 function toSlug(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -49,7 +49,7 @@ function toSlug(name: string) {
 
 const oceanBgImg = "/assets/coral_reef_bg.png";
 const oceanRippleImg = "/assets/coral_reef_bg.png";
-const sealAtTheSeamImg = "/assets/icons/fish/seal-at-the-seam-cosmic-ultra_rare.png";
+const sealAtTheSeamImg = "/assets/fish-images/seal-at-the-seam.png";
 
 const legendaryFish = [
   { name: "Phantom Minnow", chapter: "I", img: imgPhantomMinnow },
@@ -68,7 +68,7 @@ const features = [
   { icon: "/assets/icons/lures/golden_fly.png", title: "30 Species", desc: "Fish, crabs, and predators across 5 rarity tiers" },
   { icon: "/assets/icons/gbux.png", title: "Gbux Economy", desc: "Dynamic market, sell fish, complete bounties, build your fortune" },
   { icon: "/assets/icons/lures/prismatic_lure.png", title: "Equipment System", desc: "5 rods, 5 baits, 11 lures, 22 chum items - each with unique stats" },
-  { icon: "/assets/icons/fish/phantom-minnow-spectral-ultra_rare.png", title: "The Legendary 10", desc: "Ultra-rare mythic fish with complete lore and unique visual effects" },
+  { icon: "/assets/fish-images/phantom-minnow.png", title: "The Legendary 10", desc: "Ultra-rare mythic fish with complete lore and unique visual effects" },
   { icon: "/assets/objects/Boat.png", title: "Open Ocean", desc: "8 world scenes from shallow waters to the deepest abyss" },
   { icon: "/assets/icons/fish/Icons_01.png", title: "Leaderboards", desc: "Compete globally with Grudge ID for biggest catch and legendary hauls" },
 ];
@@ -190,24 +190,24 @@ const allFish: LandingFish[] = [
   { name: "Sea Devil", rarity: "rare", points: 600, desc: "A monstrous crab creature from the deep trenches.", img: imgSeaDevil },
   { name: "Whale", rarity: "legendary", points: 300, desc: "The king of the deep. Incredibly rare!", img: imgWhale },
   { name: "Kraken", rarity: "legendary", points: 800, desc: "A massive squid from the abyss, feared by all.", img: imgKraken },
-  { name: "Phantom Minnow", rarity: "ultra_rare", points: 500, desc: "A ghostly minnow wreathed in spectral flame.", img: "/assets/icons/fish/phantom-minnow-spectral-ultra_rare.png" },
-  { name: "Volcanic Perch", rarity: "ultra_rare", points: 600, desc: "Scales glow molten orange from deep-sea vents.", img: "/assets/icons/fish/volcanic-perch-molten-ultra_rare.png" },
-  { name: "Abyssal Bass", rarity: "ultra_rare", points: 750, desc: "A colossal bass radiating dark energy.", img: "/assets/icons/fish/abyssal-bass-dark-ultra_rare.png" },
-  { name: "Frost Catfish", rarity: "ultra_rare", points: 800, desc: "Encased in living ice. Freezes the water.", img: "/assets/icons/fish/frost-catfish-ice-ultra_rare.png" },
-  { name: "Storm Swordfish", rarity: "ultra_rare", points: 1000, desc: "Rides lightning bolts with electric fury.", img: "/assets/icons/fish/storm-swordfish-electric-ultra_rare.png" },
-  { name: "Celestial Whale", rarity: "ultra_rare", points: 2000, desc: "A cosmic whale that swallowed a dying star.", img: "/assets/icons/fish/celestial-whale-cosmic-ultra_rare.png" },
-  { name: "Neon Eel", rarity: "ultra_rare", points: 650, desc: "Bioluminescent eel pulsing with neon colors.", img: "/assets/icons/fish/neon-eel-neon-ultra_rare.png" },
-  { name: "Golden Salmon", rarity: "ultra_rare", points: 700, desc: "Solid gold scales. Worth a fortune.", img: "/assets/icons/fish/golden-salmon-gold-ultra_rare.png" },
-  { name: "Shadow Leviathan", rarity: "ultra_rare", points: 1500, desc: "A titanic shadow beast from beyond the abyss.", img: "/assets/icons/fish/shadow-leviathan-shadow-ultra_rare.png" },
+  { name: "Phantom Minnow", rarity: "ultra_rare", points: 500, desc: "A ghostly minnow wreathed in spectral flame.", img: imgPhantomMinnow },
+  { name: "Volcanic Perch", rarity: "ultra_rare", points: 600, desc: "Scales glow molten orange from deep-sea vents.", img: imgVolcanicPerch },
+  { name: "Abyssal Bass", rarity: "ultra_rare", points: 750, desc: "A colossal bass radiating dark energy.", img: imgAbyssalBass },
+  { name: "Frost Catfish", rarity: "ultra_rare", points: 800, desc: "Encased in living ice. Freezes the water.", img: imgFrostCatfish },
+  { name: "Storm Swordfish", rarity: "ultra_rare", points: 1000, desc: "Rides lightning bolts with electric fury.", img: imgStormSwordfish },
+  { name: "Celestial Whale", rarity: "ultra_rare", points: 2000, desc: "A cosmic whale that swallowed a dying star.", img: imgCelestialWhale },
+  { name: "Neon Eel", rarity: "ultra_rare", points: 650, desc: "Bioluminescent eel pulsing with neon colors.", img: imgNeonEel },
+  { name: "Golden Salmon", rarity: "ultra_rare", points: 700, desc: "Solid gold scales. Worth a fortune.", img: imgGoldenSalmon },
+  { name: "Shadow Leviathan", rarity: "ultra_rare", points: 1500, desc: "A titanic shadow beast from beyond the abyss.", img: imgShadowLeviathan },
   { name: "The Seal at the Seam", rarity: "ultra_rare", points: 5000, desc: "A living sigil at the boundary of reality. The 10th Legendary.", img: imgSealAtTheSeam },
 ];
 
 const fishAchievements = [
   { name: "First Catch", desc: "Catch your first fish", icon: "/assets/icons/fish/Icons_07.png", color: "#a0a0a0" },
-  { name: "Common Collector", desc: "Catch all common species", icon: "/assets/icons/fish/minnow-silver-common.png", color: "#a0a0a0" },
-  { name: "Uncommon Hunter", desc: "Catch all uncommon species", icon: "/assets/icons/fish/bass-green-uncommon.png", color: "#4fc3f7" },
-  { name: "Rare Trophy", desc: "Catch all rare species", icon: "/assets/icons/fish/swordfish-blue-rare.png", color: "#ffd54f" },
-  { name: "Legendary Angler", desc: "Catch all legendary species", icon: "/assets/icons/fish/whale-blue-legendary.png", color: "#ff8a65" },
+  { name: "Common Collector", desc: "Catch all common species", icon: "/assets/fish-images/minnow.png", color: "#a0a0a0" },
+  { name: "Uncommon Hunter", desc: "Catch all uncommon species", icon: "/assets/fish-images/bass.png", color: "#4fc3f7" },
+  { name: "Rare Trophy", desc: "Catch all rare species", icon: "/assets/fish-images/swordfish.png", color: "#ffd54f" },
+  { name: "Legendary Angler", desc: "Catch all legendary species", icon: "/assets/fish-images/whale.png", color: "#ff8a65" },
   { name: "Mythic Master", desc: "Catch all ultra-rare species", icon: "/assets/icons/lures/prismatic_lure.png", color: "#e040fb" },
   { name: "Ocean Completionist", desc: "Catch every species in the game", icon: "/assets/icons/lures/golden_fly.png", color: "#ffd700" },
   { name: "100 Catch Club", desc: "Catch 100 fish total", icon: "/assets/icons/fish/Icons_09.png", color: "#4fc3f7" },
