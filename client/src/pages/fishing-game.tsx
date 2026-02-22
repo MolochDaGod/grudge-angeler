@@ -26,7 +26,7 @@ function loadDepthSlope(): DepthSlopeData {
       }
     }
   } catch {}
-  return { shallowX: 3200, shallowY: 352, deepX: -4040, deepY: 1902, shoreX: 6600, shoreY: 332 };
+  return { shallowX: 406.50, shallowY: 1503.05, deepX: -1607.15, deepY: 3190.26, shoreX: 4510.23, shoreY: 302.4 };
 }
 let _depthSlope: DepthSlopeData | null = null;
 function getDepthSlope(): DepthSlopeData {
@@ -49,12 +49,9 @@ function loadSandAreas(): SandRect[] {
       }
     }
   } catch {}
-  const refH = 720;
-  const pierY = refH * 0.38;
-  const waterY = refH * 0.42;
   return [
-    { x: ADMIN_REF_W * 2.6, y: pierY - 30, w: ADMIN_REF_W * 2.5, h: waterY - pierY + 80 },
-    { x: ADMIN_REF_W * 3, y: pierY + 5, w: ADMIN_REF_W * 1.5, h: 40 },
+    { x: 4503.13, y: 243.60, w: 2024.87, h: 2882.86 },
+    { x: 4638.72, y: 270.01, w: 1885.65, h: 1978.16 },
   ];
 }
 function getSandAreas(): SandRect[] {
@@ -305,6 +302,14 @@ const FISH_TYPES: FishType[] = [
   { name: "Golden Salmon", icon: "/assets/fish-images/golden-salmon.png", catchAsset: "/assets/catch/golden-salmon-gold-ultra_rare.png", catchW: 48, catchH: 32, creatureFolder: "golden-salmon-gold-ultra_rare", idleFrames: 4, walkFrames: 4, points: 700, rarity: "ultra_rare", weight: 0.2, minDepth: 0.6, speed: 1.5, description: "A legendary salmon with solid gold scales. Worth a fortune.", baseScale: 0.7 },
   { name: "Shadow Leviathan", icon: "/assets/fish-images/shadow-leviathan.png", catchAsset: "/assets/catch/shadow-leviathan-shadow-ultra_rare.png", catchW: 89, catchH: 14, creatureFolder: "shadow-leviathan-shadow-ultra_rare", idleFrames: 4, walkFrames: 4, points: 1500, rarity: "ultra_rare", weight: 0.08, minDepth: 0.8, speed: 0.6, description: "A titanic shadow beast from beyond the abyss. Feared by all ocean life.", tint: "rgba(140,15,15,0.5)", baseScale: 2.5 },
   { name: "The Seal at the Seam", icon: "/assets/fish-images/seal-at-the-seam.png", catchAsset: "/assets/fish-images/seal-at-the-seam.png", catchW: 64, catchH: 64, creatureFolder: "seal-at-the-seam-cosmic-ultra_rare", idleFrames: 6, walkFrames: 6, points: 5000, rarity: "ultra_rare", weight: 0, minDepth: 0.95, speed: 0.3, description: "A living sigil at the boundary of reality. The 10th Legendary — guardian of the Seam.", tint: "rgba(20,40,120,0.5)", baseScale: 1.0, treasureChestOnly: true },
+  { name: "Pufferfish", icon: "/assets/icons/fish/Icons_04.png", catchAsset: "/assets/catch/pufferfish-salt-rare.png", catchW: 12, catchH: 6, creatureFolder: "pufferfish-salt-rare", idleFrames: 1, walkFrames: 2, points: 110, rarity: "rare", weight: 6, minDepth: 0.4, speed: 0.7, description: "A spiny golden pufferfish. Inflates when threatened.", tint: "rgba(220,180,50,0.2)", baseScale: 0.3 },
+  { name: "Freshwater Bass", icon: "/assets/icons/fish/Icons_05.png", catchAsset: "/assets/catch/bass-fresh-common.png", catchW: 16, catchH: 12, creatureFolder: "bass-fresh-common", idleFrames: 1, walkFrames: 2, points: 15, rarity: "common", weight: 35, minDepth: 0.15, speed: 1.1, description: "A green freshwater bass. Common but scrappy.", baseScale: 0.25 },
+  { name: "Redfish", icon: "/assets/icons/fish/Icons_07.png", catchAsset: "/assets/catch/redfish-large-uncommon.png", catchW: 20, catchH: 12, creatureFolder: "redfish-large-uncommon", idleFrames: 1, walkFrames: 2, points: 55, rarity: "uncommon", weight: 12, minDepth: 0.3, speed: 1.0, description: "A rust-red ocean fish with a powerful tail.", tint: "rgba(180,80,50,0.2)", baseScale: 0.4 },
+  { name: "Anchovy", icon: "/assets/icons/fish/Icons_06.png", catchAsset: "/assets/catch/anchovy-salt-common.png", catchW: 26, catchH: 12, creatureFolder: "anchovy-salt-common", idleFrames: 1, walkFrames: 2, points: 12, rarity: "common", weight: 40, minDepth: 0.2, speed: 1.6, description: "A darting blue anchovy. Travels in huge schools.", tint: "rgba(80,140,220,0.15)", baseScale: 0.2 },
+  { name: "Angelfish", icon: "/assets/icons/fish/Icons_10.png", catchAsset: "/assets/catch/angelfish-fresh-uncommon.png", catchW: 28, catchH: 24, creatureFolder: "angelfish-fresh-uncommon", idleFrames: 1, walkFrames: 2, points: 65, rarity: "uncommon", weight: 10, minDepth: 0.35, speed: 0.9, description: "A graceful pink angelfish with flowing fins.", tint: "rgba(220,120,160,0.2)", baseScale: 0.45 },
+  { name: "Surgeonfish", icon: "/assets/icons/fish/Icons_09.png", catchAsset: "/assets/catch/surgeonfish-salt-uncommon.png", catchW: 54, catchH: 22, creatureFolder: "surgeonfish-salt-uncommon", idleFrames: 1, walkFrames: 2, points: 70, rarity: "uncommon", weight: 8, minDepth: 0.45, speed: 1.3, description: "A large blue surgeonfish with a razor-sharp tail spine.", tint: "rgba(60,120,200,0.25)", baseScale: 0.9 },
+  { name: "Rainbow Trout", icon: "/assets/icons/fish/Icons_08.png", catchAsset: "/assets/catch/rainbow-trout-fresh-rare.png", catchW: 30, catchH: 12, creatureFolder: "rainbow-trout-fresh-rare", idleFrames: 1, walkFrames: 2, points: 95, rarity: "rare", weight: 5, minDepth: 0.35, speed: 1.2, description: "A speckled brown trout with a rainbow shimmer along its flank.", baseScale: 0.5 },
+  { name: "Clownfish", icon: "/assets/icons/fish/Icons_15.png", catchAsset: "/assets/catch/clownfish-salt-uncommon.png", catchW: 30, catchH: 12, creatureFolder: "clownfish-salt-uncommon", idleFrames: 1, walkFrames: 2, points: 45, rarity: "uncommon", weight: 14, minDepth: 0.25, speed: 1.0, description: "A bright pink clownfish hiding among anemones.", tint: "rgba(240,100,120,0.2)", baseScale: 0.35 },
 ];
 
 const BETA_EGG_MAX_STOCK = 50;
@@ -322,16 +327,16 @@ const BETAXGRUDA_EGGS = [
 const CRAB_FRAME = 16;
 
 const BEACH_CRABS: FishType[] = [
-  { name: "Red Crab", icon: "/assets/fish-images/red-crab.png", catchAsset: "/assets/fish-images/red-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 8, rarity: "common", weight: 50, minDepth: 0.05, speed: 0.9, description: "A small red crab that scuttles along the beach.", beachCrab: true, spriteSheet: "/assets/crabs/red-crab-red-common.png", spriteRow: 0, spriteFrameSize: 256 },
-  { name: "Blue Crab", icon: "/assets/fish-images/blue-crab.png", catchAsset: "/assets/fish-images/blue-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 10, rarity: "common", weight: 40, minDepth: 0.05, speed: 1.0, description: "A bright blue crab found near tidal pools.", beachCrab: true, spriteSheet: "/assets/crabs/blue-crab-blue-common.png", spriteRow: 0, spriteFrameSize: 256 },
-  { name: "Green Crab", icon: "/assets/fish-images/green-crab.png", catchAsset: "/assets/fish-images/green-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 8, rarity: "common", weight: 45, minDepth: 0.05, speed: 0.8, description: "A mossy green crab hiding in the seaweed.", beachCrab: true, spriteSheet: "/assets/crabs/green-crab-green-common.png", spriteRow: 0, spriteFrameSize: 256 },
-  { name: "Purple Crab", icon: "/assets/fish-images/purple-crab.png", catchAsset: "/assets/fish-images/purple-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 15, rarity: "uncommon", weight: 20, minDepth: 0.05, speed: 1.1, description: "An uncommon purple crab with iridescent shell.", beachCrab: true, spriteSheet: "/assets/crabs/purple-crab-purple-uncommon.png", spriteRow: 0, spriteFrameSize: 256 },
-  { name: "Gold Crab", icon: "/assets/fish-images/gold-crab.png", catchAsset: "/assets/fish-images/gold-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 25, rarity: "uncommon", weight: 15, minDepth: 0.05, speed: 1.2, description: "A rare golden crab. Prized for its shimmering shell.", beachCrab: true, spriteSheet: "/assets/crabs/gold-crab-gold-uncommon.png", spriteRow: 0, spriteFrameSize: 256 },
-  { name: "Cyan Crab", icon: "/assets/fish-images/cyan-crab.png", catchAsset: "/assets/fish-images/cyan-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 8, rarity: "common", weight: 45, minDepth: 0.05, speed: 0.85, description: "A pale cyan crab commonly found on sandy shores.", beachCrab: true, spriteSheet: "/assets/crabs/cyan-crab-cyan-common.png", spriteRow: 0, spriteFrameSize: 256 },
-  { name: "Pink Crab", icon: "/assets/fish-images/pink-crab.png", catchAsset: "/assets/fish-images/pink-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 12, rarity: "common", weight: 35, minDepth: 0.05, speed: 0.95, description: "A cute pink crab that loves warm shallow waters.", beachCrab: true, spriteSheet: "/assets/crabs/pink-crab-pink-common.png", spriteRow: 0, spriteFrameSize: 256 },
-  { name: "Dark Crab", icon: "/assets/fish-images/dark-crab.png", catchAsset: "/assets/fish-images/dark-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 20, rarity: "uncommon", weight: 18, minDepth: 0.05, speed: 1.15, description: "A dark-shelled crab with powerful pincers.", beachCrab: true, spriteSheet: "/assets/crabs/dark-crab-dark-uncommon.png", spriteRow: 0, spriteFrameSize: 256 },
-  { name: "Crimson Crab", icon: "/assets/fish-images/crimson-crab.png", catchAsset: "/assets/fish-images/crimson-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 40, rarity: "rare", weight: 8, minDepth: 0.05, speed: 1.4, description: "A blood-red crab with Sea Devil markings. Extremely aggressive.", beachCrab: true, spriteSheet: "/assets/crabs/crimson-crab-crimson-rare.png", spriteRow: 0, spriteFrameSize: 256 },
-  { name: "Shadow Crab", icon: "/assets/fish-images/shadow-crab.png", catchAsset: "/assets/fish-images/shadow-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 4, walkFrames: 4, points: 55, rarity: "rare", weight: 5, minDepth: 0.05, speed: 1.6, description: "A dark maroon crab that moves like a phantom. Kin of the Sea Devil.", beachCrab: true, spriteSheet: "/assets/crabs/shadow-crab-shadow-rare.png", spriteRow: 0, spriteFrameSize: 256 },
+  { name: "Red Crab", icon: "/assets/fish-images/red-crab.png", catchAsset: "/assets/fish-images/red-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 1, walkFrames: 1, points: 8, rarity: "common", weight: 50, minDepth: 0.05, speed: 0.9, description: "A small red crab that scuttles along the beach.", beachCrab: true, spriteSheet: "/assets/crabs/red-crab-red-common.png", spriteRow: 0, spriteFrameSize: 1024 },
+  { name: "Blue Crab", icon: "/assets/fish-images/blue-crab.png", catchAsset: "/assets/fish-images/blue-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 1, walkFrames: 1, points: 10, rarity: "common", weight: 40, minDepth: 0.05, speed: 1.0, description: "A bright blue crab found near tidal pools.", beachCrab: true, spriteSheet: "/assets/crabs/blue-crab-blue-common.png", spriteRow: 0, spriteFrameSize: 1024 },
+  { name: "Green Crab", icon: "/assets/fish-images/green-crab.png", catchAsset: "/assets/fish-images/green-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 1, walkFrames: 1, points: 8, rarity: "common", weight: 45, minDepth: 0.05, speed: 0.8, description: "A mossy green crab hiding in the seaweed.", beachCrab: true, spriteSheet: "/assets/crabs/green-crab-green-common.png", spriteRow: 0, spriteFrameSize: 1024 },
+  { name: "Purple Crab", icon: "/assets/fish-images/purple-crab.png", catchAsset: "/assets/fish-images/purple-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 1, walkFrames: 1, points: 15, rarity: "uncommon", weight: 20, minDepth: 0.05, speed: 1.1, description: "An uncommon purple crab with iridescent shell.", beachCrab: true, spriteSheet: "/assets/crabs/purple-crab-purple-uncommon.png", spriteRow: 0, spriteFrameSize: 1024 },
+  { name: "Gold Crab", icon: "/assets/fish-images/gold-crab.png", catchAsset: "/assets/fish-images/gold-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 1, walkFrames: 1, points: 25, rarity: "uncommon", weight: 15, minDepth: 0.05, speed: 1.2, description: "A rare golden crab. Prized for its shimmering shell.", beachCrab: true, spriteSheet: "/assets/crabs/gold-crab-gold-uncommon.png", spriteRow: 0, spriteFrameSize: 1024 },
+  { name: "Cyan Crab", icon: "/assets/fish-images/cyan-crab.png", catchAsset: "/assets/fish-images/cyan-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 1, walkFrames: 1, points: 8, rarity: "common", weight: 45, minDepth: 0.05, speed: 0.85, description: "A pale cyan crab commonly found on sandy shores.", beachCrab: true, spriteSheet: "/assets/crabs/cyan-crab-cyan-common.png", spriteRow: 0, spriteFrameSize: 1024 },
+  { name: "Pink Crab", icon: "/assets/fish-images/pink-crab.png", catchAsset: "/assets/fish-images/pink-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 1, walkFrames: 1, points: 12, rarity: "common", weight: 35, minDepth: 0.05, speed: 0.95, description: "A cute pink crab that loves warm shallow waters.", beachCrab: true, spriteSheet: "/assets/crabs/pink-crab-pink-common.png", spriteRow: 0, spriteFrameSize: 1024 },
+  { name: "Dark Crab", icon: "/assets/fish-images/dark-crab.png", catchAsset: "/assets/fish-images/dark-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 1, walkFrames: 1, points: 20, rarity: "uncommon", weight: 18, minDepth: 0.05, speed: 1.15, description: "A dark-shelled crab with powerful pincers.", beachCrab: true, spriteSheet: "/assets/crabs/dark-crab-dark-uncommon.png", spriteRow: 0, spriteFrameSize: 1024 },
+  { name: "Crimson Crab", icon: "/assets/fish-images/crimson-crab.png", catchAsset: "/assets/fish-images/crimson-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 1, walkFrames: 1, points: 40, rarity: "rare", weight: 8, minDepth: 0.05, speed: 1.4, description: "A blood-red crab with Sea Devil markings. Extremely aggressive.", beachCrab: true, spriteSheet: "/assets/crabs/crimson-crab-crimson-rare.png", spriteRow: 0, spriteFrameSize: 1024 },
+  { name: "Shadow Crab", icon: "/assets/fish-images/shadow-crab.png", catchAsset: "/assets/fish-images/shadow-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 1, walkFrames: 1, points: 55, rarity: "rare", weight: 5, minDepth: 0.05, speed: 1.6, description: "A dark maroon crab that moves like a phantom. Kin of the Sea Devil.", beachCrab: true, spriteSheet: "/assets/crabs/shadow-crab-shadow-rare.png", spriteRow: 0, spriteFrameSize: 1024 },
 ];
 
 const JUNK_ITEMS = [
@@ -344,6 +349,9 @@ const CHARACTER_VARIANTS = [
   { name: "Fabled", folder: "fisherman", tint: null, color: "#2ecc71", factionIcon: "/assets/icons/faction_fabled.png", selectImg: "/assets/char_fabled.png" },
   { name: "Legion", folder: "fisherman3", tint: null, color: "#e74c3c", factionIcon: "/assets/icons/faction_legion.png", selectImg: "/assets/char_legion.png" },
   { name: "Crusade", folder: "fisherman2", tint: null, color: "#5dade2", factionIcon: "/assets/icons/faction_crusade.png", selectImg: "/assets/char_crusade.png" },
+  { name: "Rogue", folder: "fisherman4", tint: null, color: "#9b59b6", factionIcon: "/assets/icons/faction_fabled.png", selectImg: "/assets/char_rogue.png" },
+  { name: "Engineer", folder: "fisherman5", tint: null, color: "#f39c12", factionIcon: "/assets/icons/faction_legion.png", selectImg: "/assets/char_engineer.png" },
+  { name: "Ranger", folder: "fisherman6", tint: null, color: "#e67e22", factionIcon: "/assets/icons/faction_crusade.png", selectImg: "/assets/char_ranger.png" },
 ];
 
 interface Rod {
@@ -1181,6 +1189,7 @@ export default function FishingGame() {
       specialTimer: 0,
       specialCooldown: Math.random() * 10 + 8,
     })),
+    nearCrab: -1,
     nearNpc: -1,
     activeNpc: -1,
     npcDialogueIndex: 0,
@@ -1685,6 +1694,9 @@ export default function FishingGame() {
       "/assets/char_fabled.png",
       "/assets/char_legion.png",
       "/assets/char_crusade.png",
+      "/assets/char_rogue.png",
+      "/assets/char_engineer.png",
+      "/assets/char_ranger.png",
       ...NPC_DEFS.flatMap(npc => [
         `/assets/npcs/${npc.spriteFolder}/Idle.png`,
         ...(npc.noWalk ? [] : [`/assets/npcs/${npc.spriteFolder}/Walk.png`]),
@@ -1930,44 +1942,32 @@ export default function FishingGame() {
         return;
       }
       if (["a", "d", "w", "s", " ", "e"].includes(key)) e.preventDefault();
-      if (key === " " && stateRef.current.gameState === "idle") {
+      if (key === " " && stateRef.current.gameState === "idle" && stateRef.current.toolMode === "net") {
         const st = stateRef.current;
         const canvas = canvasRef.current;
         if (canvas) {
           const dpr = window.devicePixelRatio || 1;
-          const W = canvas.width / dpr;
           const H = canvas.height / dpr;
           const wY = H * 0.42;
-          if (st.toolMode === "net") {
-            if (st.netCooldown > 0 || st.netAnimPhase !== "none") return;
-            st.netActive = true;
-            st.netBroken = false;
-            st.netCastX = st.playerX + (st.facingLeft ? -100 : 100);
-            st.netCastY = wY + 60;
-            const dexBonus = st.attributes.Dexterity * 2 * (1 + st.attributes.Tactics * 0.01);
-            const endBonus = st.attributes.Endurance * 2 * (1 + st.attributes.Tactics * 0.01);
-            st.netWidth = 74 * 2.5 * 0.5 + dexBonus;
-            st.netDepth = (FRAME_H * SCALE) * 2 + endBonus;
-            st.netTimer = 120;
-            st.netAnimPhase = "throwing";
-            st.netThrowFrame = 0;
-            st.netThrowTimer = 0;
-            st.netAnimStartY = wY;
-            st.netAnimY = wY - 20;
-            st.netAnimTargetY = wY + 160;
-            st.netAnimCaughtFish = [];
-            st.netTotalWeight = 0;
-            syncUI();
-          } else {
-            st.binoculars = false;
-            st.gameState = "casting";
-            st.castPower = 0;
-            st.castDirection = 1;
-            st.guardianUsedThisCast = false;
-            st.guardianState = "idle";
-            st.guardianDefendTimer = 0;
-            syncUI();
-          }
+          if (st.netCooldown > 0 || st.netAnimPhase !== "none") return;
+          st.netActive = true;
+          st.netBroken = false;
+          st.netCastX = st.playerX + (st.facingLeft ? -100 : 100);
+          st.netCastY = wY + 60;
+          const dexBonus = st.attributes.Dexterity * 2 * (1 + st.attributes.Tactics * 0.01);
+          const endBonus = st.attributes.Endurance * 2 * (1 + st.attributes.Tactics * 0.01);
+          st.netWidth = 74 * 2.5 * 0.5 + dexBonus;
+          st.netDepth = (FRAME_H * SCALE) * 2 + endBonus;
+          st.netTimer = 120;
+          st.netAnimPhase = "throwing";
+          st.netThrowFrame = 0;
+          st.netThrowTimer = 0;
+          st.netAnimStartY = wY;
+          st.netAnimY = wY - 20;
+          st.netAnimTargetY = wY + 160;
+          st.netAnimCaughtFish = [];
+          st.netTotalWeight = 0;
+          syncUI();
         }
         return;
       }
@@ -2066,6 +2066,50 @@ export default function FishingGame() {
           stateRef.current.gameState = "store";
           stateRef.current.storeTab = "rod";
           syncUI();
+        } else if (stateRef.current.nearCrab >= 0) {
+          // Catch a beach crab with E key
+          const st = stateRef.current;
+          const crabIdx = st.nearCrab;
+          if (crabIdx >= 0 && crabIdx < st.swimmingFish.length) {
+            const crab = st.swimmingFish[crabIdx];
+            if (crab && crab.type.beachCrab) {
+              const crabKey = crab.type.name;
+              st.crabBaitCounts[crabKey] = (st.crabBaitCounts[crabKey] || 0) + 1;
+              // Reward: XP + money based on crab rarity
+              const rarityXP: Record<string, number> = { common: 8, uncommon: 18, rare: 35 };
+              const rarityMoney: Record<string, number> = { common: 5, uncommon: 12, rare: 25 };
+              const xpGain = rarityXP[crab.type.rarity] || 8;
+              const moneyGain = rarityMoney[crab.type.rarity] || 5;
+              st.playerXP += xpGain;
+              st.money += moneyGain;
+              while (st.playerXP >= st.playerXPToNext) {
+                st.playerXP -= st.playerXPToNext;
+                st.playerLevel++;
+                st.attributePoints += 2;
+                st.playerXPToNext = Math.floor(100 * Math.pow(1.15, st.playerLevel - 1));
+              }
+              // Particles and feedback
+              st.particles.push({ x: crab.x, y: crab.y - 10, vx: 0, vy: -1.5, life: 50, maxLife: 50, size: 0, color: "#2ecc71", type: "text", text: `+${crabKey}!` });
+              st.particles.push({ x: crab.x + 15, y: crab.y - 20, vx: 0.5, vy: -1, life: 40, maxLife: 40, size: 0, color: "#f1c40f", type: "text", text: `+${moneyGain}g` });
+              for (let sp = 0; sp < 8; sp++) {
+                st.particles.push({ x: crab.x + (Math.random() - 0.5) * 20, y: crab.y, vx: (Math.random() - 0.5) * 3, vy: -1.5 - Math.random() * 2, life: 20 + Math.random() * 15, maxLife: 35, size: 2 + Math.random() * 3, color: "#c4a96e", type: "splash" });
+              }
+              st.score += crab.type.points;
+              st.totalCaught++;
+              // Track in collection
+              const entry = st.caughtCollection.get(crabKey);
+              if (entry) {
+                entry.count++;
+              } else {
+                st.caughtCollection.set(crabKey, { type: crab.type, junk: null, count: 1, bestCombo: 0, biggestSize: crab.sizeMultiplier, totalWeight: 0 });
+              }
+              // Remove the crab
+              st.swimmingFish.splice(crabIdx, 1);
+              st.nearCrab = -1;
+              st.screenShake = 2;
+              syncUI();
+            }
+          }
         } else if (stateRef.current.nearNpc >= 0) {
           stateRef.current.gameState = "npcChat";
           stateRef.current.activeNpc = stateRef.current.nearNpc;
@@ -2366,7 +2410,22 @@ export default function FishingGame() {
         const baitShopCenterX = W * 2.85 + s.baitShopOffsetX + (192 * s.baitShopScale) / 2;
         s.nearBaitShop = !s.inBoat && Math.abs(s.playerX - baitShopCenterX) < 80 && s.gameState === "idle";
 
+        s.nearCrab = -1;
         s.nearNpc = -1;
+
+        // Beach crab proximity check
+        if (s.gameState === "idle" && !s.inBoat && s.playerX >= W * 3.0) {
+          let closestCrabDist = 60;
+          for (let ci = 0; ci < s.swimmingFish.length; ci++) {
+            const fish = s.swimmingFish[ci];
+            if (!fish.type.beachCrab || fish.crabDigging) continue;
+            const dist = Math.abs(s.playerX - fish.x);
+            if (dist < closestCrabDist) {
+              closestCrabDist = dist;
+              s.nearCrab = ci;
+            }
+          }
+        }
 
         for (let ni = 0; ni < s.npcs.length; ni++) {
           const npc = s.npcs[ni];
@@ -3298,6 +3357,8 @@ export default function FishingGame() {
           const midX = bx + dsTileW / 2;
           if (midX > uwBeachLimit) continue;
           const floorAtMid = getOceanFloorY(midX, waterY, W, H);
+          // Skip tiles where the floor is too shallow (near shore) — prevents dark blob near beach
+          if (floorAtMid - waterY < 150) continue;
           const drawTopY = floorAtMid - dsTileH * 0.7;
           ctx.drawImage(depthSurfImg, bx, drawTopY, dsTileW, dsTileH);
         }
@@ -4473,7 +4534,7 @@ export default function FishingGame() {
           const crabImg = crabData.spriteSheet ? getImg(crabData.spriteSheet) : null;
           if (!crabImg || !crabImg.complete) continue;
           const crabSpacing = 120;
-          const cx = beachStart + 80 + ci * crabSpacing + Math.sin(s.time * 0.04 + ci * 1.8) * 20;
+          const cx = beachStart + 500 + ci * crabSpacing + Math.sin(s.time * 0.04 + ci * 1.8) * 20;
           const progC = (cx - beachStart) / (beachEnd - beachStart);
           const cy = pierY + 12 + progC * 28 - 20;
           const crabSize = 38 + Math.sin(ci * 0.9) * 6;
@@ -5005,18 +5066,6 @@ export default function FishingGame() {
             }
             ctx.restore();
           }
-        } else if (fish.type.beachCrab && fish.type.icon) {
-          const crabIconImg = getImg(fish.type.icon);
-          if (crabIconImg && crabIconImg.complete) {
-            const crabDrawSize = 28 * fish.sizeMultiplier;
-            const wobble = Math.sin(s.time * 0.15 + fish.wobblePhase) * 3;
-            ctx.save();
-            ctx.translate(fish.x + crabDrawSize / 2, fish.y + crabDrawSize / 2);
-            ctx.rotate(wobble * 0.05);
-            if (fish.direction < 0) ctx.scale(-1, 1);
-            ctx.drawImage(crabIconImg, -crabDrawSize / 2, -crabDrawSize / 2, crabDrawSize, crabDrawSize);
-            ctx.restore();
-          }
         } else if (fish.type.spriteSheet && fish.type.spriteRow !== undefined) {
           const crabImg = getImg(fish.type.spriteSheet);
           if (crabImg && crabImg.complete) {
@@ -5060,9 +5109,9 @@ export default function FishingGame() {
             const crownScale = raritySizes[fish.type.rarity] || 0.3;
             const crownDrawW = crownFW * crownScale;
             const crownDrawH = crownFH * crownScale;
-            const fishFrameW = fish.type.walkFrames > 0 ? (192 / fish.type.walkFrames) : FRAME_H;
+            const fishFrameW = fish.type.spriteFrameH || FRAME_H;
             const fishSpriteW = fishFrameW * creatureScale;
-            const fishSpriteH = (fish.type.spriteFrameH || FRAME_H) * creatureScale;
+            const fishSpriteH = fishFrameW * creatureScale;
             const headX = fish.direction < 0
               ? fish.x + fishSpriteW * 0.15 - crownDrawW * 0.5
               : fish.x + fishSpriteW * 0.55 - crownDrawW * 0.5;
@@ -5071,6 +5120,45 @@ export default function FishingGame() {
           }
         }
         ctx.globalAlpha = 1;
+      }
+
+      // "Press E" prompt above nearby beach crab
+      if (s.nearCrab >= 0 && s.nearCrab < s.swimmingFish.length && s.gameState === "idle") {
+        const nearFish = s.swimmingFish[s.nearCrab];
+        if (nearFish && nearFish.type.beachCrab) {
+          const crabDrawSize = SCALE * 12 * nearFish.sizeMultiplier;
+          const promptX = nearFish.x + crabDrawSize / 2;
+          const promptY = nearFish.y - 18;
+          const pulse = 0.7 + Math.sin(s.time * 0.1) * 0.3;
+          ctx.save();
+          ctx.globalAlpha = pulse;
+          // Background pill
+          const tw = 72;
+          const th = 18;
+          ctx.fillStyle = "rgba(8,15,25,0.85)";
+          ctx.beginPath();
+          ctx.moveTo(promptX - tw / 2 + 4, promptY - th);
+          ctx.lineTo(promptX + tw / 2 - 4, promptY - th);
+          ctx.quadraticCurveTo(promptX + tw / 2, promptY - th, promptX + tw / 2, promptY - th + 4);
+          ctx.lineTo(promptX + tw / 2, promptY - 4);
+          ctx.quadraticCurveTo(promptX + tw / 2, promptY, promptX + tw / 2 - 4, promptY);
+          ctx.lineTo(promptX - tw / 2 + 4, promptY);
+          ctx.quadraticCurveTo(promptX - tw / 2, promptY, promptX - tw / 2, promptY - 4);
+          ctx.lineTo(promptX - tw / 2, promptY - th + 4);
+          ctx.quadraticCurveTo(promptX - tw / 2, promptY - th, promptX - tw / 2 + 4, promptY - th);
+          ctx.closePath();
+          ctx.fill();
+          ctx.strokeStyle = "rgba(46,204,113,0.6)";
+          ctx.lineWidth = 1;
+          ctx.stroke();
+          // Text
+          ctx.font = "bold 8px 'Press Start 2P', monospace";
+          ctx.fillStyle = "#2ecc71";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText("[E] CATCH", promptX, promptY - th / 2);
+          ctx.restore();
+        }
       }
 
       // Predator update and rendering
@@ -5742,15 +5830,28 @@ export default function FishingGame() {
       // Fishing line, bobber, hook, and hooked fish
       if (s.castLineFlying && s.ropeSegments.length > 0) {
         const lead = s.ropeSegments[s.ropeSegments.length - 1];
+        // Draw bobber traveling with the rope lead
+        const flyBobSize = 5;
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(lead.x, lead.y - 1, flyBobSize, Math.PI, 0);
+        ctx.fill();
+        ctx.fillStyle = "#e74c3c";
+        ctx.beginPath();
+        ctx.arc(lead.x, lead.y + 1, flyBobSize, 0, Math.PI);
+        ctx.fill();
+        ctx.fillStyle = "#c0392b";
+        ctx.fillRect(lead.x - 1.5, lead.y - flyBobSize - 4, 3, 5);
+        // Hook dangles below bobber
         ctx.strokeStyle = "#999";
         ctx.lineWidth = 1.2;
         ctx.beginPath();
-        ctx.arc(lead.x + 3, lead.y, 3.5, -0.3, Math.PI + 0.3);
+        ctx.arc(lead.x + 3, lead.y + flyBobSize + 6, 3.5, -0.3, Math.PI + 0.3);
         ctx.stroke();
         ctx.fillStyle = "#bbb";
-        ctx.fillRect(lead.x + 2, lead.y - 4, 1.5, 4);
+        ctx.fillRect(lead.x + 2, lead.y + flyBobSize + 2, 1.5, 4);
       }
-      if (s.gameState === "waiting") {
+      if (s.gameState === "waiting" && !s.castLineFlying) {
         s.bobberBob = Math.sin(s.time * 0.08) * 2.5;
         const bobberX = s.hookX;
         let bobberY = waterY + s.bobberBob;
@@ -5892,18 +5993,6 @@ export default function FishingGame() {
             ctx.drawImage(crabImg, 0, 0, crabImg.naturalWidth, crabImg.naturalHeight, -crabDrawSize / 2, -crabDrawSize / 2, crabDrawSize, crabDrawSize);
             ctx.restore();
           }
-        } else if (s.currentCatch?.beachCrab && s.currentCatch?.icon) {
-          const crabIconImg = getImg(s.currentCatch.icon);
-          if (crabIconImg && crabIconImg.complete) {
-            const crabDrawSize = 32 * (s.hookedFishSize || 1);
-            const wobble = Math.sin(s.time * 0.2) * 0.08;
-            ctx.save();
-            ctx.translate(s.hookedFishX + crabDrawSize / 2, s.hookedFishY + crabDrawSize / 2);
-            ctx.rotate(wobble);
-            if (s.hookedFishDir < 0) ctx.scale(-1, 1);
-            ctx.drawImage(crabIconImg, -crabDrawSize / 2, -crabDrawSize / 2, crabDrawSize, crabDrawSize);
-            ctx.restore();
-          }
         } else if (s.currentCatch?.isPredator) {
           const PRED_FRAME = 96;
           const predScale = SCALE * 0.8 * (s.hookedFishSize || 1);
@@ -5941,10 +6030,9 @@ export default function FishingGame() {
             const crownScale = raritySizes[s.currentCatch.rarity] || 0.3;
             const crownDrawW = crownFW * crownScale;
             const crownDrawH = crownFH * crownScale;
-            const hookedWalkFrames = s.currentCatch?.walkFrames || 4;
-            const hookedFrameW = hookedWalkFrames > 0 ? (192 / hookedWalkFrames) : FRAME_H;
+            const hookedFrameW = s.currentCatch?.spriteFrameH || FRAME_H;
             const fishSpriteW = hookedFrameW * creatureScale;
-            const fishSpriteH2 = (s.currentCatch?.spriteFrameH || FRAME_H) * creatureScale;
+            const fishSpriteH2 = hookedFrameW * creatureScale;
             const headX = s.hookedFishDir < 0
               ? s.hookedFishX + fishSpriteW * 0.15 - crownDrawW * 0.5
               : s.hookedFishX + fishSpriteW * 0.55 - crownDrawW * 0.5;
@@ -6101,7 +6189,12 @@ export default function FishingGame() {
         if (p.life <= 0) { s.particles.splice(i, 1); continue; }
         ctx.globalAlpha = Math.min(1, p.life / (p.maxLife * 0.3));
         ctx.fillStyle = p.color;
-        if (p.type === "sparkle") {
+        if (p.type === "text" && p.text) {
+          ctx.font = "bold 9px 'Press Start 2P', monospace";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(p.text, p.x, p.y);
+        } else if (p.type === "sparkle") {
           const sparkleSize = p.size * (1 + Math.sin(s.time * 0.3 + i) * 0.5);
           ctx.fillRect(p.x - sparkleSize / 2, p.y - 0.5, sparkleSize, 1);
           ctx.fillRect(p.x - 0.5, p.y - sparkleSize / 2, 1, sparkleSize);
@@ -6132,7 +6225,7 @@ export default function FishingGame() {
             
             ctx.imageSmoothingEnabled = false;
             const catchSheetImg = s.currentCatch ? getImg(s.currentCatch.catchAsset) : null;
-            const isTwoFrame = catchSheetImg && catchSheetImg.complete && catchSheetImg.naturalWidth > catchSheetImg.naturalHeight * 1.5;
+            const isTwoFrame = catchSheetImg && catchSheetImg.complete && catchSheetImg.naturalHeight <= 48 && Math.abs(catchSheetImg.naturalWidth - catchSheetImg.naturalHeight * 2) < catchSheetImg.naturalHeight * 0.15;
             if (isTwoFrame && catchSheetImg) {
               const frameIdx = Math.floor(s.time / 90) % 2;
               const frameW = catchSheetImg.naturalWidth / 2;
@@ -7046,10 +7139,10 @@ export default function FishingGame() {
           drawRoundRect(slotBoxX, slotBoxY, slotBoxW, slotBoxH, 12);
           ctx.fill();
           
-          const rarCol = s.currentCatch?.rarity === "ultra_rare" ? "#ff6b35" :
-                         s.currentCatch?.rarity === "legendary" ? "#a855f7" :
-                         s.currentCatch?.rarity === "rare" ? "#3b82f6" :
-                         s.currentCatch?.rarity === "uncommon" ? "#22c55e" : "#f59e0b";
+          const rarCol = s.currentCatch?.rarity === "ultra_rare" ? "#ff2d55" :
+                         s.currentCatch?.rarity === "legendary" ? "#f59e0b" :
+                         s.currentCatch?.rarity === "rare" ? "#a855f7" :
+                         s.currentCatch?.rarity === "uncommon" ? "#22c55e" : "#94a3b8";
           ctx.strokeStyle = rarCol;
           ctx.lineWidth = 2;
           drawRoundRect(slotBoxX, slotBoxY, slotBoxW, slotBoxH, 12);
@@ -7114,7 +7207,7 @@ export default function FishingGame() {
           ctx.fillStyle = "#78909c";
           ctx.fillText("RARITY", W / 2 - 80, row3Y);
           
-          const starColors = ["#f59e0b", "#22c55e", "#3b82f6", "#a855f7", "#ff6b35"];
+          const starColors = ["#94a3b8", "#22c55e", "#a855f7", "#f59e0b", "#ff2d55"];
           
           if (s.slotStarsRevealed) {
             const finalStars = s.slotFinalStars;
@@ -7156,6 +7249,14 @@ export default function FishingGame() {
             ctx.fillStyle = "#e74c3c";
             ctx.font = "10px 'Press Start 2P', monospace";
             ctx.fillText(`x${s.combo} COMBO!`, W / 2, slotBoxY + slotBoxH + 8);
+          }
+          
+          if (s.slotWeightRevealed && s.slotLengthRevealed && s.slotStarsRevealed) {
+            ctx.fillStyle = "rgba(255,255,255,0.35)";
+            ctx.font = "9px 'Press Start 2P', monospace";
+            ctx.textAlign = "center";
+            const blink = Math.sin(s.time * 0.08) > -0.3;
+            if (blink) ctx.fillText("CLICK TO CONTINUE", W / 2, slotBoxY + slotBoxH + 26);
           }
           
           ctx.textAlign = "left";
@@ -7919,13 +8020,13 @@ export default function FishingGame() {
       {/* Character Select Screen - HTML Overlay */}
       {uiState.gameState === "charSelect" && (
         <div className="absolute inset-0 flex items-center justify-center" style={{ fontFamily: "'Press Start 2P', monospace", zIndex: 10 }} data-testid="char-select-screen">
-          <div className="flex flex-col items-center gap-6" style={{ background: "rgba(5,12,30,0.92)", borderRadius: 16, border: "2px solid rgba(79,195,247,0.3)", padding: "32px 40px", maxWidth: 520, width: "90%" }}>
+          <div className="flex flex-col items-center gap-6" style={{ background: "rgba(5,12,30,0.92)", borderRadius: 16, border: "2px solid rgba(79,195,247,0.3)", padding: "32px 40px", maxWidth: 720, width: "95%" }}>
             <div className="text-center">
               <div style={{ color: "#4fc3f7", fontSize: 20, marginBottom: 4, textShadow: "0 0 20px rgba(79,195,247,0.5)" }}>GRUDGE ANGELER</div>
               <div style={{ color: "#607d8b", fontSize: 11 }}>Choose your character</div>
             </div>
 
-            <div className="flex items-end justify-center" style={{ gap: 0 }}>
+            <div className="flex items-end justify-center flex-wrap" style={{ gap: 4 }}>
               {CHARACTER_VARIANTS.map((cv, i) => {
                 const isSelected = uiState.selectedCharacter === i;
                 return (
@@ -7939,7 +8040,7 @@ export default function FishingGame() {
                     }}
                     style={{
                       transition: "all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
-                      transform: isSelected ? "scale(1.2) translateY(-8px)" : "scale(0.85)",
+                      transform: isSelected ? "scale(1.1) translateY(-6px)" : "scale(0.72)",
                       zIndex: isSelected ? 10 : 1,
                       position: "relative",
                     }}
@@ -7957,10 +8058,10 @@ export default function FishingGame() {
                           top: "50%",
                           left: "50%",
                           transform: "translate(-50%, -50%)",
-                          width: 260,
-                          height: 260,
+                          width: 160,
+                          height: 160,
                           opacity: isSelected ? 0.18 : 0.05,
-                          filter: isSelected ? `drop-shadow(0 0 30px ${cv.color}50)` : "grayscale(1)",
+                          filter: isSelected ? `drop-shadow(0 0 20px ${cv.color}50)` : "grayscale(1)",
                           pointerEvents: "none",
                           transition: "all 0.4s",
                           imageRendering: "pixelated",
@@ -7972,7 +8073,7 @@ export default function FishingGame() {
                         alt={cv.name}
                         style={{
                           imageRendering: "pixelated",
-                          height: 140,
+                          height: 100,
                           width: "auto",
                           filter: isSelected ? "none" : "brightness(0.08) contrast(0.5)",
                           transition: "filter 0.4s",
@@ -7983,12 +8084,12 @@ export default function FishingGame() {
                     </div>
                     <span style={{
                       color: isSelected ? cv.color : "#2a3a4a",
-                      fontSize: isSelected ? 10 : 7,
+                      fontSize: isSelected ? 9 : 7,
                       marginTop: 4,
                       fontWeight: "bold",
                       textShadow: isSelected ? `0 0 12px ${cv.color}88` : "none",
                       transition: "all 0.3s",
-                      letterSpacing: isSelected ? "2px" : "0px",
+                      letterSpacing: isSelected ? "1px" : "0px",
                     }}>{cv.name}</span>
                   </div>
                 );
@@ -8195,17 +8296,18 @@ export default function FishingGame() {
           {uiState.gameState === "casting" && (
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1" style={{ pointerEvents: "none" }} data-testid="cast-aim-prompt">
               <span style={{ color: "#f1c40f", fontSize: 15, textShadow: "1px 1px 0 #000" }}>AIM YOUR CAST</span>
-              <span style={{ color: "#b0bec5", fontSize: 11, textShadow: "1px 1px 0 #000" }}>Move mouse to aim, click to cast!</span>
+              <span style={{ color: "#b0bec5", fontSize: 11, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "Tap to cast!" : "Click to cast  |  Right-click to cancel"}</span>
             </div>
           )}
 
           {/* Waiting */}
           {uiState.gameState === "waiting" && (
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center px-4 py-2" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8, pointerEvents: "none" }} data-testid="waiting-indicator">
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center px-4 py-2 flex flex-col gap-1" style={{ background: "rgba(8,15,25,0.7)", borderRadius: 8, pointerEvents: "none" }} data-testid="waiting-indicator">
               <span style={{ color: "#5dade2", fontSize: 13, textShadow: "1px 1px 0 #000" }}>
                 Waiting for a bite
                 <span style={{ animation: "pulse 1.5s infinite" }}>...</span>
               </span>
+              <span style={{ color: "#607d8b", fontSize: 10, textShadow: "1px 1px 0 #000" }}>{'ontouchstart' in window ? "" : "Right-click to reel in"}</span>
             </div>
           )}
 

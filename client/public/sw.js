@@ -18,11 +18,13 @@ self.addEventListener('install', function(event) {
 
 self.addEventListener('fetch', function(event) {
   if (event.request.method !== 'GET') return;
-  if (event.request.url.includes('/api/')) return;
+  var url = event.request.url;
+  if (!(url.startsWith('http://') || url.startsWith('https://'))) return;
+  if (url.includes('/api/')) return;
 
-  var url = new URL(event.request.url);
+  var parsedUrl = new URL(event.request.url);
 
-  if (url.pathname.match(/\.(png|jpg|jpeg|gif|webp|svg|ico|mp3|wav|ogg)$/)) {
+  if (parsedUrl.pathname.match(/\.(png|jpg|jpeg|gif|webp|svg|ico|mp3|wav|ogg)$/)) {
     event.respondWith(
       caches.open(STATIC_CACHE).then(function(cache) {
         return cache.match(event.request).then(function(cached) {

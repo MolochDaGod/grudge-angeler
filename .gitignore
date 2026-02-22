@@ -16,3 +16,5 @@ pyproject.toml
 main.py
 background
 attached_assets
+
+.vercel
