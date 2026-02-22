@@ -722,9 +722,9 @@
     <div class="deep-ocean-trench" data-testid="deep-ocean-trench">
       <div class="trench-title">THE DEEPEST REACH</div>
       <div class="trench-desc">Below the abyss, past where light has any meaning, lies the seam between the ocean and something older. Only the most determined anglers will ever cast a line this deep.</div>
-      <div class="hidden-treasure" data-testid="hidden-treasure-helmet">
-        <img src="/assets/legendary_helmet.png" alt="Hidden Treasure">
-        <div class="treasure-label">HOOK IT IF YOU CAN</div>
+      <div class="hidden-treasure" data-testid="hidden-treasure-chest">
+        <img src="/assets/chest/closed.png" alt="Hidden Treasure Chest">
+        <div class="treasure-label">THE DEEPEST TREASURE</div>
       </div>
     </div>
 
@@ -763,14 +763,24 @@ var FISH_SPECIES = [
   { name: "Perch", img: "/assets/icons/fish/perch-striped-common.png", points: 25, rarity: "common", weight: 30, minDepth: 0.25, speed: 1.2, description: "A striped freshwater fish with sharp fins.", zone: "Shallow" },
   { name: "Eel", img: "/assets/icons/fish/eel-dark-common.png", points: 40, rarity: "common", weight: 20, minDepth: 0.3, speed: 1.3, description: "A slippery serpentine fish.", zone: "Shallow-Mid" },
   { name: "Octopus", img: "/assets/icons/fish/octopus-red-common.png", points: 35, rarity: "common", weight: 15, minDepth: 0.25, speed: 0.9, description: "A clever red octopus with grasping tentacles.", zone: "Shallow" },
+  { name: "Freshwater Bass", img: "/assets/icons/fish/Icons_05.png", points: 15, rarity: "common", weight: 35, minDepth: 0.15, speed: 1.1, description: "A green freshwater bass. Common but scrappy.", zone: "Shallow" },
+  { name: "Anchovy", img: "/assets/icons/fish/Icons_06.png", points: 12, rarity: "common", weight: 40, minDepth: 0.2, speed: 1.6, description: "A darting blue anchovy. Travels in huge schools.", zone: "Shallow" },
+  { name: "Sea Urchin", img: "/assets/fish-images/sea-urchin.png", points: 15, rarity: "common", weight: 20, minDepth: 0.2, speed: 0.3, description: "A spiny sea urchin crawling along the ocean floor.", zone: "Shallow" },
   { name: "Bass", img: "/assets/icons/fish/bass-green-uncommon.png", points: 50, rarity: "uncommon", weight: 15, minDepth: 0.35, speed: 1.0, description: "A strong fighter popular with anglers.", zone: "Mid" },
   { name: "Catfish", img: "/assets/icons/fish/catfish-brown-uncommon.png", points: 75, rarity: "uncommon", weight: 8, minDepth: 0.45, speed: 0.8, description: "A bottom-dweller with long whiskers.", zone: "Mid" },
   { name: "Salmon", img: "/assets/icons/fish/salmon-pink-uncommon.png", points: 60, rarity: "uncommon", weight: 12, minDepth: 0.35, speed: 1.1, description: "A prized pink-fleshed fish.", zone: "Mid" },
   { name: "Electric Eel", img: "/assets/icons/fish/electric-eel-yellow-uncommon.png", points: 65, rarity: "uncommon", weight: 10, minDepth: 0.4, speed: 1.6, description: "A shocking eel crackling with electric charge.", zone: "Mid" },
   { name: "Blue Ring Octopus", img: "/assets/icons/fish/blue-ring-octopus-blue-uncommon.png", points: 55, rarity: "uncommon", weight: 8, minDepth: 0.35, speed: 1.0, description: "A small but deadly octopus with glowing blue rings.", zone: "Mid" },
   { name: "Giant Octopus", img: "/assets/icons/fish/giant-octopus-purple-legendary.png", points: 70, rarity: "uncommon", weight: 10, minDepth: 0.4, speed: 0.6, description: "A purple giant with eight crushing arms. Incredibly intelligent.", zone: "Mid-Deep" },
+  { name: "Redfish", img: "/assets/icons/fish/Icons_07.png", points: 55, rarity: "uncommon", weight: 12, minDepth: 0.3, speed: 1.0, description: "A rust-red ocean fish with a powerful tail.", zone: "Mid" },
+  { name: "Angelfish", img: "/assets/icons/fish/Icons_10.png", points: 65, rarity: "uncommon", weight: 10, minDepth: 0.35, speed: 0.9, description: "A graceful pink angelfish with flowing fins.", zone: "Mid" },
+  { name: "Surgeonfish", img: "/assets/icons/fish/Icons_09.png", points: 70, rarity: "uncommon", weight: 8, minDepth: 0.45, speed: 1.3, description: "A large blue surgeonfish with a razor-sharp tail spine.", zone: "Mid" },
+  { name: "Clownfish", img: "/assets/fish-images/clownfish-salt-uncommon.png", points: 45, rarity: "uncommon", weight: 14, minDepth: 0.25, speed: 1.0, description: "A bright orange clownfish hiding among anemones.", zone: "Shallow" },
+  { name: "Butterfly Fish", img: "/assets/fish-images/butterfly-fish.png", points: 55, rarity: "uncommon", weight: 12, minDepth: 0.2, speed: 1.3, description: "A golden butterfly fish with striking blue markings.", zone: "Shallow" },
+  { name: "Pink Jellyfish", img: "/assets/fish-images/pink-jellyfish.png", points: 40, rarity: "uncommon", weight: 15, minDepth: 0.3, speed: 0.6, description: "A pink jellyfish pulsing gracefully through the water.", zone: "Mid" },
   { name: "Whale", img: "/assets/icons/fish/whale-blue-legendary.png", points: 300, rarity: "legendary", weight: 1, minDepth: 0.65, speed: 0.5, description: "The king of the deep. Incredibly rare!", zone: "Deep Ocean" },
   { name: "Kraken", img: "/assets/icons/fish/kraken-crimson-legendary.png", points: 400, rarity: "legendary", weight: 0.8, minDepth: 0.7, speed: 0.7, description: "A crimson terror from the deep. Its tentacles crush ships.", zone: "Deep Ocean" },
+  { name: "Hammerhead Shark", img: "/assets/fish-images/hammerhead-shark.png", points: 350, rarity: "legendary", weight: 0.8, minDepth: 0.6, speed: 2.0, description: "A massive hammerhead shark. Its wide head detects prey with uncanny precision.", zone: "Deep Ocean" },
 ];
 
 var RARE_FISH = [
@@ -780,6 +790,10 @@ var RARE_FISH = [
   { name: "Anglerfish", img: "/assets/icons/fish/anglerfish-dark-rare.png", points: 120, rarity: "rare", weight: 5, minDepth: 0.55, speed: 0.6, description: "A deep-sea predator with a bioluminescent lure.", zone: "Deep" },
   { name: "Deep Sea Angler", img: "/assets/icons/fish/deep-sea-angler-dark-rare.png", points: 140, rarity: "rare", weight: 3, minDepth: 0.65, speed: 0.5, description: "A pitch-black anglerfish with a sinister yellow glow.", zone: "Deep Ocean" },
   { name: "Giant Squid", img: "/assets/icons/fish/giant-squid-blue-legendary.png", points: 130, rarity: "rare", weight: 4, minDepth: 0.55, speed: 0.8, description: "A massive blue squid from the abyss. Eyes the size of dinner plates.", zone: "Deep Ocean" },
+  { name: "Pufferfish", img: "/assets/fish-images/pufferfish-salt-rare.png", points: 110, rarity: "rare", weight: 6, minDepth: 0.4, speed: 0.7, description: "A spotted pufferfish. Inflates when threatened.", zone: "Mid" },
+  { name: "Rainbow Trout", img: "/assets/icons/fish/Icons_08.png", points: 95, rarity: "rare", weight: 5, minDepth: 0.35, speed: 1.2, description: "A speckled brown trout with a rainbow shimmer along its flank.", zone: "Mid" },
+  { name: "Lionfish", img: "/assets/fish-images/lionfish.png", points: 130, rarity: "rare", weight: 4, minDepth: 0.45, speed: 0.8, description: "A venomous lionfish with elaborate striped fins. Beautiful but deadly.", zone: "Mid-Deep" },
+  { name: "Purple Jellyfish", img: "/assets/fish-images/purple-jellyfish.png", points: 85, rarity: "rare", weight: 5, minDepth: 0.5, speed: 0.5, description: "A majestic purple jellyfish trailing long, luminous tentacles.", zone: "Mid-Deep" },
 ];
 
 var ULTRA_RARE_FISH = [
@@ -848,18 +862,28 @@ var CRAB_BAITS = [
 ];
 
 var CHUM_ITEMS = [
-  { name: "Fish Scraps", price: 15, description: "Basic chum. A slight fish attract.", icon: "/assets/icons/Icons_01.png", duration: "5min" },
-  { name: "Bread Crumbs", price: 20, description: "Attracts small fish nearby.", icon: "/assets/icons/Icons_02.png", duration: "5.8min" },
-  { name: "Corn Mash", price: 25, description: "Attracts bottom feeders.", icon: "/assets/icons/Icons_03.png", duration: "6.7min" },
-  { name: "Blood Meal", price: 40, description: "Attracts predators with its scent.", icon: "/assets/icons/Icons_04.png", duration: "5.8min" },
-  { name: "Shrimp Paste", price: 50, description: "Good all-around chum.", icon: "/assets/icons/Icons_05.png", duration: "6.7min" },
-  { name: "Squid Ink", price: 60, description: "Attracts deep fish.", icon: "/assets/icons/Icons_06.png", duration: "5.8min" },
-  { name: "Fish Oil Slick", price: 75, description: "Wide area attract effect.", icon: "/assets/icons/Icons_08.png", duration: "8.3min" },
-  { name: "Sardine Chunks", price: 45, description: "Fast bite speed boost.", icon: "/assets/icons/Icons_09.png", duration: "5min" },
-  { name: "Crab Guts", price: 55, description: "Attracts rare fish.", icon: "/assets/icons/Icons_10.png", duration: "5.8min" },
-  { name: "Mussel Mix", price: 35, description: "Steady and reliable attract.", icon: "/assets/icons/Icons_11.png", duration: "7.5min" },
-  { name: "Fermented Brine", price: 80, description: "Strong rarity boost.", icon: "/assets/icons/Icons_12.png", duration: "6.7min" },
-  { name: "Glowing Plankton", price: 0, description: "Caught glowing plankton. Attracts rare fish.", icon: "/assets/icons/Icons_14.png", duration: "3.3min" },
+  { name: "Fish Scraps", price: 15, description: "Basic chum. A slight fish attract.", icon: "/assets/icons/chum/chum-fish-guts.png", duration: "5min" },
+  { name: "Bread Crumbs", price: 20, description: "Attracts small fish nearby.", icon: "/assets/icons/chum/chum-bread-crumbs.png", duration: "5.8min" },
+  { name: "Corn Mash", price: 25, description: "Attracts bottom feeders.", icon: "/assets/icons/chum/chum-worm-bait.png", duration: "6.7min" },
+  { name: "Blood Meal", price: 40, description: "Attracts predators with its scent.", icon: "/assets/icons/chum/chum-blood-worm-extract.png", duration: "5.8min" },
+  { name: "Shrimp Paste", price: 50, description: "Good all-around chum.", icon: "/assets/icons/chum/chum-shrimp-paste.png", duration: "6.7min" },
+  { name: "Squid Ink", price: 60, description: "Attracts deep fish.", icon: "/assets/icons/chum/chum-squid-ink.png", duration: "5.8min" },
+  { name: "Fish Oil Slick", price: 75, description: "Wide area attract effect.", icon: "/assets/icons/chum/chum-sardine-oil.png", duration: "8.3min" },
+  { name: "Sardine Chunks", price: 45, description: "Fast bite speed boost.", icon: "/assets/icons/chum/chum-live-shrimp.png", duration: "5min" },
+  { name: "Crab Guts", price: 55, description: "Attracts rare fish.", icon: "/assets/icons/chum/chum-sea-urchin-spines.png", duration: "5.8min" },
+  { name: "Mussel Mix", price: 35, description: "Steady and reliable attract.", icon: "/assets/icons/chum/chum-jellyfish-jelly.png", duration: "7.5min" },
+  { name: "Fermented Brine", price: 80, description: "Strong rarity boost.", icon: "/assets/icons/chum/chum-deep-pressure.png", duration: "6.7min" },
+  { name: "Whale Blubber", price: 100, description: "Pulls legendary fish to shallower depths.", icon: "/assets/icons/chum/chum-whale-blubber.png", duration: "5.8min" },
+  { name: "Phosphor Dust", price: 120, description: "Glowing effect pulls ultra rares up.", icon: "/assets/icons/chum/chum-glowing-plankton.png", duration: "5min" },
+  { name: "Coral Powder", price: 90, description: "Attracts reef fish.", icon: "/assets/icons/chum/chum-coral-dust.png", duration: "6.7min" },
+  { name: "Deep Sea Extract", price: 150, description: "Massive depth pull. Deep fish swim up.", icon: "/assets/icons/chum/chum-electric-plankton.png", duration: "5.8min" },
+  { name: "Thunder Chum", price: 130, description: "Attracts storm fish from the depths.", icon: "/assets/icons/chum/chum-thunder.png", duration: "5min" },
+  { name: "Moonlight Essence", price: 200, description: "Celestial pull. Brings abyss fish to you.", icon: "/assets/icons/chum/chum-moonlight-essence.png", duration: "6.7min" },
+  { name: "Kraken Bile", price: 180, description: "Massive rarity, strong depth pull.", icon: "/assets/icons/chum/chum-kraken-bile.png", duration: "5min" },
+  { name: "Golden Flakes", price: 250, description: "Boosts everything. Strong depth pull.", icon: "/assets/icons/chum/chum-golden-flakes.png", duration: "8.3min" },
+  { name: "Abyssal Ooze", price: 300, description: "The ultimate chum. Pulls abyss fish to surface.", icon: "/assets/icons/chum/chum-abyssal-ooze.png", duration: "10min" },
+  { name: "Live Shrimp Cluster", price: 0, description: "Caught live shrimp. Good bait for medium fish.", icon: "/assets/icons/chum/chum-live-shrimp.png", duration: "4.2min" },
+  { name: "Glowing Plankton", price: 0, description: "Caught glowing plankton. Attracts rare fish.", icon: "/assets/icons/chum/chum-glowing-plankton.png", duration: "3.3min" },
 ];
 
 var WORLD_ZONES = [
@@ -963,7 +987,7 @@ var SECTIONS_CONFIG = [
   { id: "rods", title: "FISHING RODS", dot: "#81c784", count: "5 RODS", desc: "Each rod improves catch zone size, reel speed, line strength, and cast range.", gridType: "equip" },
   { id: "lures", title: "LURES & BAITS", dot: "#ffb74d", count: "", desc: "5 live baits and 11 artificial lures. Each has unique rarity boosts and target species.", gridType: "equip" },
   { id: "crab-bait", title: "CRAB BAIT SYSTEM", dot: "#ff7043", count: "3 TIERS", variant: "crab-bait-variant", desc: "All caught crabs become consumable live bait. 3 tiers with escalating legendary boosts (1.5x/3.0x/6.0x). Without crab bait, legendary/ultra_rare spawn rates are heavily reduced.", gridType: "crab_bait" },
-  { id: "chum", title: "CHUM ITEMS", dot: "#ce93d8", count: "12 ITEMS", desc: "Throwable items that boost fish spawns, rarity, and bite speed. Activate via hotbar.", gridType: "equip" },
+  { id: "chum", title: "CHUM ITEMS", dot: "#ce93d8", count: "22 ITEMS", desc: "Throwable items that boost fish spawns, rarity, and bite speed. Activate via hotbar.", gridType: "equip" },
   { id: "eggs", title: "BETAXGRUDA EGGS", dot: "#a855f7", count: "7 ITEMS", variant: "egg-variant", desc: 'Special items purchasable only with "Head of Legends." Limited stock worldwide.', gridType: "egg" },
   { id: "weather", title: "WEATHER SYSTEM", dot: "#64b5f6", count: "5 TYPES", desc: "Dynamic weather changes affect fish behavior, bite speed, and visual effects.", gridType: "weather" },
   { id: "celestial", title: "CELESTIAL EVENTS", dot: "#ce93d8", count: "4 EVENTS", variant: "celestial-variant", desc: "Extremely rare cosmic phenomena that dramatically alter spawns.", gridType: "celestial" },

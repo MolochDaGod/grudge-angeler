@@ -42,6 +42,14 @@ const imgGoldCrab = "/assets/fish-images/gold-crab.png";
 const imgDarkCrab = "/assets/fish-images/dark-crab.png";
 const imgCrimsonCrab = "/assets/fish-images/crimson-crab.png";
 const imgShadowCrab = "/assets/fish-images/shadow-crab.png";
+const imgPufferfish = "/assets/fish-images/pufferfish-salt-rare.png";
+const imgClownfish = "/assets/fish-images/clownfish-salt-uncommon.png";
+const imgButterflyFish = "/assets/fish-images/butterfly-fish.png";
+const imgLionfish = "/assets/fish-images/lionfish.png";
+const imgHammerheadShark = "/assets/fish-images/hammerhead-shark.png";
+const imgPinkJellyfish = "/assets/fish-images/pink-jellyfish.png";
+const imgPurpleJellyfish = "/assets/fish-images/purple-jellyfish.png";
+const imgSeaUrchin = "/assets/fish-images/sea-urchin.png";
 
 function toSlug(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -67,7 +75,7 @@ const legendaryFish = [
 const features = [
   { icon: "/assets/icons/lures/golden_fly.png", title: "30 Species", desc: "Fish, crabs, and predators across 5 rarity tiers" },
   { icon: "/assets/icons/gbux.png", title: "Gbux Economy", desc: "Dynamic market, sell fish, complete bounties, build your fortune" },
-  { icon: "/assets/icons/lures/prismatic_lure.png", title: "Equipment System", desc: "5 rods, 5 baits, 11 lures, 22 chum items - each with unique stats" },
+  { icon: "/assets/icons/lures/prismatic_lure.png", title: "Equipment System", desc: "5 rods, 16 lures & baits, 22 chum items - each with unique stats" },
   { icon: "/assets/fish-images/phantom-minnow.png", title: "The Legendary 10", desc: "Ultra-rare mythic fish with complete lore and unique visual effects" },
   { icon: "/assets/objects/Boat.png", title: "Open Ocean", desc: "8 world scenes from shallow waters to the deepest abyss" },
   { icon: "/assets/icons/fish/Icons_01.png", title: "Leaderboards", desc: "Compete globally with Grudge ID for biggest catch and legendary hauls" },
@@ -133,14 +141,14 @@ const arsenalChum = [
   { name: "Shrimp Paste", icon: "/assets/icons/chum/chum-shrimp-paste.png", price: 50, desc: "Good all-around chum.", stats: "1.7x attract | +15% bites" },
   { name: "Squid Ink", icon: "/assets/icons/chum/chum-squid-ink.png", price: 60, desc: "Attracts deep fish.", stats: "+20% rarity | 1.5x attract" },
   { name: "Fish Oil Slick", icon: "/assets/icons/chum/chum-sardine-oil.png", price: 75, desc: "Wide area attract.", stats: "2.0x attract | +10% bites" },
-  { name: "Sardine Chunks", icon: "/assets/icons/chum/chum-fish-guts.png", price: 45, desc: "Fast bite speed boost.", stats: "+50% bites | 1.3x attract" },
-  { name: "Crab Guts", icon: "/assets/icons/chum/chum-fish-guts.png", price: 55, desc: "Attracts rare fish.", stats: "+30% rarity | 1.4x attract" },
-  { name: "Mussel Mix", icon: "/assets/icons/chum/chum-live-shrimp.png", price: 35, desc: "Steady and reliable.", stats: "1.5x attract | Long duration" },
-  { name: "Fermented Brine", icon: "/assets/icons/chum/chum-jellyfish-jelly.png", price: 80, desc: "Strong rarity boost.", stats: "+50% rarity | 1.6x attract" },
+  { name: "Sardine Chunks", icon: "/assets/icons/chum/chum-live-shrimp.png", price: 45, desc: "Fast bite speed boost.", stats: "+50% bites | 1.3x attract" },
+  { name: "Crab Guts", icon: "/assets/icons/chum/chum-sea-urchin-spines.png", price: 55, desc: "Attracts rare fish.", stats: "+30% rarity | 1.4x attract" },
+  { name: "Mussel Mix", icon: "/assets/icons/chum/chum-jellyfish-jelly.png", price: 35, desc: "Steady and reliable.", stats: "1.5x attract | Long duration" },
+  { name: "Fermented Brine", icon: "/assets/icons/chum/chum-deep-pressure.png", price: 80, desc: "Strong rarity boost.", stats: "+50% rarity | 1.6x attract" },
   { name: "Whale Blubber", icon: "/assets/icons/chum/chum-whale-blubber.png", price: 100, desc: "Attracts legendary fish.", stats: "+70% rarity | 1.8x attract" },
   { name: "Phosphor Dust", icon: "/assets/icons/chum/chum-glowing-plankton.png", price: 120, desc: "Glowing ultra rare boost.", stats: "+100% rarity | 1.5x attract" },
   { name: "Coral Powder", icon: "/assets/icons/chum/chum-coral-dust.png", price: 90, desc: "Attracts reef fish.", stats: "+30% rarity | 1.7x attract" },
-  { name: "Deep Sea Extract", icon: "/assets/icons/chum/chum-deep-pressure.png", price: 150, desc: "Deep water mega boost.", stats: "+80% rarity | 2.0x attract" },
+  { name: "Deep Sea Extract", icon: "/assets/icons/chum/chum-electric-plankton.png", price: 150, desc: "Deep water mega boost.", stats: "+80% rarity | 2.0x attract" },
   { name: "Thunder Chum", icon: "/assets/icons/chum/chum-thunder.png", price: 130, desc: "Storm fish attract.", stats: "+60% rarity | +30% bites" },
   { name: "Moonlight Essence", icon: "/assets/icons/chum/chum-moonlight-essence.png", price: 200, desc: "Celestial boost.", stats: "+100% rarity | 2.2x attract" },
   { name: "Kraken Bile", icon: "/assets/icons/chum/chum-kraken-bile.png", price: 180, desc: "Massive rarity increase.", stats: "+150% rarity | 1.6x attract" },
@@ -169,12 +177,16 @@ const allFish: LandingFish[] = [
   { name: "Green Crab", rarity: "common", points: 8, desc: "A mossy green crab hiding in the seaweed.", img: imgGreenCrab },
   { name: "Cyan Crab", rarity: "common", points: 8, desc: "A pale cyan crab on sandy shores.", img: imgCyanCrab },
   { name: "Pink Crab", rarity: "common", points: 12, desc: "A cute pink crab that loves warm shallow waters.", img: imgPinkCrab },
+  { name: "Sea Urchin", rarity: "common", points: 15, desc: "A spiny sea urchin crawling along the ocean floor.", img: imgSeaUrchin },
   { name: "Bass", rarity: "uncommon", points: 50, desc: "A strong fighter popular with anglers.", img: imgBass },
   { name: "Salmon", rarity: "uncommon", points: 60, desc: "A prized pink-fleshed fish.", img: imgSalmon },
   { name: "Electric Eel", rarity: "uncommon", points: 65, desc: "A shocking eel crackling with electric charge.", img: imgElectricEel },
   { name: "Blue Ring Octopus", rarity: "uncommon", points: 55, desc: "A small but deadly octopus with glowing blue rings.", img: imgBlueOctopus },
   { name: "Catfish", rarity: "uncommon", points: 75, desc: "A bottom-dweller with long whiskers.", img: imgCatfish },
   { name: "Giant Octopus", rarity: "uncommon", points: 70, desc: "A purple giant with eight crushing arms. Incredibly intelligent.", img: imgGiantOctopus },
+  { name: "Clownfish", rarity: "uncommon", points: 45, desc: "A bright orange clownfish hiding among anemones.", img: imgClownfish },
+  { name: "Butterfly Fish", rarity: "uncommon", points: 55, desc: "A golden butterfly fish with striking blue markings.", img: imgButterflyFish },
+  { name: "Pink Jellyfish", rarity: "uncommon", points: 40, desc: "A pink jellyfish pulsing gracefully through the water.", img: imgPinkJellyfish },
   { name: "Purple Crab", rarity: "uncommon", points: 15, desc: "An uncommon purple crab with iridescent shell.", img: imgPurpleCrab },
   { name: "Gold Crab", rarity: "uncommon", points: 25, desc: "A rare golden crab. Prized for its shimmering shell.", img: imgGoldCrab },
   { name: "Dark Crab", rarity: "uncommon", points: 20, desc: "A dark-shelled crab with powerful pincers.", img: imgDarkCrab },
@@ -186,10 +198,14 @@ const allFish: LandingFish[] = [
   { name: "Swordfish", rarity: "rare", points: 150, desc: "A powerful ocean predator with a sharp bill.", img: imgSwordfish },
   { name: "Deep Sea Angler", rarity: "rare", points: 140, desc: "A pitch-black anglerfish with a sinister yellow glow.", img: imgDeepAngler },
   { name: "Giant Squid", rarity: "rare", points: 130, desc: "A massive blue squid from the abyss. Eyes the size of dinner plates.", img: imgGiantSquid },
+  { name: "Pufferfish", rarity: "rare", points: 110, desc: "A spotted pufferfish. Inflates when threatened.", img: imgPufferfish },
+  { name: "Lionfish", rarity: "rare", points: 130, desc: "A venomous lionfish with elaborate striped fins. Beautiful but deadly.", img: imgLionfish },
+  { name: "Purple Jellyfish", rarity: "rare", points: 85, desc: "A majestic purple jellyfish trailing long, luminous tentacles.", img: imgPurpleJellyfish },
   { name: "Shark", rarity: "rare", points: 400, desc: "A fearsome shark prowling the deep waters.", img: imgShark },
   { name: "Sea Devil", rarity: "rare", points: 600, desc: "A monstrous crab creature from the deep trenches.", img: imgSeaDevil },
   { name: "Whale", rarity: "legendary", points: 300, desc: "The king of the deep. Incredibly rare!", img: imgWhale },
   { name: "Kraken", rarity: "legendary", points: 800, desc: "A massive squid from the abyss, feared by all.", img: imgKraken },
+  { name: "Hammerhead Shark", rarity: "legendary", points: 350, desc: "A massive hammerhead shark. Detects prey with uncanny precision.", img: imgHammerheadShark },
   { name: "Phantom Minnow", rarity: "ultra_rare", points: 500, desc: "A ghostly minnow wreathed in spectral flame.", img: imgPhantomMinnow },
   { name: "Volcanic Perch", rarity: "ultra_rare", points: 600, desc: "Scales glow molten orange from deep-sea vents.", img: imgVolcanicPerch },
   { name: "Abyssal Bass", rarity: "ultra_rare", points: 750, desc: "A colossal bass radiating dark energy.", img: imgAbyssalBass },
@@ -436,7 +452,7 @@ export default function Landing() {
           fontSize: "clamp(6px, 1.5vw, 9px)", color: "#8899a8", maxWidth: 500,
           lineHeight: 2, letterSpacing: 1, marginBottom: 30,
         }}>
-          Cast your line into a pixel art ocean of mystery. Hunt 17 species across
+          Cast your line into a pixel art ocean of mystery. Hunt 30+ species across
           5 rarity tiers. Pursue The Legendary 10. Conquer the abyss.
         </p>
 

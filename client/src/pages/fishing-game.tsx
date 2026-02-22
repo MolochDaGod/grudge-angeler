@@ -1953,24 +1953,27 @@ export default function FishingGame() {
         const canvas = canvasRef.current;
         if (canvas) {
           const dpr = window.devicePixelRatio || 1;
+          const W = canvas.width / dpr;
           const H = canvas.height / dpr;
           const wY = H * 0.42;
           if (st.netCooldown > 0 || st.netAnimPhase !== "none") return;
+          const NET_VISUAL_W = FRAME_H * SCALE * 1.5;
+          const isOnBeach = st.playerX > W * 2.8;
           st.netActive = true;
           st.netBroken = false;
-          st.netCastX = st.playerX + (st.facingLeft ? -100 : 100);
-          st.netCastY = wY + 60;
+          st.netCastX = st.playerX + (st.facingLeft ? -NET_VISUAL_W * 0.4 : NET_VISUAL_W * 0.4);
+          st.netCastY = wY + (isOnBeach ? 10 : 60);
           const dexBonus = st.attributes.Dexterity * 2 * (1 + st.attributes.Tactics * 0.01);
           const endBonus = st.attributes.Endurance * 2 * (1 + st.attributes.Tactics * 0.01);
-          st.netWidth = 74 * 2.5 * 0.5 + dexBonus;
+          st.netWidth = NET_VISUAL_W + dexBonus;
           st.netDepth = (FRAME_H * SCALE) * 2 + endBonus;
           st.netTimer = 120;
           st.netAnimPhase = "throwing";
           st.netThrowFrame = 0;
           st.netThrowTimer = 0;
-          st.netAnimStartY = wY;
+          st.netAnimStartY = wY - (isOnBeach ? 30 : 0);
           st.netAnimY = wY - 20;
-          st.netAnimTargetY = wY + 160;
+          st.netAnimTargetY = isOnBeach ? wY + 40 : wY + 160;
           st.netAnimCaughtFish = [];
           st.netTotalWeight = 0;
           syncUI();
@@ -2144,8 +2147,8 @@ export default function FishingGame() {
       const img = getImg(src);
       if (!img || !img.complete || img.naturalWidth === 0) return;
       const fh = frameHeightOverride || img.naturalHeight;
-      const actualFrames = Math.max(1, Math.round(img.naturalWidth / fh));
-      const useFrames = actualFrames !== totalFrames ? actualFrames : totalFrames;
+      // Trust totalFrames when provided; only auto-detect as fallback for square sprites
+      const useFrames = totalFrames > 0 ? totalFrames : Math.max(1, Math.round(img.naturalWidth / fh));
       const fw = img.naturalWidth / useFrames;
       frameIndex = frameIndex % useFrames;
       const dw = Math.ceil(fw * scale);
@@ -2414,7 +2417,7 @@ export default function FishingGame() {
         }
         const licenseGateX = W * 2.6;
         const leftLimit = s.fishingLicense ? pierLeftBound : licenseGateX;
-        s.playerX = Math.max(leftLimit, Math.min(W * 4.8, s.playerX));
+        s.playerX = Math.max(leftLimit, Math.min(W * 5.6, s.playerX));
 
         const beachShopSignX = W * 2.6 + s.licenseSignOffsetX;
         s.nearLicenseSign = !s.inBoat && Math.abs(s.playerX - beachShopSignX) < 70 && s.gameState === "idle";
@@ -4888,7 +4891,7 @@ export default function FishingGame() {
           spawnFish(W, waterY, H);
         }
         const crabCount = s.swimmingFish.filter(f => f.type.beachCrab).length;
-        const maxCrabs = isBeachArea ? 5 : 3;
+        const maxCrabs = isBeachArea ? 8 : 3;
         if (crabCount < maxCrabs && Math.random() < (isBeachArea ? 0.008 : 0.004) * dt) {
           spawnBeachCrab(W, waterY, H);
         }
@@ -6285,28 +6288,35 @@ export default function FishingGame() {
         }
       }
 
-      // Net rendering (z-index 88 - draws on top of most world elements)
+      // Net rendering — casting net (1.5x fisherman height wide)
       if (s.netActive && s.netAnimPhase !== "none") {
         const netX = s.netCastX;
         const netY = s.netAnimY;
-        const netVisualW = 74 * 2.5 * 0.5;
+        const netVisualW = FRAME_H * SCALE * 1.5;
 
         if (s.netAnimPhase === "throwing") {
+          // 1Net.png is a small throwing spritesheet (193x25) — draw it scaling up as it flies
           const throwImg = getImg("/assets/objects/Net/1Net.png");
           if (throwImg && throwImg.complete && throwImg.naturalWidth > 0) {
+            const throwProgress = Math.min(1, s.netThrowTimer / 30);
+            const throwScale = 0.3 + throwProgress * 0.7;
+            const drawW = netVisualW * throwScale;
             const aspectR = throwImg.naturalHeight / throwImg.naturalWidth;
-            const drawW = netVisualW * 0.5;
             const drawH = drawW * aspectR;
+            const spin = s.netThrowTimer * 0.15;
             ctx.save();
             ctx.imageSmoothingEnabled = false;
             ctx.globalAlpha = 0.95;
-            ctx.drawImage(throwImg, 0, 0, throwImg.naturalWidth, throwImg.naturalHeight, netX - drawW / 2, netY - drawH / 2, drawW, drawH);
+            ctx.translate(netX, netY);
+            ctx.rotate(spin);
+            ctx.drawImage(throwImg, -drawW / 2, -drawH / 2, drawW, drawH);
             ctx.restore();
           }
         } else {
           const isSinking = s.netAnimPhase === "sinking";
           const isRising = s.netAnimPhase === "rising";
           const isScooping = s.netAnimPhase === "scooping";
+          // Sinking = dome net (2net.png), scooping/rising = gathered net (3net.png)
           const netImgSrc = isSinking ? "/assets/objects/Net/2net.png" : "/assets/objects/Net/3net.png";
           const netImg = getImg(netImgSrc);
           if (netImg && netImg.complete && netImg.naturalWidth > 0) {
@@ -6319,35 +6329,33 @@ export default function FishingGame() {
             let netDrawX = netX - nw / 2;
             let netDrawY = netY - nh / 2;
             if (isSinking) {
-              ctx.translate(netX, netY);
-              ctx.drawImage(netImg, 0, 0, netImg.naturalWidth, netImg.naturalHeight, -nw / 2, -nh / 2, nw, nh);
+              // Dome net descending — centered on net position
+              ctx.drawImage(netImg, netX - nw / 2, netY - nh * 0.3, nw, nh);
               netDrawX = netX - nw / 2;
-              netDrawY = netY - nh / 2;
+              netDrawY = netY - nh * 0.3;
             } else if (isRising || isScooping) {
-              const wobble = isRising ? Math.sin(s.time * 0.3) * 4 : 0;
+              // Gathered net rising — wobble effect and bottom-anchored
+              const wobble = isRising ? Math.sin(s.time * 0.3) * 6 : 0;
               netDrawX = netX - nw / 2 + wobble;
               netDrawY = netY - nh;
-              ctx.translate(netDrawX, netDrawY);
-              ctx.drawImage(netImg, 0, 0, netImg.naturalWidth, netImg.naturalHeight, 0, 0, nw, nh);
-            } else {
-              ctx.translate(netDrawX, netDrawY);
-              ctx.drawImage(netImg, 0, 0, netImg.naturalWidth, netImg.naturalHeight, 0, 0, nw, nh);
+              ctx.drawImage(netImg, netDrawX, netDrawY, nw, nh);
             }
             ctx.restore();
+            // Show caught fish icons inside the net
             if ((isRising || isScooping) && s.netAnimCaughtFish.length > 0) {
               ctx.save();
               const fishCount = s.netAnimCaughtFish.length;
-              const iconSize = 24;
+              const iconSize = 28;
               ctx.globalAlpha = 0.9;
               const maxShow = Math.min(fishCount, 6);
               const iconCenterX = netDrawX + nw / 2;
-              const iconCenterY = netDrawY + nh * 0.45;
-              const totalW = maxShow * (iconSize + 4);
+              const iconCenterY = netDrawY + nh * 0.5;
+              const totalIW = maxShow * (iconSize + 4);
               for (let fi = 0; fi < maxShow; fi++) {
                 const caught = s.netAnimCaughtFish[fi];
                 const cIcon = caught.icon ? getImg(caught.icon) : null;
                 const bobY = Math.sin(s.time * 0.2 + fi * 1.5) * 4;
-                const fx = iconCenterX - totalW / 2 + fi * (iconSize + 4);
+                const fx = iconCenterX - totalIW / 2 + fi * (iconSize + 4);
                 const fy = iconCenterY + bobY;
                 if (cIcon && cIcon.complete && cIcon.naturalWidth > 0) {
                   ctx.drawImage(cIcon, fx, fy, iconSize, iconSize);
@@ -6362,34 +6370,38 @@ export default function FishingGame() {
                 ctx.fillStyle = "#f1c40f";
                 ctx.font = "bold 11px monospace";
                 ctx.textAlign = "center";
-                ctx.fillText(`+${fishCount - maxShow}`, iconCenterX + 40, iconCenterY + iconSize / 2 + 4);
+                ctx.fillText(`+${fishCount - maxShow}`, iconCenterX + totalIW / 2 + 16, iconCenterY + iconSize / 2 + 4);
               }
               ctx.fillStyle = "#fff";
               ctx.font = "bold 10px monospace";
               ctx.textAlign = "center";
               const weightText = `${s.netTotalWeight.toFixed(1)}lb / 49lb`;
-              ctx.fillText(weightText, iconCenterX, iconCenterY + iconSize + 16);
+              ctx.fillText(weightText, iconCenterX, iconCenterY + iconSize + 18);
               if (s.netTotalWeight > 49) {
                 ctx.fillStyle = "rgba(255,60,60,0.9)";
                 ctx.font = "bold 13px monospace";
-                ctx.fillText("BREAKING!", iconCenterX, iconCenterY - 8);
+                ctx.fillText("BREAKING!", iconCenterX, iconCenterY - 10);
               }
               ctx.restore();
             }
           }
         }
 
-        ctx.strokeStyle = "rgba(180,170,150,0.6)";
-        ctx.lineWidth = 1.5;
-        ctx.setLineDash([3, 3]);
-        const lineTopY = Math.min(netY, waterY);
+        // Rope line from player hand to net
+        ctx.strokeStyle = "rgba(160,140,110,0.7)";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4, 4]);
+        const playerHandX = s.playerX + (s.facingLeft ? 0 : FRAME_H * SCALE * 0.8);
+        const playerHandY = s.lastFishermanY + FRAME_H * SCALE * 0.4;
         ctx.beginPath();
-        ctx.moveTo(netX, lineTopY);
-        ctx.lineTo(netX, netY);
+        ctx.moveTo(playerHandX, playerHandY);
+        const midRopeX = (playerHandX + netX) / 2;
+        const sagY = Math.max(playerHandY, netY) + 15;
+        ctx.quadraticCurveTo(midRopeX, sagY, netX, netY);
         ctx.stroke();
         ctx.setLineDash([]);
 
-        if (s.netAnimPhase !== "throwing") {
+        if (s.netAnimPhase !== "throwing" && netY > waterY) {
           addParticles(netX + (Math.random() - 0.5) * netVisualW * 0.4, netY, 1, "rgba(93,173,226,0.5)", 1, "bubble");
         }
       }
@@ -6942,26 +6954,31 @@ export default function FishingGame() {
         // Initialize pending catch array if not present
         if (!(s as any)._netPendingCatch) (s as any)._netPendingCatch = [];
 
-        // Helper: sweep fish in the net's current area (called during sinking & rising)
+        // Helper: sweep fish/crabs in the net's current area (called during sinking & rising)
         const sweepFishInNet = () => {
           if (s.netTotalWeight >= NET_MAX_WEIGHT) return;
           const netLeft = s.netCastX - s.netWidth / 2;
           const netRight = s.netCastX + s.netWidth / 2;
-          const netTop = s.netAnimY - s.netDepth / 2;
-          const netBottom = s.netAnimY + s.netDepth / 2;
+          // For beach crabs, use a wider vertical sweep since they're near the surface
+          const netTop = s.netAnimY - s.netDepth;
+          const netBottom = s.netAnimY + s.netDepth;
           const alreadyCaught = new Set(((s as any)._netPendingCatch || []).map((f: any) => f));
           for (let i = s.swimmingFish.length - 1; i >= 0; i--) {
             const f = s.swimmingFish[i];
             if (alreadyCaught.has(f)) continue;
-            if (f.x < netLeft || f.x > netRight || f.y < netTop || f.y > netBottom) continue;
+            if (f.x < netLeft || f.x > netRight) continue;
+            // Beach crabs: use their baseY for vertical check (they bob near surface)
+            const fCheckY = f.type.beachCrab ? f.baseY : f.y;
+            if (fCheckY < netTop || fCheckY > netBottom) continue;
+            // Allow common, uncommon, rare (includes all crabs)
             if (f.type.rarity !== "common" && f.type.rarity !== "uncommon" && f.type.rarity !== "rare") continue;
             if (s.netTotalWeight >= NET_MAX_WEIGHT) break;
             s.swimmingFish.splice(i, 1);
             const sz = f.sizeMultiplier;
             const fishWeight = Math.round(sz * f.type.points * 0.3 * 10) / 10;
             s.netTotalWeight += fishWeight;
-            addParticles(f.x, f.y, 5, "#5dade2", 2, "splash");
-            const isCrab = f.type.name.toLowerCase().includes("crab");
+            const isCrab = !!f.type.beachCrab || f.type.name.toLowerCase().includes("crab");
+            addParticles(f.x, f.y, 5, isCrab ? "#c4a96e" : "#5dade2", 2, "splash");
             s.netAnimCaughtFish.push({ name: f.type.name, icon: f.type.icon || "", isCrab, weight: fishWeight });
             ((s as any)._netPendingCatch as any[]).push(f);
           }
@@ -7730,26 +7747,32 @@ export default function FishingGame() {
       if (s.toolMode === "net") {
         if (s.netCooldown > 0) return;
         if (s.netAnimPhase !== "none") return;
+        const NET_VISUAL_W = FRAME_H * SCALE * 1.5;
+        const isOnBeach = s.playerX > W * 2.8;
         s.netActive = true;
         s.netBroken = false;
         // Cast toward the click position for direction, clamped to a reasonable range
         const clickDir = worldClickX > s.playerX ? 1 : -1;
-        const throwDist = Math.min(250, Math.max(60, Math.abs(worldClickX - s.playerX)));
+        const throwDist = Math.min(NET_VISUAL_W, Math.max(60, Math.abs(worldClickX - s.playerX)));
         s.netCastX = s.playerX + clickDir * throwDist;
-        s.netCastY = waterY + 60;
+        s.netCastY = waterY + (isOnBeach ? 10 : 60);
         const dexBonus2 = s.attributes.Dexterity * 2 * (1 + s.attributes.Tactics * 0.01);
         const endBonus2 = s.attributes.Endurance * 2 * (1 + s.attributes.Tactics * 0.01);
-        s.netWidth = 74 * 2.5 * 0.5 + dexBonus2;
+        s.netWidth = NET_VISUAL_W + dexBonus2;
         s.netDepth = (FRAME_H * SCALE) * 2 + endBonus2;
         s.netTimer = 120;
         s.netAnimPhase = "throwing";
         s.netThrowFrame = 0;
         s.netThrowTimer = 0;
-        s.netAnimStartY = waterY;
+        s.netAnimStartY = waterY - (isOnBeach ? 30 : 0);
         s.netAnimY = waterY - 20;
-        // Sink depth scales with click Y — deeper click = deeper net throw
-        const clickDepth = Math.max(100, Math.min(400, worldClickY - waterY));
-        s.netAnimTargetY = waterY + clickDepth;
+        // Beach: shallow toss to catch crabs; Water: depth scales with click
+        if (isOnBeach) {
+          s.netAnimTargetY = waterY + 40;
+        } else {
+          const clickDepth = Math.max(100, Math.min(400, worldClickY - waterY));
+          s.netAnimTargetY = waterY + clickDepth;
+        }
         s.netAnimCaughtFish = [];
         s.netTotalWeight = 0;
         s.facingLeft = clickDir < 0;
