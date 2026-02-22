@@ -4,3 +4,15 @@ dist
 server/public
 vite.config.ts.*
 *.tar.gz
+.vercel
+.env
+.env.local
+.local
+.config
+.replit
+replit.md
+uv.lock
+pyproject.toml
+main.py
+background
+attached_assets

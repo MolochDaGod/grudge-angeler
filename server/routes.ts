@@ -6,7 +6,7 @@ import { registerImageRoutes } from "./replit_integrations/image/routes";
 import fs from "fs";
 import path from "path";
 
-const baseUrl = "https://ocean-angler-grudge.replit.app";
+const baseUrl = process.env.BASE_URL || "https://grudge-angeler.vercel.app";
 
 const RARITY_COLORS: Record<string, number> = {
   common: 0xa0a0a0,
@@ -62,7 +62,7 @@ async function sendDiscordCatch(data: {
       { name: "Length", value: `${data.length}"`, inline: true },
       { name: "Earnings", value: `${data.earnings} gbux`, inline: true },
     ],
-    footer: { text: "Grudge Angeler \u2022 ocean-angler-grudge.replit.app", icon_url: logoUrl },
+    footer: { text: `Grudge Angeler \u2022 ${baseUrl.replace(/^https?:\/\//, '')}`, icon_url: logoUrl },
     timestamp: new Date().toISOString(),
   };
 
@@ -150,7 +150,7 @@ setInterval(() => {
 
 function getBaseUrl(req: Request) {
   const proto = req.headers["x-forwarded-proto"] || req.protocol || "https";
-  const host = req.headers["x-forwarded-host"] || req.headers.host || "ocean-angler-grudge.replit.app";
+  const host = req.headers["x-forwarded-host"] || req.headers.host || new URL(baseUrl).host;
   return `${proto}://${host}`;
 }
 

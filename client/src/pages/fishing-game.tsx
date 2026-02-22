@@ -1944,8 +1944,10 @@ export default function FishingGame() {
             st.netBroken = false;
             st.netCastX = st.playerX + (st.facingLeft ? -100 : 100);
             st.netCastY = wY + 60;
-            st.netWidth = 74 * 2.5 * 0.5;
-            st.netDepth = (FRAME_H * SCALE) * 2;
+            const dexBonus = st.attributes.Dexterity * 2 * (1 + st.attributes.Tactics * 0.01);
+            const endBonus = st.attributes.Endurance * 2 * (1 + st.attributes.Tactics * 0.01);
+            st.netWidth = 74 * 2.5 * 0.5 + dexBonus;
+            st.netDepth = (FRAME_H * SCALE) * 2 + endBonus;
             st.netTimer = 120;
             st.netAnimPhase = "throwing";
             st.netThrowFrame = 0;
@@ -6827,42 +6829,55 @@ export default function FishingGame() {
         const NET_MAX_WEIGHT = 49;
         const NET_NORMAL_COOLDOWN = 600;
         const NET_BREAK_COOLDOWN = 3600;
+
+        // Initialize pending catch array if not present
+        if (!(s as any)._netPendingCatch) (s as any)._netPendingCatch = [];
+
+        // Helper: sweep fish in the net's current area (called during sinking & rising)
+        const sweepFishInNet = () => {
+          if (s.netTotalWeight >= NET_MAX_WEIGHT) return;
+          const netLeft = s.netCastX - s.netWidth / 2;
+          const netRight = s.netCastX + s.netWidth / 2;
+          const netTop = s.netAnimY - s.netDepth / 2;
+          const netBottom = s.netAnimY + s.netDepth / 2;
+          const alreadyCaught = new Set(((s as any)._netPendingCatch || []).map((f: any) => f));
+          for (let i = s.swimmingFish.length - 1; i >= 0; i--) {
+            const f = s.swimmingFish[i];
+            if (alreadyCaught.has(f)) continue;
+            if (f.x < netLeft || f.x > netRight || f.y < netTop || f.y > netBottom) continue;
+            if (f.type.rarity !== "common" && f.type.rarity !== "uncommon" && f.type.rarity !== "rare") continue;
+            if (s.netTotalWeight >= NET_MAX_WEIGHT) break;
+            s.swimmingFish.splice(i, 1);
+            const sz = f.sizeMultiplier;
+            const fishWeight = Math.round(sz * f.type.points * 0.3 * 10) / 10;
+            s.netTotalWeight += fishWeight;
+            addParticles(f.x, f.y, 5, "#5dade2", 2, "splash");
+            const isCrab = f.type.name.toLowerCase().includes("crab");
+            s.netAnimCaughtFish.push({ name: f.type.name, icon: f.type.icon || "", isCrab, weight: fishWeight });
+            ((s as any)._netPendingCatch as any[]).push(f);
+          }
+        };
+
         if (s.netAnimPhase === "throwing") {
           s.netThrowTimer += dt;
           s.netAnimY += sinkSpeed * 0.5 * dt;
           if (s.netThrowTimer >= 30) {
             s.netAnimPhase = "sinking";
+            s.netAnimCaughtFish = [];
+            s.netTotalWeight = 0;
+            (s as any)._netPendingCatch = [];
             addParticles(s.netCastX, s.netAnimY, 6, "#5dade2", 2, "splash");
             addRipple(s.netCastX, s.netAnimY);
           }
         } else if (s.netAnimPhase === "sinking") {
           s.netAnimY += sinkSpeed * dt;
+          // Sweep fish as the net sinks through the water
+          sweepFishInNet();
           if (s.netAnimY >= s.netAnimTargetY) {
             s.netAnimY = s.netAnimTargetY;
             s.netAnimPhase = "scooping";
-            const netLeft = s.netCastX - s.netWidth / 2;
-            const netRight = s.netCastX + s.netWidth / 2;
-            const netTop = s.netAnimY - s.netDepth / 2;
-            const netBottom = s.netAnimY + s.netDepth / 2;
-            const caughtFish = s.swimmingFish.filter(f =>
-              f.x >= netLeft && f.x <= netRight && f.y >= netTop && f.y <= netBottom &&
-              (f.type.rarity === "common" || f.type.rarity === "uncommon")
-            );
-            s.netAnimCaughtFish = [];
-            s.netTotalWeight = 0;
-            const pendingCatch: typeof caughtFish = [];
-            for (const fish of caughtFish) {
-              const idx = s.swimmingFish.indexOf(fish);
-              if (idx >= 0) s.swimmingFish.splice(idx, 1);
-              const sz = fish.sizeMultiplier;
-              const fishWeight = Math.round(sz * fish.type.points * 0.3 * 10) / 10;
-              s.netTotalWeight += fishWeight;
-              addParticles(fish.x, fish.y, 5, "#5dade2", 2, "splash");
-              const isCrab = fish.type.name.toLowerCase().includes("crab");
-              s.netAnimCaughtFish.push({ name: fish.type.name, icon: fish.type.icon || "", isCrab, weight: fishWeight });
-              pendingCatch.push(fish);
-            }
-            (s as any)._netPendingCatch = pendingCatch;
+            // Final sweep at the bottom
+            sweepFishInNet();
           }
         } else if (s.netAnimPhase === "scooping") {
           if (s.netTotalWeight > NET_MAX_WEIGHT) {
@@ -6881,7 +6896,21 @@ export default function FishingGame() {
           }
         } else if (s.netAnimPhase === "rising") {
           s.netAnimY -= riseSpeed * dt;
-          if (s.netAnimY <= s.netAnimStartY - 10) {
+          // Continue sweeping fish as the net rises back up
+          sweepFishInNet();
+          // Check for overweight while rising
+          if (s.netTotalWeight > NET_MAX_WEIGHT) {
+            s.netBroken = true;
+            s.netAnimPhase = "none";
+            s.netActive = false;
+            s.netCooldown = NET_BREAK_COOLDOWN;
+            s.netAnimCaughtFish = [];
+            s.netTotalWeight = 0;
+            (s as any)._netPendingCatch = [];
+            addParticles(s.netCastX, s.netAnimY, 15, "rgba(139,90,43,0.8)", 3, "splash");
+            addParticles(s.netCastX, s.netAnimY, 8, "#ff4444", 2, "sparkle");
+            syncUI();
+          } else if (s.netAnimY <= s.netAnimStartY - 10) {
             s.netAnimPhase = "none";
             s.netActive = false;
             s.netBroken = false;
@@ -7586,19 +7615,27 @@ export default function FishingGame() {
         if (s.netAnimPhase !== "none") return;
         s.netActive = true;
         s.netBroken = false;
-        s.netCastX = s.playerX + (s.facingLeft ? -100 : 100);
+        // Cast toward the click position for direction, clamped to a reasonable range
+        const clickDir = worldClickX > s.playerX ? 1 : -1;
+        const throwDist = Math.min(250, Math.max(60, Math.abs(worldClickX - s.playerX)));
+        s.netCastX = s.playerX + clickDir * throwDist;
         s.netCastY = waterY + 60;
-        s.netWidth = 74 * 2.5 * 0.5;
-        s.netDepth = (FRAME_H * SCALE) * 2;
+        const dexBonus2 = s.attributes.Dexterity * 2 * (1 + s.attributes.Tactics * 0.01);
+        const endBonus2 = s.attributes.Endurance * 2 * (1 + s.attributes.Tactics * 0.01);
+        s.netWidth = 74 * 2.5 * 0.5 + dexBonus2;
+        s.netDepth = (FRAME_H * SCALE) * 2 + endBonus2;
         s.netTimer = 120;
         s.netAnimPhase = "throwing";
         s.netThrowFrame = 0;
         s.netThrowTimer = 0;
         s.netAnimStartY = waterY;
         s.netAnimY = waterY - 20;
-        s.netAnimTargetY = waterY + 160;
+        // Sink depth scales with click Y — deeper click = deeper net throw
+        const clickDepth = Math.max(100, Math.min(400, worldClickY - waterY));
+        s.netAnimTargetY = waterY + clickDepth;
         s.netAnimCaughtFish = [];
         s.netTotalWeight = 0;
+        s.facingLeft = clickDir < 0;
         syncUI();
         return;
       }
@@ -8412,7 +8449,7 @@ export default function FishingGame() {
                 className="flex flex-col items-center cursor-pointer"
                 style={{ padding: "4px 6px", borderRadius: 6, position: "relative", background: uiState.selectedHotbar === 4 ? "rgba(168,85,247,0.25)" : "rgba(8,15,25,0.75)", border: uiState.selectedHotbar === 4 ? "1px solid rgba(168,85,247,0.5)" : "1px solid rgba(255,255,255,0.1)", transition: "all 0.15s", opacity: uiState.netCooldown > 0 ? 0.5 : 1 }}
                 data-testid="hotbar-slot-4">
-                <img src="/assets/icons/fish/Icons_11.png" alt="" style={{ width: 24, height: 24 }} />
+                <img src="/assets/objects/Net/1Net.png" alt="Net" style={{ width: 24, height: 24, imageRendering: "pixelated" }} />
                 <span style={{ fontSize: 8, color: uiState.selectedHotbar === 4 ? "#a855f7" : "#607d8b" }}>4</span>
                 {uiState.netCooldown > 0 && (
                   <span style={{ position: "absolute", top: -4, right: -4, fontSize: 7, background: uiState.netBroken ? "rgba(220,38,38,0.9)" : "rgba(168,85,247,0.9)", color: "#fff", borderRadius: 4, padding: "1px 3px", fontWeight: "bold" }}>
@@ -10121,6 +10158,18 @@ export default function FishingGame() {
           {/* Map Tab - Underwater Background Layers */}
           {uiState.adminTab === "map" && (
             <div style={{ flex: 1, overflowY: "auto", padding: 8 }}>
+              <a
+                href="/adminmap"
+                data-testid="link-admin-map"
+                style={{
+                  display: "block", padding: "6px 10px", borderRadius: 6, marginBottom: 8,
+                  background: "rgba(46,204,113,0.12)", border: "1px solid rgba(46,204,113,0.35)",
+                  color: "#2ecc71", fontSize: 7, fontFamily: "'Press Start 2P', monospace",
+                  textDecoration: "none", textAlign: "center", letterSpacing: 1,
+                }}
+              >
+                OPEN FULL MAP EDITOR
+              </a>
               <div style={{ color: "#4fc3f7", fontSize: 7, marginBottom: 6 }}>Underwater BG Layers</div>
               <div style={{ color: "#607d8b", fontSize: 5, marginBottom: 8, lineHeight: "1.8" }}>
                 Layer underwater backgrounds with depth ordering. Layer 1 = farthest, 2 = middle, 3 = closest.
