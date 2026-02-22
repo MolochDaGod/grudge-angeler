@@ -274,7 +274,7 @@ interface FishType {
 
 const FISH_TYPES: FishType[] = [
   { name: "Minnow", icon: "/assets/fish-images/minnow.png", catchAsset: "/assets/catch/minnow-silver-common.png", catchW: 92, catchH: 22, creatureFolder: "minnow-silver-common", idleFrames: 4, walkFrames: 4, points: 10, rarity: "common", weight: 40, minDepth: 0.15, speed: 1.5, description: "A tiny silver fish, common in shallow waters.", tint: "rgba(200,210,230,0.2)", baseScale: 0.15 },
-  { name: "Jellyfish", icon: "/assets/fish-images/jellyfish.png", catchAsset: "/assets/catch/jellyfish-translucent-common.png", catchW: 15, catchH: 24, creatureFolder: "jellyfish-translucent-common", idleFrames: 4, walkFrames: 4, points: 20, rarity: "common", weight: 25, minDepth: 0.2, speed: 0.7, description: "A translucent jellyfish drifting with the current.", tint: "rgba(120,80,255,0.2)", baseScale: 0.25 },
+  { name: "Jellyfish", icon: "/assets/fish-images/jellyfish.png", catchAsset: "/assets/catch/jellyfish-translucent-common.png", catchW: 130, catchH: 87, creatureFolder: "jellyfish-translucent-common", idleFrames: 10, walkFrames: 10, points: 20, rarity: "common", weight: 25, minDepth: 0.2, speed: 0.7, description: "A translucent jellyfish drifting with the current.", tint: "rgba(120,80,255,0.2)", baseScale: 0.25 },
   { name: "Perch", icon: "/assets/fish-images/perch.png", catchAsset: "/assets/catch/perch-striped-common.png", catchW: 92, catchH: 22, creatureFolder: "perch-striped-common", idleFrames: 4, walkFrames: 4, points: 25, rarity: "common", weight: 30, minDepth: 0.25, speed: 1.2, description: "A striped freshwater fish with sharp fins.", baseScale: 0.25 },
   { name: "Bass", icon: "/assets/fish-images/bass.png", catchAsset: "/assets/catch/bass-green-uncommon.png", catchW: 36, catchH: 34, creatureFolder: "bass-green-uncommon", idleFrames: 1, walkFrames: 2, points: 50, rarity: "uncommon", weight: 15, minDepth: 0.35, speed: 1.0, description: "A strong fighter popular with anglers.", baseScale: 0.36 },
   { name: "Catfish", icon: "/assets/fish-images/catfish.png", catchAsset: "/assets/catch/catfish-brown-uncommon.png", catchW: 56, catchH: 36, creatureFolder: "catfish-brown-uncommon", idleFrames: 4, walkFrames: 4, points: 75, rarity: "uncommon", weight: 8, minDepth: 0.15, speed: 0.8, description: "A bottom-dweller with long whiskers.", tint: "rgba(160,120,80,0.15)", bottomDweller: true, baseScale: 0.5 },
@@ -302,14 +302,20 @@ const FISH_TYPES: FishType[] = [
   { name: "Golden Salmon", icon: "/assets/fish-images/golden-salmon.png", catchAsset: "/assets/catch/golden-salmon-gold-ultra_rare.png", catchW: 48, catchH: 32, creatureFolder: "golden-salmon-gold-ultra_rare", idleFrames: 4, walkFrames: 4, points: 700, rarity: "ultra_rare", weight: 0.2, minDepth: 0.6, speed: 1.5, description: "A legendary salmon with solid gold scales. Worth a fortune.", baseScale: 0.7 },
   { name: "Shadow Leviathan", icon: "/assets/fish-images/shadow-leviathan.png", catchAsset: "/assets/catch/shadow-leviathan-shadow-ultra_rare.png", catchW: 89, catchH: 14, creatureFolder: "shadow-leviathan-shadow-ultra_rare", idleFrames: 4, walkFrames: 4, points: 1500, rarity: "ultra_rare", weight: 0.08, minDepth: 0.8, speed: 0.6, description: "A titanic shadow beast from beyond the abyss. Feared by all ocean life.", tint: "rgba(140,15,15,0.5)", baseScale: 2.5 },
   { name: "The Seal at the Seam", icon: "/assets/fish-images/seal-at-the-seam.png", catchAsset: "/assets/fish-images/seal-at-the-seam.png", catchW: 64, catchH: 64, creatureFolder: "seal-at-the-seam-cosmic-ultra_rare", idleFrames: 6, walkFrames: 6, points: 5000, rarity: "ultra_rare", weight: 0, minDepth: 0.95, speed: 0.3, description: "A living sigil at the boundary of reality. The 10th Legendary — guardian of the Seam.", tint: "rgba(20,40,120,0.5)", baseScale: 1.0, treasureChestOnly: true },
-  { name: "Pufferfish", icon: "/assets/icons/fish/Icons_04.png", catchAsset: "/assets/catch/pufferfish-salt-rare.png", catchW: 12, catchH: 6, creatureFolder: "pufferfish-salt-rare", idleFrames: 1, walkFrames: 2, points: 110, rarity: "rare", weight: 6, minDepth: 0.4, speed: 0.7, description: "A spiny golden pufferfish. Inflates when threatened.", tint: "rgba(220,180,50,0.2)", baseScale: 0.3 },
+  { name: "Pufferfish", icon: "/assets/fish-images/pufferfish-salt-rare.png", catchAsset: "/assets/catch/pufferfish-salt-rare.png", catchW: 208, catchH: 111, creatureFolder: "pufferfish-salt-rare", idleFrames: 10, walkFrames: 10, points: 110, rarity: "rare", weight: 6, minDepth: 0.4, speed: 0.7, description: "A spotted pufferfish. Inflates when threatened.", tint: "rgba(220,180,50,0.2)", baseScale: 0.3 },
   { name: "Freshwater Bass", icon: "/assets/icons/fish/Icons_05.png", catchAsset: "/assets/catch/bass-fresh-common.png", catchW: 16, catchH: 12, creatureFolder: "bass-fresh-common", idleFrames: 1, walkFrames: 2, points: 15, rarity: "common", weight: 35, minDepth: 0.15, speed: 1.1, description: "A green freshwater bass. Common but scrappy.", baseScale: 0.25 },
   { name: "Redfish", icon: "/assets/icons/fish/Icons_07.png", catchAsset: "/assets/catch/redfish-large-uncommon.png", catchW: 20, catchH: 12, creatureFolder: "redfish-large-uncommon", idleFrames: 1, walkFrames: 2, points: 55, rarity: "uncommon", weight: 12, minDepth: 0.3, speed: 1.0, description: "A rust-red ocean fish with a powerful tail.", tint: "rgba(180,80,50,0.2)", baseScale: 0.4 },
   { name: "Anchovy", icon: "/assets/icons/fish/Icons_06.png", catchAsset: "/assets/catch/anchovy-salt-common.png", catchW: 26, catchH: 12, creatureFolder: "anchovy-salt-common", idleFrames: 1, walkFrames: 2, points: 12, rarity: "common", weight: 40, minDepth: 0.2, speed: 1.6, description: "A darting blue anchovy. Travels in huge schools.", tint: "rgba(80,140,220,0.15)", baseScale: 0.2 },
   { name: "Angelfish", icon: "/assets/icons/fish/Icons_10.png", catchAsset: "/assets/catch/angelfish-fresh-uncommon.png", catchW: 28, catchH: 24, creatureFolder: "angelfish-fresh-uncommon", idleFrames: 1, walkFrames: 2, points: 65, rarity: "uncommon", weight: 10, minDepth: 0.35, speed: 0.9, description: "A graceful pink angelfish with flowing fins.", tint: "rgba(220,120,160,0.2)", baseScale: 0.45 },
   { name: "Surgeonfish", icon: "/assets/icons/fish/Icons_09.png", catchAsset: "/assets/catch/surgeonfish-salt-uncommon.png", catchW: 54, catchH: 22, creatureFolder: "surgeonfish-salt-uncommon", idleFrames: 1, walkFrames: 2, points: 70, rarity: "uncommon", weight: 8, minDepth: 0.45, speed: 1.3, description: "A large blue surgeonfish with a razor-sharp tail spine.", tint: "rgba(60,120,200,0.25)", baseScale: 0.9 },
   { name: "Rainbow Trout", icon: "/assets/icons/fish/Icons_08.png", catchAsset: "/assets/catch/rainbow-trout-fresh-rare.png", catchW: 30, catchH: 12, creatureFolder: "rainbow-trout-fresh-rare", idleFrames: 1, walkFrames: 2, points: 95, rarity: "rare", weight: 5, minDepth: 0.35, speed: 1.2, description: "A speckled brown trout with a rainbow shimmer along its flank.", baseScale: 0.5 },
-  { name: "Clownfish", icon: "/assets/icons/fish/Icons_15.png", catchAsset: "/assets/catch/clownfish-salt-uncommon.png", catchW: 30, catchH: 12, creatureFolder: "clownfish-salt-uncommon", idleFrames: 1, walkFrames: 2, points: 45, rarity: "uncommon", weight: 14, minDepth: 0.25, speed: 1.0, description: "A bright pink clownfish hiding among anemones.", tint: "rgba(240,100,120,0.2)", baseScale: 0.35 },
+  { name: "Clownfish", icon: "/assets/fish-images/clownfish-salt-uncommon.png", catchAsset: "/assets/catch/clownfish-salt-uncommon.png", catchW: 231, catchH: 135, creatureFolder: "clownfish-salt-uncommon", idleFrames: 10, walkFrames: 10, points: 45, rarity: "uncommon", weight: 14, minDepth: 0.25, speed: 1.0, description: "A bright orange clownfish hiding among anemones.", tint: "rgba(240,100,120,0.2)", baseScale: 0.35 },
+  { name: "Butterfly Fish", icon: "/assets/fish-images/butterfly-fish.png", catchAsset: "/assets/catch/butterfly-fish-fresh-uncommon.png", catchW: 236, catchH: 193, creatureFolder: "butterfly-fish-fresh-uncommon", idleFrames: 10, walkFrames: 10, points: 55, rarity: "uncommon", weight: 12, minDepth: 0.2, speed: 1.3, description: "A golden butterfly fish with striking blue markings.", tint: "rgba(240,200,50,0.2)", baseScale: 0.3 },
+  { name: "Lionfish", icon: "/assets/fish-images/lionfish.png", catchAsset: "/assets/catch/lionfish-salt-rare.png", catchW: 423, catchH: 336, creatureFolder: "lionfish-salt-rare", idleFrames: 10, walkFrames: 10, points: 130, rarity: "rare", weight: 4, minDepth: 0.45, speed: 0.8, description: "A venomous lionfish with elaborate striped fins. Beautiful but deadly.", tint: "rgba(180,140,80,0.2)", baseScale: 0.25 },
+  { name: "Hammerhead Shark", icon: "/assets/fish-images/hammerhead-shark.png", catchAsset: "/assets/catch/hammerhead-shark-blue-legendary.png", catchW: 773, catchH: 382, creatureFolder: "hammerhead-shark-blue-legendary", idleFrames: 10, walkFrames: 10, points: 350, rarity: "legendary", weight: 0.8, minDepth: 0.6, speed: 2.0, description: "A massive hammerhead shark. Its wide head detects prey with uncanny precision.", tint: "rgba(80,100,140,0.3)", baseScale: 0.12 },
+  { name: "Pink Jellyfish", icon: "/assets/fish-images/pink-jellyfish.png", catchAsset: "/assets/catch/pink-jellyfish-pink-uncommon.png", catchW: 143, catchH: 225, creatureFolder: "pink-jellyfish-pink-uncommon", idleFrames: 10, walkFrames: 10, points: 40, rarity: "uncommon", weight: 15, minDepth: 0.3, speed: 0.6, description: "A pink jellyfish pulsing gracefully through the water.", tint: "rgba(240,120,180,0.2)", baseScale: 0.2 },
+  { name: "Purple Jellyfish", icon: "/assets/fish-images/purple-jellyfish.png", catchAsset: "/assets/catch/purple-jellyfish-purple-rare.png", catchW: 196, catchH: 294, creatureFolder: "purple-jellyfish-purple-rare", idleFrames: 10, walkFrames: 10, points: 85, rarity: "rare", weight: 5, minDepth: 0.5, speed: 0.5, description: "A majestic purple jellyfish trailing long, luminous tentacles.", tint: "rgba(100,40,200,0.25)", baseScale: 0.2 },
+  { name: "Sea Urchin", icon: "/assets/fish-images/sea-urchin.png", catchAsset: "/assets/catch/sea-urchin-dark-common.png", catchW: 311, catchH: 318, creatureFolder: "sea-urchin-dark-common", idleFrames: 10, walkFrames: 10, points: 15, rarity: "common", weight: 20, minDepth: 0.2, speed: 0.3, description: "A spiny sea urchin crawling along the ocean floor.", tint: "rgba(40,30,60,0.15)", bottomDweller: true, baseScale: 0.12 },
 ];
 
 const BETA_EGG_MAX_STOCK = 50;
@@ -469,7 +475,7 @@ const CHUM_ITEMS: ChumItem[] = [
 ];
 
 const PREDATOR_TYPES = [
-  { name: "Shark", folder: "shark", idleFrames: 4, walkFrames: 6, attackFrames: 6, hurtFrames: 2, deathFrames: 6, specialFrames: 6, catchAsset: "/assets/predators/shark/Idle.png", catchW: 96, catchH: 96, points: 400, rarity: "rare" as const, weight: 3, speed: 2.2, size: 1.8, scareRadius: 200, description: "A fearsome shark prowling the deep waters.", tint: null as string | null },
+  { name: "Shark", folder: "shark", idleFrames: 10, walkFrames: 10, attackFrames: 10, hurtFrames: 2, deathFrames: 10, specialFrames: 10, catchAsset: "/assets/predators/shark/Idle.png", catchW: 96, catchH: 96, points: 400, rarity: "rare" as const, weight: 3, speed: 2.2, size: 1.8, scareRadius: 200, description: "A fearsome great white shark prowling the deep waters.", tint: null as string | null },
   { name: "Kraken", folder: "kraken", idleFrames: 6, walkFrames: 6, attackFrames: 6, hurtFrames: 2, deathFrames: 6, specialFrames: 6, catchAsset: "/assets/predators/kraken/Idle.png", catchW: 96, catchH: 96, points: 800, rarity: "legendary" as const, weight: 1, speed: 1.5, size: 2.2, scareRadius: 280, description: "A massive squid from the abyss, feared by all.", tint: null as string | null },
   { name: "Sea Devil", folder: "crabaggresive", idleFrames: 4, walkFrames: 6, attackFrames: 6, hurtFrames: 2, deathFrames: 6, specialFrames: 6, catchAsset: "/assets/predators/crabaggresive/Idle.png", catchW: 96, catchH: 96, points: 600, rarity: "rare" as const, weight: 2, speed: 1.8, size: 2.0, scareRadius: 240, description: "A monstrous crab creature from the deep trenches.", tint: null as string | null },
   { name: "Shadow Leviathan", folder: "leviathan", idleFrames: 4, walkFrames: 6, attackFrames: 4, hurtFrames: 2, deathFrames: 6, specialFrames: 4, catchAsset: "/assets/predators/leviathan/Idle.png", catchW: 96, catchH: 96, points: 1200, rarity: "ultra_rare" as const, weight: 1, speed: 2.8, size: 2.8, scareRadius: 350, description: "An ancient crimson terror from the deepest abyss. Its shadow alone drives fish to madness.", tint: null as string | null },
@@ -2262,21 +2268,31 @@ export default function FishingGame() {
       if (!s.oceanDecorGenerated) {
         s.oceanDecorGenerated = true;
         const decorSprites = [
-          "/assets/ocean_decor/Stone_1.png", "/assets/ocean_decor/Stone_2.png",
-          "/assets/ocean_decor/Stone_3.png", "/assets/ocean_decor/Stone_5.png",
-          "/assets/ocean_decor/Stone_6.png", "/assets/ocean_decor/Seaweed_1.png",
-          "/assets/ocean_decor/Seaweed_2.png", "/assets/ocean_decor/Barrel_1.png",
-          "/assets/ocean_decor/Barrel_2.png", "/assets/ocean_decor/Anchor.png",
-          "/assets/ocean_decor/Chain.png", "/assets/ocean_decor/Steering-wheel.png",
+          "/assets/ocean_decor/Reef_1.png", "/assets/ocean_decor/Reef_2.png",
+          "/assets/ocean_decor/Reef_3.png", "/assets/ocean_decor/Reef_4.png",
+          "/assets/ocean_decor/Pixel_Anchor.png", "/assets/ocean_decor/Pixel_Wheel.png",
+          "/assets/ocean_decor/Coral_Pink_1.png", "/assets/ocean_decor/Coral_Pink_2.png",
+          "/assets/ocean_decor/Coral_Blue_1.png", "/assets/ocean_decor/Coral_Blue_2.png",
+          "/assets/ocean_decor/Coral_Beige_1.png", "/assets/ocean_decor/Coral_Red_1.png",
+          "/assets/ocean_decor/Coral_Violet_1.png",
+          "/assets/ocean_decor/Shipwreck_1.png", "/assets/ocean_decor/Shipwreck_2.png",
+          "/assets/ocean_decor/Starfish_1.png", "/assets/ocean_decor/Starfish_2.png",
+          "/assets/ocean_decor/Pearl_Shell_1.png", "/assets/ocean_decor/Pearl_Shell_2.png",
+          "/assets/ocean_decor/Dragon_Bones.png", "/assets/ocean_decor/Fish_Bones.png",
+          "/assets/ocean_decor/Statue_1.png", "/assets/ocean_decor/Statue_2.png",
+          "/assets/ocean_decor/Mermaid_House.png", "/assets/ocean_decor/Turtle_Shell.png",
+          "/assets/ocean_decor/Sea_Urchin_Decor.png", "/assets/ocean_decor/Sea_Urchin_Large.png",
+          "/assets/ocean_decor/Shell_Brown.png", "/assets/ocean_decor/Shell_Yellow.png",
+          "/assets/ocean_decor/Sea_Bug.png",
         ];
         const beachBound = W * 2.85;
         const worldLeft = -(W * 3) - 200;
-        for (let di = 0; di < 30; di++) {
+        for (let di = 0; di < 50; di++) {
           const seed = Math.sin(di * 127.1 + 311.7) * 43758.5453;
           const r = seed - Math.floor(seed);
           const wx = worldLeft + r * (beachBound - worldLeft - 100);
           const sprIdx = Math.floor(Math.abs(Math.sin(di * 83.3 + 19.1)) * decorSprites.length) % decorSprites.length;
-          const sc = 0.6 + Math.abs(Math.sin(di * 53.7)) * 0.8;
+          const sc = 1.0 + Math.abs(Math.sin(di * 53.7)) * 1.4;
           const flip = Math.sin(di * 37.9) > 0;
           s.oceanDecor.push({ sprite: decorSprites[sprIdx], worldX: wx, scale: sc, flipX: flip });
         }

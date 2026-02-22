@@ -1,0 +1,6 @@
+# Track large spritesheets and asset packs with Git LFS
+client/public/assets/creatures/**/*.png filter=lfs diff=lfs merge=lfs -text
+client/public/assets/predators/**/*.png filter=lfs diff=lfs merge=lfs -text
+client/public/assets/catch/*.png filter=lfs diff=lfs merge=lfs -text
+client/public/assets/ocean_decor/*.png filter=lfs diff=lfs merge=lfs -text
+client/public/assets/characters/**/*.png filter=lfs diff=lfs merge=lfs -text
