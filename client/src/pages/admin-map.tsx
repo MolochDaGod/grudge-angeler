@@ -79,10 +79,10 @@ const DEFAULT_AREAS: MapArea[] = [
 ];
 
 const GAME_IMAGES: GameImage[] = [
-  { id: "dock-front", src: "/assets/dock_front.png", x: REF_W * -0.15, y: PIER_Y - 50, w: REF_W * 2.5, h: 60, label: "Dock Front" },
-  { id: "dock-struct", src: "/assets/dock_structure_full.png", x: REF_W * 0.1, y: PIER_Y - 80, w: REF_W * 1.5, h: 100, label: "Dock Structure" },
-  { id: "dock-legs-uw", src: "/assets/dock_legs_underwater.png", x: REF_W * 0.2, y: WATER_Y + 10, w: 200, h: 180, label: "Dock Legs UW" },
-  { id: "dock-legs-wl", src: "/assets/dock_legs_waterline.png", x: REF_W * 0.2, y: WATER_Y - 30, w: 150, h: 80, label: "Dock Legs WL" },
+  { id: "dock-front", src: "/assets/tiles/dock_front.png", x: REF_W * -0.15, y: PIER_Y - 50, w: REF_W * 2.5, h: 60, label: "Dock Front" },
+  { id: "dock-struct", src: "/assets/tiles/dock_structure_full.png", x: REF_W * 0.1, y: PIER_Y - 80, w: REF_W * 1.5, h: 100, label: "Dock Structure" },
+  { id: "dock-legs-uw", src: "/assets/tiles/dock_legs_underwater.png", x: REF_W * 0.2, y: WATER_Y + 10, w: 200, h: 180, label: "Dock Legs UW" },
+  { id: "dock-legs-wl", src: "/assets/tiles/dock_legs_waterline.png", x: REF_W * 0.2, y: WATER_Y - 30, w: 150, h: 80, label: "Dock Legs WL" },
   { id: "fishing-hut", src: "/assets/objects/Fishing_hut.png", x: REF_W * 0.85, y: PIER_Y - 192 * 2.2, w: 192 * 2.2, h: 192 * 2.2, label: "Fishing Hut" },
   { id: "boat", src: "/assets/objects/Boat.png", x: REF_W * 0.1, y: WATER_Y - 20, w: 120, h: 60, label: "Boat" },
   { id: "stay-sign1", src: "/assets/objects/Stay.png", x: REF_W * 1.6, y: PIER_Y - 32, w: 30, h: 30, label: "Stay Sign" },
@@ -90,8 +90,8 @@ const GAME_IMAGES: GameImage[] = [
   { id: "grass1", src: "/assets/objects/Grass1.png", x: REF_W * 2.0, y: PIER_Y - 40, w: 33, h: 40, label: "Grass 1" },
   { id: "fishrod-stand", src: "/assets/objects/Fish-rod.png", x: REF_W * 2.2, y: PIER_Y - 42, w: 26, h: 42, label: "Fish Rod Stand" },
   { id: "barrel2", src: "/assets/objects/Fishbarrel2.png", x: REF_W * 2.5, y: PIER_Y - 24, w: 22, h: 24, label: "Fish Barrel 2" },
-  { id: "uw-bg", src: "/assets/underwater_bg.png", x: WORLD_LEFT, y: WATER_Y, w: WORLD_WIDTH, h: 500, label: "Underwater BG (tiled)" },
-  { id: "plants", src: "/assets/plants_sheet.png", x: WORLD_LEFT, y: WATER_Y + 300, w: 400, h: 100, label: "Plants Sheet" },
+  { id: "uw-bg", src: "/assets/tiles/underwater_bg.png", x: WORLD_LEFT, y: WATER_Y, w: WORLD_WIDTH, h: 500, label: "Underwater BG (tiled)" },
+  { id: "plants", src: "/assets/tiles/plants_sheet.png", x: WORLD_LEFT, y: WATER_Y + 300, w: 400, h: 100, label: "Plants Sheet" },
   { id: "bait-shop", src: "/assets/objects/Fishing_hut.png", x: REF_W * 3.5, y: PIER_Y - 120, w: 120, h: 120, label: "Bait Shop (Beach)" },
 ];
 

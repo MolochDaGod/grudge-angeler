@@ -278,9 +278,9 @@ const FISH_TYPES: FishType[] = [
   { name: "Perch", icon: "/assets/fish-images/perch.png", catchAsset: "/assets/catch/perch-striped-common.png", catchW: 92, catchH: 22, creatureFolder: "perch-striped-common", idleFrames: 4, walkFrames: 4, points: 25, rarity: "common", weight: 30, minDepth: 0.25, speed: 1.2, description: "A striped freshwater fish with sharp fins.", baseScale: 0.32 },
   { name: "Bass", icon: "/assets/fish-images/bass.png", catchAsset: "/assets/catch/bass-green-uncommon.png", catchW: 36, catchH: 34, creatureFolder: "bass-green-uncommon", idleFrames: 1, walkFrames: 2, points: 50, rarity: "uncommon", weight: 15, minDepth: 0.35, speed: 1.0, description: "A strong fighter popular with anglers.", baseScale: 0.44 },
   { name: "Catfish", icon: "/assets/fish-images/catfish.png", catchAsset: "/assets/catch/catfish-brown-uncommon.png", catchW: 56, catchH: 36, creatureFolder: "catfish-brown-uncommon", idleFrames: 4, walkFrames: 4, points: 75, rarity: "uncommon", weight: 8, minDepth: 0.15, speed: 0.8, description: "A bottom-dweller with long whiskers.", tint: "rgba(160,120,80,0.15)", bottomDweller: true, baseScale: 0.48 },
-  { name: "Swordfish", icon: "/assets/fish-images/swordfish.png", catchAsset: "/assets/catch/swordfish-blue-rare.png", catchW: 92, catchH: 22, creatureFolder: "swordfish-blue-rare", idleFrames: 4, walkFrames: 4, points: 150, rarity: "rare", weight: 4, minDepth: 0.55, speed: 1.8, description: "A powerful ocean predator with a sharp bill.", baseScale: 0.80 },
+  { name: "Swordfish", icon: "/assets/fish-images/swordfish.png", catchAsset: "/assets/fish-images/swordfish.png", catchW: 92, catchH: 22, creatureFolder: "swordfish-blue-rare", idleFrames: 4, walkFrames: 4, points: 150, rarity: "rare", weight: 4, minDepth: 0.55, speed: 1.8, description: "A powerful ocean predator with a sharp bill.", baseScale: 0.80 },
   { name: "Stingray", icon: "/assets/fish-images/stingray.png", catchAsset: "/assets/catch/stingray-gray-rare.png", catchW: 92, catchH: 22, creatureFolder: "stingray-gray-rare", idleFrames: 4, walkFrames: 4, points: 100, rarity: "rare", weight: 5, minDepth: 0.45, speed: 1.4, description: "A flat-bodied ray gliding silently along the ocean floor.", tint: "rgba(100,110,130,0.25)", baseScale: 0.72 },
-  { name: "Whale", icon: "/assets/fish-images/whale.png", catchAsset: "/assets/catch/whale-blue-legendary.png", catchW: 78, catchH: 20, creatureFolder: "whale-blue-legendary", idleFrames: 2, walkFrames: 2, points: 300, rarity: "legendary", weight: 1, minDepth: 0.65, speed: 0.5, description: "The king of the deep. Incredibly rare!", tint: "rgba(40,80,180,0.45)", baseScale: 1.20 },
+  { name: "Whale", icon: "/assets/fish-images/whale.png", catchAsset: "/assets/fish-images/whale.png", catchW: 78, catchH: 20, creatureFolder: "whale-blue-legendary", idleFrames: 2, walkFrames: 2, points: 300, rarity: "legendary", weight: 1, minDepth: 0.65, speed: 0.5, description: "The king of the deep. Incredibly rare!", tint: "rgba(40,80,180,0.45)", baseScale: 1.20 },
   { name: "Kraken", icon: "/assets/fish-images/kraken.png", catchAsset: "/assets/catch/kraken-crimson-legendary.png", catchW: 96, catchH: 96, creatureFolder: "kraken-crimson-legendary", idleFrames: 6, walkFrames: 6, points: 400, rarity: "legendary", weight: 0.8, minDepth: 0.7, speed: 0.7, description: "A crimson terror from the deep. Its tentacles crush ships.", tint: "rgba(140,30,20,0.35)", baseScale: 1.00 },
   { name: "Giant Squid", icon: "/assets/fish-images/giant-squid.png", catchAsset: "/assets/catch/giant-squid-blue-legendary.png", catchW: 96, catchH: 96, creatureFolder: "giant-squid-blue-legendary", idleFrames: 6, walkFrames: 6, points: 130, rarity: "rare", weight: 4, minDepth: 0.55, speed: 0.8, description: "A massive blue squid from the abyss. Eyes the size of dinner plates.", tint: "rgba(30,60,160,0.35)", baseScale: 0.50 },
   { name: "Giant Octopus", icon: "/assets/fish-images/giant-octopus.png", catchAsset: "/assets/catch/giant-octopus-purple-legendary.png", catchW: 96, catchH: 96, creatureFolder: "giant-octopus-purple-legendary", idleFrames: 6, walkFrames: 6, points: 70, rarity: "uncommon", weight: 10, minDepth: 0.4, speed: 0.6, description: "A purple giant with eight crushing arms. Incredibly intelligent.", tint: "rgba(120,20,140,0.35)", baseScale: 0.30 },
@@ -290,13 +290,13 @@ const FISH_TYPES: FishType[] = [
   { name: "Electric Eel", icon: "/assets/fish-images/electric-eel.png", catchAsset: "/assets/catch/electric-eel-yellow-uncommon.png", catchW: 36, catchH: 34, creatureFolder: "electric-eel-yellow-uncommon", idleFrames: 1, walkFrames: 2, points: 65, rarity: "uncommon", weight: 10, minDepth: 0.4, speed: 1.6, description: "A shocking eel crackling with electric charge.", baseScale: 0.22 },
   { name: "Blue Ring Octopus", icon: "/assets/fish-images/blue-ring-octopus.png", catchAsset: "/assets/catch/blue-ring-octopus-blue-uncommon.png", catchW: 35, catchH: 32, creatureFolder: "blue-ring-octopus-blue-uncommon", idleFrames: 6, walkFrames: 6, points: 55, rarity: "uncommon", weight: 8, minDepth: 0.35, speed: 1.0, description: "A small but deadly octopus with glowing blue rings.", baseScale: 0.32 },
   { name: "Moray Eel", icon: "/assets/fish-images/moray-eel.png", catchAsset: "/assets/catch/moray-eel-brown-rare.png", catchW: 36, catchH: 11, creatureFolder: "moray-eel-brown-rare", idleFrames: 4, walkFrames: 6, points: 90, rarity: "rare", weight: 6, minDepth: 0.5, speed: 1.1, description: "A thick-bodied eel lurking in reef crevices.", baseScale: 0.64 },
-  { name: "Anglerfish", icon: "/assets/fish-images/anglerfish.png", catchAsset: "/assets/catch/anglerfish-dark-rare.png", catchW: 78, catchH: 20, creatureFolder: "anglerfish-dark-rare", idleFrames: 2, walkFrames: 2, points: 120, rarity: "rare", weight: 5, minDepth: 0.55, speed: 0.6, description: "A deep-sea predator with a bioluminescent lure.", baseScale: 0.60 },
+  { name: "Anglerfish", icon: "/assets/fish-images/anglerfish.png", catchAsset: "/assets/fish-images/anglerfish.png", catchW: 78, catchH: 20, creatureFolder: "anglerfish-dark-rare", idleFrames: 2, walkFrames: 2, points: 120, rarity: "rare", weight: 5, minDepth: 0.55, speed: 0.6, description: "A deep-sea predator with a bioluminescent lure.", baseScale: 0.60 },
   { name: "Deep Sea Angler", icon: "/assets/fish-images/deep-sea-angler.png", catchAsset: "/assets/catch/deep-sea-angler-dark-rare.png", catchW: 78, catchH: 20, creatureFolder: "deep-sea-angler-dark-rare", idleFrames: 4, walkFrames: 4, points: 140, rarity: "rare", weight: 3, minDepth: 0.65, speed: 0.5, description: "A pitch-black anglerfish with a sinister yellow glow.", baseScale: 0.64 },
   { name: "Phantom Minnow", icon: "/assets/fish-images/phantom-minnow.png", catchAsset: "/assets/catch/phantom-minnow-spectral-ultra_rare.png", catchW: 96, catchH: 48, creatureFolder: "phantom-minnow-spectral-ultra_rare", idleFrames: 4, walkFrames: 4, points: 500, rarity: "ultra_rare", weight: 0.3, minDepth: 0.55, speed: 2.2, description: "A ghostly minnow wreathed in spectral flame. Blinks in and out of reality.", baseScale: 0.64 },
   { name: "Volcanic Perch", icon: "/assets/fish-images/volcanic-perch.png", catchAsset: "/assets/catch/volcanic-perch-molten-ultra_rare.png", catchW: 33, catchH: 25, creatureFolder: "volcanic-perch-molten-ultra_rare", idleFrames: 4, walkFrames: 4, points: 600, rarity: "ultra_rare", weight: 0.25, minDepth: 0.6, speed: 1.6, description: "A perch superheated by deep-sea vents. Its scales glow molten orange.", baseScale: 0.64 },
   { name: "Abyssal Bass", icon: "/assets/fish-images/abyssal-bass.png", catchAsset: "/assets/catch/abyssal-bass-dark-ultra_rare.png", catchW: 48, catchH: 41, creatureFolder: "abyssal-bass-dark-ultra_rare", idleFrames: 4, walkFrames: 4, points: 750, rarity: "ultra_rare", weight: 0.2, minDepth: 0.65, speed: 1.4, description: "A colossal bass from the deepest trenches. Radiates dark energy.", baseScale: 0.80 },
   { name: "Frost Catfish", icon: "/assets/fish-images/frost-catfish.png", catchAsset: "/assets/catch/frost-catfish-ice-ultra_rare.png", catchW: 40, catchH: 32, creatureFolder: "frost-catfish-ice-ultra_rare", idleFrames: 4, walkFrames: 4, points: 800, rarity: "ultra_rare", weight: 0.18, minDepth: 0.6, speed: 0.9, description: "An ancient catfish encased in living ice. Freezes the water around it.", baseScale: 0.80 },
-  { name: "Storm Swordfish", icon: "/assets/fish-images/storm-swordfish.png", catchAsset: "/assets/catch/storm-swordfish-electric-ultra_rare.png", catchW: 92, catchH: 22, creatureFolder: "storm-swordfish-electric-ultra_rare", idleFrames: 4, walkFrames: 4, points: 1000, rarity: "ultra_rare", weight: 0.12, minDepth: 0.7, speed: 2.5, description: "A swordfish that rides lightning bolts. Crackles with electric fury.", baseScale: 1.12 },
+  { name: "Storm Swordfish", icon: "/assets/fish-images/storm-swordfish.png", catchAsset: "/assets/fish-images/storm-swordfish.png", catchW: 92, catchH: 22, creatureFolder: "storm-swordfish-electric-ultra_rare", idleFrames: 4, walkFrames: 4, points: 1000, rarity: "ultra_rare", weight: 0.12, minDepth: 0.7, speed: 2.5, description: "A swordfish that rides lightning bolts. Crackles with electric fury.", baseScale: 1.12 },
   { name: "Celestial Whale", icon: "/assets/fish-images/celestial-whale.png", catchAsset: "/assets/catch/celestial-whale-cosmic-ultra_rare.png", catchW: 96, catchH: 48, creatureFolder: "celestial-whale-cosmic-ultra_rare", idleFrames: 2, walkFrames: 2, points: 2000, rarity: "ultra_rare", weight: 0.05, minDepth: 0.75, speed: 0.4, description: "A cosmic whale that swallowed a dying star. The rarest creature in existence.", baseScale: 1.40 },
   { name: "Neon Eel", icon: "/assets/fish-images/neon-eel.png", catchAsset: "/assets/catch/neon-eel-neon-ultra_rare.png", catchW: 43, catchH: 27, creatureFolder: "neon-eel-neon-ultra_rare", idleFrames: 4, walkFrames: 4, points: 650, rarity: "ultra_rare", weight: 0.22, minDepth: 0.55, speed: 1.9, description: "A bioluminescent eel pulsing with neon colors. Mesmerizing.", baseScale: 0.72 },
   { name: "Golden Salmon", icon: "/assets/fish-images/golden-salmon.png", catchAsset: "/assets/catch/golden-salmon-gold-ultra_rare.png", catchW: 48, catchH: 32, creatureFolder: "golden-salmon-gold-ultra_rare", idleFrames: 4, walkFrames: 4, points: 700, rarity: "ultra_rare", weight: 0.2, minDepth: 0.6, speed: 1.5, description: "A legendary salmon with solid gold scales. Worth a fortune.", baseScale: 0.72 },
@@ -1666,14 +1666,14 @@ export default function FishingGame() {
       ...CHARACTER_VARIANTS.flatMap(cv => spriteNames.map(sn => `/assets/${cv.folder}/${sn}`)),
       "/assets/objects/Boat.png",
       "/assets/objects/Boat2.png",
-      "/assets/objects/Water.png",
+      "/assets/tiles/Water.png",
       "/assets/objects/Pier_Tiles.png",
       "/assets/objects/Fishing_hut.png",
       "/assets/objects/Stay.png",
-      "/assets/dock_front.png",
-      "/assets/dock_structure_full.png",
-      "/assets/dock_legs_waterline.png",
-      "/assets/dock_legs_underwater.png",
+      "/assets/tiles/dock_front.png",
+      "/assets/tiles/dock_structure_full.png",
+      "/assets/tiles/dock_legs_waterline.png",
+      "/assets/tiles/dock_legs_underwater.png",
       "/assets/rarity_crown.png",
       "/assets/objects/Fish-rod.png",
       "/assets/objects/Grass1.png",
@@ -3859,7 +3859,7 @@ export default function FishingGame() {
       const hutY = pierY - hutH + 50 * hutScale;
 
       // LAYER 1: Dock legs underwater (deepest, behind everything)
-      const dockLegsUW = getImg("/assets/dock_legs_underwater.png");
+      const dockLegsUW = getImg("/assets/tiles/dock_legs_underwater.png");
       if (dockLegsUW && dockLegsUW.complete) {
         const uwScale = 0.8;
         const uwW = dockLegsUW.width * uwScale;
@@ -3897,7 +3897,7 @@ export default function FishingGame() {
       }
 
       // LAYER 4: 3D deck front face (the visible thickness/edge of the deck)
-      const dockFrontImg = getImg("/assets/dock_front.png");
+      const dockFrontImg = getImg("/assets/tiles/dock_front.png");
       if (dockFrontImg && dockFrontImg.complete) {
         const dockFrontW = pierRight - pierStartX;
         ctx.drawImage(dockFrontImg, 0, 0, dockFrontImg.width, dockFrontImg.height, pierStartX, deckEdgeY, dockFrontW, deckFrontH);
@@ -3907,7 +3907,7 @@ export default function FishingGame() {
       }
 
       // LAYER 5: Dock structure panel in front of fishing hut (3D understructure)
-      const dockStructImg = getImg("/assets/dock_structure_full.png");
+      const dockStructImg = getImg("/assets/tiles/dock_structure_full.png");
       if (dockStructImg && dockStructImg.complete) {
         const dsFrontScale = 0.85;
         const dsW = dockStructImg.width * dsFrontScale;
@@ -3920,7 +3920,7 @@ export default function FishingGame() {
       }
 
       // LAYER 6: Dock legs at waterline (overlap water surface)
-      const dockLegsWL = getImg("/assets/dock_legs_waterline.png");
+      const dockLegsWL = getImg("/assets/tiles/dock_legs_waterline.png");
       if (dockLegsWL && dockLegsWL.complete) {
         const wlScale = 1.6;
         const wlW = dockLegsWL.width * wlScale;
@@ -10160,7 +10160,7 @@ export default function FishingGame() {
                   { name: "Boat 2", src: "/assets/objects/Boat2.png", frames: 1 },
                   { name: "Fish Rod", src: "/assets/objects/Fish-rod.png", frames: 1 },
                   { name: "Stay Sign", src: "/assets/objects/Stay.png", frames: 1 },
-                  { name: "Water", src: "/assets/objects/Water.png", frames: 1 },
+                  { name: "Water", src: "/assets/tiles/Water.png", frames: 1 },
                   ...([1,2,3,4] as number[]).map(n => ({ name: `Grass ${n}`, src: `/assets/objects/Grass${n}.png`, frames: 1 })),
                   ...([1,2,3,4] as number[]).map(n => ({ name: `Barrel ${n}`, src: `/assets/objects/Fishbarrel${n}.png`, frames: 1 })),
                 ] },
@@ -10260,11 +10260,11 @@ export default function FishingGame() {
                   { name: "Fishing Hut", sprite: "/assets/objects/Fishing_hut.png", scale: 1.5 },
                   { name: "Boat", sprite: "/assets/objects/Boat.png", scale: 1.5 },
                   { name: "Boat 2", sprite: "/assets/objects/Boat2.png", scale: 1.5 },
-                  { name: "Water", sprite: "/assets/objects/Water.png", scale: 1.5 },
-                  { name: "Dock Front", sprite: "/assets/dock_front.png", scale: 2.0 },
-                  { name: "Dock Full", sprite: "/assets/dock_structure_full.png", scale: 2.0 },
-                  { name: "Dock Legs", sprite: "/assets/dock_legs_underwater.png", scale: 2.0 },
-                  { name: "Dock Water", sprite: "/assets/dock_legs_waterline.png", scale: 2.0 },
+                  { name: "Water", sprite: "/assets/tiles/Water.png", scale: 1.5 },
+                  { name: "Dock Front", sprite: "/assets/tiles/dock_front.png", scale: 2.0 },
+                  { name: "Dock Full", sprite: "/assets/tiles/dock_structure_full.png", scale: 2.0 },
+                  { name: "Dock Legs", sprite: "/assets/tiles/dock_legs_underwater.png", scale: 2.0 },
+                  { name: "Dock Water", sprite: "/assets/tiles/dock_legs_waterline.png", scale: 2.0 },
                   { name: "Pier Tiles", sprite: "/assets/objects/Pier_Tiles.png", scale: 2.0 },
                 ].map((item, idx) => (
                   <div
@@ -10299,7 +10299,7 @@ export default function FishingGame() {
               </div>
               {[
                 { id: -10, label: "Deck (Planks + Front)", icon: "/assets/objects/Pier_Tiles.png", ox: stateRef.current.deckOffsetX, oy: stateRef.current.deckOffsetY, scaleKey: null as string | null, scaleVal: 0 },
-                { id: -11, label: "Deck Legs (Underwater)", icon: "/assets/dock_legs_underwater.png", ox: stateRef.current.deckLegsOffsetX, oy: stateRef.current.deckLegsOffsetY, scaleKey: null, scaleVal: 0 },
+                { id: -11, label: "Deck Legs (Underwater)", icon: "/assets/tiles/dock_legs_underwater.png", ox: stateRef.current.deckLegsOffsetX, oy: stateRef.current.deckLegsOffsetY, scaleKey: null, scaleVal: 0 },
                 { id: -12, label: "Bait Shop", icon: "/assets/objects/Fishing_hut.png", ox: stateRef.current.baitShopOffsetX, oy: stateRef.current.baitShopOffsetY, scaleKey: "baitShopScale", scaleVal: stateRef.current.baitShopScale },
                 { id: -13, label: "License Sign", icon: "/assets/objects/Stay.png", ox: stateRef.current.licenseSignOffsetX, oy: stateRef.current.licenseSignOffsetY, scaleKey: "licenseSignScale", scaleVal: stateRef.current.licenseSignScale },
               ].map(item => (
