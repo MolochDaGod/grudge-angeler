@@ -302,14 +302,14 @@ const FISH_TYPES: FishType[] = [
   { name: "Golden Salmon", icon: "/assets/fish-images/golden-salmon.png", catchAsset: "/assets/catch/golden-salmon-gold-ultra_rare.png", catchW: 48, catchH: 32, creatureFolder: "golden-salmon-gold-ultra_rare", idleFrames: 4, walkFrames: 4, points: 700, rarity: "ultra_rare", weight: 0.2, minDepth: 0.6, speed: 1.5, description: "A legendary salmon with solid gold scales. Worth a fortune.", baseScale: 0.7 },
   { name: "Shadow Leviathan", icon: "/assets/fish-images/shadow-leviathan.png", catchAsset: "/assets/catch/shadow-leviathan-shadow-ultra_rare.png", catchW: 89, catchH: 14, creatureFolder: "shadow-leviathan-shadow-ultra_rare", idleFrames: 4, walkFrames: 4, points: 1500, rarity: "ultra_rare", weight: 0.08, minDepth: 0.8, speed: 0.6, description: "A titanic shadow beast from beyond the abyss. Feared by all ocean life.", tint: "rgba(140,15,15,0.5)", baseScale: 2.5 },
   { name: "The Seal at the Seam", icon: "/assets/fish-images/seal-at-the-seam.png", catchAsset: "/assets/fish-images/seal-at-the-seam.png", catchW: 64, catchH: 64, creatureFolder: "seal-at-the-seam-cosmic-ultra_rare", idleFrames: 6, walkFrames: 6, points: 5000, rarity: "ultra_rare", weight: 0, minDepth: 0.95, speed: 0.3, description: "A living sigil at the boundary of reality. The 10th Legendary — guardian of the Seam.", tint: "rgba(20,40,120,0.5)", baseScale: 1.0, treasureChestOnly: true },
-  { name: "Pufferfish", icon: "/assets/fish-images/pufferfish-salt-rare.png", catchAsset: "/assets/catch/pufferfish-salt-rare.png", catchW: 208, catchH: 111, creatureFolder: "pufferfish-salt-rare", idleFrames: 10, walkFrames: 10, points: 110, rarity: "rare", weight: 6, minDepth: 0.4, speed: 0.7, description: "A spotted pufferfish. Inflates when threatened.", tint: "rgba(220,180,50,0.2)", baseScale: 0.3 },
-  { name: "Freshwater Bass", icon: "/assets/icons/fish/Icons_05.png", catchAsset: "/assets/catch/bass-fresh-common.png", catchW: 16, catchH: 12, creatureFolder: "bass-fresh-common", idleFrames: 1, walkFrames: 2, points: 15, rarity: "common", weight: 35, minDepth: 0.15, speed: 1.1, description: "A green freshwater bass. Common but scrappy.", baseScale: 0.25 },
-  { name: "Redfish", icon: "/assets/icons/fish/Icons_07.png", catchAsset: "/assets/catch/redfish-large-uncommon.png", catchW: 20, catchH: 12, creatureFolder: "redfish-large-uncommon", idleFrames: 1, walkFrames: 2, points: 55, rarity: "uncommon", weight: 12, minDepth: 0.3, speed: 1.0, description: "A rust-red ocean fish with a powerful tail.", tint: "rgba(180,80,50,0.2)", baseScale: 0.4 },
-  { name: "Anchovy", icon: "/assets/icons/fish/Icons_06.png", catchAsset: "/assets/catch/anchovy-salt-common.png", catchW: 26, catchH: 12, creatureFolder: "anchovy-salt-common", idleFrames: 1, walkFrames: 2, points: 12, rarity: "common", weight: 40, minDepth: 0.2, speed: 1.6, description: "A darting blue anchovy. Travels in huge schools.", tint: "rgba(80,140,220,0.15)", baseScale: 0.2 },
-  { name: "Angelfish", icon: "/assets/icons/fish/Icons_10.png", catchAsset: "/assets/catch/angelfish-fresh-uncommon.png", catchW: 28, catchH: 24, creatureFolder: "angelfish-fresh-uncommon", idleFrames: 1, walkFrames: 2, points: 65, rarity: "uncommon", weight: 10, minDepth: 0.35, speed: 0.9, description: "A graceful pink angelfish with flowing fins.", tint: "rgba(220,120,160,0.2)", baseScale: 0.45 },
-  { name: "Surgeonfish", icon: "/assets/icons/fish/Icons_09.png", catchAsset: "/assets/catch/surgeonfish-salt-uncommon.png", catchW: 54, catchH: 22, creatureFolder: "surgeonfish-salt-uncommon", idleFrames: 1, walkFrames: 2, points: 70, rarity: "uncommon", weight: 8, minDepth: 0.45, speed: 1.3, description: "A large blue surgeonfish with a razor-sharp tail spine.", tint: "rgba(60,120,200,0.25)", baseScale: 0.9 },
-  { name: "Rainbow Trout", icon: "/assets/icons/fish/Icons_08.png", catchAsset: "/assets/catch/rainbow-trout-fresh-rare.png", catchW: 30, catchH: 12, creatureFolder: "rainbow-trout-fresh-rare", idleFrames: 1, walkFrames: 2, points: 95, rarity: "rare", weight: 5, minDepth: 0.35, speed: 1.2, description: "A speckled brown trout with a rainbow shimmer along its flank.", baseScale: 0.5 },
-  { name: "Clownfish", icon: "/assets/fish-images/clownfish-salt-uncommon.png", catchAsset: "/assets/catch/clownfish-salt-uncommon.png", catchW: 231, catchH: 135, creatureFolder: "clownfish-salt-uncommon", idleFrames: 10, walkFrames: 10, points: 45, rarity: "uncommon", weight: 14, minDepth: 0.25, speed: 1.0, description: "A bright orange clownfish hiding among anemones.", tint: "rgba(240,100,120,0.2)", baseScale: 0.35 },
+  { name: "Pufferfish", icon: "/assets/catch/pufferfish-salt-rare.png", catchAsset: "/assets/catch/pufferfish-salt-rare.png", catchW: 208, catchH: 111, creatureFolder: "pufferfish-salt-rare", idleFrames: 10, walkFrames: 10, points: 110, rarity: "rare", weight: 6, minDepth: 0.4, speed: 0.7, description: "A spotted pufferfish. Inflates when threatened.", tint: "rgba(220,180,50,0.2)", baseScale: 0.3 },
+  { name: "Freshwater Bass", icon: "/assets/catch/bass-fresh-common.png", catchAsset: "/assets/catch/bass-fresh-common.png", catchW: 16, catchH: 12, creatureFolder: "bass-fresh-common", idleFrames: 1, walkFrames: 2, points: 15, rarity: "common", weight: 35, minDepth: 0.15, speed: 1.1, description: "A green freshwater bass. Common but scrappy.", baseScale: 0.25 },
+  { name: "Redfish", icon: "/assets/catch/redfish-large-uncommon.png", catchAsset: "/assets/catch/redfish-large-uncommon.png", catchW: 20, catchH: 12, creatureFolder: "redfish-large-uncommon", idleFrames: 1, walkFrames: 2, points: 55, rarity: "uncommon", weight: 12, minDepth: 0.3, speed: 1.0, description: "A rust-red ocean fish with a powerful tail.", tint: "rgba(180,80,50,0.2)", baseScale: 0.4 },
+  { name: "Anchovy", icon: "/assets/catch/anchovy-salt-common.png", catchAsset: "/assets/catch/anchovy-salt-common.png", catchW: 26, catchH: 12, creatureFolder: "anchovy-salt-common", idleFrames: 1, walkFrames: 2, points: 12, rarity: "common", weight: 40, minDepth: 0.2, speed: 1.6, description: "A darting blue anchovy. Travels in huge schools.", tint: "rgba(80,140,220,0.15)", baseScale: 0.2 },
+  { name: "Angelfish", icon: "/assets/catch/angelfish-fresh-uncommon.png", catchAsset: "/assets/catch/angelfish-fresh-uncommon.png", catchW: 28, catchH: 24, creatureFolder: "angelfish-fresh-uncommon", idleFrames: 1, walkFrames: 2, points: 65, rarity: "uncommon", weight: 10, minDepth: 0.35, speed: 0.9, description: "A graceful pink angelfish with flowing fins.", tint: "rgba(220,120,160,0.2)", baseScale: 0.45 },
+  { name: "Surgeonfish", icon: "/assets/catch/surgeonfish-salt-uncommon.png", catchAsset: "/assets/catch/surgeonfish-salt-uncommon.png", catchW: 54, catchH: 22, creatureFolder: "surgeonfish-salt-uncommon", idleFrames: 1, walkFrames: 2, points: 70, rarity: "uncommon", weight: 8, minDepth: 0.45, speed: 1.3, description: "A large blue surgeonfish with a razor-sharp tail spine.", tint: "rgba(60,120,200,0.25)", baseScale: 0.9 },
+  { name: "Rainbow Trout", icon: "/assets/catch/rainbow-trout-fresh-rare.png", catchAsset: "/assets/catch/rainbow-trout-fresh-rare.png", catchW: 30, catchH: 12, creatureFolder: "rainbow-trout-fresh-rare", idleFrames: 1, walkFrames: 2, points: 95, rarity: "rare", weight: 5, minDepth: 0.35, speed: 1.2, description: "A speckled brown trout with a rainbow shimmer along its flank.", baseScale: 0.5 },
+  { name: "Clownfish", icon: "/assets/catch/clownfish-salt-uncommon.png", catchAsset: "/assets/catch/clownfish-salt-uncommon.png", catchW: 231, catchH: 135, creatureFolder: "clownfish-salt-uncommon", idleFrames: 10, walkFrames: 10, points: 45, rarity: "uncommon", weight: 14, minDepth: 0.25, speed: 1.0, description: "A bright orange clownfish hiding among anemones.", tint: "rgba(240,100,120,0.2)", baseScale: 0.35 },
   { name: "Butterfly Fish", icon: "/assets/fish-images/butterfly-fish.png", catchAsset: "/assets/catch/butterfly-fish-fresh-uncommon.png", catchW: 236, catchH: 193, creatureFolder: "butterfly-fish-fresh-uncommon", idleFrames: 10, walkFrames: 10, points: 55, rarity: "uncommon", weight: 12, minDepth: 0.2, speed: 1.3, description: "A golden butterfly fish with striking blue markings.", tint: "rgba(240,200,50,0.2)", baseScale: 0.3 },
   { name: "Lionfish", icon: "/assets/fish-images/lionfish.png", catchAsset: "/assets/catch/lionfish-salt-rare.png", catchW: 423, catchH: 336, creatureFolder: "lionfish-salt-rare", idleFrames: 10, walkFrames: 10, points: 130, rarity: "rare", weight: 4, minDepth: 0.45, speed: 0.8, description: "A venomous lionfish with elaborate striped fins. Beautiful but deadly.", tint: "rgba(180,140,80,0.2)", baseScale: 0.25 },
   { name: "Hammerhead Shark", icon: "/assets/fish-images/hammerhead-shark.png", catchAsset: "/assets/catch/hammerhead-shark-blue-legendary.png", catchW: 773, catchH: 382, creatureFolder: "hammerhead-shark-blue-legendary", idleFrames: 10, walkFrames: 10, points: 350, rarity: "legendary", weight: 0.8, minDepth: 0.6, speed: 2.0, description: "A massive hammerhead shark. Its wide head detects prey with uncanny precision.", tint: "rgba(80,100,140,0.3)", baseScale: 0.12 },
@@ -331,6 +331,9 @@ const BETAXGRUDA_EGGS = [
 ];
 
 const CRAB_FRAME = 16;
+const NET_MAX_WEIGHT = 49;
+const NET_NORMAL_COOLDOWN = 600;
+const NET_BREAK_COOLDOWN = 3600;
 
 const BEACH_CRABS: FishType[] = [
   { name: "Red Crab", icon: "/assets/fish-images/red-crab.png", catchAsset: "/assets/fish-images/red-crab.png", catchW: 32, catchH: 32, creatureFolder: "", idleFrames: 1, walkFrames: 1, points: 8, rarity: "common", weight: 50, minDepth: 0.05, speed: 0.9, description: "A small red crab that scuttles along the beach.", beachCrab: true, spriteSheet: "/assets/crabs/red-crab-red-common.png", spriteRow: 0, spriteFrameSize: 1024 },
@@ -470,7 +473,7 @@ const CHUM_ITEMS: ChumItem[] = [
   { name: "Kraken Bile", price: 180, description: "Massive rarity, strong depth pull.", icon: "/assets/icons/chum/chum-kraken-bile.png", effect: "Massive rarity + pull", duration: 300, rarityBoost: 2.5, biteSpeedBoost: 1.0, fishAttract: 1.6, cooldown: 320, catchable: false, type: "chum", depthPull: 0.3 },
   { name: "Golden Flakes", price: 250, description: "Boosts everything. Strong depth pull.", icon: "/assets/icons/chum/chum-golden-flakes.png", effect: "Everything + depth pull", duration: 500, rarityBoost: 2.0, biteSpeedBoost: 1.4, fishAttract: 2.5, cooldown: 400, catchable: false, type: "chum", depthPull: 0.35 },
   { name: "Abyssal Ooze", price: 300, description: "The ultimate chum. Pulls abyss fish to surface.", icon: "/assets/icons/chum/chum-abyssal-ooze.png", effect: "Ultimate depth pull", duration: 600, rarityBoost: 2.5, biteSpeedBoost: 1.5, fishAttract: 3.0, cooldown: 500, catchable: false, type: "chum", depthPull: 0.4 },
-  { name: "Live Shrimp Cluster", price: 0, description: "Caught live shrimp. Good bait for medium fish.", icon: "/assets/icons/fish/Icons_05.png", effect: "Medium fish attract", duration: 250, rarityBoost: 1.2, biteSpeedBoost: 1.3, fishAttract: 1.8, cooldown: 100, catchable: true, type: "special", depthPull: 0.1 },
+  { name: "Live Shrimp Cluster", price: 0, description: "Caught live shrimp. Good bait for medium fish.", icon: "/assets/catch/bass-fresh-common.png", effect: "Medium fish attract", duration: 250, rarityBoost: 1.2, biteSpeedBoost: 1.3, fishAttract: 1.8, cooldown: 100, catchable: true, type: "special", depthPull: 0.1 },
   { name: "Glowing Plankton", price: 0, description: "Caught glowing plankton. Pulls rare fish up.", icon: "/assets/icons/fish/Icons_14.png", effect: "Rare glow + pull", duration: 200, rarityBoost: 1.8, biteSpeedBoost: 1.1, fishAttract: 1.5, cooldown: 100, catchable: true, type: "special", depthPull: 0.2 },
 ];
 
@@ -665,7 +668,7 @@ const NPC_DEFS: NpcDef[] = [
     id: 8, name: "Chum Charlie", spriteFolder: "8", idleFrames: 4, walkFrames: 4,
     worldX: 0.62, role: "shopkeeper", noWalk: true, specialFrames: 4,
     greeting: "Sit down, friend! I mix the finest chum on the whole dock. What's your poison?",
-    shopItems: CHUM_ITEMS.map((c, i) => !c.catchable ? { name: c.name, type: "chum" as const, index: i, price: c.price, description: c.description, icon: c.icon } : null).filter((x): x is NpcShopItem => x !== null),
+    shopItems: CHUM_ITEMS.flatMap((c, i) => !c.catchable ? [{ name: c.name, type: "chum" as "chum" | "lure" | "rod", index: i, price: c.price, description: c.description, icon: c.icon }] : []),
     dialogueLines: [
       "I know every chum recipe there is. Name a fish and I'll tell you what attracts it.",
       "Fish Scraps are cheap but barely attract anything. Start with Corn Mash or Mussel Mix.",
@@ -898,6 +901,16 @@ interface Ripple {
   radius: number;
   maxRadius: number;
   alpha: number;
+}
+
+function gainXP(s: { playerXP: number; playerXPToNext: number; playerLevel: number; attributePoints: number }, xp: number) {
+  s.playerXP += xp;
+  while (s.playerXP >= s.playerXPToNext) {
+    s.playerXP -= s.playerXPToNext;
+    s.playerLevel++;
+    s.attributePoints += 2;
+    s.playerXPToNext = Math.floor(100 * Math.pow(1.15, s.playerLevel - 1));
+  }
 }
 
 export default function FishingGame() {
@@ -1327,6 +1340,8 @@ export default function FishingGame() {
     tutorialStep: 0,
     underwaterPlants: [] as UnderwaterPlant[],
     plantsInitialized: false,
+    tournamentActive: false,
+    tournamentShowResults: false,
   });
 
   const [discordUser, setDiscordUser] = useState<{ discordId: string; username: string; avatar: string | null } | null>(null);
@@ -1434,9 +1449,8 @@ export default function FishingGame() {
     }
     if (isInSandArea(x, y, canvasW, canvasH)) return;
     const baseSizeMult = 0.5 + Math.random() * Math.random() * 4.5;
-    const ultraScale = fishType.baseScale || 1;
     const rightSizeReduction = rightRatio > 0.1 ? Math.max(0.3, 1 - rightRatio * 0.7) : 1;
-    const sizeMultiplier = (baseSizeMult * (1 + distRatio * 0.8) + lure.sizeBoost) * ultraScale * rightSizeReduction;
+    const sizeMultiplier = (baseSizeMult * (1 + distRatio * 0.8) + lure.sizeBoost) * rightSizeReduction;
     s.swimmingFish.push({
       x, y, baseY: y, type: fishType, direction, frame: 0, frameTimer: 0,
       speed: fishType.speed * (0.7 + Math.random() * 0.6),
@@ -1472,7 +1486,7 @@ export default function FishingGame() {
       approachingHook: false,
       dirChangeTimer: 40 + Math.random() * 80,
       sizeMultiplier,
-      crabDigTimer: 300 + Math.random() * 500,
+      crabDigTimer: 600 + Math.random() * 800,
       crabDigging: false,
       crabDigAlpha: 1,
       crabVertDir: Math.random() > 0.5 ? 1 : -1,
@@ -1558,7 +1572,7 @@ export default function FishingGame() {
 
   const generateBounties = useCallback(() => {
     const s = stateRef.current;
-    const shuffled = [...FISH_TYPES].sort(() => Math.random() - 0.5);
+    const shuffled = [...FISH_TYPES].filter(ft => !ft.treasureChestOnly && !ft.beachCrab).sort(() => Math.random() - 0.5);
     s.bounties = shuffled.slice(0, 3).map(ft => {
       const ms = Math.round((1.5 + Math.random() * 2) * 10) / 10;
       return {
@@ -1692,6 +1706,9 @@ export default function FishingGame() {
       "/assets/guardian/Idle.png",
       "/assets/guardian/Attack1.png",
       "/assets/guardian/Special.png",
+      "/assets/objects/Net/1Net.png",
+      "/assets/objects/Net/2net.png",
+      "/assets/objects/Net/3net.png",
       "/assets/logo.png",
       "/assets/icons/gbux.png",
       "/assets/icons/faction_fabled.png",
@@ -2434,7 +2451,7 @@ export default function FishingGame() {
 
         // Beach crab proximity check
         if (s.gameState === "idle" && !s.inBoat && s.playerX >= W * 3.0) {
-          let closestCrabDist = 60;
+          let closestCrabDist = 120;
           for (let ci = 0; ci < s.swimmingFish.length; ci++) {
             const fish = s.swimmingFish[ci];
             if (!fish.type.beachCrab || fish.crabDigging) continue;
@@ -6847,13 +6864,7 @@ export default function FishingGame() {
           const rarityXP: Record<string, number> = { common: 10, uncommon: 25, rare: 50, legendary: 100, ultra_rare: 200 };
           const intXPBonus = 1 + s.attributes.Intellect * 0.016 * (1 + s.attributes.Tactics * 0.01);
           const xpGain = Math.floor((rarityXP[s.currentCatch?.rarity || "common"] || 10) * sizeBonus * intXPBonus);
-          s.playerXP += xpGain;
-          while (s.playerXP >= s.playerXPToNext) {
-            s.playerXP -= s.playerXPToNext;
-            s.playerLevel++;
-            s.attributePoints += 2;
-            s.playerXPToNext = Math.floor(100 * Math.pow(1.15, s.playerLevel - 1));
-          }
+          gainXP(s, xpGain);
 
           s.catchHistory.unshift({ name, rarity: s.currentCatch?.rarity || "junk", size: sizeBonus, weight: fishWeight, sellPrice, timestamp: Date.now() });
           if (s.catchHistory.length > 50) s.catchHistory.length = 50;
@@ -6878,14 +6889,7 @@ export default function FishingGame() {
           if (s.currentCatch?.beachCrab) {
             const crabKey = s.currentCatch.name;
             s.crabBaitCounts[crabKey] = (s.crabBaitCounts[crabKey] || 0) + 1;
-            const bonusXP = Math.floor(5 + Math.random() * 10);
-            s.playerXP += bonusXP;
-            while (s.playerXP >= s.playerXPToNext) {
-              s.playerXP -= s.playerXPToNext;
-              s.playerLevel++;
-              s.attributePoints += 2;
-              s.playerXPToNext = Math.floor(100 * Math.pow(1.15, s.playerLevel - 1));
-            }
+            gainXP(s, Math.floor(5 + Math.random() * 10));
             s.money += Math.floor(3 + Math.random() * 8);
           }
 
@@ -6947,9 +6951,6 @@ export default function FishingGame() {
       if (s.netActive) {
         const sinkSpeed = 3;
         const riseSpeed = 2.5;
-        const NET_MAX_WEIGHT = 49;
-        const NET_NORMAL_COOLDOWN = 600;
-        const NET_BREAK_COOLDOWN = 3600;
 
         // Initialize pending catch array if not present
         if (!(s as any)._netPendingCatch) (s as any)._netPendingCatch = [];
@@ -7379,7 +7380,7 @@ export default function FishingGame() {
       }
 
       // --- MINIMAP ---
-      if (s.gameState !== "title" && s.gameState !== "charSelect" && s.gameState !== "intro" && !s.binoculars) {
+      if (s.gameState !== "title" && s.gameState !== "charSelect" && !s.binoculars) {
         const mmW = 200;
         const mmH = 70;
         const mmX = (W - mmW) / 2;
@@ -7844,7 +7845,7 @@ export default function FishingGame() {
       s.isRightMouseDown = false;
       s.resilience = Math.min(8, 2 + Math.floor(s.attributes.Endurance / 5));
       s.resilienceMax = s.resilience;
-      s.forceBarMax = 10 + Math.max(s.attributes.Strength, s.attributes.Agility);
+      s.forceBarMax = 10 + s.attributes.Strength + s.attributes.Agility;
       s.forceBar = s.forceBarMax;
       s.hookedFishVY = 0;
       s.hookLineMaxDist = Math.sqrt((s.hookedFishX - s.playerX) ** 2 + (s.hookedFishY - (canvas ? canvas.height * 0.42 : 300)) ** 2);
@@ -10828,14 +10829,14 @@ export default function FishingGame() {
                 desc: isMob
                   ? "Tap the CAST button to throw your line into the water. Aim where the fish are swimming!"
                   : "Click to cast your line into the water. Right-click to cancel. Aim where the fish are swimming!",
-                icon: "/assets/icons/fish/Icons_07.png",
+                icon: "/assets/catch/redfish-large-uncommon.png",
               },
               {
                 title: "REELING",
                 desc: isMob
                   ? "When a fish bites, tap REEL to start the minigame. Keep the green catch zone over the fish marker on the bar!"
                   : "When a fish bites, click and hold to reel. Keep the green catch zone over the fish marker on the bar!",
-                icon: "/assets/icons/fish/Icons_07.png",
+                icon: "/assets/catch/redfish-large-uncommon.png",
               },
               {
                 title: "FORCE BAR",
@@ -10849,7 +10850,7 @@ export default function FishingGame() {
                 desc: isMob
                   ? "Tap RES during reeling to let line out, preventing breaks on tough fish. Slows progress but saves your catch!"
                   : "Hold S during reeling to let line out, preventing breaks on tough fish. Slows progress but saves your catch!",
-                icon: "/assets/icons/fish/Icons_05.png",
+                icon: "/assets/catch/bass-fresh-common.png",
               },
               {
                 title: "EXPLORE & SELL",
