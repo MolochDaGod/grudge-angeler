@@ -1084,6 +1084,7 @@ export default function FishingGame() {
     chumActiveType: -1,
     chumCooldown: 0,
     toolMode: "rod" as "rod" | "net",
+    castUsedCrabName: "" as string,
     netCooldown: 0,
     netBroken: false,
     netCastX: 0,
@@ -1100,6 +1101,10 @@ export default function FishingGame() {
     netThrowTimer: 0,
     netAnimCaughtFish: [] as { name: string; icon: string; isCrab: boolean; weight: number }[],
     netTotalWeight: 0,
+    netCatchShowcase: false,
+    netCatchShowcaseTimer: 0,
+    netCatchShowcaseItems: [] as { name: string; icon: string; isCrab: boolean; weight: number; sellPrice: number }[],
+    netCatchShowcaseTotal: 0,
     catchPhase: 0 as number,
     catchPhaseTimer: 0,
     catchFishWorldX: 0,
@@ -2115,7 +2120,7 @@ export default function FishingGame() {
                 st.playerXPToNext = Math.floor(100 * Math.pow(1.15, st.playerLevel - 1));
               }
               // Particles and feedback
-              st.particles.push({ x: crab.x, y: crab.y - 10, vx: 0, vy: -1.5, life: 50, maxLife: 50, size: 0, color: "#2ecc71", type: "text", text: `+${crabKey}!` });
+              st.particles.push({ x: crab.x, y: crab.y - 10, vx: 0, vy: -1.5, life: 50, maxLife: 50, size: 0, color: "#2ecc71", type: "text", text: `+1 ${crabKey}` });
               st.particles.push({ x: crab.x + 15, y: crab.y - 20, vx: 0.5, vy: -1, life: 40, maxLife: 40, size: 0, color: "#f1c40f", type: "text", text: `+${moneyGain}g` });
               for (let sp = 0; sp < 8; sp++) {
                 st.particles.push({ x: crab.x + (Math.random() - 0.5) * 20, y: crab.y, vx: (Math.random() - 0.5) * 3, vy: -1.5 - Math.random() * 2, life: 20 + Math.random() * 15, maxLife: 35, size: 2 + Math.random() * 3, color: "#c4a96e", type: "splash" });
@@ -2128,6 +2133,20 @@ export default function FishingGame() {
                 entry.count++;
               } else {
                 st.caughtCollection.set(crabKey, { type: crab.type, junk: null, count: 1, bestCombo: 0, biggestSize: crab.sizeMultiplier, totalWeight: 0 });
+              }
+              // Check NPC requests for crab catches
+              for (const npc of st.npcs) {
+                const requestMatches = npc.request && !npc.request.completed && (
+                  npc.request.fishName === crabKey ||
+                  (npc.request.fishName === "Red Crab" && npc.beachNpc)
+                );
+                if (requestMatches && npc.request) {
+                  npc.request.fulfilled = Math.min(npc.request.fulfilled + 1, npc.request.count);
+                  if (npc.request.fulfilled >= npc.request.count) {
+                    npc.request.completed = true;
+                    st.money += npc.request.reward;
+                  }
+                }
               }
               // Remove the crab
               st.swimmingFish.splice(crabIdx, 1);
@@ -4561,30 +4580,6 @@ export default function FishingGame() {
         ctx.fill();
       }
 
-      // Beach showcase: crab sprites walking on sand + net stages displayed
-      if (s.gameState !== "title" && s.gameState !== "charSelect") {
-        ctx.save();
-        ctx.imageSmoothingEnabled = false;
-        for (let ci = 0; ci < BEACH_CRABS.length; ci++) {
-          const crabData = BEACH_CRABS[ci];
-          const crabImg = crabData.spriteSheet ? getImg(crabData.spriteSheet) : null;
-          if (!crabImg || !crabImg.complete) continue;
-          const crabSpacing = 120;
-          const cx = beachStart + 500 + ci * crabSpacing + Math.sin(s.time * 0.04 + ci * 1.8) * 20;
-          const progC = (cx - beachStart) / (beachEnd - beachStart);
-          const cy = pierY + 12 + progC * 28 - 20;
-          const crabSize = 38 + Math.sin(ci * 0.9) * 6;
-          const wobble = Math.sin(s.time * 0.12 + ci * 2.3) * 3;
-          const scuttle = Math.sin(s.time * 0.08 + ci * 1.1) * 0.06;
-          ctx.save();
-          ctx.translate(cx + crabSize / 2, cy + crabSize / 2 + wobble);
-          ctx.rotate(scuttle);
-          if (Math.sin(s.time * 0.04 + ci * 1.8) > 0) ctx.scale(-1, 1);
-          ctx.drawImage(crabImg, 0, 0, crabImg.naturalWidth, crabImg.naturalHeight, -crabSize / 2, -crabSize / 2, crabSize, crabSize);
-          ctx.restore();
-        }
-        ctx.restore();
-      }
 
       // Beach Shop Building - positioned at waterline
       if (s.gameState !== "title" && s.gameState !== "charSelect") {
@@ -6800,9 +6795,10 @@ export default function FishingGame() {
 
           const crabMasterNpc = NPC_DEFS.find(n => n.name === "Crab Master");
           if (crabMasterNpc?.missions) {
-            const equippedLure = LURES[s.equippedLure];
-            if (equippedLure.crabName) {
-              const matchingMission = crabMasterNpc.missions.find(m => m.crabName === equippedLure.crabName && m.targetFish === name);
+            // Use saved crab name from cast time (equippedLure may have reset if last crab was used)
+            const usedCrabName = s.castUsedCrabName;
+            if (usedCrabName) {
+              const matchingMission = crabMasterNpc.missions.find(m => m.crabName === usedCrabName && m.targetFish === name);
               if (matchingMission && !s.crabMasterProgress[matchingMission.crabName]) {
                 s.crabMasterProgress[matchingMission.crabName] = true;
                 s.money += matchingMission.reward;
@@ -6972,6 +6968,8 @@ export default function FishingGame() {
             s.netBroken = false;
             s.netCooldown = NET_NORMAL_COOLDOWN;
             const pendingCatch = (s as any)._netPendingCatch || [];
+            const showcaseItems: { name: string; icon: string; isCrab: boolean; weight: number; sellPrice: number }[] = [];
+            let showcaseTotal = 0;
             for (const fish of pendingCatch) {
               const sz = fish.sizeMultiplier;
               const fishWeight = Math.round(sz * fish.type.points * 0.3 * 10) / 10;
@@ -6982,16 +6980,43 @@ export default function FishingGame() {
               const existing = s.caughtCollection.get(fish.type.name);
               if (existing) { existing.count++; existing.totalWeight += fishWeight; }
               else { s.caughtCollection.set(fish.type.name, { type: fish.type, junk: null, count: 1, bestCombo: 0, biggestSize: sz, totalWeight: fishWeight }); }
+              // Add crabs to bait inventory
+              const isCrab = !!fish.type.beachCrab || fish.type.name.toLowerCase().includes("crab");
+              if (isCrab) {
+                const crabKey = fish.type.name;
+                s.crabBaitCounts[crabKey] = (s.crabBaitCounts[crabKey] || 0) + 1;
+              }
+              showcaseItems.push({ name: fish.type.name, icon: fish.type.icon || "", isCrab, weight: fishWeight, sellPrice: halfPrice });
+              showcaseTotal += halfPrice;
             }
             if (pendingCatch.length > 0 && Math.random() < 0.10) {
               const catchableChumIdx = Math.random() < 0.5 ? 20 : 21;
               s.ownedChum[catchableChumIdx]++;
+            }
+            // Trigger net catch showcase if we caught anything
+            if (showcaseItems.length > 0) {
+              s.netCatchShowcase = true;
+              s.netCatchShowcaseTimer = 300;
+              s.netCatchShowcaseItems = showcaseItems;
+              s.netCatchShowcaseTotal = showcaseTotal;
+              s.screenShake = 4;
+              s.flashTimer = 8;
             }
             (s as any)._netPendingCatch = [];
             addParticles(s.netCastX, waterY, 8, "#5dade2", 2, "splash");
             addRipple(s.netCastX, waterY);
             syncUI();
           }
+        }
+      }
+
+      // Net catch showcase timer
+      if (s.netCatchShowcase) {
+        s.netCatchShowcaseTimer -= dt;
+        if (s.netCatchShowcaseTimer <= 0) {
+          s.netCatchShowcase = false;
+          s.netCatchShowcaseItems = [];
+          syncUI();
         }
       }
 
@@ -7242,6 +7267,116 @@ export default function FishingGame() {
           ctx.fillText(catchName, W / 2, 85);
           ctx.textAlign = "left";
         }
+      }
+
+      // Net Catch Showcase overlay
+      if (s.netCatchShowcase && s.netCatchShowcaseItems.length > 0) {
+        const items = s.netCatchShowcaseItems;
+        const maxRows = Math.min(items.length, 8);
+        const rowH = 28;
+        const panelW = Math.min(380, W * 0.88);
+        const headerH = 50;
+        const footerH = 50;
+        const panelH = headerH + maxRows * rowH + footerH + (items.length > maxRows ? 20 : 0);
+        const panelX = W / 2 - panelW / 2;
+        const panelY = H / 2 - panelH / 2;
+
+        // Dim background
+        ctx.fillStyle = "rgba(0,0,0,0.5)";
+        ctx.fillRect(0, 0, W, H);
+
+        // Panel bg
+        ctx.fillStyle = "rgba(8,15,25,0.95)";
+        drawRoundRect(panelX, panelY, panelW, panelH, 12);
+        ctx.fill();
+        ctx.strokeStyle = "#4fc3f7";
+        ctx.lineWidth = 2;
+        drawRoundRect(panelX, panelY, panelW, panelH, 12);
+        ctx.stroke();
+
+        // Title
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#f1c40f";
+        ctx.font = "bold 14px 'Press Start 2P', monospace";
+        ctx.fillText("NET HAUL!", W / 2, panelY + 22);
+        ctx.fillStyle = "#78909c";
+        ctx.font = "8px 'Press Start 2P', monospace";
+        ctx.fillText(`${items.length} caught`, W / 2, panelY + 40);
+
+        // Item rows
+        ctx.textAlign = "left";
+        for (let ri = 0; ri < maxRows; ri++) {
+          const item = items[ri];
+          const ry = panelY + headerH + ri * rowH;
+          const iconSz = 22;
+
+          // Alternating row bg
+          if (ri % 2 === 0) {
+            ctx.fillStyle = "rgba(255,255,255,0.03)";
+            ctx.fillRect(panelX + 6, ry, panelW - 12, rowH);
+          }
+
+          // Icon
+          const icoImg = item.icon ? getImg(item.icon) : null;
+          if (icoImg && icoImg.complete && icoImg.naturalWidth > 0) {
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(icoImg, panelX + 12, ry + 3, iconSz, iconSz);
+          } else {
+            ctx.fillStyle = item.isCrab ? "#ff9800" : "#5dade2";
+            ctx.beginPath();
+            ctx.arc(panelX + 12 + iconSz / 2, ry + 3 + iconSz / 2, iconSz / 2 - 1, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          // Name
+          ctx.fillStyle = item.isCrab ? "#ff9800" : "#ecf0f1";
+          ctx.font = "8px 'Press Start 2P', monospace";
+          const nameStr = item.name.length > 16 ? item.name.slice(0, 15) + ".." : item.name;
+          ctx.fillText(nameStr, panelX + 40, ry + 16);
+
+          // Weight
+          ctx.fillStyle = "#78909c";
+          ctx.font = "7px 'Press Start 2P', monospace";
+          ctx.textAlign = "right";
+          ctx.fillText(`${item.weight}lb`, panelX + panelW - 70, ry + 16);
+
+          // Sell price
+          ctx.fillStyle = "#2ecc71";
+          ctx.fillText(`+${item.sellPrice}g`, panelX + panelW - 12, ry + 16);
+
+          // Crab bait indicator
+          if (item.isCrab) {
+            ctx.fillStyle = "#ff9800";
+            ctx.font = "6px 'Press Start 2P', monospace";
+            ctx.textAlign = "left";
+            ctx.fillText("BAIT", panelX + 40, ry + 25);
+          }
+          ctx.textAlign = "left";
+        }
+
+        if (items.length > maxRows) {
+          ctx.textAlign = "center";
+          ctx.fillStyle = "#607d8b";
+          ctx.font = "7px 'Press Start 2P', monospace";
+          ctx.fillText(`+${items.length - maxRows} more...`, W / 2, panelY + headerH + maxRows * rowH + 12);
+        }
+
+        // Footer: total earnings
+        const footerY = panelY + panelH - footerH + 10;
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#2ecc71";
+        ctx.font = "bold 12px 'Press Start 2P', monospace";
+        const totalTxt = `TOTAL: +${s.netCatchShowcaseTotal}g`;
+        ctx.fillText(totalTxt, W / 2, footerY + 10);
+
+        // Click to continue
+        const blink = Math.sin(s.time * 0.08) > -0.3;
+        if (blink) {
+          ctx.fillStyle = "rgba(255,255,255,0.35)";
+          ctx.font = "8px 'Press Start 2P', monospace";
+          ctx.fillText("CLICK TO CONTINUE", W / 2, footerY + 30);
+        }
+        ctx.textAlign = "left";
       }
 
       // Binoculars scope overlay
@@ -7647,6 +7782,14 @@ export default function FishingGame() {
     const waterY = H * 0.42;
     const defaultFX = W * 0.45;
 
+    // Dismiss net catch showcase on click
+    if (s.netCatchShowcase) {
+      s.netCatchShowcase = false;
+      s.netCatchShowcaseItems = [];
+      syncUI();
+      return;
+    }
+
     if (s.gameState === "intro") {
       return;
     }
@@ -7728,10 +7871,13 @@ export default function FishingGame() {
 
     if (s.gameState === "casting") {
       const equippedLure = LURES[s.equippedLure];
+      // Save the crab name used for this cast before it gets reset
+      s.castUsedCrabName = equippedLure.crabName || "";
       if (equippedLure.crabName) {
         const crabKey = equippedLure.crabName;
         if ((s.crabBaitCounts[crabKey] || 0) <= 0) {
           s.equippedLure = 0;
+          s.castUsedCrabName = "";
           syncUI();
           return;
         }
