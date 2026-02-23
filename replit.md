@@ -11,7 +11,7 @@ The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a f
 
 **UI/UX and Design:**
 - **Pixel Art:** Consistent pixel art aesthetic across all game assets.
-- **Character Selection:** HTML overlay for faction variant selection (Fabled/Legion/Crusade) with unique backgrounds and username input.
+- **Character Selection:** HTML overlay for character variant selection (Fabled/Legion/Crusade/Rogue/Engineer/Ranger) with unique backgrounds and username input.
 - **Hotbar System:** A 5-slot hotbar for quick access to equipment.
 - **Shop Interface:** Full-screen shop overlay for purchasing equipment.
 - **Billboard System:** Canvas-rendered sign rotating through bounties, records, deals, and game logo.
@@ -26,8 +26,9 @@ The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a f
 - **Reeling Minigame:** A Palworld-style minigame with a horizontal bar, moving catch zone, and mechanics affected by rod stats, including Force Bar and Resilience Bar.
 - **Net Tool:** Alternative fishing method with 7-frame throw animation (NetThrow.png), Netthrown.png sinking sprite, and Net.png rising sprite. Auto-catches common/uncommon fish in area. 49lb max weight capacity — overweight breaks the net (5-minute cooldown, catch lost). Normal cooldown is 10 seconds. Shows caught fish icons bobbing in net during rise with weight counter.
 - **Sprite Orientation:** Standardized sprite conventions for character facing, movement, and mirroring.
-- **Character System:** Three selectable factions (Fabled, Legion, Crusade) with unique recolored sprite sets and faction icons.
-- **Fish Species:** 30 distinct species (fish + crabs) across 5 rarity tiers (common, uncommon, rare, legendary, ultra_rare), including 10 ultra-rare variants (The Legendary 10) and 10 beach crab variants.
+- **Character System:** Six selectable character variants (Fabled, Legion, Crusade, Rogue, Engineer, Ranger) with unique recolored sprite sets and faction icons.
+- **Fish Species:** 53 distinct species (43 fish + 10 crabs) across 5 rarity tiers (common, uncommon, rare, legendary, ultra_rare), including 10 ultra-rare variants (The Legendary 10) and 10 beach crab variants.
+- **Fish Sizing System:** Normalized baseScale values for all 43 fish types ensuring consistent on-screen sizes by rarity tier. Formula: `creatureScale = SCALE * 0.65 * sizeMultiplier * baseScale`. Target sizes: common ~30-50px, uncommon ~50-70px, rare ~80-110px, legendary ~200-300px, ultra_rare ~80-350px.
 - **Equipment System:** Diverse range of rods, live baits, artificial lures, and chum items, each affecting gameplay mechanics.
 - **Chum System:** Throwable items boosting fish spawns, rarity, and bite speed, activated via hotbar.
 - **Rarity System:** 5 tiers with distinct colors, star ratings, sell price multipliers, and reeling difficulty multipliers.
@@ -88,3 +89,8 @@ The game utilizes a React frontend with HTML5 Canvas for rendering, ensuring a f
 - **2026-02-19:** Sand Area Boundaries: Fish now respect admin map sand zones (isSand areas). Fish cannot spawn in or swim through sand areas - they bounce off the sand line boundary. Sand areas are loaded from admin map localStorage and scaled to match game coordinates. Both spawn position and movement are checked.
 - **2026-02-19:** Bait Shop Position Persistence: Bait shop offsetX, offsetY, and scale now save to localStorage (grudge-angeler-baitshop-pos) when moved via gizmo. Position loads on game start so it stays where placed.
 - **2026-02-19:** Legendary Codex Animations: Fish sprites have CSS wiggle/swim animations (unique timing per fish). Art images have gentle floating animation. Fish sprites scaled proportionally by real-world size using logarithmic mapping. Size labels show feet/inches.
+- **2026-02-23:** Fish Sizing Normalization: Audited all 43 fish sprite dimensions and normalized baseScale values by rarity tier. Fixed invisible fish (FreshBass 10px, Anchovy 13px) and oversized fish (Clownfish 210px, Lionfish 275px). All species now render at consistent sizes appropriate for their rarity.
+- **2026-02-23:** Redfish Sprite Replacement: Replaced tiny 40x12 pixel Redfish Walk.png/Idle.png with new 192x48 (4 frames at 48x48 each) sprites recolored from Salmon. Generated matching catch icon. Updated walkFrames/idleFrames to 4, baseScale to 0.48.
+- **2026-02-23:** Hooked Fish Rendering Fix: Fish on the line during reeling now apply baseScale for proper sizing. Computes actual frame dimensions from loaded sprite, applies baseScale, enforces minimum 80px display via `Math.max(swimScale, minHookScale * hookedFishSize)`. Fixed fishSpriteW to use actual hookFrameW.
+- **2026-02-23:** Character Variants Expanded: Added Rogue, Engineer, and Ranger character variants (fisherman4/5/6 sprite folders), bringing total from 3 to 6 selectable characters.
+- **2026-02-23:** Gameboard Encyclopedia Updated: Added 3 new character variants to gameboard.html, updated section counts and descriptions to match current game state.

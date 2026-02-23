@@ -898,9 +898,12 @@ var WORLD_ZONES = [
 ];
 
 var CHARACTERS = [
-  { name: "Fabled", img: "/assets/fisherman/fabled/Idle.png", color: "#64b5f6", desc: "The balanced faction. Traditional anglers with steady hands." },
-  { name: "Legion", img: "/assets/fisherman/legion/Idle.png", color: "#ef5350", desc: "The aggressive faction. Power reelers who fight every catch." },
-  { name: "Crusade", img: "/assets/fisherman/crusade/Idle.png", color: "#66bb6a", desc: "The patient faction. Strategic anglers who wait for the perfect moment." },
+  { name: "Fabled", img: "/assets/fisherman/fabled/Idle.png", color: "#2ecc71", desc: "The balanced faction. Traditional anglers with steady hands." },
+  { name: "Legion", img: "/assets/fisherman/legion/Idle.png", color: "#e74c3c", desc: "The aggressive faction. Power reelers who fight every catch." },
+  { name: "Crusade", img: "/assets/fisherman/crusade/Idle.png", color: "#5dade2", desc: "The patient faction. Strategic anglers who wait for the perfect moment." },
+  { name: "Rogue", img: "/assets/fisherman4/Idle.png", color: "#9b59b6", desc: "The cunning faction. Stealthy anglers who exploit every advantage." },
+  { name: "Engineer", img: "/assets/fisherman5/Idle.png", color: "#f39c12", desc: "The inventive faction. Gadget-savvy anglers with tech upgrades." },
+  { name: "Ranger", img: "/assets/fisherman6/Idle.png", color: "#e67e22", desc: "The wild faction. Nature-attuned anglers with deep ocean instincts." },
 ];
 
 var WEATHER_TYPES = [
@@ -975,7 +978,7 @@ var RARITY_COLORS = { common: "var(--common)", uncommon: "var(--uncommon)", rare
 var RARITY_LABELS = { common: "COMMON", uncommon: "UNCOMMON", rare: "RARE", epic: "EPIC", legendary: "LEGENDARY", ultra_rare: "ULTRA RARE" };
 
 var SECTIONS_CONFIG = [
-  { id: "characters", title: "PLAYABLE CHARACTERS", dot: "#22d3ee", count: "3 FACTIONS", desc: "Choose your character variant at the start. Each faction has unique recolored sprite sets.", gridType: "char" },
+  { id: "characters", title: "PLAYABLE CHARACTERS", dot: "#22d3ee", count: "6 VARIANTS", desc: "Choose your character variant at the start. Six unique characters with recolored sprite sets.", gridType: "char" },
   { id: "world-zones", title: "WORLD ZONES", dot: "var(--accent)", count: "8 SCENES", desc: "The world is divided into 8 horizontally scrolling scenes, from sandy beach to abyssal depths.", gridType: "zone" },
   { id: "common-fish", title: "COMMON FISH", dot: "var(--common)", count: "", gridType: "fish", filterRarity: "common" },
   { id: "uncommon-fish", title: "UNCOMMON FISH", dot: "var(--uncommon)", count: "", gridType: "fish", filterRarity: "uncommon" },

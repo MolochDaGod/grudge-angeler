@@ -273,49 +273,49 @@ interface FishType {
 }
 
 const FISH_TYPES: FishType[] = [
-  { name: "Minnow", icon: "/assets/fish-images/minnow.png", catchAsset: "/assets/catch/minnow-silver-common.png", catchW: 92, catchH: 22, creatureFolder: "minnow-silver-common", idleFrames: 4, walkFrames: 4, points: 10, rarity: "common", weight: 40, minDepth: 0.15, speed: 1.5, description: "A tiny silver fish, common in shallow waters.", tint: "rgba(200,210,230,0.2)", baseScale: 0.15 },
-  { name: "Jellyfish", icon: "/assets/fish-images/jellyfish.png", catchAsset: "/assets/catch/jellyfish-translucent-common.png", catchW: 130, catchH: 87, creatureFolder: "jellyfish-translucent-common", idleFrames: 10, walkFrames: 10, points: 20, rarity: "common", weight: 25, minDepth: 0.2, speed: 0.7, description: "A translucent jellyfish drifting with the current.", tint: "rgba(120,80,255,0.2)", baseScale: 0.25 },
-  { name: "Perch", icon: "/assets/fish-images/perch.png", catchAsset: "/assets/catch/perch-striped-common.png", catchW: 92, catchH: 22, creatureFolder: "perch-striped-common", idleFrames: 4, walkFrames: 4, points: 25, rarity: "common", weight: 30, minDepth: 0.25, speed: 1.2, description: "A striped freshwater fish with sharp fins.", baseScale: 0.25 },
-  { name: "Bass", icon: "/assets/fish-images/bass.png", catchAsset: "/assets/catch/bass-green-uncommon.png", catchW: 36, catchH: 34, creatureFolder: "bass-green-uncommon", idleFrames: 1, walkFrames: 2, points: 50, rarity: "uncommon", weight: 15, minDepth: 0.35, speed: 1.0, description: "A strong fighter popular with anglers.", baseScale: 0.36 },
-  { name: "Catfish", icon: "/assets/fish-images/catfish.png", catchAsset: "/assets/catch/catfish-brown-uncommon.png", catchW: 56, catchH: 36, creatureFolder: "catfish-brown-uncommon", idleFrames: 4, walkFrames: 4, points: 75, rarity: "uncommon", weight: 8, minDepth: 0.15, speed: 0.8, description: "A bottom-dweller with long whiskers.", tint: "rgba(160,120,80,0.15)", bottomDweller: true, baseScale: 0.5 },
-  { name: "Swordfish", icon: "/assets/fish-images/swordfish.png", catchAsset: "/assets/catch/swordfish-blue-rare.png", catchW: 92, catchH: 22, creatureFolder: "swordfish-blue-rare", idleFrames: 4, walkFrames: 4, points: 150, rarity: "rare", weight: 4, minDepth: 0.55, speed: 1.8, description: "A powerful ocean predator with a sharp bill.", baseScale: 1.2 },
-  { name: "Stingray", icon: "/assets/fish-images/stingray.png", catchAsset: "/assets/catch/stingray-gray-rare.png", catchW: 92, catchH: 22, creatureFolder: "stingray-gray-rare", idleFrames: 4, walkFrames: 4, points: 100, rarity: "rare", weight: 5, minDepth: 0.45, speed: 1.4, description: "A flat-bodied ray gliding silently along the ocean floor.", tint: "rgba(100,110,130,0.25)", baseScale: 0.8 },
-  { name: "Whale", icon: "/assets/fish-images/whale.png", catchAsset: "/assets/catch/whale-blue-legendary.png", catchW: 78, catchH: 20, creatureFolder: "whale-blue-legendary", idleFrames: 2, walkFrames: 2, points: 300, rarity: "legendary", weight: 1, minDepth: 0.65, speed: 0.5, description: "The king of the deep. Incredibly rare!", tint: "rgba(40,80,180,0.45)", baseScale: 3.0 },
-  { name: "Kraken", icon: "/assets/fish-images/kraken.png", catchAsset: "/assets/catch/kraken-crimson-legendary.png", catchW: 96, catchH: 96, creatureFolder: "kraken-crimson-legendary", idleFrames: 6, walkFrames: 6, points: 400, rarity: "legendary", weight: 0.8, minDepth: 0.7, speed: 0.7, description: "A crimson terror from the deep. Its tentacles crush ships.", tint: "rgba(140,30,20,0.35)", baseScale: 2.0 },
-  { name: "Giant Squid", icon: "/assets/fish-images/giant-squid.png", catchAsset: "/assets/catch/giant-squid-blue-legendary.png", catchW: 96, catchH: 96, creatureFolder: "giant-squid-blue-legendary", idleFrames: 6, walkFrames: 6, points: 130, rarity: "rare", weight: 4, minDepth: 0.55, speed: 0.8, description: "A massive blue squid from the abyss. Eyes the size of dinner plates.", tint: "rgba(30,60,160,0.35)", baseScale: 1.5 },
-  { name: "Giant Octopus", icon: "/assets/fish-images/giant-octopus.png", catchAsset: "/assets/catch/giant-octopus-purple-legendary.png", catchW: 96, catchH: 96, creatureFolder: "giant-octopus-purple-legendary", idleFrames: 6, walkFrames: 6, points: 70, rarity: "uncommon", weight: 10, minDepth: 0.4, speed: 0.6, description: "A purple giant with eight crushing arms. Incredibly intelligent.", tint: "rgba(120,20,140,0.35)", baseScale: 1.3 },
-  { name: "Eel", icon: "/assets/fish-images/eel.png", catchAsset: "/assets/catch/eel-dark-common.png", catchW: 36, catchH: 11, creatureFolder: "eel-dark-common", idleFrames: 4, walkFrames: 6, points: 40, rarity: "common", weight: 20, minDepth: 0.3, speed: 1.3, description: "A slippery serpentine fish.", tint: "rgba(50,60,70,0.15)", baseScale: 0.4 },
-  { name: "Octopus", icon: "/assets/fish-images/octopus.png", catchAsset: "/assets/catch/octopus-red-common.png", catchW: 35, catchH: 32, creatureFolder: "octopus-red-common", idleFrames: 6, walkFrames: 6, points: 35, rarity: "common", weight: 15, minDepth: 0.25, speed: 0.9, description: "A clever red octopus with grasping tentacles.", baseScale: 0.3 },
-  { name: "Salmon", icon: "/assets/fish-images/salmon.png", catchAsset: "/assets/catch/salmon-pink-uncommon.png", catchW: 45, catchH: 42, creatureFolder: "salmon-pink-uncommon", idleFrames: 4, walkFrames: 4, points: 60, rarity: "uncommon", weight: 12, minDepth: 0.35, speed: 1.1, description: "A prized pink-fleshed fish.", tint: "rgba(220,100,80,0.4)", baseScale: 0.55 },
-  { name: "Electric Eel", icon: "/assets/fish-images/electric-eel.png", catchAsset: "/assets/catch/electric-eel-yellow-uncommon.png", catchW: 36, catchH: 34, creatureFolder: "electric-eel-yellow-uncommon", idleFrames: 1, walkFrames: 2, points: 65, rarity: "uncommon", weight: 10, minDepth: 0.4, speed: 1.6, description: "A shocking eel crackling with electric charge.", baseScale: 0.26 },
-  { name: "Blue Ring Octopus", icon: "/assets/fish-images/blue-ring-octopus.png", catchAsset: "/assets/catch/blue-ring-octopus-blue-uncommon.png", catchW: 35, catchH: 32, creatureFolder: "blue-ring-octopus-blue-uncommon", idleFrames: 6, walkFrames: 6, points: 55, rarity: "uncommon", weight: 8, minDepth: 0.35, speed: 1.0, description: "A small but deadly octopus with glowing blue rings.", baseScale: 0.2 },
-  { name: "Moray Eel", icon: "/assets/fish-images/moray-eel.png", catchAsset: "/assets/catch/moray-eel-brown-rare.png", catchW: 36, catchH: 11, creatureFolder: "moray-eel-brown-rare", idleFrames: 4, walkFrames: 6, points: 90, rarity: "rare", weight: 6, minDepth: 0.5, speed: 1.1, description: "A thick-bodied eel lurking in reef crevices.", baseScale: 0.7 },
-  { name: "Anglerfish", icon: "/assets/fish-images/anglerfish.png", catchAsset: "/assets/catch/anglerfish-dark-rare.png", catchW: 78, catchH: 20, creatureFolder: "anglerfish-dark-rare", idleFrames: 2, walkFrames: 2, points: 120, rarity: "rare", weight: 5, minDepth: 0.55, speed: 0.6, description: "A deep-sea predator with a bioluminescent lure.", baseScale: 0.5 },
-  { name: "Deep Sea Angler", icon: "/assets/fish-images/deep-sea-angler.png", catchAsset: "/assets/catch/deep-sea-angler-dark-rare.png", catchW: 78, catchH: 20, creatureFolder: "deep-sea-angler-dark-rare", idleFrames: 4, walkFrames: 4, points: 140, rarity: "rare", weight: 3, minDepth: 0.65, speed: 0.5, description: "A pitch-black anglerfish with a sinister yellow glow.", baseScale: 0.6 },
-  { name: "Phantom Minnow", icon: "/assets/fish-images/phantom-minnow.png", catchAsset: "/assets/catch/phantom-minnow-spectral-ultra_rare.png", catchW: 96, catchH: 48, creatureFolder: "phantom-minnow-spectral-ultra_rare", idleFrames: 4, walkFrames: 4, points: 500, rarity: "ultra_rare", weight: 0.3, minDepth: 0.55, speed: 2.2, description: "A ghostly minnow wreathed in spectral flame. Blinks in and out of reality.", baseScale: 0.3 },
-  { name: "Volcanic Perch", icon: "/assets/fish-images/volcanic-perch.png", catchAsset: "/assets/catch/volcanic-perch-molten-ultra_rare.png", catchW: 33, catchH: 25, creatureFolder: "volcanic-perch-molten-ultra_rare", idleFrames: 4, walkFrames: 4, points: 600, rarity: "ultra_rare", weight: 0.25, minDepth: 0.6, speed: 1.6, description: "A perch superheated by deep-sea vents. Its scales glow molten orange.", baseScale: 0.4 },
-  { name: "Abyssal Bass", icon: "/assets/fish-images/abyssal-bass.png", catchAsset: "/assets/catch/abyssal-bass-dark-ultra_rare.png", catchW: 48, catchH: 41, creatureFolder: "abyssal-bass-dark-ultra_rare", idleFrames: 4, walkFrames: 4, points: 750, rarity: "ultra_rare", weight: 0.2, minDepth: 0.65, speed: 1.4, description: "A colossal bass from the deepest trenches. Radiates dark energy.", baseScale: 0.7 },
-  { name: "Frost Catfish", icon: "/assets/fish-images/frost-catfish.png", catchAsset: "/assets/catch/frost-catfish-ice-ultra_rare.png", catchW: 40, catchH: 32, creatureFolder: "frost-catfish-ice-ultra_rare", idleFrames: 4, walkFrames: 4, points: 800, rarity: "ultra_rare", weight: 0.18, minDepth: 0.6, speed: 0.9, description: "An ancient catfish encased in living ice. Freezes the water around it.", baseScale: 0.75 },
-  { name: "Storm Swordfish", icon: "/assets/fish-images/storm-swordfish.png", catchAsset: "/assets/catch/storm-swordfish-electric-ultra_rare.png", catchW: 92, catchH: 22, creatureFolder: "storm-swordfish-electric-ultra_rare", idleFrames: 4, walkFrames: 4, points: 1000, rarity: "ultra_rare", weight: 0.12, minDepth: 0.7, speed: 2.5, description: "A swordfish that rides lightning bolts. Crackles with electric fury.", baseScale: 1.5 },
-  { name: "Celestial Whale", icon: "/assets/fish-images/celestial-whale.png", catchAsset: "/assets/catch/celestial-whale-cosmic-ultra_rare.png", catchW: 96, catchH: 48, creatureFolder: "celestial-whale-cosmic-ultra_rare", idleFrames: 2, walkFrames: 2, points: 2000, rarity: "ultra_rare", weight: 0.05, minDepth: 0.75, speed: 0.4, description: "A cosmic whale that swallowed a dying star. The rarest creature in existence.", baseScale: 3.5 },
-  { name: "Neon Eel", icon: "/assets/fish-images/neon-eel.png", catchAsset: "/assets/catch/neon-eel-neon-ultra_rare.png", catchW: 43, catchH: 27, creatureFolder: "neon-eel-neon-ultra_rare", idleFrames: 4, walkFrames: 4, points: 650, rarity: "ultra_rare", weight: 0.22, minDepth: 0.55, speed: 1.9, description: "A bioluminescent eel pulsing with neon colors. Mesmerizing.", baseScale: 0.8 },
-  { name: "Golden Salmon", icon: "/assets/fish-images/golden-salmon.png", catchAsset: "/assets/catch/golden-salmon-gold-ultra_rare.png", catchW: 48, catchH: 32, creatureFolder: "golden-salmon-gold-ultra_rare", idleFrames: 4, walkFrames: 4, points: 700, rarity: "ultra_rare", weight: 0.2, minDepth: 0.6, speed: 1.5, description: "A legendary salmon with solid gold scales. Worth a fortune.", baseScale: 0.7 },
-  { name: "Shadow Leviathan", icon: "/assets/fish-images/shadow-leviathan.png", catchAsset: "/assets/catch/shadow-leviathan-shadow-ultra_rare.png", catchW: 89, catchH: 14, creatureFolder: "shadow-leviathan-shadow-ultra_rare", idleFrames: 4, walkFrames: 4, points: 1500, rarity: "ultra_rare", weight: 0.08, minDepth: 0.8, speed: 0.6, description: "A titanic shadow beast from beyond the abyss. Feared by all ocean life.", tint: "rgba(140,15,15,0.5)", baseScale: 2.5 },
-  { name: "The Seal at the Seam", icon: "/assets/fish-images/seal-at-the-seam.png", catchAsset: "/assets/fish-images/seal-at-the-seam.png", catchW: 64, catchH: 64, creatureFolder: "seal-at-the-seam-cosmic-ultra_rare", idleFrames: 6, walkFrames: 6, points: 5000, rarity: "ultra_rare", weight: 0, minDepth: 0.95, speed: 0.3, description: "A living sigil at the boundary of reality. The 10th Legendary — guardian of the Seam.", tint: "rgba(20,40,120,0.5)", baseScale: 1.0, treasureChestOnly: true },
-  { name: "Pufferfish", icon: "/assets/catch/pufferfish-salt-rare.png", catchAsset: "/assets/catch/pufferfish-salt-rare.png", catchW: 208, catchH: 111, creatureFolder: "pufferfish-salt-rare", idleFrames: 10, walkFrames: 10, points: 110, rarity: "rare", weight: 6, minDepth: 0.4, speed: 0.7, description: "A spotted pufferfish. Inflates when threatened.", tint: "rgba(220,180,50,0.2)", baseScale: 0.3 },
-  { name: "Freshwater Bass", icon: "/assets/catch/bass-fresh-common.png", catchAsset: "/assets/catch/bass-fresh-common.png", catchW: 16, catchH: 12, creatureFolder: "bass-fresh-common", idleFrames: 1, walkFrames: 2, points: 15, rarity: "common", weight: 35, minDepth: 0.15, speed: 1.1, description: "A green freshwater bass. Common but scrappy.", baseScale: 0.25 },
-  { name: "Redfish", icon: "/assets/catch/redfish-large-uncommon.png", catchAsset: "/assets/catch/redfish-large-uncommon.png", catchW: 20, catchH: 12, creatureFolder: "redfish-large-uncommon", idleFrames: 1, walkFrames: 2, points: 55, rarity: "uncommon", weight: 12, minDepth: 0.3, speed: 1.0, description: "A rust-red ocean fish with a powerful tail.", tint: "rgba(180,80,50,0.2)", baseScale: 0.4 },
-  { name: "Anchovy", icon: "/assets/catch/anchovy-salt-common.png", catchAsset: "/assets/catch/anchovy-salt-common.png", catchW: 26, catchH: 12, creatureFolder: "anchovy-salt-common", idleFrames: 1, walkFrames: 2, points: 12, rarity: "common", weight: 40, minDepth: 0.2, speed: 1.6, description: "A darting blue anchovy. Travels in huge schools.", tint: "rgba(80,140,220,0.15)", baseScale: 0.2 },
-  { name: "Angelfish", icon: "/assets/catch/angelfish-fresh-uncommon.png", catchAsset: "/assets/catch/angelfish-fresh-uncommon.png", catchW: 28, catchH: 24, creatureFolder: "angelfish-fresh-uncommon", idleFrames: 1, walkFrames: 2, points: 65, rarity: "uncommon", weight: 10, minDepth: 0.35, speed: 0.9, description: "A graceful pink angelfish with flowing fins.", tint: "rgba(220,120,160,0.2)", baseScale: 0.45 },
-  { name: "Surgeonfish", icon: "/assets/catch/surgeonfish-salt-uncommon.png", catchAsset: "/assets/catch/surgeonfish-salt-uncommon.png", catchW: 54, catchH: 22, creatureFolder: "surgeonfish-salt-uncommon", idleFrames: 1, walkFrames: 2, points: 70, rarity: "uncommon", weight: 8, minDepth: 0.45, speed: 1.3, description: "A large blue surgeonfish with a razor-sharp tail spine.", tint: "rgba(60,120,200,0.25)", baseScale: 0.9 },
-  { name: "Rainbow Trout", icon: "/assets/catch/rainbow-trout-fresh-rare.png", catchAsset: "/assets/catch/rainbow-trout-fresh-rare.png", catchW: 30, catchH: 12, creatureFolder: "rainbow-trout-fresh-rare", idleFrames: 1, walkFrames: 2, points: 95, rarity: "rare", weight: 5, minDepth: 0.35, speed: 1.2, description: "A speckled brown trout with a rainbow shimmer along its flank.", baseScale: 0.5 },
-  { name: "Clownfish", icon: "/assets/catch/clownfish-salt-uncommon.png", catchAsset: "/assets/catch/clownfish-salt-uncommon.png", catchW: 231, catchH: 135, creatureFolder: "clownfish-salt-uncommon", idleFrames: 10, walkFrames: 10, points: 45, rarity: "uncommon", weight: 14, minDepth: 0.25, speed: 1.0, description: "A bright orange clownfish hiding among anemones.", tint: "rgba(240,100,120,0.2)", baseScale: 0.35 },
-  { name: "Butterfly Fish", icon: "/assets/fish-images/butterfly-fish.png", catchAsset: "/assets/catch/butterfly-fish-fresh-uncommon.png", catchW: 236, catchH: 193, creatureFolder: "butterfly-fish-fresh-uncommon", idleFrames: 10, walkFrames: 10, points: 55, rarity: "uncommon", weight: 12, minDepth: 0.2, speed: 1.3, description: "A golden butterfly fish with striking blue markings.", tint: "rgba(240,200,50,0.2)", baseScale: 0.3 },
-  { name: "Lionfish", icon: "/assets/fish-images/lionfish.png", catchAsset: "/assets/catch/lionfish-salt-rare.png", catchW: 423, catchH: 336, creatureFolder: "lionfish-salt-rare", idleFrames: 10, walkFrames: 10, points: 130, rarity: "rare", weight: 4, minDepth: 0.45, speed: 0.8, description: "A venomous lionfish with elaborate striped fins. Beautiful but deadly.", tint: "rgba(180,140,80,0.2)", baseScale: 0.25 },
-  { name: "Hammerhead Shark", icon: "/assets/fish-images/hammerhead-shark.png", catchAsset: "/assets/catch/hammerhead-shark-blue-legendary.png", catchW: 773, catchH: 382, creatureFolder: "hammerhead-shark-blue-legendary", idleFrames: 10, walkFrames: 10, points: 350, rarity: "legendary", weight: 0.8, minDepth: 0.6, speed: 2.0, description: "A massive hammerhead shark. Its wide head detects prey with uncanny precision.", tint: "rgba(80,100,140,0.3)", baseScale: 0.12 },
-  { name: "Pink Jellyfish", icon: "/assets/fish-images/pink-jellyfish.png", catchAsset: "/assets/catch/pink-jellyfish-pink-uncommon.png", catchW: 143, catchH: 225, creatureFolder: "pink-jellyfish-pink-uncommon", idleFrames: 10, walkFrames: 10, points: 40, rarity: "uncommon", weight: 15, minDepth: 0.3, speed: 0.6, description: "A pink jellyfish pulsing gracefully through the water.", tint: "rgba(240,120,180,0.2)", baseScale: 0.2 },
-  { name: "Purple Jellyfish", icon: "/assets/fish-images/purple-jellyfish.png", catchAsset: "/assets/catch/purple-jellyfish-purple-rare.png", catchW: 196, catchH: 294, creatureFolder: "purple-jellyfish-purple-rare", idleFrames: 10, walkFrames: 10, points: 85, rarity: "rare", weight: 5, minDepth: 0.5, speed: 0.5, description: "A majestic purple jellyfish trailing long, luminous tentacles.", tint: "rgba(100,40,200,0.25)", baseScale: 0.2 },
-  { name: "Sea Urchin", icon: "/assets/fish-images/sea-urchin.png", catchAsset: "/assets/catch/sea-urchin-dark-common.png", catchW: 311, catchH: 318, creatureFolder: "sea-urchin-dark-common", idleFrames: 10, walkFrames: 10, points: 15, rarity: "common", weight: 20, minDepth: 0.2, speed: 0.3, description: "A spiny sea urchin crawling along the ocean floor.", tint: "rgba(40,30,60,0.15)", bottomDweller: true, baseScale: 0.12 },
+  { name: "Minnow", icon: "/assets/fish-images/minnow.png", catchAsset: "/assets/catch/minnow-silver-common.png", catchW: 92, catchH: 22, creatureFolder: "minnow-silver-common", idleFrames: 4, walkFrames: 4, points: 10, rarity: "common", weight: 40, minDepth: 0.15, speed: 1.5, description: "A tiny silver fish, common in shallow waters.", tint: "rgba(200,210,230,0.2)", baseScale: 0.22 },
+  { name: "Jellyfish", icon: "/assets/fish-images/jellyfish.png", catchAsset: "/assets/catch/jellyfish-translucent-common.png", catchW: 130, catchH: 87, creatureFolder: "jellyfish-translucent-common", idleFrames: 10, walkFrames: 10, points: 20, rarity: "common", weight: 25, minDepth: 0.2, speed: 0.7, description: "A translucent jellyfish drifting with the current.", tint: "rgba(120,80,255,0.2)", baseScale: 0.15 },
+  { name: "Perch", icon: "/assets/fish-images/perch.png", catchAsset: "/assets/catch/perch-striped-common.png", catchW: 92, catchH: 22, creatureFolder: "perch-striped-common", idleFrames: 4, walkFrames: 4, points: 25, rarity: "common", weight: 30, minDepth: 0.25, speed: 1.2, description: "A striped freshwater fish with sharp fins.", baseScale: 0.32 },
+  { name: "Bass", icon: "/assets/fish-images/bass.png", catchAsset: "/assets/catch/bass-green-uncommon.png", catchW: 36, catchH: 34, creatureFolder: "bass-green-uncommon", idleFrames: 1, walkFrames: 2, points: 50, rarity: "uncommon", weight: 15, minDepth: 0.35, speed: 1.0, description: "A strong fighter popular with anglers.", baseScale: 0.44 },
+  { name: "Catfish", icon: "/assets/fish-images/catfish.png", catchAsset: "/assets/catch/catfish-brown-uncommon.png", catchW: 56, catchH: 36, creatureFolder: "catfish-brown-uncommon", idleFrames: 4, walkFrames: 4, points: 75, rarity: "uncommon", weight: 8, minDepth: 0.15, speed: 0.8, description: "A bottom-dweller with long whiskers.", tint: "rgba(160,120,80,0.15)", bottomDweller: true, baseScale: 0.48 },
+  { name: "Swordfish", icon: "/assets/fish-images/swordfish.png", catchAsset: "/assets/catch/swordfish-blue-rare.png", catchW: 92, catchH: 22, creatureFolder: "swordfish-blue-rare", idleFrames: 4, walkFrames: 4, points: 150, rarity: "rare", weight: 4, minDepth: 0.55, speed: 1.8, description: "A powerful ocean predator with a sharp bill.", baseScale: 0.80 },
+  { name: "Stingray", icon: "/assets/fish-images/stingray.png", catchAsset: "/assets/catch/stingray-gray-rare.png", catchW: 92, catchH: 22, creatureFolder: "stingray-gray-rare", idleFrames: 4, walkFrames: 4, points: 100, rarity: "rare", weight: 5, minDepth: 0.45, speed: 1.4, description: "A flat-bodied ray gliding silently along the ocean floor.", tint: "rgba(100,110,130,0.25)", baseScale: 0.72 },
+  { name: "Whale", icon: "/assets/fish-images/whale.png", catchAsset: "/assets/catch/whale-blue-legendary.png", catchW: 78, catchH: 20, creatureFolder: "whale-blue-legendary", idleFrames: 2, walkFrames: 2, points: 300, rarity: "legendary", weight: 1, minDepth: 0.65, speed: 0.5, description: "The king of the deep. Incredibly rare!", tint: "rgba(40,80,180,0.45)", baseScale: 1.20 },
+  { name: "Kraken", icon: "/assets/fish-images/kraken.png", catchAsset: "/assets/catch/kraken-crimson-legendary.png", catchW: 96, catchH: 96, creatureFolder: "kraken-crimson-legendary", idleFrames: 6, walkFrames: 6, points: 400, rarity: "legendary", weight: 0.8, minDepth: 0.7, speed: 0.7, description: "A crimson terror from the deep. Its tentacles crush ships.", tint: "rgba(140,30,20,0.35)", baseScale: 1.00 },
+  { name: "Giant Squid", icon: "/assets/fish-images/giant-squid.png", catchAsset: "/assets/catch/giant-squid-blue-legendary.png", catchW: 96, catchH: 96, creatureFolder: "giant-squid-blue-legendary", idleFrames: 6, walkFrames: 6, points: 130, rarity: "rare", weight: 4, minDepth: 0.55, speed: 0.8, description: "A massive blue squid from the abyss. Eyes the size of dinner plates.", tint: "rgba(30,60,160,0.35)", baseScale: 0.50 },
+  { name: "Giant Octopus", icon: "/assets/fish-images/giant-octopus.png", catchAsset: "/assets/catch/giant-octopus-purple-legendary.png", catchW: 96, catchH: 96, creatureFolder: "giant-octopus-purple-legendary", idleFrames: 6, walkFrames: 6, points: 70, rarity: "uncommon", weight: 10, minDepth: 0.4, speed: 0.6, description: "A purple giant with eight crushing arms. Incredibly intelligent.", tint: "rgba(120,20,140,0.35)", baseScale: 0.30 },
+  { name: "Eel", icon: "/assets/fish-images/eel.png", catchAsset: "/assets/catch/eel-dark-common.png", catchW: 36, catchH: 11, creatureFolder: "eel-dark-common", idleFrames: 4, walkFrames: 6, points: 40, rarity: "common", weight: 20, minDepth: 0.3, speed: 1.3, description: "A slippery serpentine fish.", tint: "rgba(50,60,70,0.15)", baseScale: 0.36 },
+  { name: "Octopus", icon: "/assets/fish-images/octopus.png", catchAsset: "/assets/catch/octopus-red-common.png", catchW: 35, catchH: 32, creatureFolder: "octopus-red-common", idleFrames: 6, walkFrames: 6, points: 35, rarity: "common", weight: 15, minDepth: 0.25, speed: 0.9, description: "A clever red octopus with grasping tentacles.", baseScale: 0.32 },
+  { name: "Salmon", icon: "/assets/fish-images/salmon.png", catchAsset: "/assets/catch/salmon-pink-uncommon.png", catchW: 45, catchH: 42, creatureFolder: "salmon-pink-uncommon", idleFrames: 4, walkFrames: 4, points: 60, rarity: "uncommon", weight: 12, minDepth: 0.35, speed: 1.1, description: "A prized pink-fleshed fish.", tint: "rgba(220,100,80,0.4)", baseScale: 0.48 },
+  { name: "Electric Eel", icon: "/assets/fish-images/electric-eel.png", catchAsset: "/assets/catch/electric-eel-yellow-uncommon.png", catchW: 36, catchH: 34, creatureFolder: "electric-eel-yellow-uncommon", idleFrames: 1, walkFrames: 2, points: 65, rarity: "uncommon", weight: 10, minDepth: 0.4, speed: 1.6, description: "A shocking eel crackling with electric charge.", baseScale: 0.22 },
+  { name: "Blue Ring Octopus", icon: "/assets/fish-images/blue-ring-octopus.png", catchAsset: "/assets/catch/blue-ring-octopus-blue-uncommon.png", catchW: 35, catchH: 32, creatureFolder: "blue-ring-octopus-blue-uncommon", idleFrames: 6, walkFrames: 6, points: 55, rarity: "uncommon", weight: 8, minDepth: 0.35, speed: 1.0, description: "A small but deadly octopus with glowing blue rings.", baseScale: 0.32 },
+  { name: "Moray Eel", icon: "/assets/fish-images/moray-eel.png", catchAsset: "/assets/catch/moray-eel-brown-rare.png", catchW: 36, catchH: 11, creatureFolder: "moray-eel-brown-rare", idleFrames: 4, walkFrames: 6, points: 90, rarity: "rare", weight: 6, minDepth: 0.5, speed: 1.1, description: "A thick-bodied eel lurking in reef crevices.", baseScale: 0.64 },
+  { name: "Anglerfish", icon: "/assets/fish-images/anglerfish.png", catchAsset: "/assets/catch/anglerfish-dark-rare.png", catchW: 78, catchH: 20, creatureFolder: "anglerfish-dark-rare", idleFrames: 2, walkFrames: 2, points: 120, rarity: "rare", weight: 5, minDepth: 0.55, speed: 0.6, description: "A deep-sea predator with a bioluminescent lure.", baseScale: 0.60 },
+  { name: "Deep Sea Angler", icon: "/assets/fish-images/deep-sea-angler.png", catchAsset: "/assets/catch/deep-sea-angler-dark-rare.png", catchW: 78, catchH: 20, creatureFolder: "deep-sea-angler-dark-rare", idleFrames: 4, walkFrames: 4, points: 140, rarity: "rare", weight: 3, minDepth: 0.65, speed: 0.5, description: "A pitch-black anglerfish with a sinister yellow glow.", baseScale: 0.64 },
+  { name: "Phantom Minnow", icon: "/assets/fish-images/phantom-minnow.png", catchAsset: "/assets/catch/phantom-minnow-spectral-ultra_rare.png", catchW: 96, catchH: 48, creatureFolder: "phantom-minnow-spectral-ultra_rare", idleFrames: 4, walkFrames: 4, points: 500, rarity: "ultra_rare", weight: 0.3, minDepth: 0.55, speed: 2.2, description: "A ghostly minnow wreathed in spectral flame. Blinks in and out of reality.", baseScale: 0.64 },
+  { name: "Volcanic Perch", icon: "/assets/fish-images/volcanic-perch.png", catchAsset: "/assets/catch/volcanic-perch-molten-ultra_rare.png", catchW: 33, catchH: 25, creatureFolder: "volcanic-perch-molten-ultra_rare", idleFrames: 4, walkFrames: 4, points: 600, rarity: "ultra_rare", weight: 0.25, minDepth: 0.6, speed: 1.6, description: "A perch superheated by deep-sea vents. Its scales glow molten orange.", baseScale: 0.64 },
+  { name: "Abyssal Bass", icon: "/assets/fish-images/abyssal-bass.png", catchAsset: "/assets/catch/abyssal-bass-dark-ultra_rare.png", catchW: 48, catchH: 41, creatureFolder: "abyssal-bass-dark-ultra_rare", idleFrames: 4, walkFrames: 4, points: 750, rarity: "ultra_rare", weight: 0.2, minDepth: 0.65, speed: 1.4, description: "A colossal bass from the deepest trenches. Radiates dark energy.", baseScale: 0.80 },
+  { name: "Frost Catfish", icon: "/assets/fish-images/frost-catfish.png", catchAsset: "/assets/catch/frost-catfish-ice-ultra_rare.png", catchW: 40, catchH: 32, creatureFolder: "frost-catfish-ice-ultra_rare", idleFrames: 4, walkFrames: 4, points: 800, rarity: "ultra_rare", weight: 0.18, minDepth: 0.6, speed: 0.9, description: "An ancient catfish encased in living ice. Freezes the water around it.", baseScale: 0.80 },
+  { name: "Storm Swordfish", icon: "/assets/fish-images/storm-swordfish.png", catchAsset: "/assets/catch/storm-swordfish-electric-ultra_rare.png", catchW: 92, catchH: 22, creatureFolder: "storm-swordfish-electric-ultra_rare", idleFrames: 4, walkFrames: 4, points: 1000, rarity: "ultra_rare", weight: 0.12, minDepth: 0.7, speed: 2.5, description: "A swordfish that rides lightning bolts. Crackles with electric fury.", baseScale: 1.12 },
+  { name: "Celestial Whale", icon: "/assets/fish-images/celestial-whale.png", catchAsset: "/assets/catch/celestial-whale-cosmic-ultra_rare.png", catchW: 96, catchH: 48, creatureFolder: "celestial-whale-cosmic-ultra_rare", idleFrames: 2, walkFrames: 2, points: 2000, rarity: "ultra_rare", weight: 0.05, minDepth: 0.75, speed: 0.4, description: "A cosmic whale that swallowed a dying star. The rarest creature in existence.", baseScale: 1.40 },
+  { name: "Neon Eel", icon: "/assets/fish-images/neon-eel.png", catchAsset: "/assets/catch/neon-eel-neon-ultra_rare.png", catchW: 43, catchH: 27, creatureFolder: "neon-eel-neon-ultra_rare", idleFrames: 4, walkFrames: 4, points: 650, rarity: "ultra_rare", weight: 0.22, minDepth: 0.55, speed: 1.9, description: "A bioluminescent eel pulsing with neon colors. Mesmerizing.", baseScale: 0.72 },
+  { name: "Golden Salmon", icon: "/assets/fish-images/golden-salmon.png", catchAsset: "/assets/catch/golden-salmon-gold-ultra_rare.png", catchW: 48, catchH: 32, creatureFolder: "golden-salmon-gold-ultra_rare", idleFrames: 4, walkFrames: 4, points: 700, rarity: "ultra_rare", weight: 0.2, minDepth: 0.6, speed: 1.5, description: "A legendary salmon with solid gold scales. Worth a fortune.", baseScale: 0.72 },
+  { name: "Shadow Leviathan", icon: "/assets/fish-images/shadow-leviathan.png", catchAsset: "/assets/catch/shadow-leviathan-shadow-ultra_rare.png", catchW: 89, catchH: 14, creatureFolder: "shadow-leviathan-shadow-ultra_rare", idleFrames: 4, walkFrames: 4, points: 1500, rarity: "ultra_rare", weight: 0.08, minDepth: 0.8, speed: 0.6, description: "A titanic shadow beast from beyond the abyss. Feared by all ocean life.", tint: "rgba(140,15,15,0.5)", baseScale: 1.00 },
+  { name: "The Seal at the Seam", icon: "/assets/fish-images/seal-at-the-seam.png", catchAsset: "/assets/fish-images/seal-at-the-seam.png", catchW: 64, catchH: 64, creatureFolder: "seal-at-the-seam-cosmic-ultra_rare", idleFrames: 6, walkFrames: 6, points: 5000, rarity: "ultra_rare", weight: 0, minDepth: 0.95, speed: 0.3, description: "A living sigil at the boundary of reality. The 10th Legendary — guardian of the Seam.", tint: "rgba(20,40,120,0.5)", baseScale: 0.80, treasureChestOnly: true },
+  { name: "Pufferfish", icon: "/assets/catch/pufferfish-salt-rare.png", catchAsset: "/assets/catch/pufferfish-salt-rare.png", catchW: 208, catchH: 111, creatureFolder: "pufferfish-salt-rare", idleFrames: 10, walkFrames: 10, points: 110, rarity: "rare", weight: 6, minDepth: 0.4, speed: 0.7, description: "A spotted pufferfish. Inflates when threatened.", tint: "rgba(220,180,50,0.2)", baseScale: 0.15 },
+  { name: "Freshwater Bass", icon: "/assets/catch/bass-fresh-common.png", catchAsset: "/assets/catch/bass-fresh-common.png", catchW: 16, catchH: 12, creatureFolder: "bass-fresh-common", idleFrames: 1, walkFrames: 2, points: 15, rarity: "common", weight: 35, minDepth: 0.15, speed: 1.1, description: "A green freshwater bass. Common but scrappy.", baseScale: 0.85 },
+  { name: "Redfish", icon: "/assets/catch/redfish-large-uncommon.png", catchAsset: "/assets/catch/redfish-large-uncommon.png", catchW: 48, catchH: 48, creatureFolder: "redfish-large-uncommon", idleFrames: 4, walkFrames: 4, points: 55, rarity: "uncommon", weight: 12, minDepth: 0.3, speed: 1.0, description: "A rust-red ocean fish with a powerful tail.", tint: "rgba(180,80,50,0.2)", baseScale: 0.48 },
+  { name: "Anchovy", icon: "/assets/catch/anchovy-salt-common.png", catchAsset: "/assets/catch/anchovy-salt-common.png", catchW: 26, catchH: 12, creatureFolder: "anchovy-salt-common", idleFrames: 1, walkFrames: 2, points: 12, rarity: "common", weight: 40, minDepth: 0.2, speed: 1.6, description: "A darting blue anchovy. Travels in huge schools.", tint: "rgba(80,140,220,0.15)", baseScale: 0.42 },
+  { name: "Angelfish", icon: "/assets/catch/angelfish-fresh-uncommon.png", catchAsset: "/assets/catch/angelfish-fresh-uncommon.png", catchW: 28, catchH: 24, creatureFolder: "angelfish-fresh-uncommon", idleFrames: 1, walkFrames: 2, points: 65, rarity: "uncommon", weight: 10, minDepth: 0.35, speed: 0.9, description: "A graceful pink angelfish with flowing fins.", tint: "rgba(220,120,160,0.2)", baseScale: 0.69 },
+  { name: "Surgeonfish", icon: "/assets/catch/surgeonfish-salt-uncommon.png", catchAsset: "/assets/catch/surgeonfish-salt-uncommon.png", catchW: 54, catchH: 22, creatureFolder: "surgeonfish-salt-uncommon", idleFrames: 1, walkFrames: 2, points: 70, rarity: "uncommon", weight: 8, minDepth: 0.45, speed: 1.3, description: "A large blue surgeonfish with a razor-sharp tail spine.", tint: "rgba(60,120,200,0.25)", baseScale: 0.46 },
+  { name: "Rainbow Trout", icon: "/assets/catch/rainbow-trout-fresh-rare.png", catchAsset: "/assets/catch/rainbow-trout-fresh-rare.png", catchW: 30, catchH: 12, creatureFolder: "rainbow-trout-fresh-rare", idleFrames: 1, walkFrames: 2, points: 95, rarity: "rare", weight: 5, minDepth: 0.35, speed: 1.2, description: "A speckled brown trout with a rainbow shimmer along its flank.", baseScale: 0.90 },
+  { name: "Clownfish", icon: "/assets/catch/clownfish-salt-uncommon.png", catchAsset: "/assets/catch/clownfish-salt-uncommon.png", catchW: 231, catchH: 135, creatureFolder: "clownfish-salt-uncommon", idleFrames: 10, walkFrames: 10, points: 45, rarity: "uncommon", weight: 14, minDepth: 0.25, speed: 1.0, description: "A bright orange clownfish hiding among anemones.", tint: "rgba(240,100,120,0.2)", baseScale: 0.11 },
+  { name: "Butterfly Fish", icon: "/assets/fish-images/butterfly-fish.png", catchAsset: "/assets/catch/butterfly-fish-fresh-uncommon.png", catchW: 236, catchH: 193, creatureFolder: "butterfly-fish-fresh-uncommon", idleFrames: 10, walkFrames: 10, points: 55, rarity: "uncommon", weight: 12, minDepth: 0.2, speed: 1.3, description: "A golden butterfly fish with striking blue markings.", tint: "rgba(240,200,50,0.2)", baseScale: 0.10 },
+  { name: "Lionfish", icon: "/assets/fish-images/lionfish.png", catchAsset: "/assets/catch/lionfish-salt-rare.png", catchW: 423, catchH: 336, creatureFolder: "lionfish-salt-rare", idleFrames: 10, walkFrames: 10, points: 130, rarity: "rare", weight: 4, minDepth: 0.45, speed: 0.8, description: "A venomous lionfish with elaborate striped fins. Beautiful but deadly.", tint: "rgba(180,140,80,0.2)", baseScale: 0.09 },
+  { name: "Hammerhead Shark", icon: "/assets/fish-images/hammerhead-shark.png", catchAsset: "/assets/catch/hammerhead-shark-blue-legendary.png", catchW: 773, catchH: 382, creatureFolder: "hammerhead-shark-blue-legendary", idleFrames: 10, walkFrames: 10, points: 350, rarity: "legendary", weight: 0.8, minDepth: 0.6, speed: 2.0, description: "A massive hammerhead shark. Its wide head detects prey with uncanny precision.", tint: "rgba(80,100,140,0.3)", baseScale: 0.10 },
+  { name: "Pink Jellyfish", icon: "/assets/fish-images/pink-jellyfish.png", catchAsset: "/assets/catch/pink-jellyfish-pink-uncommon.png", catchW: 143, catchH: 225, creatureFolder: "pink-jellyfish-pink-uncommon", idleFrames: 10, walkFrames: 10, points: 40, rarity: "uncommon", weight: 15, minDepth: 0.3, speed: 0.6, description: "A pink jellyfish pulsing gracefully through the water.", tint: "rgba(240,120,180,0.2)", baseScale: 0.14 },
+  { name: "Purple Jellyfish", icon: "/assets/fish-images/purple-jellyfish.png", catchAsset: "/assets/catch/purple-jellyfish-purple-rare.png", catchW: 196, catchH: 294, creatureFolder: "purple-jellyfish-purple-rare", idleFrames: 10, walkFrames: 10, points: 85, rarity: "rare", weight: 5, minDepth: 0.5, speed: 0.5, description: "A majestic purple jellyfish trailing long, luminous tentacles.", tint: "rgba(100,40,200,0.25)", baseScale: 0.15 },
+  { name: "Sea Urchin", icon: "/assets/fish-images/sea-urchin.png", catchAsset: "/assets/catch/sea-urchin-dark-common.png", catchW: 311, catchH: 318, creatureFolder: "sea-urchin-dark-common", idleFrames: 10, walkFrames: 10, points: 15, rarity: "common", weight: 20, minDepth: 0.2, speed: 0.3, description: "A spiny sea urchin crawling along the ocean floor.", tint: "rgba(40,30,60,0.15)", bottomDweller: true, baseScale: 0.05 },
 ];
 
 const BETA_EGG_MAX_STOCK = 50;
@@ -849,6 +849,9 @@ interface SwimmingFish {
   crabDigging?: boolean;
   crabDigAlpha?: number;
   crabVertDir?: number;
+  approachPhase?: number;      // 0=curious swim-by, 1=circling, 2=dart to bite
+  approachTimer?: number;      // frames remaining in current phase
+  approachOrbitAngle?: number; // orbit angle for circling phase
 }
 
 interface Predator {
@@ -4856,49 +4859,99 @@ export default function FishingGame() {
         const fish = s.swimmingFish[i];
 
         if (fish.approachingHook && (s.gameState === "waiting")) {
-          const interceptY = Math.max(fish.baseY, Math.min(s.hookY, fish.baseY + 40));
-          const dx = s.hookX - fish.x;
-          const dy = interceptY - fish.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+          const phase = fish.approachPhase || 0;
+          fish.approachTimer = (fish.approachTimer || 0) - dt;
           const hookDist = Math.sqrt((s.hookX - fish.x) ** 2 + (s.hookY - fish.y) ** 2);
-          if (hookDist > 12) {
-            fish.x += (dx / Math.max(1, Math.abs(dx))) * fish.speed * 1.5 * dt;
-            fish.y += (dy / Math.max(1, dist)) * fish.speed * 0.8 * dt;
-            fish.direction = dx > 0 ? 1 : -1;
+
+          if (phase === 0) {
+            // CURIOUS: Keep swimming naturally, gently steer toward hook area
+            fish.wobblePhase += 0.04 * dt;
+            fish.y = fish.baseY + Math.sin(fish.wobblePhase) * fish.wobbleAmp;
+            const toHookX = s.hookX - fish.x;
+            // Bias direction toward hook — occasional course corrections, not instant snap
+            fish.dirChangeTimer -= dt;
+            if (fish.dirChangeTimer <= 0) {
+              fish.direction = toHookX > 0 ? 1 : -1;
+              fish.speed = fish.type.speed * (0.8 + Math.random() * 0.5);
+              fish.dirChangeTimer = 20 + Math.random() * 40;
+            }
+            fish.x += fish.direction * fish.speed * dt;
+            // Gently drift Y toward hook depth
+            const targetY = Math.max(fish.baseY, Math.min(s.hookY, fish.baseY + 60));
+            fish.baseY += (targetY - fish.baseY) * 0.005 * dt;
+            // Transition to circling when within ~120px
+            if (hookDist < 120 || (fish.approachTimer || 0) <= 0) {
+              fish.approachPhase = 1;
+              fish.approachTimer = 50 + Math.random() * 70;
+              fish.approachOrbitAngle = Math.atan2(fish.y - s.hookY, fish.x - s.hookX);
+            }
+          } else if (phase === 1) {
+            // CIRCLING: Orbit around hook, tightening radius
+            const orbitSpeed = 0.04 + fish.type.speed * 0.015;
+            fish.approachOrbitAngle = (fish.approachOrbitAngle || 0) + orbitSpeed * dt;
+            const timeLeft = Math.max(0, fish.approachTimer || 0);
+            const maxTime = 120;
+            const progress = 1 - (timeLeft / maxTime);
+            const orbitRadius = Math.max(15, 100 * (1 - progress * 0.85));
+            const targetX = s.hookX + Math.cos(fish.approachOrbitAngle) * orbitRadius;
+            const targetY = s.hookY + Math.sin(fish.approachOrbitAngle) * orbitRadius * 0.5;
+            // Smooth interpolation toward orbit position
+            fish.x += (targetX - fish.x) * 0.06 * dt;
+            fish.y += (targetY - fish.y) * 0.06 * dt;
+            fish.direction = Math.cos(fish.approachOrbitAngle + Math.PI * 0.5) > 0 ? 1 : -1;
+            // Small wobble overlay for liveliness
+            fish.wobblePhase += 0.06 * dt;
+            fish.y += Math.sin(fish.wobblePhase) * 2;
+            // Transition to dart when close enough or time runs out
+            if ((fish.approachTimer || 0) <= 0 || hookDist < 25) {
+              fish.approachPhase = 2;
+              fish.approachTimer = 15 + Math.random() * 10;
+              fish.speed = fish.type.speed * 2.5;
+            }
           } else {
-            const lure = LURES[s.equippedLure] || LURES[0];
-            const tentacledFish = ["Kraken", "Octopus", "Jellyfish"];
-            if (lure.protection?.noTentacleSteal && tentacledFish.includes(fish.type.name)) {
-              fish.approachingHook = false;
-              fish.direction *= -1;
-              fish.speed = fish.type.speed * 3;
-              fish.dirChangeTimer = 120;
-              addParticles(fish.x, fish.y, 6, "#aa44ff", 2, "sparkle");
+            // DART: Quick burst toward hook to bite
+            const dx = s.hookX - fish.x;
+            const dy = s.hookY - fish.y;
+            const dist = Math.max(1, Math.sqrt(dx * dx + dy * dy));
+            fish.x += (dx / dist) * fish.speed * 1.8 * dt;
+            fish.y += (dy / dist) * fish.speed * 1.2 * dt;
+            fish.direction = dx > 0 ? 1 : -1;
+            if (hookDist <= 14 || (fish.approachTimer || 0) <= 0) {
+              const lure = LURES[s.equippedLure] || LURES[0];
+              const tentacledFish = ["Kraken", "Octopus", "Jellyfish"];
+              if (lure.protection?.noTentacleSteal && tentacledFish.includes(fish.type.name)) {
+                fish.approachingHook = false;
+                fish.approachPhase = 0;
+                fish.direction *= -1;
+                fish.speed = fish.type.speed * 3;
+                fish.dirChangeTimer = 120;
+                addParticles(fish.x, fish.y, 6, "#aa44ff", 2, "sparkle");
+                continue;
+              }
+              s.gameState = "bite";
+              const vitBonus = 1 + s.attributes.Vitality * 0.02 * (1 + s.attributes.Tactics * 0.01);
+              s.biteTimer = (120 + Math.random() * 80) * vitBonus;
+              s.exclamationTimer = 0;
+              s.currentCatch = fish.type;
+              s.hookedFishX = fish.x;
+              s.hookedFishY = fish.y;
+              s.hookedFishDir = fish.direction;
+              s.hookedFishFrame = 0;
+              s.hookedFishFrameTimer = 0;
+              s.hookedFishVX = (Math.random() > 0.5 ? 1 : -1) * fish.speed;
+              s.hookedFishSize = fish.sizeMultiplier;
+              const junkChance = (lure.protection?.noJunk) ? 0 : 0.08;
+              if (Math.random() < junkChance) {
+                s.currentCatch = null;
+                s.currentJunk = JUNK_ITEMS[Math.floor(Math.random() * JUNK_ITEMS.length)];
+              } else { s.currentJunk = null; }
+              addParticles(s.hookX, waterY, 10, "#5dade2", 2.5, "splash");
+              addRipple(s.hookX, waterY);
+              s.screenShake = 3;
+              s.swimmingFish.splice(i, 1);
+              syncUI();
               continue;
             }
-            s.gameState = "bite";
-            const vitBonus = 1 + s.attributes.Vitality * 0.02 * (1 + s.attributes.Tactics * 0.01);
-            s.biteTimer = (120 + Math.random() * 80) * vitBonus;
-            s.exclamationTimer = 0;
-            s.currentCatch = fish.type;
-            s.hookedFishX = fish.x;
-            s.hookedFishY = fish.y;
-            s.hookedFishDir = fish.direction;
-            s.hookedFishFrame = 0;
-            s.hookedFishFrameTimer = 0;
-            s.hookedFishVX = (Math.random() > 0.5 ? 1 : -1) * fish.speed;
-            s.hookedFishSize = fish.sizeMultiplier;
-            const junkChance = (lure.protection?.noJunk) ? 0 : 0.08;
-            if (Math.random() < junkChance) {
-              s.currentCatch = null;
-              s.currentJunk = JUNK_ITEMS[Math.floor(Math.random() * JUNK_ITEMS.length)];
-            } else { s.currentJunk = null; }
-            addParticles(s.hookX, waterY, 10, "#5dade2", 2.5, "splash");
-            addRipple(s.hookX, waterY);
-            s.screenShake = 3;
-            s.swimmingFish.splice(i, 1);
-            syncUI();
-            continue;
           }
         } else if (fish.type.beachCrab) {
           if (fish.crabDigging) {
@@ -5904,8 +5957,19 @@ export default function FishingGame() {
       }
 
       if (s.gameState === "bite" || s.gameState === "reeling") {
-        const creatureScale = SCALE * 0.65 * s.hookedFishSize;
-        const fishSpriteW = 48 * creatureScale;
+        // Compute hooked fish scale using baseScale + minimum size enforcement
+        const creatureFolder = s.currentCatch?.creatureFolder || "1";
+        const walkFrames = s.currentCatch?.walkFrames || 4;
+        const hookWalkImg = getImg(`/assets/creatures/${creatureFolder}/Walk.png`);
+        const hookFrameW = hookWalkImg && hookWalkImg.naturalWidth > 0 ? hookWalkImg.naturalWidth / walkFrames : 48;
+        const hookFrameH = hookWalkImg && hookWalkImg.naturalHeight > 0 ? hookWalkImg.naturalHeight : 48;
+        const hookMaxDim = Math.max(hookFrameW, hookFrameH);
+        const baseScaleVal = s.currentCatch?.baseScale || 1.0;
+        const swimScale = SCALE * 0.65 * s.hookedFishSize * baseScaleVal;
+        const minHookScale = 80 / hookMaxDim;
+        const creatureScale = Math.max(swimScale, minHookScale * s.hookedFishSize);
+
+        const fishSpriteW = hookFrameW * creatureScale;
         const fishMouthX = s.hookedFishX + (s.hookedFishDir > 0 ? fishSpriteW * 0.8 : fishSpriteW * 0.2);
         const fishMouthY = s.hookedFishY + 12 * creatureScale;
 
@@ -5938,9 +6002,6 @@ export default function FishingGame() {
         const fishDepth = (s.hookedFishY - waterY) / (H - waterY);
         const depthAlpha = 0.9 - fishDepth * 0.25;
         ctx.globalAlpha = depthAlpha;
-
-        const creatureFolder = s.currentCatch?.creatureFolder || "1";
-        const walkFrames = s.currentCatch?.walkFrames || 4;
         if (s.currentCatch?.beachCrab && s.currentCatch?.spriteSheet) {
           const crabImg = getImg(s.currentCatch.spriteSheet);
           if (crabImg && crabImg.complete) {
@@ -6385,6 +6446,9 @@ export default function FishingGame() {
                 Math.abs(a.x - s.hookX) < Math.abs(b.x - s.hookX) ? a : b
               );
               closest.approachingHook = true;
+              closest.approachPhase = 0;
+              closest.approachTimer = 60 + Math.random() * 80;
+              closest.approachOrbitAngle = Math.atan2(closest.y - s.hookY, closest.x - s.hookX);
             } else if (Math.random() < 0.15 * chumAttract * fatigueMult) {
               const hookWorldX = s.hookX;
               const isHookOnBeach = hookWorldX > W * 2.8;
@@ -6398,6 +6462,9 @@ export default function FishingGame() {
                 newFish.x = s.hookX + (Math.random() > 0.5 ? 1 : -1) * (200 + Math.random() * 100);
                 newFish.y = isHookOnBeach ? (waterY + 5 + Math.random() * 30) : (newFish.baseY);
                 newFish.approachingHook = true;
+                newFish.approachPhase = 0;
+                newFish.approachTimer = 60 + Math.random() * 80;
+                newFish.approachOrbitAngle = 0;
               }
             }
             const vitWaitReduction = 1 + s.attributes.Vitality * 0.012 * (1 + s.attributes.Tactics * 0.01);
