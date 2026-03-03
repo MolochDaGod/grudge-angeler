@@ -2465,7 +2465,7 @@ export default function FishingGame() {
         const hutCheckX = W * 0.85 + (192 * 2.2) / 2;
         s.nearHut = !s.inBoat && Math.abs(s.playerX - hutCheckX) < 80 && s.gameState === "idle" && s.fishingLicense;
 
-        const baitShopCenterX = W * 2.85 + s.baitShopOffsetX + (192 * s.baitShopScale) / 2;
+        const baitShopCenterX = W * 2.7 + s.baitShopOffsetX + (192 * s.baitShopScale) / 2;
         s.nearBaitShop = !s.inBoat && Math.abs(s.playerX - baitShopCenterX) < 80 && s.gameState === "idle";
 
         s.nearCrab = -1;
@@ -4587,10 +4587,10 @@ export default function FishingGame() {
       // Beach Shop Building - positioned at waterline
       if (s.gameState !== "title" && s.gameState !== "charSelect") {
         const bsScale = s.baitShopScale;
-        const bsX = W * 2.85 + s.baitShopOffsetX;
+        const bsX = W * 2.7 + s.baitShopOffsetX;
         const bsW = 192 * bsScale;
         const bsH = 122 * bsScale;
-        const bsY = pierY - bsH + 35 + s.baitShopOffsetY;
+        const bsY = pierY - bsH + 10 + s.baitShopOffsetY;
         drawImage("/assets/objects/Fishing_hut.png", bsX, bsY, bsScale);
 
         ctx.save();
@@ -5099,14 +5099,27 @@ export default function FishingGame() {
         } else {
           const surfaceTintCutoff = 0.25;
           const applyTint = fishDepth > surfaceTintCutoff ? (fish.type.tint || null) : null;
-          drawSprite(
-            `/assets/creatures/${fish.type.creatureFolder}/Walk.png`,
-            fish.frame, fish.type.walkFrames,
-            fish.x, fish.y, creatureScale,
-            fish.direction < 0,
-            applyTint,
-            fish.type.spriteFrameH
-          );
+          const walkSrc = `/assets/creatures/${fish.type.creatureFolder}/Walk.png`;
+          const walkImg = getImg(walkSrc);
+          if (walkImg && walkImg.complete && walkImg.naturalWidth > 0) {
+            drawSprite(
+              walkSrc,
+              fish.frame, fish.type.walkFrames,
+              fish.x, fish.y, creatureScale,
+              fish.direction < 0,
+              applyTint,
+              fish.type.spriteFrameH
+            );
+          } else {
+            // Fallback: render using catch asset or icon when creature sprite unavailable
+            const fbSrc = fish.type.catchAsset || fish.type.icon;
+            const fbImg = getImg(fbSrc);
+            if (fbImg && fbImg.complete && fbImg.naturalWidth > 0) {
+              const targetH = FRAME_H * creatureScale;
+              const fbScale = targetH / fbImg.naturalHeight;
+              drawSprite(fbSrc, 0, 1, fish.x, fish.y, fbScale, fish.direction < 0, applyTint);
+            }
+          }
         }
         if (fish.type.rarity !== "common") {
           const crownImg = getImg("/assets/rarity_crown.png");
@@ -5840,6 +5853,33 @@ export default function FishingGame() {
         s.ropeSegments[0].y = rodTipY;
       }
 
+      // Draw bait/lure dangling from rod tip when idle
+      if (s.gameState === "idle" || s.gameState === "casting") {
+        const eqLureIdle = LURES[s.equippedLure];
+        const baitDangleY = rodTipY + 8;
+        const baitSize = 10;
+        if (eqLureIdle.crabSpriteSheet) {
+          const crabImg = getImg(eqLureIdle.crabSpriteSheet);
+          if (crabImg && crabImg.complete && crabImg.naturalWidth > 0) {
+            const wobble = Math.sin(s.time * 0.12) * 1.5;
+            ctx.save();
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(crabImg, 0, 0, crabImg.naturalWidth, crabImg.naturalHeight,
+              rodTipX - baitSize / 2 + wobble, baitDangleY, baitSize, baitSize);
+            ctx.restore();
+          }
+        } else {
+          const lureIcon = getImg(eqLureIdle.icon);
+          if (lureIcon && lureIcon.complete && lureIcon.naturalWidth > 0) {
+            const wobble = Math.sin(s.time * 0.12) * 1.5;
+            ctx.save();
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(lureIcon, rodTipX - baitSize / 2 + wobble, baitDangleY, baitSize, baitSize);
+            ctx.restore();
+          }
+        }
+      }
+
       // Fishing line, bobber, hook, and hooked fish
       if (s.castLineFlying && s.ropeSegments.length > 0) {
         const lead = s.ropeSegments[s.ropeSegments.length - 1];
@@ -5863,6 +5903,27 @@ export default function FishingGame() {
         ctx.stroke();
         ctx.fillStyle = "#bbb";
         ctx.fillRect(lead.x + 2, lead.y + flyBobSize + 2, 1.5, 4);
+        // Draw bait/lure on flying hook
+        const eqLureFly = LURES[s.equippedLure];
+        const flyBaitSize = 10;
+        if (eqLureFly.crabSpriteSheet) {
+          const crabImg = getImg(eqLureFly.crabSpriteSheet);
+          if (crabImg && crabImg.complete && crabImg.naturalWidth > 0) {
+            ctx.save();
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(crabImg, 0, 0, crabImg.naturalWidth, crabImg.naturalHeight,
+              lead.x - flyBaitSize / 2 + 2, lead.y + flyBobSize + 7, flyBaitSize, flyBaitSize);
+            ctx.restore();
+          }
+        } else {
+          const lureIcon = getImg(eqLureFly.icon);
+          if (lureIcon && lureIcon.complete && lureIcon.naturalWidth > 0) {
+            ctx.save();
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(lureIcon, lead.x - flyBaitSize / 2 + 2, lead.y + flyBobSize + 7, flyBaitSize, flyBaitSize);
+            ctx.restore();
+          }
+        }
       }
       if (s.gameState === "waiting" && !s.castLineFlying) {
         s.bobberBob = Math.sin(s.time * 0.08) * 2.5;
@@ -5951,6 +6012,16 @@ export default function FishingGame() {
             const wobble = Math.sin(s.time * 0.15) * 2;
             ctx.drawImage(crabSheet, 0, 0, crabFS, crabFS,
               s.hookX - crabDrawSize / 2 + 2, s.hookY + 1 + wobble, crabDrawSize, crabDrawSize);
+            ctx.restore();
+          }
+        } else {
+          const lureIcon = getImg(eqLure.icon);
+          if (lureIcon && lureIcon.complete && lureIcon.naturalWidth > 0) {
+            const lureDrawSize = 12;
+            const wobble = Math.sin(s.time * 0.15) * 2;
+            ctx.save();
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(lureIcon, s.hookX - lureDrawSize / 2 + 2, s.hookY + 1 + wobble, lureDrawSize, lureDrawSize);
             ctx.restore();
           }
         }
@@ -6917,7 +6988,7 @@ export default function FishingGame() {
       }
 
       if (s.chumActiveTimer > 0) {
-        s.chumActiveTimer -= dt;
+        s.chumActiveTimer -= dt / 60;
         const chumItem = CHUM_ITEMS[s.chumActiveType];
         if (Math.random() < 0.12 * dt) {
           addParticles(s.playerX + (Math.random() - 0.5) * 60, waterY + 5, 2, "#88ffcc", 1.5, "bubble");
@@ -6931,7 +7002,7 @@ export default function FishingGame() {
           s.chumActiveTimer = 0;
         }
       }
-      if (s.chumCooldown > 0) s.chumCooldown -= dt;
+      if (s.chumCooldown > 0) s.chumCooldown -= dt / 60;
       if (s.netCooldown > 0) {
         s.netCooldown -= dt;
         if (s.netCooldown <= 0) {
@@ -7796,10 +7867,10 @@ export default function FishingGame() {
       return;
     }
     const gbsScale = s.baitShopScale;
-    const gbsX = W * 2.85 + s.baitShopOffsetX;
+    const gbsX = W * 2.7 + s.baitShopOffsetX;
     const gbsW = 192 * gbsScale;
     const gbsH = 122 * gbsScale;
-    const gbsY = H * 0.38 - gbsH + 35 + s.baitShopOffsetY;
+    const gbsY = H * 0.38 - gbsH + 10 + s.baitShopOffsetY;
     if (worldX >= gbsX && worldX <= gbsX + gbsW && worldY >= gbsY && worldY <= gbsY + gbsH) {
       s.gizmoSelected = -12;
       s.gizmoDragging = true;
@@ -8048,8 +8119,8 @@ export default function FishingGame() {
       } else if (s.gizmoSelected === -12) {
         const canvas = canvasRef.current;
         if (canvas) {
-          const baseBsX = canvas.width * 2.85;
-          const baseBsY = canvas.height * 0.38 - 122 * s.baitShopScale + 35;
+          const baseBsX = canvas.width * 2.7;
+          const baseBsY = canvas.height * 0.38 - 122 * s.baitShopScale + 10;
           s.baitShopOffsetX = (worldX - s.gizmoDragOffX) - baseBsX;
           s.baitShopOffsetY = (worldY - s.gizmoDragOffY) - baseBsY;
         }
@@ -8097,8 +8168,8 @@ export default function FishingGame() {
       } else if (s.gizmoSelected === -12) {
         const canvas = canvasRef.current;
         if (canvas) {
-          s.baitShopOffsetX = (worldX - s.gizmoDragOffX) - canvas.width * 2.85;
-          s.baitShopOffsetY = (worldY - s.gizmoDragOffY) - (canvas.height * 0.38 - 122 * s.baitShopScale + 35);
+          s.baitShopOffsetX = (worldX - s.gizmoDragOffX) - canvas.width * 2.7;
+          s.baitShopOffsetY = (worldY - s.gizmoDragOffY) - (canvas.height * 0.38 - 122 * s.baitShopScale + 10);
         }
       } else if (s.gizmoSelected === -13) {
         const canvas = canvasRef.current;
@@ -8630,7 +8701,7 @@ export default function FishingGame() {
                   <div style={{ width: `${(uiState.chumActiveTimer / CHUM_ITEMS[uiState.chumActiveType].duration) * 100}%`, height: "100%", background: uiState.chumActiveTimer < 60 ? "#ef4444" : "#f59e0b", borderRadius: 2, transition: "width 0.3s" }} />
                 </div>
                 <div className="flex justify-between">
-                  <span style={{ color: "#78909c", fontSize: 7 }}>{Math.ceil(uiState.chumActiveTimer / 60)}s left</span>
+                  <span style={{ color: "#78909c", fontSize: 7 }}>{Math.floor(uiState.chumActiveTimer / 60)}:{String(Math.floor(uiState.chumActiveTimer % 60)).padStart(2, '0')} left</span>
                   <span style={{ color: "#22c55e", fontSize: 7 }}>x{CHUM_ITEMS[uiState.chumActiveType].fishAttract.toFixed(1)} attract</span>
                 </div>
               </div>
@@ -8639,7 +8710,7 @@ export default function FishingGame() {
           {uiState.chumCooldown > 0 && uiState.chumActiveType < 0 && (
             <div className="absolute flex items-center gap-2" style={{ left: 12, bottom: 'ontouchstart' in window ? 140 : 60, zIndex: 30, background: "rgba(8,15,25,0.8)", borderRadius: 8, border: "1px solid rgba(255,255,255,0.1)", padding: "5px 10px" }} data-testid="chum-cooldown-hud">
               <span style={{ color: "#607d8b", fontSize: 9, fontFamily: "'Press Start 2P', monospace" }}>CHUM CD</span>
-              <span style={{ color: "#78909c", fontSize: 9 }}>{Math.ceil(uiState.chumCooldown / 60)}s</span>
+              <span style={{ color: "#78909c", fontSize: 9 }}>{Math.floor(uiState.chumCooldown / 60)}:{String(Math.floor(uiState.chumCooldown % 60)).padStart(2, '0')}</span>
             </div>
           )}
 

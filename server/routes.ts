@@ -7,6 +7,7 @@ import fs from "fs";
 import path from "path";
 
 const baseUrl = process.env.BASE_URL || "https://grudge-angeler.vercel.app";
+const playUrl = process.env.PLAY_URL || "https://puter.com/app/grudge-angler";
 
 const RARITY_COLORS: Record<string, number> = {
   common: 0xa0a0a0,
@@ -62,7 +63,7 @@ async function sendDiscordCatch(data: {
       { name: "Length", value: `${data.length}"`, inline: true },
       { name: "Earnings", value: `${data.earnings} gbux`, inline: true },
     ],
-    footer: { text: `Grudge Angeler \u2022 ${baseUrl.replace(/^https?:\/\//, '')}`, icon_url: logoUrl },
+    footer: { text: `Grudge Angeler \u2022 ${playUrl.replace(/^https?:\/\//, '')}`, icon_url: logoUrl },
     timestamp: new Date().toISOString(),
   };
 
@@ -448,7 +449,7 @@ export async function registerRoutes(
 
     const logoUrl = `${baseUrl}/assets/icons/grudge/grudge_logo.png`;
     const bannerUrl = `${baseUrl}/assets/icons/grudge/promo-banner.png`;
-    const playLink = baseUrl;
+    const playLink = playUrl;
 
     const title = isReminder
       ? "\u23F0 TOURNAMENT REMINDER \u2014 1 HOUR LEFT!"
@@ -507,7 +508,7 @@ export async function registerRoutes(
     if (!webhookUrl) return;
 
     const logoUrl = `${baseUrl}/assets/icons/grudge/grudge_logo.png`;
-    const playLink = baseUrl;
+    const playLink = playUrl;
 
     try {
       const results = await storage.getTournamentResults(date, 10);
