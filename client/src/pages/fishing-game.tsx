@@ -4590,7 +4590,7 @@ export default function FishingGame() {
         const bsX = W * 2.7 + s.baitShopOffsetX;
         const bsW = 192 * bsScale;
         const bsH = 122 * bsScale;
-        const bsY = pierY - bsH + 10 + s.baitShopOffsetY;
+        const bsY = pierY - bsH + 10 + (FRAME_H * SCALE * 2) + s.baitShopOffsetY;
         drawImage("/assets/objects/Fishing_hut.png", bsX, bsY, bsScale);
 
         ctx.save();
@@ -7870,7 +7870,7 @@ export default function FishingGame() {
     const gbsX = W * 2.7 + s.baitShopOffsetX;
     const gbsW = 192 * gbsScale;
     const gbsH = 122 * gbsScale;
-    const gbsY = H * 0.38 - gbsH + 10 + s.baitShopOffsetY;
+    const gbsY = H * 0.38 - gbsH + 10 + (FRAME_H * SCALE * 2) + s.baitShopOffsetY;
     if (worldX >= gbsX && worldX <= gbsX + gbsW && worldY >= gbsY && worldY <= gbsY + gbsH) {
       s.gizmoSelected = -12;
       s.gizmoDragging = true;
@@ -8120,7 +8120,7 @@ export default function FishingGame() {
         const canvas = canvasRef.current;
         if (canvas) {
           const baseBsX = canvas.width * 2.7;
-          const baseBsY = canvas.height * 0.38 - 122 * s.baitShopScale + 10;
+          const baseBsY = canvas.height * 0.38 - 122 * s.baitShopScale + 10 + (FRAME_H * SCALE * 2);
           s.baitShopOffsetX = (worldX - s.gizmoDragOffX) - baseBsX;
           s.baitShopOffsetY = (worldY - s.gizmoDragOffY) - baseBsY;
         }
@@ -8169,7 +8169,7 @@ export default function FishingGame() {
         const canvas = canvasRef.current;
         if (canvas) {
           s.baitShopOffsetX = (worldX - s.gizmoDragOffX) - canvas.width * 2.7;
-          s.baitShopOffsetY = (worldY - s.gizmoDragOffY) - (canvas.height * 0.38 - 122 * s.baitShopScale + 10);
+          s.baitShopOffsetY = (worldY - s.gizmoDragOffY) - (canvas.height * 0.38 - 122 * s.baitShopScale + 10 + (FRAME_H * SCALE * 2));
         }
       } else if (s.gizmoSelected === -13) {
         const canvas = canvasRef.current;
