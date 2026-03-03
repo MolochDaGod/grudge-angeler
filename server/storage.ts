@@ -117,7 +117,7 @@ export class DatabaseStorage implements IStorage {
         largestCatch: row.largest_catch,
         largestFishName: row.largest_fish_name,
         rarityScore: row.rarity_score,
-        compositeScore: Math.max(row.composite_score, entry.compositeScore),
+        compositeScore: Math.max(row.composite_score, entry.compositeScore ?? 0),
         reward: row.reward,
         createdAt: row.created_at,
       } as TournamentEntry;
