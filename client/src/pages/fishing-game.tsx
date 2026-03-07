@@ -1046,6 +1046,7 @@ export default function FishingGame() {
     sessionCatches: 0,
     showLeaderboard: false,
     leaderboardTab: "biggest" as "biggest" | "session" | "legendary",
+    leaderboardTimeFilter: "alltime" as "daily" | "weekly" | "alltime",
     leaderboardData: [] as any[],
     leaderboardLoading: false,
     showInstallPrompt: false,
@@ -1339,6 +1340,7 @@ export default function FishingGame() {
     headOfLegendsNotifTimer: 0,
     showLeaderboard: false,
     leaderboardTab: "biggest" as "biggest" | "session" | "legendary",
+    leaderboardTimeFilter: "alltime" as "daily" | "weekly" | "alltime",
     leaderboardData: [] as any[],
     leaderboardLoading: false,
     showInstallPrompt: false,
@@ -1353,6 +1355,8 @@ export default function FishingGame() {
   });
 
   const [discordUser, setDiscordUser] = useState<{ discordId: string; username: string; avatar: string | null } | null>(null);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [assetsReady, setAssetsReady] = useState(false);
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -1752,7 +1756,12 @@ export default function FishingGame() {
       "/assets/creatures/seal-at-the-seam-cosmic-ultra_rare/frames/1.png",
       "/assets/creatures/seal-at-the-seam-cosmic-ultra_rare/frames/2.png",
     ];
-    Promise.all(assets.map(a => loadImage(a)));
+    let loadedCount = 0;
+    const totalAssets = assets.length;
+    Promise.all(assets.map(a => loadImage(a).then(() => {
+      loadedCount++;
+      setLoadingProgress(Math.floor((loadedCount / totalAssets) * 100));
+    }))).then(() => setAssetsReady(true));
     generateBounties();
   }, [loadImage, generateBounties]);
 
@@ -5003,8 +5012,31 @@ export default function FishingGame() {
             fish.dirChangeTimer = 60 + Math.random() * 120;
           }
           fish.x += fish.direction * fish.speed * dt;
+          // Species-specific wobble patterns
+          const fname = fish.type.name.toLowerCase();
           fish.wobblePhase += 0.04 * dt;
-          fish.y = fish.baseY + Math.sin(fish.wobblePhase) * fish.wobbleAmp;
+          if (fname.includes("jellyfish")) {
+            // Jellyfish: slow vertical pulsing bob
+            fish.y = fish.baseY + Math.sin(fish.wobblePhase * 0.6) * (fish.wobbleAmp * 2.5) + Math.sin(fish.wobblePhase * 1.8) * 1.5;
+          } else if (fname.includes("eel") || fname === "moray eel") {
+            // Eels: S-wave sinuous slither
+            fish.y = fish.baseY + Math.sin(fish.wobblePhase * 1.5) * fish.wobbleAmp + Math.sin(fish.wobblePhase * 3) * (fish.wobbleAmp * 0.3);
+          } else if (fname.includes("whale") || fname.includes("leviathan")) {
+            // Large creatures: slow majestic undulation
+            fish.y = fish.baseY + Math.sin(fish.wobblePhase * 0.35) * (fish.wobbleAmp * 1.8);
+          } else if (fname.includes("squid") || fname.includes("octopus") || fname.includes("kraken")) {
+            // Cephalopods: pulse-jet motion
+            fish.y = fish.baseY + Math.sin(fish.wobblePhase * 0.8) * fish.wobbleAmp + Math.abs(Math.sin(fish.wobblePhase * 1.6)) * 2;
+          } else if (fname.includes("stingray")) {
+            // Stingray: gentle gliding with slight wave
+            fish.y = fish.baseY + Math.sin(fish.wobblePhase * 0.5) * (fish.wobbleAmp * 0.6);
+          } else if (fname.includes("swordfish") || fname.includes("shark")) {
+            // Fast predators: tight, rapid oscillation
+            fish.y = fish.baseY + Math.sin(fish.wobblePhase * 1.2) * (fish.wobbleAmp * 0.7);
+          } else {
+            // Default: standard sinusoidal
+            fish.y = fish.baseY + Math.sin(fish.wobblePhase) * fish.wobbleAmp;
+          }
 
           const beachBound = W * 2.85;
           if (fish.x >= beachBound) {
@@ -5041,7 +5073,24 @@ export default function FishingGame() {
         const finalAlpha = depthAlpha * (weatherVisibility * s.weatherTransition + 1 * (1 - s.weatherTransition));
         ctx.globalAlpha = finalAlpha;
 
-        const creatureScale = SCALE * 0.65 * fish.sizeMultiplier * (fish.type.baseScale || 1.0);
+        // Scale breathing — subtle oscillation for liveliness
+        const breathe = 1 + Math.sin(s.time * 0.04 + fish.wobblePhase) * 0.015;
+        const creatureScale = SCALE * 0.65 * fish.sizeMultiplier * (fish.type.baseScale || 1.0) * breathe;
+
+        // Ultra rare / legendary particle trails
+        if ((fish.type.rarity === "ultra_rare" || fish.type.rarity === "legendary") && Math.random() < 0.12 * dt) {
+          const auraColors: Record<string, string> = {
+            "Phantom Minnow": "rgba(0,255,200,0.6)", "Volcanic Perch": "rgba(255,80,0,0.6)",
+            "Abyssal Bass": "rgba(120,0,255,0.6)", "Frost Catfish": "rgba(100,200,255,0.6)",
+            "Storm Swordfish": "rgba(255,255,60,0.6)", "Celestial Whale": "rgba(180,120,255,0.6)",
+            "Neon Eel": "rgba(0,255,120,0.6)", "Golden Salmon": "rgba(255,215,0,0.6)",
+            "Shadow Leviathan": "rgba(140,15,15,0.6)", "The Seal at the Seam": "rgba(20,40,200,0.6)",
+            "Whale": "rgba(40,80,180,0.4)", "Kraken": "rgba(140,30,20,0.4)", "Hammerhead Shark": "rgba(80,100,140,0.4)",
+          };
+          const pColor = auraColors[fish.type.name] || (fish.type.tint || "rgba(255,255,255,0.4)");
+          const fishW = (fish.type.spriteFrameH || FRAME_H) * creatureScale;
+          addParticles(fish.x + fishW * 0.5 + (Math.random() - 0.5) * fishW * 0.6, fish.y + fishW * 0.3, 1, pColor, 0.8, "sparkle");
+        }
         if (fish.type.beachCrab && fish.type.spriteSheet) {
           const crabImg = getImg(fish.type.spriteSheet);
           if (crabImg && crabImg.complete) {
@@ -5098,13 +5147,35 @@ export default function FishingGame() {
           }
         } else {
           const surfaceTintCutoff = 0.25;
-          const applyTint = fishDepth > surfaceTintCutoff ? (fish.type.tint || null) : null;
+          // Depth-based blue tint overlay — deeper fish get blue-shifted
+          let depthTint: string | null = null;
+          if (fishDepth > 0.6) {
+            const intensity = Math.min(0.35, (fishDepth - 0.6) * 0.7);
+            depthTint = `rgba(10,30,80,${intensity.toFixed(2)})`;
+          }
+          const baseTint = fishDepth > surfaceTintCutoff ? (fish.type.tint || null) : null;
+          const applyTint = depthTint || baseTint;
+
+          // Idle vs Walk sprite selection: use Idle when patrolling slowly, Walk when active
+          const isActive = fish.approachingHook || fish.speed > fish.type.speed * 0.9;
+          const idleSrc = `/assets/creatures/${fish.type.creatureFolder}/Idle.png`;
           const walkSrc = `/assets/creatures/${fish.type.creatureFolder}/Walk.png`;
+          const idleImg = getImg(idleSrc);
           const walkImg = getImg(walkSrc);
-          if (walkImg && walkImg.complete && walkImg.naturalWidth > 0) {
+          const useIdle = !isActive && idleImg && idleImg.complete && idleImg.naturalWidth > 0;
+          const spriteSrc = useIdle ? idleSrc : walkSrc;
+          const spriteImg = useIdle ? idleImg : walkImg;
+          const frameCount = useIdle ? fish.type.idleFrames : fish.type.walkFrames;
+
+          if (spriteImg && spriteImg.complete && spriteImg.naturalWidth > 0) {
+            // Caustic light shimmer near surface
+            if (fishDepth < 0.15 && fishDepth > 0) {
+              const shimmer = Math.sin(s.time * 0.08 + fish.x * 0.01) * 0.06;
+              ctx.globalAlpha = finalAlpha + shimmer;
+            }
             drawSprite(
-              walkSrc,
-              fish.frame, fish.type.walkFrames,
+              spriteSrc,
+              fish.frame, frameCount,
               fish.x, fish.y, creatureScale,
               fish.direction < 0,
               applyTint,
@@ -8234,6 +8305,15 @@ export default function FishingGame() {
   return (
     <div className="relative w-screen h-screen overflow-hidden" style={{ fontFamily: "'Press Start 2P', monospace", background: "#0a0f1a" }}>
       <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+      <style>{`
+        @keyframes fadeOverlayIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        .overlay-fade-in {
+          animation: fadeOverlayIn 0.3s ease-out;
+        }
+      `}</style>
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
@@ -8267,6 +8347,21 @@ export default function FishingGame() {
             color: "rgba(255,255,255,0.4)", fontSize: 11,
             fontFamily: "'Press Start 2P', monospace",
           }}>CLICK TO SKIP</div>
+        </div>
+      )}
+
+      {/* Loading screen overlay */}
+      {!assetsReady && uiState.gameState !== "intro" && (
+        <div
+          className="absolute inset-0 flex flex-col items-center justify-center"
+          style={{ zIndex: 25, background: "#0a0f1a", transition: "opacity 0.5s", opacity: assetsReady ? 0 : 1, pointerEvents: assetsReady ? "none" : "auto" }}
+          data-testid="loading-overlay"
+        >
+          <div style={{ color: "#4fc3f7", fontSize: 18, marginBottom: 24, textShadow: "0 0 20px rgba(79,195,247,0.5)" }}>GRUDGE ANGELER</div>
+          <div style={{ width: 220, height: 4, background: "rgba(255,255,255,0.08)", borderRadius: 2, overflow: "hidden" }}>
+            <div style={{ width: `${loadingProgress}%`, height: "100%", background: "linear-gradient(90deg, #4fc3f7, #2ecc71)", borderRadius: 2, transition: "width 0.15s ease-out" }} />
+          </div>
+          <div style={{ color: "#546e7a", fontSize: 10, marginTop: 10 }}>Loading assets... {loadingProgress}%</div>
         </div>
       )}
 
@@ -9035,7 +9130,7 @@ export default function FishingGame() {
 
           {/* Store Overlay */}
           {uiState.gameState === "store" && (
-            <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 80, background: "rgba(0,0,0,0.6)" }} data-testid="store-overlay">
+            <div className="absolute inset-0 flex items-center justify-center overlay-fade-in" style={{ zIndex: 80, background: "rgba(0,0,0,0.6)" }} data-testid="store-overlay">
               <div className="flex flex-col" style={{ background: "rgba(8,15,25,0.97)", borderRadius: 12, border: "1px solid rgba(46,204,113,0.4)", width: Math.min(440, window.innerWidth * 0.92), maxHeight: "85vh", overflow: "hidden" }} data-testid="store-panel">
                 {/* Store Header */}
                 <div className="flex items-center justify-between p-3" style={{ borderBottom: "1px solid rgba(46,204,113,0.2)" }}>
@@ -9418,7 +9513,7 @@ export default function FishingGame() {
             const roleColor = roleColors[npc.role] || "#ffffff";
             const roleLabels: Record<string, string> = { shopkeeper: "SHOP", requester: "REQUEST", mission_giver: "MISSION" };
             return (
-              <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 80, background: "rgba(0,0,0,0.5)" }} data-testid="npc-overlay">
+              <div className="absolute inset-0 flex items-center justify-center overlay-fade-in" style={{ zIndex: 80, background: "rgba(0,0,0,0.5)" }} data-testid="npc-overlay">
                 <div className="flex flex-col" style={{ background: "rgba(8,15,25,0.97)", borderRadius: 12, border: `1px solid ${roleColor}44`, width: Math.min(420, window.innerWidth * 0.9), maxHeight: "80vh", overflow: "hidden" }} data-testid="npc-panel">
                   <div className="flex items-center justify-between p-3" style={{ borderBottom: `1px solid ${roleColor}33` }}>
                     <div className="flex items-center gap-3">
@@ -10895,7 +10990,7 @@ export default function FishingGame() {
             s.showLeaderboard = !s.showLeaderboard;
             if (s.showLeaderboard) {
               setUiState(prev => ({ ...prev, showLeaderboard: true, leaderboardLoading: true }));
-              fetch(`/api/leaderboard/${s.leaderboardTab === "biggest" ? "biggest_catch" : s.leaderboardTab === "session" ? "session_catches" : "legendary_catches"}?limit=20`)
+              fetch(`/api/leaderboard/${s.leaderboardTab === "biggest" ? "biggest_catch" : s.leaderboardTab === "session" ? "session_catches" : "legendary_catches"}?limit=20&time=${s.leaderboardTimeFilter}`)
                 .then(r => r.json())
                 .then(data => setUiState(prev => ({ ...prev, leaderboardData: data, leaderboardLoading: false })))
                 .catch(() => setUiState(prev => ({ ...prev, leaderboardLoading: false })));
@@ -11154,7 +11249,7 @@ export default function FishingGame() {
           position: "absolute", inset: 0, zIndex: 60,
           background: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center",
           fontFamily: "'Press Start 2P', monospace", pointerEvents: "auto",
-        }} data-testid="leaderboard-overlay">
+        }} className="overlay-fade-in" data-testid="leaderboard-overlay">
           <div style={{
             background: "linear-gradient(135deg, rgba(10,25,50,0.98), rgba(5,15,35,0.98))",
             border: "2px solid rgba(79,195,247,0.3)", borderRadius: 16, padding: 28,
@@ -11170,7 +11265,7 @@ export default function FishingGame() {
               >X</div>
             </div>
 
-            <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+            <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
               {(["biggest", "session", "legendary"] as const).map(tab => (
                 <div
                   key={tab}
@@ -11178,8 +11273,9 @@ export default function FishingGame() {
                   onClick={() => {
                     stateRef.current.leaderboardTab = tab;
                     const cat = tab === "biggest" ? "biggest_catch" : tab === "session" ? "session_catches" : "legendary_catches";
+                    const tf = stateRef.current.leaderboardTimeFilter;
                     setUiState(prev => ({ ...prev, leaderboardTab: tab, leaderboardLoading: true }));
-                    fetch(`/api/leaderboard/${cat}?limit=20`)
+                    fetch(`/api/leaderboard/${cat}?limit=20&time=${tf}`)
                       .then(r => r.json())
                       .then(data => setUiState(prev => ({ ...prev, leaderboardData: data, leaderboardLoading: false })))
                       .catch(() => setUiState(prev => ({ ...prev, leaderboardLoading: false })));
@@ -11193,6 +11289,33 @@ export default function FishingGame() {
                   }}
                 >
                   {tab === "biggest" ? "BIGGEST CATCH" : tab === "session" ? "20 MIN SESSION" : "LEGENDARY"}
+                </div>
+              ))}
+            </div>
+
+            <div style={{ display: "flex", gap: 6, marginBottom: 16, justifyContent: "center" }}>
+              {(["daily", "weekly", "alltime"] as const).map(tf => (
+                <div
+                  key={tf}
+                  data-testid={`tab-leaderboard-time-${tf}`}
+                  onClick={() => {
+                    stateRef.current.leaderboardTimeFilter = tf;
+                    const tab = stateRef.current.leaderboardTab;
+                    const cat = tab === "biggest" ? "biggest_catch" : tab === "session" ? "session_catches" : "legendary_catches";
+                    setUiState(prev => ({ ...prev, leaderboardTimeFilter: tf, leaderboardLoading: true }));
+                    fetch(`/api/leaderboard/${cat}?limit=20&time=${tf}`)
+                      .then(r => r.json())
+                      .then(data => setUiState(prev => ({ ...prev, leaderboardData: data, leaderboardLoading: false })))
+                      .catch(() => setUiState(prev => ({ ...prev, leaderboardLoading: false })));
+                  }}
+                  style={{
+                    padding: "5px 12px", cursor: "pointer", fontSize: 8, letterSpacing: 1, borderRadius: 4,
+                    background: uiState.leaderboardTimeFilter === tf ? "rgba(241,196,15,0.15)" : "rgba(255,255,255,0.03)",
+                    border: `1px solid ${uiState.leaderboardTimeFilter === tf ? "rgba(241,196,15,0.4)" : "rgba(255,255,255,0.06)"}`,
+                    color: uiState.leaderboardTimeFilter === tf ? "#f1c40f" : "#546e7a",
+                  }}
+                >
+                  {tf === "daily" ? "TODAY" : tf === "weekly" ? "THIS WEEK" : "ALL TIME"}
                 </div>
               ))}
             </div>

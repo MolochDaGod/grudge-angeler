@@ -2,12 +2,11 @@ import type { Express, Request, Response, CookieOptions } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertLeaderboardSchema } from "@shared/schema";
-import { registerImageRoutes } from "./replit_integrations/image/routes";
 import fs from "fs";
 import path from "path";
 
 const baseUrl = process.env.BASE_URL || "https://grudge-angeler.vercel.app";
-const playUrl = process.env.PLAY_URL || "https://puter.com/app/grudge-angler";
+const playUrl = process.env.PLAY_URL || "https://grudge-angeler.vercel.app/game";
 
 const RARITY_COLORS: Record<string, number> = {
   common: 0xa0a0a0,
@@ -168,7 +167,8 @@ export async function registerRoutes(
         return res.status(400).json({ message: "Invalid category" });
       }
       const limit = Math.min(parseInt(req.query.limit as string) || 50, 100);
-      const entries = await storage.getLeaderboard(category, limit);
+      const timeFilter = (req.query.time as string) || "alltime";
+      const entries = await storage.getLeaderboard(category, limit, timeFilter);
       res.json(entries);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch leaderboard" });
@@ -606,8 +606,6 @@ export async function registerRoutes(
     lastTournamentState = status.active;
     if (status.active) lastTournamentDate = status.date;
   }, 30000);
-
-  registerImageRoutes(app);
 
   return httpServer;
 }

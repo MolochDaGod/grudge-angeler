@@ -1,13 +1,13 @@
 import { type User, type InsertUser, type LeaderboardEntry, type InsertLeaderboardEntry, leaderboardEntries, type TournamentEntry, type InsertTournamentEntry, tournamentEntries } from "@shared/schema";
 import { db } from "./db";
-import { desc, eq, and, sql } from "drizzle-orm";
+import { desc, eq, and, sql, gte } from "drizzle-orm";
 import { randomUUID } from "crypto";
 
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  getLeaderboard(category: string, limit?: number): Promise<LeaderboardEntry[]>;
+  getLeaderboard(category: string, limit?: number, timeFilter?: string): Promise<LeaderboardEntry[]>;
   submitLeaderboardEntry(entry: InsertLeaderboardEntry): Promise<LeaderboardEntry>;
   submitTournamentEntry(entry: InsertTournamentEntry): Promise<TournamentEntry>;
   getTournamentResults(tournamentDate: string, limit?: number): Promise<TournamentEntry[]>;
@@ -27,11 +27,17 @@ export class DatabaseStorage implements IStorage {
     return { ...insertUser, id };
   }
 
-  async getLeaderboard(category: string, limit = 50): Promise<LeaderboardEntry[]> {
+  async getLeaderboard(category: string, limit = 50, timeFilter?: string): Promise<LeaderboardEntry[]> {
+    const conditions = [eq(leaderboardEntries.category, category)];
+    if (timeFilter === "daily") {
+      conditions.push(gte(leaderboardEntries.createdAt, new Date(Date.now() - 24 * 60 * 60 * 1000)));
+    } else if (timeFilter === "weekly") {
+      conditions.push(gte(leaderboardEntries.createdAt, new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)));
+    }
     return await db
       .select()
       .from(leaderboardEntries)
-      .where(eq(leaderboardEntries.category, category))
+      .where(and(...conditions))
       .orderBy(desc(leaderboardEntries.value))
       .limit(limit);
   }

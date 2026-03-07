@@ -317,6 +317,96 @@ const legendaries = [
   },
 ];
 
+const CATCH_GUIDES: Record<string, {
+  rod: string;
+  lures: string[];
+  chum: string[];
+  depth: string;
+  strategy: string;
+  spawnInfo: string;
+}> = {
+  "Phantom Minnow": {
+    rod: "Carbon Rod or higher",
+    lures: ["Shadow Crab Bait \u2014 6\u00d7 legendary boost, full threat protection", "Crimson Crab Bait \u2014 6\u00d7 legendary boost, no junk"],
+    chum: ["Phosphor Dust \u2014 2\u00d7 rarity, pulls ultra rares up", "Abyssal Ooze \u2014 2.5\u00d7 rarity, ultimate depth pull"],
+    depth: "55%+ \u2014 cast into the Deep zone",
+    strategy: "The fastest legendary at 2.2 speed. Its spectral phasing makes it erratic \u2014 keep your catch zone steady and anticipate sudden direction changes. Pair high-legendary-boost crab bait with rarity chum for the best odds.",
+    spawnInfo: "0.3% base weight \u2014 the most common ultra rare, but still exceedingly rare without legendary-boosted bait",
+  },
+  "Volcanic Perch": {
+    rod: "Carbon Rod or higher",
+    lures: ["Crimson Crab Bait \u2014 directly targets Volcanic Perch, 6\u00d7 legendary", "Purple Crab Bait \u2014 3\u00d7 legendary boost, predator immunity"],
+    chum: ["Deep Sea Extract \u2014 1.8\u00d7 rarity, massive depth pull", "Fermented Brine \u2014 1.5\u00d7 rarity, strong depth pull"],
+    depth: "60%+ \u2014 the Deep Ocean, near thermal vents",
+    strategy: "Moderate speed at 1.6 but superheated. Crimson Crab Bait is the perfect choice \u2014 it specifically targets Volcanic Perch and provides 6\u00d7 legendary boost. Use depth-pulling chum to bring it within reach of lower-tier rods.",
+    spawnInfo: "0.25% base weight \u2014 uncommon among ultra rares",
+  },
+  "Abyssal Bass": {
+    rod: "Titanium Rod or higher recommended",
+    lures: ["Crimson Crab Bait \u2014 directly targets Abyssal Bass, 6\u00d7 legendary", "Dark Crab Bait \u2014 3\u00d7 legendary boost, deep dive +0.6"],
+    chum: ["Kraken Bile \u2014 2.5\u00d7 rarity, strong depth pull", "Abyssal Ooze \u2014 2.5\u00d7 rarity, ultimate depth pull"],
+    depth: "65%+ \u2014 the Abyss, where light fails",
+    strategy: "Requires deep casting to reach its 65% minimum depth. Use Titanium or Legendary Rod for the range. Crimson Crab Bait directly targets this species. Combine with Abyssal Ooze to maximize both rarity and depth pull.",
+    spawnInfo: "0.2% base weight \u2014 rare even by ultra rare standards",
+  },
+  "Frost Catfish": {
+    rod: "Carbon Rod or higher",
+    lures: ["Dark Crab Bait \u2014 3\u00d7 legendary boost, deep dive +0.6", "Green Crab Bait \u2014 targets the Catfish family, depth boost"],
+    chum: ["Deep Sea Extract \u2014 1.8\u00d7 rarity, massive depth pull", "Moonlight Essence \u2014 2\u00d7 rarity, celestial depth pull"],
+    depth: "60%+ \u2014 the Deep Ocean, in frigid currents",
+    strategy: "The slowest legendary at 0.9 speed, making the catch minigame more forgiving. Green Crab Bait specifically targets the catfish family for a bonus. Pair with depth-pulling chum to drag it up from the cold deep.",
+    spawnInfo: "0.18% base weight \u2014 a patient angler's prize",
+  },
+  "Storm Swordfish": {
+    rod: "Titanium Rod or higher \u2014 must reach 70%+ depth",
+    lures: ["Crimson Crab Bait \u2014 directly targets Storm Swordfish, 6\u00d7 legendary", "Purple Crab Bait \u2014 targets Swordfish family, 3\u00d7 legendary"],
+    chum: ["Thunder Chum \u2014 1.6\u00d7 rarity, storm depth pull", "Deep Sea Extract \u2014 1.8\u00d7 rarity, mega depth pull"],
+    depth: "70%+ \u2014 the electrified deep ocean",
+    strategy: "The fastest creature in the ocean at 2.5 speed \u2014 catching it is a test of reflexes. Crimson Crab Bait specifically targets Storm Swordfish with a massive 6\u00d7 legendary boost. Thunder Chum is thematically and mechanically ideal. Brace for a lightning-fast fight.",
+    spawnInfo: "0.12% base weight \u2014 strikes rarely, like lightning itself",
+  },
+  "Celestial Whale": {
+    rod: "Legendary Rod required \u2014 only rod reaching 75%+ depth",
+    lures: ["Shadow Crab Bait \u2014 directly targets Celestial Whale, 6\u00d7 legendary", "Gold Crab Bait \u2014 targets Whale family, 3\u00d7 legendary"],
+    chum: ["Moonlight Essence \u2014 2\u00d7 rarity, celestial depth pull", "Golden Flakes \u2014 2\u00d7 rarity, boosts everything", "Abyssal Ooze \u2014 2.5\u00d7 rarity, ultimate depth pull"],
+    depth: "75%+ \u2014 the Abyss, where space meets sea",
+    strategy: "Second rarest creature in the ocean. Requires the Legendary Rod \u2014 no other rod can reach 75%+ depth. Shadow Crab Bait directly targets this species. Slow at 0.4 speed, so the catch is gentle \u2014 if you can find it. Stack Moonlight Essence with Shadow Crab for cosmic synergy.",
+    spawnInfo: "0.05% base weight \u2014 only three confirmed catches in history",
+  },
+  "Neon Eel": {
+    rod: "Carbon Rod or higher",
+    lures: ["Shadow Crab Bait \u2014 directly targets Neon Eel, 6\u00d7 legendary", "Dark Crab Bait \u2014 3\u00d7 legendary boost, deep dive"],
+    chum: ["Phosphor Dust \u2014 2\u00d7 rarity, glowing synergy", "Squid Ink \u2014 1.2\u00d7 rarity, pulls deep fish up"],
+    depth: "55%+ \u2014 the Deep zone, through reef corridors",
+    strategy: "Fast at 1.9 speed with mesmerizing movement patterns. Shadow Crab Bait directly targets Neon Eel with 6\u00d7 legendary boost. Phosphor Dust has natural synergy \u2014 its glow attracts bioluminescent creatures. Watch for its neon trail in the deep.",
+    spawnInfo: "0.22% base weight \u2014 the most accessible mid-tier ultra rare",
+  },
+  "Golden Salmon": {
+    rod: "Carbon Rod or higher",
+    lures: ["Gold Crab Bait \u2014 directly targets Salmon, 3\u00d7 legendary", "Blue Crab Bait \u2014 targets Salmon, 1.5\u00d7 legendary"],
+    chum: ["Golden Flakes \u2014 2\u00d7 rarity, golden synergy", "Fermented Brine \u2014 1.5\u00d7 rarity, good depth pull"],
+    depth: "60%+ \u2014 the Deep Ocean, in warm golden currents",
+    strategy: "Moderate speed at 1.5. Gold Crab Bait is the natural pairing \u2014 it targets Salmon and its golden glow resonates with this creature. Golden Flakes chum creates a golden aura in the water. The golden combination stacks rarity and salmon targeting for maximum odds.",
+    spawnInfo: "0.2% base weight \u2014 worth its weight in gold, literally",
+  },
+  "Shadow Leviathan": {
+    rod: "Legendary Rod required \u2014 must reach 80%+ depth",
+    lures: ["Shadow Crab Bait \u2014 directly targets Shadow Leviathan, 6\u00d7 legendary", "Crimson Crab Bait \u2014 6\u00d7 legendary boost, full protection"],
+    chum: ["Abyssal Ooze \u2014 2.5\u00d7 rarity, ultimate depth pull", "Kraken Bile \u2014 2.5\u00d7 rarity, strong depth pull"],
+    depth: "80%+ \u2014 the deepest Abyss, where shadow reigns",
+    strategy: "The second most valuable catch. Requires the Legendary Rod. Shadow Crab Bait is purpose-built for this encounter \u2014 it directly targets the Shadow Leviathan with 6\u00d7 legendary boost and complete threat protection. Use Abyssal Ooze for maximum depth pull. Slow at 0.6, but the weight of its pull is immense.",
+    spawnInfo: "0.08% base weight \u2014 whispered of in legends, seen by almost none",
+  },
+  "The Seal at the Seam": {
+    rod: "No rod can reach The Seam",
+    lures: ["No lure works \u2014 this is beyond fishing"],
+    chum: ["No chum attracts what guards the boundary"],
+    depth: "99% \u2014 The Seam itself, the boundary between worlds",
+    strategy: "The Seal at the Seam cannot be caught by conventional fishing. It exists only in treasure chests found in the deepest waters. Cast deep, hope for treasure \u2014 and pray the Seal grants you an audience. There is no technique, only fate.",
+    spawnInfo: "0% natural spawn \u2014 treasure chest exclusive. The rarest discovery in all the oceans.",
+  },
+};
+
 function FlipbookOverlay({ targetPage, onComplete }: { targetPage: number; onComplete: () => void }) {
   const [flipIndex, setFlipIndex] = useState(-1);
   const [phase, setPhase] = useState<"flipping" | "landing" | "done">("flipping");
@@ -1514,6 +1604,114 @@ function ChapterPage({ fish, pageNum, totalPages, onPrev, onNext, onCover, onGoT
           </p>
         ))}
       </div>
+
+      {(() => {
+        const guide = CATCH_GUIDES[fish.name];
+        if (!guide) return null;
+        return (
+          <div style={{ maxWidth: "640px", margin: "40px auto 0" }}>
+            <div style={{
+              width: "40px", height: "1px",
+              background: "linear-gradient(90deg, transparent, rgba(196,160,80,0.4), transparent)",
+              margin: "0 auto 28px",
+            }} />
+            <div style={{
+              textAlign: "center", fontSize: "11px", letterSpacing: "6px",
+              textTransform: "uppercase", color: "#c4a050",
+              marginBottom: "24px",
+            }}>
+              How to Catch
+            </div>
+
+            <div style={{
+              display: "grid", gap: "12px",
+              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+            }}>
+              {[
+                { label: "Rod Required", value: guide.rod },
+                { label: "Depth", value: guide.depth },
+              ].map((item) => (
+                <div key={item.label} style={{
+                  background: "rgba(255,255,255,0.02)",
+                  border: "1px solid rgba(196,160,80,0.12)",
+                  borderRadius: "4px", padding: "14px 16px",
+                }}>
+                  <div style={{ fontSize: "10px", letterSpacing: "3px", textTransform: "uppercase", color: "#8888a8", marginBottom: "8px" }}>
+                    {item.label}
+                  </div>
+                  <div style={{ fontSize: "13px", color: "#ddd6c6", lineHeight: 1.6 }}>
+                    {item.value}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{
+              display: "grid", gap: "12px",
+              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+              marginTop: "12px",
+            }}>
+              <div style={{
+                background: "rgba(255,255,255,0.02)",
+                border: "1px solid rgba(196,160,80,0.12)",
+                borderRadius: "4px", padding: "14px 16px",
+              }}>
+                <div style={{ fontSize: "10px", letterSpacing: "3px", textTransform: "uppercase", color: "#8888a8", marginBottom: "8px" }}>
+                  Best Lures
+                </div>
+                {guide.lures.map((l, li) => (
+                  <div key={li} style={{
+                    fontSize: "12px", color: "#b8b8d0", lineHeight: 1.7,
+                    paddingLeft: "8px", borderLeft: "2px solid rgba(196,160,80,0.2)",
+                    marginBottom: li < guide.lures.length - 1 ? "8px" : 0,
+                  }}>
+                    {l}
+                  </div>
+                ))}
+              </div>
+              <div style={{
+                background: "rgba(255,255,255,0.02)",
+                border: "1px solid rgba(196,160,80,0.12)",
+                borderRadius: "4px", padding: "14px 16px",
+              }}>
+                <div style={{ fontSize: "10px", letterSpacing: "3px", textTransform: "uppercase", color: "#8888a8", marginBottom: "8px" }}>
+                  Best Chum
+                </div>
+                {guide.chum.map((c, ci) => (
+                  <div key={ci} style={{
+                    fontSize: "12px", color: "#b8b8d0", lineHeight: 1.7,
+                    paddingLeft: "8px", borderLeft: "2px solid rgba(196,160,80,0.2)",
+                    marginBottom: ci < guide.chum.length - 1 ? "8px" : 0,
+                  }}>
+                    {c}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div style={{
+              background: "rgba(255,255,255,0.02)",
+              border: "1px solid rgba(196,160,80,0.12)",
+              borderRadius: "4px", padding: "14px 16px", marginTop: "12px",
+            }}>
+              <div style={{ fontSize: "10px", letterSpacing: "3px", textTransform: "uppercase", color: "#8888a8", marginBottom: "8px" }}>
+                Strategy
+              </div>
+              <div style={{ fontSize: "13px", color: "#ddd6c6", lineHeight: 1.8, textAlign: "justify" }}>
+                {guide.strategy}
+              </div>
+            </div>
+
+            <div style={{
+              textAlign: "center", marginTop: "16px",
+              fontSize: "11px", letterSpacing: "2px", color: "#a8a8c8",
+              fontStyle: "italic",
+            }}>
+              {guide.spawnInfo}
+            </div>
+          </div>
+        );
+      })()}
 
       <div
         style={{
