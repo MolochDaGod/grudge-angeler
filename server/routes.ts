@@ -91,62 +91,8 @@ async function sendDiscordCatch(data: {
   }
 }
 
-async function getDiscordTokens(code: string, redirectUri: string) {
-  const clientId = process.env.DISCORD_CLIENT_ID;
-  const clientSecret = process.env.DISCORD_CLIENT_SECRET;
-  if (!clientId || !clientSecret) throw new Error("Discord OAuth not configured");
-
-  const params = new URLSearchParams({
-    client_id: clientId,
-    client_secret: clientSecret,
-    grant_type: "authorization_code",
-    code,
-    redirect_uri: redirectUri,
-  });
-
-  const resp = await fetch("https://discord.com/api/oauth2/token", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: params.toString(),
-  });
-
-  if (!resp.ok) {
-    const text = await resp.text();
-    throw new Error(`Discord token exchange failed: ${resp.status} ${text}`);
-  }
-  return resp.json();
-}
-
-async function getDiscordUser(accessToken: string) {
-  const resp = await fetch("https://discord.com/api/users/@me", {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-  if (!resp.ok) throw new Error("Failed to fetch Discord user");
-  return resp.json();
-}
-
-const sessions = new Map<string, { discordId: string; username: string; avatar: string | null; discriminator: string; accessToken: string; expiresAt: number }>();
-const oauthStates = new Map<string, number>();
-
-function generateRandomId(len = 48) {
-  const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let id = "";
-  for (let i = 0; i < len; i++) id += chars[Math.floor(Math.random() * chars.length)];
-  return id;
-}
-
-setInterval(() => {
-  const now = Date.now();
-  const stateKeys = Array.from(oauthStates.keys());
-  for (const key of stateKeys) {
-    if (now > (oauthStates.get(key) || 0)) oauthStates.delete(key);
-  }
-  const sessionKeys = Array.from(sessions.keys());
-  for (const key of sessionKeys) {
-    const s = sessions.get(key);
-    if (s && now > s.expiresAt) sessions.delete(key);
-  }
-}, 60000);
+const GRUDGE_ID_URL = process.env.GRUDGE_AUTH_URL || 'https://id.grudge-studio.com';
+const TOKEN_COOKIE = 'ga_grudge_token';
 
 function getBaseUrl(req: Request) {
   const proto = req.headers["x-forwarded-proto"] || req.protocol || "https";
@@ -209,95 +155,109 @@ export async function registerRoutes(
     }
   });
 
+  // --- Auth: proxy through Grudge ID (id.grudge-studio.com) ---
+
+  // Discord login — redirect to grudge-id's Discord OAuth start
   app.get("/api/auth/discord", (req: Request, res: Response) => {
-    const clientId = process.env.DISCORD_CLIENT_ID;
-    if (!clientId) {
-      return res.status(500).json({ message: "Discord OAuth not configured" });
-    }
     const base = getBaseUrl(req);
-    const redirectUri = `${base}/api/auth/discord/callback`;
-    const state = generateRandomId(32);
-    oauthStates.set(state, Date.now() + 600000);
-    const params = new URLSearchParams({
-      client_id: clientId,
-      redirect_uri: redirectUri,
-      response_type: "code",
-      scope: "identify",
-      state,
-    });
-    res.redirect(`https://discord.com/api/oauth2/authorize?${params.toString()}`);
+    const returnUrl = `${base}/game`;
+    res.redirect(`${GRUDGE_ID_URL}/auth/discord/start?returnUrl=${encodeURIComponent(returnUrl)}`);
   });
 
-  app.get("/api/auth/discord/callback", async (req: Request, res: Response) => {
+  // Login with username/password via grudge-id
+  app.post("/api/auth/login", async (req: Request, res: Response) => {
     try {
-      const code = req.query.code as string;
-      const state = req.query.state as string;
-      if (!code || !state) {
-        return res.redirect("/game?auth_error=no_code");
-      }
-      const stateExpiry = oauthStates.get(state);
-      if (!stateExpiry || Date.now() > stateExpiry) {
-        oauthStates.delete(state);
-        return res.redirect("/game?auth_error=invalid_state");
-      }
-      oauthStates.delete(state);
-
-      const base = getBaseUrl(req);
-      const redirectUri = `${base}/api/auth/discord/callback`;
-
-      const tokens = await getDiscordTokens(code, redirectUri);
-      const user = await getDiscordUser(tokens.access_token);
-
-      const sessionId = generateRandomId();
-      sessions.set(sessionId, {
-        discordId: user.id,
-        username: user.global_name || user.username,
-        avatar: user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : null,
-        discriminator: user.discriminator || "0",
-        accessToken: tokens.access_token,
-        expiresAt: Date.now() + (tokens.expires_in || 604800) * 1000,
+      const resp = await fetch(`${GRUDGE_ID_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(req.body),
       });
-
-      res.cookie("ga_session", sessionId, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "lax",
-        maxAge: (tokens.expires_in || 604800) * 1000,
-        path: "/",
-      });
-
-      res.redirect("/game?auth=success");
+      const data = await resp.json();
+      if (data.token) {
+        res.cookie(TOKEN_COOKIE, data.token, {
+          httpOnly: true, secure: true, sameSite: 'lax', maxAge: 7 * 24 * 60 * 60 * 1000, path: '/',
+        });
+      }
+      res.status(resp.status).json(data);
     } catch (err) {
-      console.error("Discord OAuth callback error:", err);
-      res.redirect("/game?auth_error=callback_failed");
+      res.status(502).json({ error: 'Auth service unavailable' });
     }
   });
 
-  app.get("/api/auth/me", (req: Request, res: Response) => {
-    const sessionId = req.cookies?.ga_session;
-    if (!sessionId) {
-      return res.json({ authenticated: false });
+  // Register via grudge-id
+  app.post("/api/auth/register", async (req: Request, res: Response) => {
+    try {
+      const resp = await fetch(`${GRUDGE_ID_URL}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(req.body),
+      });
+      const data = await resp.json();
+      if (data.token) {
+        res.cookie(TOKEN_COOKIE, data.token, {
+          httpOnly: true, secure: true, sameSite: 'lax', maxAge: 7 * 24 * 60 * 60 * 1000, path: '/',
+        });
+      }
+      res.status(resp.status).json(data);
+    } catch (err) {
+      res.status(502).json({ error: 'Auth service unavailable' });
     }
-    const session = sessions.get(sessionId);
-    if (!session || session.expiresAt < Date.now()) {
-      if (session) sessions.delete(sessionId);
-      return res.json({ authenticated: false });
-    }
-    res.json({
-      authenticated: true,
-      user: {
-        discordId: session.discordId,
-        username: session.username,
-        avatar: session.avatar,
-      },
-    });
   });
 
+  // Guest login via grudge-id
+  app.post("/api/auth/guest", async (req: Request, res: Response) => {
+    try {
+      const resp = await fetch(`${GRUDGE_ID_URL}/auth/guest`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(req.body),
+      });
+      const data = await resp.json();
+      if (data.token) {
+        res.cookie(TOKEN_COOKIE, data.token, {
+          httpOnly: true, secure: true, sameSite: 'lax', maxAge: 7 * 24 * 60 * 60 * 1000, path: '/',
+        });
+      }
+      res.status(resp.status).json(data);
+    } catch (err) {
+      res.status(502).json({ error: 'Auth service unavailable' });
+    }
+  });
+
+  // Check current user — verify token with grudge-id
+  app.get("/api/auth/me", async (req: Request, res: Response) => {
+    const token = req.cookies?.[TOKEN_COOKIE]
+      || (req.headers.authorization?.startsWith('Bearer ') ? req.headers.authorization.slice(7) : null);
+    if (!token) {
+      return res.json({ authenticated: false });
+    }
+    try {
+      const resp = await fetch(`${GRUDGE_ID_URL}/auth/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }),
+      });
+      const data = await resp.json();
+      if (data.valid || data.success) {
+        const u = data.user || data;
+        return res.json({
+          authenticated: true,
+          user: {
+            grudgeId: data.grudgeId || u.grudgeId || u.grudge_id,
+            username: u.username || u.displayName,
+            avatar: u.avatarUrl || null,
+          },
+        });
+      }
+      return res.json({ authenticated: false });
+    } catch {
+      return res.json({ authenticated: false });
+    }
+  });
+
+  // Logout — clear cookie
   app.post("/api/auth/logout", (req: Request, res: Response) => {
-    const sessionId = req.cookies?.ga_session;
-    if (sessionId) {
-      sessions.delete(sessionId);
-    }
+    res.clearCookie(TOKEN_COOKIE, { path: "/" });
     res.clearCookie("ga_session", { path: "/" });
     res.json({ ok: true });
   });
