@@ -35,6 +35,10 @@ const allowlist = [
 async function buildAll() {
   await rm("dist", { recursive: true, force: true });
 
+  console.log("generating sprite manifest...");
+  const { execSync } = await import("child_process");
+  execSync("npx tsx scripts/generate-sprite-manifest.ts", { stdio: "inherit" });
+
   console.log("building client...");
   await viteBuild();
 

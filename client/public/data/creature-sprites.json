@@ -1,0 +1,674 @@
+[
+  {
+    "folder": "abyssal-bass-dark-ultra_rare",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/abyssal-bass-dark-ultra_rare"
+  },
+  {
+    "folder": "anchovy-salt-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/anchovy-salt-common"
+  },
+  {
+    "folder": "angelfish-fresh-uncommon",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/angelfish-fresh-uncommon"
+  },
+  {
+    "folder": "anglerfish-dark-rare",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/anglerfish-dark-rare"
+  },
+  {
+    "folder": "barrel-junk-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/barrel-junk-common"
+  },
+  {
+    "folder": "baseturtle",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/baseturtle"
+  },
+  {
+    "folder": "bass-fresh-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/bass-fresh-common"
+  },
+  {
+    "folder": "bass-green-uncommon",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/bass-green-uncommon"
+  },
+  {
+    "folder": "blue-ring-octopus-blue-uncommon",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/blue-ring-octopus-blue-uncommon"
+  },
+  {
+    "folder": "bluefish-big-rare",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/bluefish-big-rare"
+  },
+  {
+    "folder": "bluefish-teal-uncommon",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/bluefish-teal-uncommon"
+  },
+  {
+    "folder": "boot-junk-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/boot-junk-common"
+  },
+  {
+    "folder": "box-junk-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/box-junk-common"
+  },
+  {
+    "folder": "brownfish-rusty-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/brownfish-rusty-common"
+  },
+  {
+    "folder": "butterfly-fish-fresh-uncommon",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/butterfly-fish-fresh-uncommon"
+  },
+  {
+    "folder": "catfish-brown-uncommon",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/catfish-brown-uncommon"
+  },
+  {
+    "folder": "catfish-fresh-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/catfish-fresh-common"
+  },
+  {
+    "folder": "celestial-whale-cosmic-ultra_rare",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/celestial-whale-cosmic-ultra_rare"
+  },
+  {
+    "folder": "chest-junk-rare",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/chest-junk-rare"
+  },
+  {
+    "folder": "clownfish-salt-uncommon",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/clownfish-salt-uncommon"
+  },
+  {
+    "folder": "deep-sea-angler-dark-rare",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/deep-sea-angler-dark-rare"
+  },
+  {
+    "folder": "dungeness-crab-salt-uncommon",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/dungeness-crab-salt-uncommon"
+  },
+  {
+    "folder": "eel-dark-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/eel-dark-common"
+  },
+  {
+    "folder": "egg-small-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/egg-small-common"
+  },
+  {
+    "folder": "electric-eel-yellow-uncommon",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/electric-eel-yellow-uncommon"
+  },
+  {
+    "folder": "frost-catfish-ice-ultra_rare",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/frost-catfish-ice-ultra_rare"
+  },
+  {
+    "folder": "giant-octopus-purple-legendary",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/giant-octopus-purple-legendary"
+  },
+  {
+    "folder": "giant-squid-blue-legendary",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/giant-squid-blue-legendary"
+  },
+  {
+    "folder": "golden-salmon-gold-ultra_rare",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/golden-salmon-gold-ultra_rare"
+  },
+  {
+    "folder": "goldfish-fresh-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/goldfish-fresh-common"
+  },
+  {
+    "folder": "goldfish-tiny-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/goldfish-tiny-common"
+  },
+  {
+    "folder": "green-fish-small-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/green-fish-small-common"
+  },
+  {
+    "folder": "greenfish-small-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/greenfish-small-common"
+  },
+  {
+    "folder": "hammerhead-shark-blue-legendary",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/hammerhead-shark-blue-legendary"
+  },
+  {
+    "folder": "jelly-small-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/jelly-small-common"
+  },
+  {
+    "folder": "jellyfish-translucent-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/jellyfish-translucent-common"
+  },
+  {
+    "folder": "kraken-crimson-legendary",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/kraken-crimson-legendary"
+  },
+  {
+    "folder": "lionfish-salt-rare",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/lionfish-salt-rare"
+  },
+  {
+    "folder": "minnow-silver-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/minnow-silver-common"
+  },
+  {
+    "folder": "moray-eel-brown-rare",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/moray-eel-brown-rare"
+  },
+  {
+    "folder": "neon-eel-neon-ultra_rare",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/neon-eel-neon-ultra_rare"
+  },
+  {
+    "folder": "octopus-red-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/octopus-red-common"
+  },
+  {
+    "folder": "olivefish-long-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/olivefish-long-common"
+  },
+  {
+    "folder": "perch-striped-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/perch-striped-common"
+  },
+  {
+    "folder": "phantom-minnow-spectral-ultra_rare",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/phantom-minnow-spectral-ultra_rare"
+  },
+  {
+    "folder": "pink-fish-small-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/pink-fish-small-common"
+  },
+  {
+    "folder": "pink-jellyfish-pink-uncommon",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/pink-jellyfish-pink-uncommon"
+  },
+  {
+    "folder": "pinkfish-long-uncommon",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/pinkfish-long-uncommon"
+  },
+  {
+    "folder": "pufferfish-salt-rare",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/pufferfish-salt-rare"
+  },
+  {
+    "folder": "purple-jellyfish-purple-rare",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/purple-jellyfish-purple-rare"
+  },
+  {
+    "folder": "rainbow-trout-fresh-rare",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/rainbow-trout-fresh-rare"
+  },
+  {
+    "folder": "redfish-large-uncommon",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/redfish-large-uncommon"
+  },
+  {
+    "folder": "rustycan-junk-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/rustycan-junk-common"
+  },
+  {
+    "folder": "salmon-pink-uncommon",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/salmon-pink-uncommon"
+  },
+  {
+    "folder": "sea-urchin-dark-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/sea-urchin-dark-common"
+  },
+  {
+    "folder": "seal-at-the-seam-cosmic-ultra_rare",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/seal-at-the-seam-cosmic-ultra_rare"
+  },
+  {
+    "folder": "shadow-leviathan-shadow-ultra_rare",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/shadow-leviathan-shadow-ultra_rare"
+  },
+  {
+    "folder": "starfish-small-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/starfish-small-common"
+  },
+  {
+    "folder": "stingray-gray-rare",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/stingray-gray-rare"
+  },
+  {
+    "folder": "storm-swordfish-electric-ultra_rare",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/storm-swordfish-electric-ultra_rare"
+  },
+  {
+    "folder": "surgeonfish-salt-uncommon",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/surgeonfish-salt-uncommon"
+  },
+  {
+    "folder": "swordfish-blue-rare",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/swordfish-blue-rare"
+  },
+  {
+    "folder": "tadpole-small-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/tadpole-small-common"
+  },
+  {
+    "folder": "volcanic-perch-molten-ultra_rare",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/volcanic-perch-molten-ultra_rare"
+  },
+  {
+    "folder": "whale-blue-legendary",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": true,
+    "category": "creature",
+    "spritePath": "/assets/creatures/whale-blue-legendary"
+  },
+  {
+    "folder": "worm-bait-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/worm-bait-common"
+  },
+  {
+    "folder": "worm-small-common",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "creature",
+    "spritePath": "/assets/creatures/worm-small-common"
+  },
+  {
+    "folder": "crabaggresive",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "predator",
+    "spritePath": "/assets/predators/crabaggresive"
+  },
+  {
+    "folder": "kraken",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "predator",
+    "spritePath": "/assets/predators/kraken"
+  },
+  {
+    "folder": "leviathan",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "predator",
+    "spritePath": "/assets/predators/leviathan"
+  },
+  {
+    "folder": "shark",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "predator",
+    "spritePath": "/assets/predators/shark"
+  },
+  {
+    "folder": "guardian",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "guardian",
+    "spritePath": "/assets/guardian"
+  },
+  {
+    "folder": "1",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "npc",
+    "spritePath": "/assets/npcs/1"
+  },
+  {
+    "folder": "10",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "npc",
+    "spritePath": "/assets/npcs/10"
+  },
+  {
+    "folder": "11",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "npc",
+    "spritePath": "/assets/npcs/11"
+  },
+  {
+    "folder": "12",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "npc",
+    "spritePath": "/assets/npcs/12"
+  },
+  {
+    "folder": "2",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "npc",
+    "spritePath": "/assets/npcs/2"
+  },
+  {
+    "folder": "3",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "npc",
+    "spritePath": "/assets/npcs/3"
+  },
+  {
+    "folder": "4",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "npc",
+    "spritePath": "/assets/npcs/4"
+  },
+  {
+    "folder": "5",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "npc",
+    "spritePath": "/assets/npcs/5"
+  },
+  {
+    "folder": "6",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "npc",
+    "spritePath": "/assets/npcs/6"
+  },
+  {
+    "folder": "7",
+    "hasIdle": true,
+    "hasWalk": false,
+    "hasFrames": false,
+    "category": "npc",
+    "spritePath": "/assets/npcs/7"
+  },
+  {
+    "folder": "8",
+    "hasIdle": true,
+    "hasWalk": false,
+    "hasFrames": false,
+    "category": "npc",
+    "spritePath": "/assets/npcs/8"
+  },
+  {
+    "folder": "9",
+    "hasIdle": true,
+    "hasWalk": true,
+    "hasFrames": false,
+    "category": "npc",
+    "spritePath": "/assets/npcs/9"
+  }
+]

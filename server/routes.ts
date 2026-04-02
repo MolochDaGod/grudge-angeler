@@ -2,8 +2,6 @@ import type { Express, Request, Response, CookieOptions } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertLeaderboardSchema } from "@shared/schema";
-import fs from "fs";
-import path from "path";
 
 const baseUrl = process.env.BASE_URL || "https://grudge-angeler.vercel.app";
 const playUrl = process.env.PLAY_URL || "https://grudge-angeler.vercel.app/game";
@@ -262,61 +260,10 @@ export async function registerRoutes(
     res.json({ ok: true });
   });
 
+  // Sprite manifest is now generated at build time → /data/creature-sprites.json
+  // This endpoint redirects to the static file for backward compatibility
   app.get("/api/creature-sprites", (_req: Request, res: Response) => {
-    try {
-      const assetsRoot = path.join(process.cwd(), "client", "public", "assets");
-
-      function scanDir(dir: string, category: string, pathPrefix: string) {
-        if (!fs.existsSync(dir)) return [];
-        return fs.readdirSync(dir, { withFileTypes: true })
-          .filter(d => d.isDirectory() && d.name !== "PSD" && d.name !== "frames")
-          .map(d => {
-            const folderPath = path.join(dir, d.name);
-            const files = fs.readdirSync(folderPath);
-            const hasIdle = files.includes("Idle.png");
-            const hasWalk = files.includes("Walk.png");
-            const hasFrames = fs.existsSync(path.join(folderPath, "frames"));
-            return {
-              folder: d.name,
-              hasIdle,
-              hasWalk,
-              hasFrames,
-              category,
-              spritePath: `${pathPrefix}/${d.name}`,
-            };
-          });
-      }
-
-      const creatures = scanDir(path.join(assetsRoot, "creatures"), "creature", "/assets/creatures");
-      const predators = scanDir(path.join(assetsRoot, "predators"), "predator", "/assets/predators");
-      const npcs = scanDir(path.join(assetsRoot, "npcs"), "npc", "/assets/npcs");
-      const guardianDir = path.join(assetsRoot, "guardian");
-      const guardianEntries: any[] = [];
-      if (fs.existsSync(guardianDir)) {
-        const gFiles = fs.readdirSync(guardianDir);
-        guardianEntries.push({
-          folder: "guardian",
-          hasIdle: gFiles.includes("Idle.png"),
-          hasWalk: gFiles.includes("Walk.png"),
-          hasFrames: false,
-          category: "guardian",
-          spritePath: "/assets/guardian",
-        });
-      }
-
-      const all = [...creatures, ...predators, ...guardianEntries, ...npcs]
-        .filter(s => s.hasIdle || s.hasWalk)
-        .sort((a, b) => {
-          const catOrder: Record<string, number> = { creature: 0, predator: 1, guardian: 2, npc: 3 };
-          const ca = catOrder[a.category] ?? 9;
-          const cb = catOrder[b.category] ?? 9;
-          if (ca !== cb) return ca - cb;
-          return a.folder.localeCompare(b.folder);
-        });
-      res.json(all);
-    } catch (err: any) {
-      res.status(500).json({ error: err.message });
-    }
+    res.redirect("/data/creature-sprites.json");
   });
 
   function getTournamentDateCST(): string {
